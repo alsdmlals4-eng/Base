@@ -52,10 +52,16 @@ def progress(board: dict) -> tuple[int, int]:
     return sum(item["status"] == "DONE" for item in items), len(items)
 
 
-def validate_tracking(board: object, *, phase: str = "start", expected_source_sha: str | None = None) -> list[str]:
+def validate_tracking(
+    board: object,
+    *,
+    phase: str = "start",
+    expected_source_sha: str | None = None,
+    expected_head_sha: str | None = None,
+) -> list[str]:
     errors: list[str] = []
     if not choice(phase, {"start", "resume", "closeout", "inspect"}):
-        return ["phase must be start, resume or closeout"]
+        return ["phase must be start, resume, closeout or inspect"]
     if not isinstance(board, dict):
         return ["project_work_kanban is required for L1+ execution"]
     for key in ("goal_or_slice_issue_ref", "next_action"):
@@ -67,6 +73,11 @@ def validate_tracking(board: object, *, phase: str = "start", expected_source_sh
     if expected_source_sha is not None:
         if not isinstance(expected_source_sha, str) or SHA.fullmatch(expected_source_sha) is None or source != expected_source_sha:
             errors.append("project_work_kanban.source_main_sha does not match trusted expected source")
+
+    trusted_head_valid = isinstance(expected_head_sha, str) and SHA.fullmatch(expected_head_sha) is not None
+    if phase == "closeout" and not trusted_head_valid:
+        errors.append("expected_head_sha from the trusted final-head caller is required for closeout")
+
     tasks = _records(board.get("work_items"), "work_item_id", "project_work_kanban.work_items", errors)
     refs = board.get("work_item_refs")
     if not strings(refs) or len(refs) != len(set(refs)) or set(refs) != set(tasks):
@@ -164,6 +175,8 @@ def validate_tracking(board: object, *, phase: str = "start", expected_source_sh
             head = task.get("verified_head_sha")
             if not isinstance(head, str) or SHA.fullmatch(head) is None:
                 errors.append(f"{prefix}: DONE requires verified_head_sha for the recorded evidence")
+            elif phase == "closeout" and trusted_head_valid and head != expected_head_sha:
+                errors.append(f"{prefix}.verified_head_sha does not match trusted expected head")
             if applicable == 0 or passed != applicable:
                 errors.append(f"{prefix}: DONE requires every applicable checklist item PASS")
             for level in required:
