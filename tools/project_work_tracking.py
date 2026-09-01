@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import re
 import html
+import unicodedata
 from typing import Any
 
 TASK_STATES = frozenset({"BACKLOG", "READY", "IN_PROGRESS", "VERIFY_REVIEW", "BLOCKED_UNVERIFIED", "USER_DECISION_REQUIRED", "DEFERRED", "DONE"})
@@ -18,7 +19,7 @@ SHA = re.compile(r"[0-9a-f]{40}\Z")
 
 
 def text(value: Any) -> bool:
-    return isinstance(value, str) and bool(value.strip()) and not (value.strip().startswith("<") and value.strip().endswith(">")) and value.strip().upper() not in {"TODO", "TBD", "N/A"}
+    return isinstance(value, str) and bool(value.strip()) and not any(unicodedata.category(c) in {"Cc", "Cf"} and c not in "\n\r\t" for c in value) and not (value.strip().startswith("<") and value.strip().endswith(">")) and value.strip().upper() not in {"TODO", "TBD", "N/A"}
 
 
 def strings(value: Any, *, nonempty: bool = True) -> bool:
@@ -53,7 +54,7 @@ def progress(board: dict) -> tuple[int, int]:
 
 def validate_tracking(board: object, *, phase: str = "start", expected_source_sha: str | None = None) -> list[str]:
     errors: list[str] = []
-    if not choice(phase, {"start", "resume", "closeout"}):
+    if not choice(phase, {"start", "resume", "closeout", "inspect"}):
         return ["phase must be start, resume or closeout"]
     if not isinstance(board, dict):
         return ["project_work_kanban is required for L1+ execution"]
@@ -83,7 +84,6 @@ def validate_tracking(board: object, *, phase: str = "start", expected_source_sh
         errors.append(f"{phase} requires one IN_PROGRESS task; record blockers without authorizing execution")
     if phase == "closeout" and (active is not None or not tasks or any(t.get("status") != "DONE" for t in tasks.values())):
         errors.append("closeout requires all required work_items DONE and no active task")
-
     if phase == "closeout" and board.get("next_action") != "STOP_APPROVED_SCOPE_COMPLETE":
         errors.append("closeout.next_action must be STOP_APPROVED_SCOPE_COMPLETE; new scope needs its own approval")
 
@@ -128,6 +128,8 @@ def validate_tracking(board: object, *, phase: str = "start", expected_source_sh
             check_status = check.get("status")
             if not choice(check_status, CHECK_STATES) or not text(check.get("text")):
                 errors.append(f"{prefix}.checklist[{check_id}] requires valid status and text")
+            if "evidence" in check and not strings(check["evidence"], nonempty=False):
+                errors.append(f"{prefix}.checklist[{check_id}].evidence must be a list of text")
             if check_status == "NOT_APPLICABLE":
                 if not text(check.get("reason")):
                     errors.append(f"{prefix}.checklist[{check_id}].reason is required")
@@ -145,6 +147,8 @@ def validate_tracking(board: object, *, phase: str = "start", expected_source_sh
         for level, entry in verification.items():
             if level not in LEVELS or not choice(entry.get("status"), EVIDENCE_STATES):
                 errors.append(f"{prefix}.verification[{level}] is invalid")
+            if "evidence" in entry and not strings(entry["evidence"], nonempty=False):
+                errors.append(f"{prefix}.verification[{level}].evidence must be a list of text")
             if entry.get("status") == "PASS" and not strings(entry.get("evidence")):
                 errors.append(f"{prefix}.verification[{level}].evidence is required for PASS")
             if entry.get("status") == "NOT_APPLICABLE" and not text(entry.get("reason")):
@@ -155,6 +159,8 @@ def validate_tracking(board: object, *, phase: str = "start", expected_source_sh
             elif verification[level].get("status") == "NOT_APPLICABLE":
                 errors.append(f"{prefix}: required evidence {level} cannot be waived")
         if status == "DONE":
+            if any(entry.get("status") in ("FAIL", "BLOCKED_UNVERIFIED") for entry in verification.values()):
+                errors.append(f"{prefix}: DONE contradicts recorded failed or blocked verification")
             head = task.get("verified_head_sha")
             if not isinstance(head, str) or SHA.fullmatch(head) is None:
                 errors.append(f"{prefix}: DONE requires verified_head_sha for the recorded evidence")
@@ -169,7 +175,6 @@ def validate_tracking(board: object, *, phase: str = "start", expected_source_sh
             if task.get("repository_readback") != "PASS" or not strings(task.get("readback_evidence")) or not text(task.get("rollback")):
                 errors.append(f"{prefix}: DONE requires repository_readback PASS, readback_evidence and rollback")
 
-    # Iterative topological elimination avoids recursion limits on user-controlled graphs.
     pending = dict(dependencies)
     resolved: set[str] = set()
     while pending:
@@ -185,11 +190,12 @@ def validate_tracking(board: object, *, phase: str = "start", expected_source_sh
         completed = sum(task.get("status") == "DONE" for task in tasks.values())
         if not isinstance(summary, dict) or any(type(summary.get(k)) is not int for k in ("completed_items", "applicable_items")) or summary.get("completed_items") != completed or summary.get("applicable_items") != len(tasks):
             errors.append("project_work_kanban.progress_summary differs from required child DONE count")
+        if isinstance(summary, dict) and "display" in summary and summary["display"] != f"{completed} / {len(tasks)}":
+            errors.append("project_work_kanban.progress_summary.display differs from required child DONE count")
     return errors
 
 
 def _plain(value: str) -> str:
-    # Render references as inert text, not Markdown/HTML commands or hidden links.
     value = html.escape(" ".join(value.split()), quote=False)
     for char in "\\`*_{}[]<>()|!#":
         value = value.replace(char, "\\" + char)
@@ -197,7 +203,7 @@ def _plain(value: str) -> str:
 
 
 def render_tracking(board: dict) -> str:
-    """Render only after validate_tracking succeeds; no filesystem/network writes."""
+    """Render only after shape validation succeeds; no filesystem/network writes."""
     completed, total = progress(board)
     lines = [f"## PM 작업 체크리스트 — {completed} / {total}", "", "이 표는 기록 일관성 검사를 통과한 파생 뷰이며 실제 증거 검수를 대신하지 않습니다.", ""]
     for task in board["work_items"]:
@@ -206,7 +212,8 @@ def render_tracking(board: dict) -> str:
         count = f"{passed} / {len(checks)}" if checks else "NO_APPLICABLE_CHECKLIST"
         mark = "x" if task["status"] == "DONE" else " "
         lines.append(f"- [{mark}] {_plain(task['work_item_id'])} · {task['status']} · {_plain(task['title'])} ({count})")
-        lines.append(f"  다음: {_plain(task['next_action'])}")
+        if task["status"] != "DONE":
+            lines.append(f"  다음: {_plain(task['next_action'])}")
         if task["status"] in BLOCKED:
             lines.append(f"  차단: {_plain(task['blocker'])}; 재개: {_plain(task['resume_condition'])}")
     lines.extend(["", f"다음 안전 작업: {_plain(board['next_action'])}"])
