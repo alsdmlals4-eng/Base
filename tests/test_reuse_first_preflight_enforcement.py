@@ -85,7 +85,7 @@ class ReuseFirstPreflightEnforcementTests(unittest.TestCase):
             entry_rules["legacy_workspace_requires_current_project_authority"]
         )
 
-        # Base must route mutable state; it must not freeze historical project snapshots.
+        # Base routes live project state and must not freeze historical snapshots.
         actions = {
             project_id: handoff["projects"][project_id]["next_project_work_action"]
             for project_id in (
@@ -109,6 +109,7 @@ class ReuseFirstPreflightEnforcementTests(unittest.TestCase):
         self.assertNotIn("Issue #", actions["OMENWARD"])
         self.assertNotIn("PR #", actions["OMENWARD"])
 
+        # Historical project identity must not re-enter current Base routing.
         tetris_identity = handoff["projects"]["TETRIS"]["project_owned_identity"]
         self.assertIn("continuous realtime", tetris_identity.lower())
         self.assertIn("line/chain", tetris_identity.lower())
