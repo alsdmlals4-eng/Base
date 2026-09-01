@@ -1,0 +1,91 @@
+name: PR 803 guarded merge once
+
+on:
+  push:
+    branches:
+      - ops/pr803-safe-merge-20260901
+    paths:
+      - .github/workflows/pr803-safe-merge-once.yml
+
+permissions:
+  actions: read
+  checks: read
+  contents: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  guarded-merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for exact current gates and squash merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          repo="alsdmlals4-eng/Base"
+          pr_number=803
+          for attempt in $(seq 1 60); do
+            pr="$(gh api "repos/$repo/pulls/$pr_number")"
+            if [[ "$(jq -r '.merged' <<<"$pr")" == "true" ]]; then
+              echo "PR already merged."
+              exit 0
+            fi
+            if [[ "$(jq -r '.state' <<<"$pr")" != "open" ]]; then
+              echo "PR is not open." >&2
+              exit 1
+            fi
+            head_sha="$(jq -r '.head.sha' <<<"$pr")"
+            base_sha="$(jq -r '.base.sha' <<<"$pr")"
+
+            files="$(gh api --paginate "repos/$repo/pulls/$pr_number/files?per_page=100")"
+            if jq -e 'any(.[]; .filename == ".github/workflows/resolve-pr803-current-thread.yml" or .filename == ".github/workflows/resolve-and-clean-pr803.yml")' <<<"$files" >/dev/null; then
+              echo "attempt $attempt: temporary resolver files still present"
+              sleep 10
+              continue
+            fi
+
+            query='query($owner:String!,$name:String!,$number:Int!){repository(owner:$owner,name:$name){pullRequest(number:$number){reviewThreads(first:100){nodes{isResolved}}}}}'
+            thread_payload="$(gh api graphql -f query="$query" -F owner=alsdmlals4-eng -F name=Base -F number=$pr_number)"
+            unresolved="$(jq '[.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved == false)] | length' <<<"$thread_payload")"
+            if [[ "$unresolved" != "0" ]]; then
+              echo "attempt $attempt: unresolved review threads=$unresolved"
+              sleep 10
+              continue
+            fi
+
+            checks="$(gh api "repos/$repo/commits/$head_sha/check-runs?per_page=100")"
+            ci_ok="$(jq '[.check_runs[] | select(.name == "ci-gate" and .status == "completed" and .conclusion == "success")] | length' <<<"$checks")"
+            if [[ "$ci_ok" == "0" ]]; then
+              echo "attempt $attempt: ci-gate not yet successful for $head_sha"
+              sleep 10
+              continue
+            fi
+
+            current_main="$(gh api "repos/$repo/git/ref/heads/main" --jq '.object.sha')"
+            if [[ "$current_main" != "$base_sha" ]]; then
+              echo "attempt $attempt: PR base SHA $base_sha is stale relative to current main $current_main"
+              sleep 10
+              continue
+            fi
+
+            result="$(gh api --method PUT "repos/$repo/pulls/$pr_number/merge" \
+              -f merge_method=squash \
+              -f sha="$head_sha" \
+              -f commit_title='feat: benchmark-first modular UI production and declared-plan checks (#803)' \
+              -f commit_message='Add external-benchmark-first planning, reusable modular image assemblies, functional surface validation, source-identity hardening, and connected-tool capability discovery while preserving project and runtime evidence boundaries.')"
+            if [[ "$(jq -r '.merged' <<<"$result")" == "true" ]]; then
+              merge_sha="$(jq -r '.sha' <<<"$result")"
+              readback="$(gh api "repos/$repo/pulls/$pr_number")"
+              main_after="$(gh api "repos/$repo/git/ref/heads/main" --jq '.object.sha')"
+              [[ "$(jq -r '.merged' <<<"$readback")" == "true" ]]
+              [[ "$main_after" == "$merge_sha" ]]
+              echo "merged=$merge_sha"
+              exit 0
+            fi
+            echo "attempt $attempt: merge API did not merge: $(jq -r '.message' <<<"$result")"
+            sleep 10
+          done
+          echo "Timed out without bypassing repository gates." >&2
+          exit 1
