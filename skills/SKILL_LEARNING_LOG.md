@@ -1,5 +1,14 @@
 # Base Skill Learning Log
 
+## 2026-09-01 — 기능별 코드·계약 경계의 소형 기능 라우팅
+
+- **상태:** `OBSERVATION`
+- **Trigger:** 기능별 코드·계약 모듈화가 작업 분해 reference에는 필요했지만, 승인된 작은 작업은 intake Registry의 비사용 조건에 걸리고 실행계획에는 contract owner·공개 경계·consumer 입력란이 없었다.
+- **Finding:** 파일 또는 작업 단계가 작다는 이유만으로 새 공개 계약·상태 소유권·consumer 연결을 intake 없이 처리하면, 정본·구현·테스트·롤백 연결이 누락될 수 있다. 반대로 이미 승인된 내부 경계를 그대로 구현하는 continuation까지 L1로 승격하면 불필요한 절차와 정본 복제가 생긴다.
+- **Decision:** 새 기능 또는 기능 계약·공개 경계·상태 소유권·consumer 연결의 의미 변경만 작업 크기와 무관하게 `managing-project-intake-and-work-contract`로 라우팅한다. 이미 승인·정의된 경계를 그대로 구현하는 작은 continuation은 기존 approval reference를 재사용한다. `EXECUTION_SEQUENCE_PLAN.md`에는 기존 owner와 구현·데이터·테스트 위치, 공개·통합 경계, 실제 consumer·의존 방향, 검증·롤백을 연결하며 별도 Registry나 중복 정본을 만들지 않는다.
+- **Evidence ceiling:** 이 Base 변경은 작성·라우팅·양식 계약의 기계 검증만 다룬다. 기존 프로젝트 코드가 이미 모듈화됐거나 Godot runtime·UX·사용자 검수가 완료됐다는 뜻은 아니다.
+- **Recheck trigger:** 작은 기능이 다시 intake를 우회하거나, 실행계획에서 contract owner·public boundary·consumer path가 누락되거나, 단순 내부 구현까지 과도하게 L1 계약 작업으로 분류될 때 경계를 재검토한다.
+
 ## 2026-08-27 — Screen inventory is a subordinate input, not a second visual coverage owner
 
 - **상태:** `PATTERN_CANDIDATE`
