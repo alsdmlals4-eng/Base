@@ -53,6 +53,8 @@ def progress(board: dict) -> tuple[int, int]:
 
 def validate_tracking(board: object, *, phase: str = "start", expected_source_sha: str | None = None) -> list[str]:
     errors: list[str] = []
+    if not choice(phase, {"start", "resume", "closeout"}):
+        return ["phase must be start, resume or closeout"]
     if not isinstance(board, dict):
         return ["project_work_kanban is required for L1+ execution"]
     for key in ("goal_or_slice_issue_ref", "next_action"):
@@ -62,7 +64,7 @@ def validate_tracking(board: object, *, phase: str = "start", expected_source_sh
     if not isinstance(source, str) or SHA.fullmatch(source) is None:
         errors.append("project_work_kanban.source_main_sha must be an exact 40-character SHA")
     if expected_source_sha is not None:
-        if SHA.fullmatch(expected_source_sha) is None or source != expected_source_sha:
+        if not isinstance(expected_source_sha, str) or SHA.fullmatch(expected_source_sha) is None or source != expected_source_sha:
             errors.append("project_work_kanban.source_main_sha does not match trusted expected source")
     tasks = _records(board.get("work_items"), "work_item_id", "project_work_kanban.work_items", errors)
     refs = board.get("work_item_refs")
@@ -182,7 +184,7 @@ def validate_tracking(board: object, *, phase: str = "start", expected_source_sh
         summary = board["progress_summary"]
         completed = sum(task.get("status") == "DONE" for task in tasks.values())
         if not isinstance(summary, dict) or any(type(summary.get(k)) is not int for k in ("completed_items", "applicable_items")) or summary.get("completed_items") != completed or summary.get("applicable_items") != len(tasks):
-            errors.append("project_work_kanbanban.progress_summary differs from required child DONE count")
+            errors.append("project_work_kanban.progress_summary differs from required child DONE count")
     return errors
 
 
