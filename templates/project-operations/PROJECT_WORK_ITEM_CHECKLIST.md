@@ -10,6 +10,7 @@ NOT_APPLICABLE_EXCLUDED_FROM_DENOMINATOR
 NO_APPLICABLE_CHECKLIST
 PARENT_GOAL_PROGRESS_USES_REQUIRED_CHILD_DONE_COUNT
 DO_NOT_AVERAGE_CHILD_PERCENTAGES
+TRUSTED_VERIFICATION_TARGET_HEAD
 NO_HTML_DASHBOARD
 NO_NEW_PAID_PM_TOOL
 NO_FLEET_WIDE_EMPTY_ARTIFACT_ROLLOUT
@@ -249,8 +250,11 @@ project AGENTS / approved owner / actual implementation fresh-read
 → 같은 receipt와 기존 Issue/card 갱신
 → 다음 승인 작업을 먼저 선택해 IN_PROGRESS와 active_work_item_ref에 기록
 → 그 작업을 실행하기 전 --phase resume으로 재검사
-→ 모든 필수 작업 검증 뒤 --phase closeout으로 마감 검사
+→ 모든 필수 작업을 같은 최종 HEAD에서 재검증
+→ validate_work_contract_receipt.py --receipt <receipt> --phase closeout --expected-source-sha <fresh-read-source-sha> --expected-head-sha <fresh-read-final-head-sha> --render-markdown
 ```
+
+`TRUSTED_VERIFICATION_TARGET_HEAD`: closeout의 `--expected-head-sha`는 신뢰한 caller가 현재 branch/PR의 최종 HEAD를 별도로 fresh-read해 전달한다. receipt 안의 `verified_head_sha`를 기대값으로 다시 복사하면 자기주장 확인에 불과하므로 허용하지 않는다. 모든 필수 DONE 작업의 evidence와 readback은 이 동일한 최종 HEAD를 대상으로 다시 확인해야 하며, 그 뒤 commit이 추가되면 closeout을 다시 실행한다. start/resume은 역사적으로 완료된 작업의 이전 HEAD 기록을 보존하지만, 최종 closeout은 현재 최종 HEAD와 일치해야 한다.
 
 기존 CLI의 기본 phase가 `start`이므로 PM을 활성화하는 opt-in flag가 없다. L1+에서 trusted expected source 누락, PM 필드 누락, 잘못된 진행률, 미완료 dependency, WIP 초과, evidence 없는 PASS/DONE은 nonzero exit다. `BLOCKED_UNVERIFIED` benchmark는 올바른 실패 기록일 수 있지만 실행 허가는 아니다. `validate_receipt()` Python API는 **과거 구조 검사 호환용**이고 실행 승인에 사용하지 않는다. 실행 consumer는 CLI 또는 `validate_execution_receipt()`를 쓴다.
 
