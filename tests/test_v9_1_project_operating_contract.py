@@ -446,6 +446,39 @@ class BaseV91ProjectOperatingContractTests(unittest.TestCase):
 
         self.assertEqual(0, checked.returncode, checked.stdout + checked.stderr)
 
+    def test_generation_accepts_clean_eol_converted_generated_views(self) -> None:
+        """Windows checkout line endings must not make an untouched generated view stale."""
+        legacy = self.project / "legacy/BASE_V9_ADAPTER.json"
+        legacy.parent.mkdir()
+        legacy.write_text('{"base_route": {}}\n', encoding="utf-8")
+        adapter = json.loads(self.adapter.read_text(encoding="utf-8"))
+        adapter["compatibility"]["views"] = ["skills/BASE_V9_ADAPTER.json"]
+        adapter["compatibility"]["legacy_inputs"] = {
+            "skills/BASE_V9_ADAPTER.json": "legacy/BASE_V9_ADAPTER.json"
+        }
+        self.adapter.write_text(json.dumps(adapter, sort_keys=True) + "\n", encoding="utf-8")
+        args = ["--project-root", str(self.project), "--base-repository", str(self.base)]
+        written = self.run_tool(BUILD, *args, "--write")
+        self.assertEqual(0, written.returncode, written.stderr)
+
+        generated = [
+            self.project / "skills/PROJECT_SKILL_SNAPSHOT.json",
+            self.project / "docs/PROJECT_OPERATING_DASHBOARD.html",
+            self.project / ".agents/skills/project-workflow-router/SKILL.md",
+            self.project / "skills/BASE_V9_ADAPTER.json",
+        ]
+        for path in generated:
+            path.write_bytes(path.read_bytes().replace(b"\n", b"\r\n"))
+
+        checked = self.run_tool(BUILD, *args, "--check")
+
+        self.assertEqual(0, checked.returncode, checked.stdout + checked.stderr)
+
+        generated[0].write_bytes(generated[0].read_bytes() + b"<!-- manual -->\r\n")
+        stale = self.run_tool(BUILD, *args, "--check")
+        self.assertNotEqual(0, stale.returncode)
+        self.assertIn("manual", stale.stderr.lower())
+
     def test_validator_fails_closed_for_hashes_aliases_duplicates_and_shared_body_copying(self) -> None:
         args = ["--project-root", str(self.project), "--base-repository", str(self.base), "--check"]
         generated = self.run_tool(BUILD, "--project-root", str(self.project), "--base-repository", str(self.base), "--write")

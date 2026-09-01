@@ -134,6 +134,14 @@ def sha256_file(path: Path) -> str:
     return sha256_bytes(path.read_bytes())
 
 
+def generated_artifact_matches(path: Path, expected: bytes) -> bool:
+    """Accept Git's clean CRLF checkout conversion without accepting content edits."""
+    if not path.is_file():
+        return False
+    actual = path.read_bytes()
+    return actual == expected or actual.replace(b"\r\n", b"\n") == expected
+
+
 def normalized_skill_body_hash(raw: bytes) -> str:
     text = raw.decode("utf-8")
     normalized = "\n".join(line.rstrip() for line in text.replace("\r\n", "\n").replace("\r", "\n").split("\n"))
@@ -986,7 +994,7 @@ def write_or_check_artifacts(
     protected_base: str = "",
 ) -> list[Path]:
     artifacts = build_artifacts(project_root, base_repository, protected_base=protected_base)
-    mismatches = [path for path, content in artifacts.items() if not path.is_file() or path.read_bytes() != content]
+    mismatches = [path for path, content in artifacts.items() if not generated_artifact_matches(path, content)]
     if check and mismatches:
         names = ", ".join(path.relative_to(project_root).as_posix() for path in mismatches)
         raise ContractError(f"Generated view manual modification or stale output detected: {names}")
@@ -1237,7 +1245,7 @@ def validation_errors(
     if check_generated and not errors:
         try:
             artifacts = build_artifacts(project_root, base_repository, prevalidated=True)
-            mismatches = [path for path, content in artifacts.items() if not path.is_file() or path.read_bytes() != content]
+            mismatches = [path for path, content in artifacts.items() if not generated_artifact_matches(path, content)]
             if mismatches:
                 names = ", ".join(path.relative_to(project_root).as_posix() for path in mismatches)
                 errors.append(f"Generated view manual modification or stale output detected: {names}")
