@@ -1,0 +1,82 @@
+name: Apply current project handoff routing fix
+
+on:
+  push:
+    branches:
+      - fix/current-project-handoff-routing-20260902
+    paths:
+      - .github/workflows/apply-current-project-handoff-routing-fix.yml
+
+permissions:
+  contents: write
+
+jobs:
+  red-green-commit:
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/current-project-handoff-routing-20260902
+          fetch-depth: 0
+      - name: Add regression test and prove RED
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          test_path = Path("tests/test_reuse_first_preflight_enforcement.py")
+          tests = test_path.read_text(encoding="utf-8")
+          anchor = "    def test_gate_does_not_force_unbounded_research_or_project_adoption(self) -> None:\n"
+          new_test = "    def test_project_handoff_routes_to_current_repository_owners(self) -> None:\n        handoff = json.loads(\n            read(\n                \"docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json\"\n            )\n        )\n        matrix = json.loads(\n            read(\n                \"docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json\"\n            )\n        )\n\n        switchy_handoff = handoff[\"projects\"][\"SWITCHY\"][\"next_project_work_action\"]\n        switchy_revisit = matrix[\"projects\"][\"SWITCHY\"][\"revisit\"]\n        self.assertNotIn(\"SX-DEC-059\", switchy_handoff)\n        self.assertNotIn(\"SX-DEC-059\", switchy_revisit)\n        self.assertIn(\"current project\", switchy_handoff.lower())\n        self.assertIn(\"current project\", switchy_revisit.lower())\n\n        ten_paces_fields = \"\\n\".join(\n            [\n                handoff[\"projects\"][\"TEN_PACES\"][\"next_project_work_action\"],\n                matrix[\"projects\"][\"TEN_PACES\"][\"blocker\"],\n                matrix[\"projects\"][\"TEN_PACES\"][\"revisit\"],\n            ]\n        )\n        self.assertNotIn(\"Notion\", ten_paces_fields)\n        self.assertIn(\"current repository\", ten_paces_fields.lower())\n\n"
+          if tests.count(anchor) != 1:
+              raise SystemExit("test insertion anchor missing or ambiguous")
+          test_path.write_text(tests.replace(anchor, new_test + anchor), encoding="utf-8")
+          PY
+          set +e
+          python -m unittest tests/test_reuse_first_preflight_enforcement.py -v > /tmp/handoff-red.log 2>&1
+          red_rc=$?
+          set -e
+          cat /tmp/handoff-red.log
+          test "$red_rc" -ne 0
+          grep -Eq "SX-DEC-059|Notion" /tmp/handoff-red.log
+      - name: Apply minimal current-owner routing correction
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          def replace_once(path: Path, old: str, new: str) -> None:
+              text = path.read_text(encoding="utf-8")
+              if text.count(old) != 1:
+                  raise SystemExit(f"patch anchor missing or ambiguous in {path}: {old}")
+              path.write_text(text.replace(old, new), encoding="utf-8")
+
+          handoff = Path("docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json")
+          replace_once(handoff, '  "updated_at": "2026-08-25",', '  "updated_at": "2026-09-02",')
+          replace_once(handoff, '      "next_project_work_action": "Re-read current main and the SX-DEC-059 acceptance/human-evidence gates; reuse grid, route-stack, phase, explainability, replay, UI, and symbol contracts only through an approved finite-delivery task.",', '      "next_project_work_action": "Re-read current project main, AGENTS.md, current decisions/context, and open PRs; preserve the current finite-delivery and acceptance/human-evidence authority, then reuse grid, route-stack, phase, explainability, replay, UI, and symbol contracts only through an approved task.",')
+          replace_once(handoff, '      "next_project_work_action": "Read current main + exact Notion state + open PRs first; the first-five-duel Phase I–VI is already implemented, so reuse hidden-plan, explainability, deterministic replay, UI, symbol, and telegraph contracts only when a current approved project task actually consumes them, without exposing protected hidden information or promoting Human/device evidence.",', '      "next_project_work_action": "Read current project main, AGENTS.md, ACTIVE_CONTEXT, current repository human-facing/structured owners, and open PRs first; reuse hidden-plan, explainability, deterministic replay, UI, symbol, and telegraph contracts only when a current approved project task actually consumes them, without exposing protected hidden information or promoting Human/device evidence.",')
+
+          matrix = Path("docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json")
+          replace_once(matrix, '      "revisit": "re-read current main before project work and preserve SX-DEC-059 finite-delivery authority; adopt only modules consumed by an approved task"', '      "revisit": "re-read current project main, AGENTS.md, current decisions/context, and open PRs before project work; preserve current finite-delivery authority and adopt only modules consumed by an approved task"')
+          replace_once(matrix, '      "blocker": "Base reuse preinstallation remains intentionally unrun; adoption now requires a current approved project task, fresh main + exact Notion + open-PR overlap checks, and an actually consumed module",', '      "blocker": "Base reuse preinstallation remains intentionally unrun; adoption requires a current approved project task, fresh project main + current repository owners + open-PR overlap checks, and an actually consumed module",')
+          replace_once(matrix, '      "revisit": "during the next approved Ten Paces project task, re-read current main, exact Notion state and open PRs, then install or adapt only modules actually consumed by that task while preserving hidden-information and Human/device evidence boundaries"', '      "revisit": "during the next approved Ten Paces project task, re-read current project main, AGENTS.md, ACTIVE_CONTEXT, current repository owners, and open PRs, then install or adapt only modules actually consumed by that task while preserving hidden-information and Human/device evidence boundaries"')
+          PY
+      - name: Prove GREEN and validate JSON
+        shell: bash
+        run: |
+          python -m json.tool docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json > /dev/null
+          python -m json.tool docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json > /dev/null
+          python -m unittest tests/test_reuse_first_preflight_enforcement.py -v
+          python -m py_compile tests/test_reuse_first_preflight_enforcement.py
+      - name: Remove one-shot workflow and commit final three-file diff
+        shell: bash
+        run: |
+          rm .github/workflows/apply-current-project-handoff-routing-fix.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json tests/test_reuse_first_preflight_enforcement.py .github/workflows/apply-current-project-handoff-routing-fix.yml
+          test "$(git diff --cached --name-only | sort | tr '\n' ' ')" = ".github/workflows/apply-current-project-handoff-routing-fix.yml docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json tests/test_reuse_first_preflight_enforcement.py "
+          git commit -m "fix: route reuse handoffs through current project owners"
+          test "$(git diff --name-only origin/main...HEAD | sort | tr '\n' ' ')" = "docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json tests/test_reuse_first_preflight_enforcement.py "
+          git push origin HEAD:fix/current-project-handoff-routing-20260902
