@@ -109,6 +109,14 @@ class ReuseFirstPreflightEnforcementTests(unittest.TestCase):
         self.assertNotIn("Issue #", actions["OMENWARD"])
         self.assertNotIn("PR #", actions["OMENWARD"])
 
+        tetris_identity = handoff["projects"]["TETRIS"]["project_owned_identity"]
+        self.assertIn("continuous realtime", tetris_identity.lower())
+        self.assertIn("line/chain", tetris_identity.lower())
+        self.assertIn("tactical", tetris_identity.lower())
+        self.assertNotIn("Shared Player Turn Budget", tetris_identity)
+        self.assertNotIn("READY", tetris_identity)
+        self.assertNotIn("Tempo", tetris_identity)
+
     def test_gate_does_not_force_unbounded_research_or_project_adoption(self) -> None:
         intake = read("skills/managing-project-intake-and-work-contract/SKILL.md")
         agents = read("AGENTS.md")
