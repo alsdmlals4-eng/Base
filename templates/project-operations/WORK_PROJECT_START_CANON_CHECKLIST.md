@@ -88,6 +88,8 @@ Notion을 조회하지 않았다는 이유만으로 block하지 않는다. 고�
 
 ## 4. 프로젝트 시작 receipt
 
+아래 YAML은 사람이 읽는 전체 시작 보고 구조다. 실행 CLI의 JSON 입력은 §12.1의 root projection을 사용한다. `work_level`, `benchmark_preflight_receipt`, `context_configuration_hygiene`, `project_work_kanban`을 JSON root에 놓고, 아래 상세 보고가 필요하면 `PROJECT_START_CANON_CHECKLIST` 아래에 보존한다. 같은 사실을 별도 활성 파일로 복제하지 않는다.
+
 ```yaml
 PROJECT_START_CANON_CHECKLIST:
   identity_and_sources:
@@ -137,7 +139,7 @@ PROJECT_START_CANON_CHECKLIST:
           disposition: ADOPT | ADAPT | REJECT
       reason_not_applicable: # L0 only
       blocked_sources: []
-    receipt_validation_command: python <resolved-Base-root-at-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <project-repository-owned-json-receipt>
+    receipt_validation_command: python <resolved-Base-root-at-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <project-repository-owned-json-receipt> --phase start --expected-source-sha <fresh-read-project-source-sha> --render-markdown
     player_promise:
     pointed_fun:
     core_loop:
@@ -456,7 +458,7 @@ GitHub structured canon / Notion human canon destination readback = retired dual
 
 ## 12. 프로젝트 작업 칸반·체크리스트 연결
 
-`PROJECT_WORK_KANBAN_CHECKLIST_REQUIRED`
+`PROJECT_WORK_KANBAN_CHECKLIST_REQUIRED` · `PM_EXECUTION_GATE_REQUIRED`
 
 프로젝트 시작 receipt의 `remaining_and_order`를 계산한 뒤, 같은 Goal·Playable Slice의 기존 Issue·카드·PR을 먼저 찾고 현재 작업 목록을 `templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md` 형식으로 연결한다.
 
@@ -472,24 +474,55 @@ NO_PROJECTS_WRITE_CAPABILITY_IS_NOT_BLOCKER
 
 ### 12.1 Receipt extension
 
-```yaml
-PROJECT_START_CANON_CHECKLIST:
-  project_work_kanban:
-    goal_or_slice_issue_ref:
-    work_item_refs: []
-    active_work_item_ref:
-    board_or_view_ref:
-    board_configuration_status: NOT_APPLICABLE | VERIFIED | UNVERIFIED_PROJECTS_CONFIGURATION
-    sub_issue_relation_status: NOT_APPLICABLE | VERIFIED | UNVERIFIED_SUB_ISSUE_RELATION
-    progress_summary:
-      completed_items:
-      applicable_items:
-      display: NO_APPLICABLE_CHECKLIST | "completed_items / applicable_items"
-    blocked_or_decision_items: []
-    next_action:
+실행용 JSON은 다음 **root 구조**를 사용한다. placeholder는 실제 승인 Goal과 fresh-read 결과로 채운다. 아래 구조 자체가 PASS나 실행 승인은 아니다. 필드 의미와 DONE 증거는 `PROJECT_WORK_ITEM_CHECKLIST.md` §10이 소유한다.
+
+```json
+{
+  "work_level": "L1",
+  "benchmark_preflight_receipt": {
+    "state": "PASS",
+    "entries": [{
+      "source_and_evidence": "<source and evidence>",
+      "observed_pattern": "<observed pattern>",
+      "project_fit_and_difference": "<project fit>",
+      "disposition": "ADAPT"
+    }]
+  },
+  "context_configuration_hygiene": {
+    "scope": "<current work scope>",
+    "inventory": [{
+      "path": "<existing owner>",
+      "classification": "ACTIVE_OWNER",
+      "owner_or_provenance": "<verified provenance>",
+      "references_and_consumers": "<actual consumers>"
+    }]
+  },
+  "project_work_kanban": {
+    "goal_or_slice_issue_ref": "<existing Goal locator>",
+    "source_main_sha": "<fresh-read 40-character source SHA>",
+    "work_item_refs": ["TASK-01"],
+    "active_work_item_ref": "TASK-01",
+    "next_action": "<next approved action>",
+    "work_items": [{
+      "work_item_id": "TASK-01",
+      "title": "<observable outcome>",
+      "status": "IN_PROGRESS",
+      "canon_owner": "<existing canonical path>",
+      "actual_consumers": ["<actual consumer>"],
+      "depends_on": [],
+      "acceptance_criteria": ["AC-01"],
+      "required_evidence": ["E2_TEST"],
+      "checklist": [{"id": "AC-01", "text": "<condition, action, result>", "status": "NOT_RUN"}],
+      "verification": [{"level": "E2_TEST", "status": "NOT_RUN", "evidence": []}],
+      "next_action": "<first safe step>"
+    }]
+  }
+}
 ```
 
-GitHub Projects 또는 sub-issue 관계를 실제로 생성·조회·readback할 수 없으면 Issue 본문과 Markdown 카드 참조를 유지하고 각각 `UNVERIFIED_PROJECTS_CONFIGURATION`, `UNVERIFIED_SUB_ISSUE_RELATION`을 기록한다. 설정되지 않은 board·automation·relation을 추측하지 않으며, 해당 capability 부재만으로 project work를 전역 차단하지 않는다.
+`board_or_view_ref`, `board_configuration_status`, `sub_issue_relation_status`, `blocked_or_decision_items`는 실제 확인한 경우에만 선택 metadata로 유지한다. GitHub Projects 또는 sub-issue 관계를 실제로 생성·조회·readback할 수 없으면 Issue 본문과 Markdown 카드 참조를 유지하고 각각 `UNVERIFIED_PROJECTS_CONFIGURATION`, `UNVERIFIED_SUB_ISSUE_RELATION`을 기록한다. 설정되지 않은 board·automation·relation을 추측하지 않으며, 해당 capability 부재만으로 project work를 전역 차단하지 않는다.
+
+`progress_summary`는 선택 파생 값이며 포함하면 `completed_items`, `applicable_items`, 선택 `display`가 실제 필수 child DONE 수와 일치해야 한다. 자동 계산 가능한 값을 수동으로 조작하지 않는다. 모든 L1+ 실행은 신뢰한 caller가 별도로 fresh-read한 `--expected-source-sha`를 전달한다. receipt 자신의 SHA를 다시 읽어 기대값으로 삼는 것은 freshness 확인이 아니다.
 
 ### 12.2 Materialization order
 
@@ -503,9 +536,12 @@ active_playable_slice 또는 next_playable_slice_candidate
 → 작은 순차 단계는 부모 카드 내부 체크리스트로 유지
 → READY / IN_PROGRESS / VERIFY_REVIEW / BLOCKED_DECISION / DONE
 → evidence와 repository readback에 따라 진행률·다음 행동 갱신
+→ 다음 승인 작업을 선택해 IN_PROGRESS와 active_work_item_ref를 먼저 기록
+→ --phase resume --expected-source-sha <fresh-read-project-source-sha> --render-markdown 검사
+→ 통과한 그 작업만 실행
 ```
 
-`BLOCKED_DECISION`은 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, `DEFERRED`를 한눈에 보는 파생 View다. 실제 work item 상태는 원래 분류를 유지한다.
+`BLOCKED_DECISION`은 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, `DEFERRED`를 한눈에 보는 파생 View다. 실제 work item 상태는 원래 분류를 유지한다. 모든 작업이 차단되면 실행은 nonzero로 유지하면서 형식이 검증된 PM 목록·실제 blocker·재개 조건은 `INFORMATION ONLY; EXECUTION BLOCKED`로 표시한다.
 
 ### 12.3 GPT PM 갱신 책임
 
@@ -515,8 +551,6 @@ GPT는 현재 승인 범위에서 다음을 연속 수행한다.
 2. 기본 WIP에 따라 `IN_PROGRESS` 하나와 `VERIFY_REVIEW` 하나를 넘지 않게 한다.
 3. 작업·검증·readback 뒤 PASS·FAIL·blocker와 exact evidence를 카드에 반영한다.
 4. `[x]`는 evidence-backed `PASS`에만 사용하고 `NOT_APPLICABLE`은 이유와 함께 진행률 분모에서 제외한다.
-5. blocker가 생기면 해당 작업만 defer하고 독립 `READY` 작업을 계속한다.
-6. 완료 후보에서 remaining-work recalculation, implementation correction rescan과 adversarial review를 실행한다.
-7. 사용자에게는 전체 진행률, 현재 작업, 차단·결정 항목, 다음 안전 작업을 요약한다.
-
-카드나 Issue 작성 자체는 구현·runtime·UX·Human/Player·사용자 승인 PASS가 아니다. 모든 기존 프로젝트에 빈 항목을 일괄 생성하지 않고 새 material work, 작업 재개, Goal 변경, major closeout 또는 다음 Slice 진입 시 필요한 범위에서만 적용한다.
+5. blocker가 생기면 해당 작업만 defer하고 독립 `READY` 작업을 먼저 active로 선택·기록한 뒤 resume Gate를 통과해 계속한다.
+6. 완료 후보에서 remaining-work recalculation, implementation correction rescan과 adversarial review를 실행한다. `--phase closeout --expected-source-sha <fresh-read-project-source-sha> --render-markdown`은 모든 필수 작업 DONE, active null, `STOP_APPROVED_SCOPE_COMPLETE`일 때만 통과한다.
+7. 사용자에게는 전체 진행률, 현재 작업, 차단·결정 항목, 다음 안전 작업을 요약한다. 완료 task의 오래된 next-action은 실행 지시로 출력하지 않는다.

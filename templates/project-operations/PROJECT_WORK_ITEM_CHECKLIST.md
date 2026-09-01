@@ -199,7 +199,7 @@ rollback:
 
 `PM_EXECUTION_GATE_REQUIRED` · `PM_CHECKLIST_VISIBLE_AT_START_TRANSITION_CLOSEOUT`
 
-책임 원본은 `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` §14다. `tools/project_work_tracking.py`는 위 카드의 **검증·Markdown 출력 모듈**이며 별도 PM 상태 저장소가 아니다. 기존 project/Base work-contract JSON receipt에 **root `project_work_kanban`**을 추가한다. `PROJECT_START_CANON_CHECKLIST` YAML 아래의 예시를 JSON의 중첩 root로 복사하지 않는다. `benchmark_preflight_receipt`·`context_configuration_hygiene`와 형제 필드로 둔다.
+책임 원본은 `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` §14다. `tools/project_work_tracking.py`는 위 카드의 **검증·Markdown 출력 모듈**이며 별도 PM 상태 저장소가 아니다. 기존 project/Base work-contract JSON receipt에 **root `project_work_kanban`**을 추가한다. 실행용 전체 root 형식은 `WORK_PROJECT_START_CANON_CHECKLIST.md` §12.1이다. `benchmark_preflight_receipt`·`context_configuration_hygiene`와 형제 필드로 둔다.
 
 ### 최소 데이터 투영
 
@@ -232,34 +232,35 @@ rollback:
 
 `work_items`는 **현재 승인 Goal의 필수 독립 작업**이다. `work_item_refs`와 ID 집합이 정확히 일치해야 한다. 선택적 미래 기능을 섞거나 미완료 필수 항목을 지워 분모를 줄이지 않는다. 단일 작업도 전체 적용 checklist를 포함한다. 기존 작업이 있으면 ID·Issue·owner를 재사용하고, 독립 Issue가 필요 없는 작은 단계는 해당 카드 안에 둔다.
 
-`acceptance_criteria`는 checklist의 필수 ID 목록이다. 문장·조건은 해당 checklist의 `text`에 기록한다. 모든 PASS에는 실제 `evidence` locator 목록을 둔다. 선택적 N/A에는 `reason`이 필요하고 필수 AC·필수 evidence는 N/A로 면제할 수 없다. `required_evidence`는 실제 승인 계약에서 선택하며, UI 작업에서 테스트만 넣어 runtime·화면 요구를 지우지 않는다. 모듈은 승인 원문의 완전성이나 증거 진실성을 대신 판단하지 않는다.
+`acceptance_criteria`는 checklist의 필수 ID 목록이다. 문장·조건은 해당 checklist의 `text`에 기록한다. 모든 PASS에는 실제 `evidence` locator 목록을 둔다. PASS가 아니어도 evidence가 있으면 text 목록이어야 한다. 선택적 N/A에는 `reason`이 필요하고 필수 AC·필수 evidence는 N/A로 면제할 수 없다. `required_evidence`는 실제 승인 계약에서 선택하며, UI 작업에서 테스트만 넣어 runtime·화면 요구를 지우지 않는다. 모듈은 승인 원문의 완전성이나 증거 진실성을 대신 판단하지 않는다.
 
-DONE 추가 필드: `verified_head_sha`(실제 검증한 40자 HEAD), `repository_readback: PASS`, 비어 있지 않은 `readback_evidence`, `rollback`, 정수 `must_fix_remaining: 0`, `blocked_unverified_remaining: 0`, `user_decision_required_remaining: 0`. 해당 작업의 적용 checklist와 필수 evidence 모두 PASS여야 한다. evidence가 외부 Artifact라면 만료 전에 방법·결과·exact 대상·장기 보존 근거를 기존 Issue/PR에 남긴다.
+DONE 추가 필드: `verified_head_sha`(실제 검증한 40자 HEAD), `repository_readback: PASS`, 비어 있지 않은 `readback_evidence`, `rollback`, 정수 `must_fix_remaining: 0`, `blocked_unverified_remaining: 0`, `user_decision_required_remaining: 0`. 해당 작업의 적용 checklist와 필수 evidence 모두 PASS여야 하며 다른 verification에도 FAIL·BLOCKED_UNVERIFIED가 남아 있으면 DONE과 모순된다. evidence가 외부 Artifact라면 만료 전에 방법·결과·exact 대상·장기 보존 근거를 기존 Issue/PR에 남긴다.
 
 ### 실행·재개·마감
 
 ```text
 project AGENTS / approved owner / actual implementation fresh-read
 → existing Goal issue + required remaining work reconciliation
-→ same repository receipt에 현재 ID·scope·evidence·next action 갱신
+→ 같은 repository receipt에 현재 ID·scope·evidence·next action 갱신
 → adapter가 승인한 exact Base checkout 확인
 → validate_work_contract_receipt.py --receipt <receipt> --phase start --expected-source-sha <fresh-read-source-sha> --render-markdown
 → 사용자에게 전체 적용 작업 목록·현재 항목·완료/필수 수·차단·다음 행동 표시
 → 한 작업 수행·검증·owner readback
 → 같은 receipt와 기존 Issue/card 갱신
-→ 다음 작업 선택 전 --phase resume으로 재검사
+→ 다음 승인 작업을 먼저 선택해 IN_PROGRESS와 active_work_item_ref에 기록
+→ 그 작업을 실행하기 전 --phase resume으로 재검사
 → 모든 필수 작업 검증 뒤 --phase closeout으로 마감 검사
 ```
 
-기존 CLI의 기본 phase가 `start`이므로 PM을 활성화하는 opt-in flag가 없다. L1+에서 PM 필드 누락, 잘못된 진행률, 미완료 dependency, WIP 초과, evidence 없는 PASS/DONE은 nonzero exit다. `BLOCKED_UNVERIFIED` benchmark는 올바른 실패 기록일 수 있지만 실행 허가는 아니다. `validate_receipt()` Python API는 **과거 구조 검사 호환용**이고 실행 승인에 사용하지 않는다. 실행 consumer는 CLI 또는 `validate_execution_receipt()`를 쓴다.
+기존 CLI의 기본 phase가 `start`이므로 PM을 활성화하는 opt-in flag가 없다. L1+에서 trusted expected source 누락, PM 필드 누락, 잘못된 진행률, 미완료 dependency, WIP 초과, evidence 없는 PASS/DONE은 nonzero exit다. `BLOCKED_UNVERIFIED` benchmark는 올바른 실패 기록일 수 있지만 실행 허가는 아니다. `validate_receipt()` Python API는 **과거 구조 검사 호환용**이고 실행 승인에 사용하지 않는다. 실행 consumer는 CLI 또는 `validate_execution_receipt()`를 쓴다.
 
-오래된 receipt에 PM 필드가 없으면 `PM_RECONCILIATION_REQUIRED`로 현재 승인 작업을 복원하고 receipt bookkeeping만 교정한 뒤 재실행한다. 이 교정은 새로운 제품 기능을 시작하는 권한이 아니다. 완전히 차단된 상태도 Issue와 receipt에 보존하되 실행 Gate는 통과시키지 않는다. 독립 작업이 준비됐으면 그 작업을 active로 선택해 계속한다.
+오래된 receipt에 PM 필드가 없으면 `PM_RECONCILIATION_REQUIRED`로 현재 승인 작업을 복원하고 receipt bookkeeping만 교정한 뒤 재실행한다. 이 교정은 새로운 제품 기능을 시작하는 권한이 아니다. 완전히 차단된 상태도 Issue와 receipt에 보존한다. `--render-markdown`은 형식이 유효한 차단 목록·진행 수·실제 blocker·재개 조건을 `INFORMATION ONLY; EXECUTION BLOCKED`로 표시하지만 nonzero exit를 유지한다. 독립 작업이 준비됐으면 그 작업을 active로 먼저 선택한 뒤 재검사한다.
 
 시작/재개에는 IN_PROGRESS 1개, VERIFY_REVIEW 최대 1개가 기본이다. 프로젝트의 명시적 다른 WIP 계약은 별도 adapter 변경·검증 없이 이 기본 모듈에 조용히 주입하지 않는다. 현재 모듈로 표현되지 않는 project exception은 `BLOCKED_UNVERIFIED`로 기록하고 기존 승인 계약에 맞춰 bounded adaptation한다.
 
-마감은 모든 필수 작업 DONE, active null, `next_action: STOP_APPROVED_SCOPE_COMPLETE`일 때만 가능하다. 승인 범위가 끝났으면 종료하며 다음 Goal을 자동 발명하지 않는다. 아직 병합·postmerge가 필수 작업이면 분모에 남겨 완료로 표시하지 않는다. 중단 시 `finished / remaining / blocker / resume_condition / why`를 보존하고 같은 지시를 지우지 말고 완료 표시와 근거를 남긴다.
+마감은 모든 필수 작업 DONE, active null, `next_action: STOP_APPROVED_SCOPE_COMPLETE`일 때만 가능하다. 승인 범위가 끝났으면 종료하며 다음 Goal을 자동 발명하지 않는다. 완료 항목의 오래된 next_action은 renderer가 지시문으로 출력하지 않는다. 아직 병합·postmerge가 필수 작업이면 분모에 남겨 완료로 표시하지 않는다. 중단 시 `finished / remaining / blocker / resume_condition / why`를 보존하고 같은 지시를 지우지 말고 완료 표시와 근거를 남긴다.
 
-`--render-markdown`은 파생 text-native 출력이다. 별도 HTML·보드·PM 앱을 설치하지 않으며 입력의 URL·명령·HTML을 실행하지 않는다. `--expected-source-sha`는 신뢰한 caller가 fresh-read한 값을 전달한다. 모듈 자체가 GitHub 최신성을 조회하지 않으므로 SHA 형식 검사만으로 freshness를 주장하지 않는다. 기존 project pin은 정상 adoption PR로 검증하기 전까지 유지하고, Base 병합을 모든 프로젝트 설치 완료로 보고하지 않는다.
+`--render-markdown`은 파생 text-native 출력이다. 별도 HTML·보드·PM 앱을 설치하지 않으며 입력의 URL·명령·HTML을 실행하지 않는다. terminal control·bidi control은 유효한 text로 받지 않는다. `--expected-source-sha`는 L1+에서 필수이며 신뢰한 caller가 fresh-read한 값을 전달한다. 모듈 자체가 GitHub 최신성을 조회하지 않으므로 receipt 자신의 SHA를 기대값으로 복사하거나 형식 검사만으로 freshness를 주장하지 않는다. `progress_summary.display`가 있으면 자동 계산된 완료/필수 수와 일치해야 한다. 기존 project pin은 정상 adoption PR로 검증하기 전까지 유지하고, Base 병합을 모든 프로젝트 설치 완료로 보고하지 않는다.
 
 ## 11. 새 세션용 여섯 절 인계 — 기존 정본 재사용
 
