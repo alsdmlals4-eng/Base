@@ -63,6 +63,13 @@ class ReviewRegressions(unittest.TestCase):
         board.update(active_work_item_ref='PM-02', next_action='Execute approved PM-02')
         self.assertEqual([], check(value, phase='resume'))
 
+    def test_verify_review_only_task_can_be_active_for_resume(self):
+        value = tracked_receipt(); board = value['project_work_kanban']
+        board['work_items'][0].update(status='VERIFY_REVIEW', next_action='Review exact-head evidence')
+        result = run_cli(value, '--phase', 'resume', '--render-markdown')
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertIn('VERIFY_REVIEW', result.stdout)
+
     def test_closeout_binds_done_evidence_to_trusted_current_head(self):
         value = done_receipt()
         wrong_head_errors = validate_execution_receipt(
