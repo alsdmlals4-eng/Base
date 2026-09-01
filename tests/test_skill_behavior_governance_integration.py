@@ -112,6 +112,22 @@ class SkillBehaviorGovernanceIntegrationTests(unittest.TestCase):
         self.assertIn("NOT_RUN", "\n".join(cases["SBE-040"]["required_evidence"]))
         self.assertIn("Notion", "\n".join(cases["SBE-041"]["required_evidence"]))
 
+        coverage = json.loads(
+            (ROOT / "skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json").read_text(encoding="utf-8")
+        )
+        coverage_cases = {case["case_id"]: case for case in coverage["cases"]}
+        repository_projection = coverage_cases["SBE-031"]
+        self.assertEqual(
+            "building-project-visual-dashboards",
+            repository_projection["expected_primary_skill"],
+        )
+        self.assertIn("repository human projection", repository_projection["prompt"])
+        self.assertIn("V4 exception", repository_projection["prompt"])
+        self.assertIn(
+            "exact-SHA destination readback",
+            repository_projection["required_evidence"],
+        )
+
         generated = (ROOT / "docs/generated/BASE_SKILL_IMPLEMENTATION_EVIDENCE.md").read_text(encoding="utf-8")
         self.assertIn("Behavior evaluation case count", generated)
         self.assertIn("Behavior evaluation source SHA-256", generated)
