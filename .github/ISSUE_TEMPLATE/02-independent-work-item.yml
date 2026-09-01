@@ -1,0 +1,124 @@
+name: Independent Work Item
+description: 별도 실행·차단·검증·재개가 필요한 하나의 독립 작업을 추적합니다.
+title: "[Work Item] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        `INDEPENDENT_WORK_ITEM`은 별도 owner/PR, dependency, acceptance, verification 또는 resume condition이 필요한 경우에만 만듭니다.
+
+        `NO_ISSUE_EXPLOSION`: 동일 작업 안의 작은 순차 절차와 단순 확인은 `PROJECT_WORK_ITEM_CHECKLIST.md` 내부 체크리스트로 유지합니다. 이 Issue와 선택형 GitHub Projects view는 repository canon의 derived operational view입니다.
+
+  - type: input
+    id: parent_issue_ref
+    attributes:
+      label: 부모 Goal·Playable Slice Issue
+      description: 이 작업이 속한 기존 부모 Issue 참조를 적습니다.
+      placeholder: "#123"
+    validations:
+      required: true
+
+  - type: textarea
+    id: why_now
+    attributes:
+      label: 작업 목적·왜 지금인가·사용자 가치
+      description: 현재 blocker/dependency/player value 순서에서 이 작업이 먼저 필요한 이유를 적습니다.
+      placeholder: |
+        problem:
+        why now:
+        player or user value:
+        risk if ignored:
+        expected outcome:
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: 선행 조건·의존성·차단·재개 조건
+      description: Issue/PR/path/resource 의존성과 blocker, 관찰 가능한 resume condition을 적습니다.
+      placeholder: |
+        depends on:
+        blocked by:
+        shared resources:
+        resume condition:
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual_consumers
+    attributes:
+      label: 정본 owner·actual consumer·변경 경로
+      description: 이 작업이 읽고 변경하며 검증해야 하는 실제 owner와 consumer를 적습니다.
+      placeholder: |
+        canon owner:
+        actual consumers:
+        files / data / scene / resource / asset / test:
+        source main SHA:
+        protected scope:
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance Criteria
+      description: 조건 → 행동 → 관찰 결과 → 증거 형식으로 작성합니다.
+      placeholder: |
+        - [ ] AC-01 —
+        - [ ] AC-02 —
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: 검증 계획·evidence ceiling
+      description: 필요한 E0–E6 검증, 명령·runtime 경로·capture·readback과 현재 상한을 적습니다.
+      placeholder: |
+        required evidence:
+        verification commands / scenarios:
+        repository readback:
+        evidence ceiling:
+        rollback:
+    validations:
+      required: true
+
+  - type: dropdown
+    id: initial_status
+    attributes:
+      label: 초기 상태
+      description: 증거에 맞는 초기 상태를 선택합니다.
+      options:
+        - BACKLOG
+        - READY
+        - BLOCKED_UNVERIFIED
+        - USER_DECISION_REQUIRED
+        - DEFERRED
+    validations:
+      required: true
+
+  - type: textarea
+    id: checklist
+    attributes:
+      label: Evidence-backed checklist
+      description: `[x]`는 실제 evidence가 있는 PASS에만 사용합니다. NOT_APPLICABLE은 이유와 함께 분모에서 제외합니다.
+      placeholder: |
+        - [ ] READY —
+        - [ ] BLOCKED_UNVERIFIED — blocker:
+        - [ ] NOT_APPLICABLE — reason:
+        next action:
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: safeguards
+    attributes:
+      label: 작업 분해 경계 확인
+      options:
+        - label: 같은 부모 Goal 아래 기존 작업 Issue를 먼저 검색했다.
+          required: true
+        - label: 별도 실행·차단·검증 가치가 있어 독립 Issue가 필요하다.
+          required: true
+        - label: 다른 열린 PR과 repository owner를 승인 없이 변경하거나 흡수하지 않는다.
+          required: true

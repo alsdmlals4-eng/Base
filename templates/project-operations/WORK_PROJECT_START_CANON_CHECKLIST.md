@@ -415,3 +415,70 @@ GitHub structured canon / Notion human canon destination readback = retired dual
 ```
 
 위 문자열은 역사·구형 test 탐색용이며 active completion condition이 아니다.
+
+## 12. 프로젝트 작업 칸반·체크리스트 연결
+
+`PROJECT_WORK_KANBAN_CHECKLIST_REQUIRED`
+
+프로젝트 시작 receipt의 `remaining_and_order`를 계산한 뒤, 같은 Goal·Playable Slice의 기존 Issue·카드·PR을 먼저 찾고 현재 작업 목록을 `templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md` 형식으로 연결한다.
+
+```text
+REUSE_EXISTING_WORK_ITEM_BEFORE_CREATE
+NO_ISSUE_EXPLOSION
+CHECKLIST_IS_DERIVED_OPERATIONAL_VIEW_NOT_CANON
+PROJECTS_DERIVED_VIEW_NOT_CANON
+NO_PROJECTS_WRITE_CAPABILITY_IS_NOT_BLOCKER
+```
+
+작업 목록은 프로젝트 사실의 새 정본이 아니다. 각 항목은 current repository owner, actual consumer, Acceptance Criteria와 요구 evidence를 가리키며, 충돌하면 owner·실제 구현·검증을 다시 읽고 카드 상태를 교정한다.
+
+### 12.1 Receipt extension
+
+```yaml
+PROJECT_START_CANON_CHECKLIST:
+  project_work_kanban:
+    goal_or_slice_issue_ref:
+    work_item_refs: []
+    active_work_item_ref:
+    board_or_view_ref:
+    board_configuration_status: NOT_APPLICABLE | VERIFIED | UNVERIFIED_PROJECTS_CONFIGURATION
+    sub_issue_relation_status: NOT_APPLICABLE | VERIFIED | UNVERIFIED_SUB_ISSUE_RELATION
+    progress_summary:
+      completed_items:
+      applicable_items:
+      display: NO_APPLICABLE_CHECKLIST | "completed_items / applicable_items"
+    blocked_or_decision_items: []
+    next_action:
+```
+
+GitHub Projects 또는 sub-issue 관계를 실제로 생성·조회·readback할 수 없으면 Issue 본문과 Markdown 카드 참조를 유지하고 각각 `UNVERIFIED_PROJECTS_CONFIGURATION`, `UNVERIFIED_SUB_ISSUE_RELATION`을 기록한다. 설정되지 않은 board·automation·relation을 추측하지 않으며, 해당 capability 부재만으로 project work를 전역 차단하지 않는다.
+
+### 12.2 Materialization order
+
+```text
+active_playable_slice 또는 next_playable_slice_candidate
+→ 같은 Goal의 기존 Issue·PR·work item 검색
+→ remaining_required_work와 work_order fresh-read
+→ 별도 owner/PR·독립 blocker·dependency·Acceptance·verification 여부 판정
+→ 기존 work item 재사용
+→ 필요한 독립 작업만 새 Issue 또는 카드 생성
+→ 작은 순차 단계는 부모 카드 내부 체크리스트로 유지
+→ READY / IN_PROGRESS / VERIFY_REVIEW / BLOCKED_DECISION / DONE
+→ evidence와 repository readback에 따라 진행률·다음 행동 갱신
+```
+
+`BLOCKED_DECISION`은 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, `DEFERRED`를 한눈에 보는 파생 View다. 실제 work item 상태는 원래 분류를 유지한다.
+
+### 12.3 GPT PM 갱신 책임
+
+GPT는 현재 승인 범위에서 다음을 연속 수행한다.
+
+1. dependency와 player/user value를 기준으로 `READY` 순서를 정한다.
+2. 기본 WIP에 따라 `IN_PROGRESS` 하나와 `VERIFY_REVIEW` 하나를 넘지 않게 한다.
+3. 작업·검증·readback 뒤 PASS·FAIL·blocker와 exact evidence를 카드에 반영한다.
+4. `[x]`는 evidence-backed `PASS`에만 사용하고 `NOT_APPLICABLE`은 이유와 함께 진행률 분모에서 제외한다.
+5. blocker가 생기면 해당 작업만 defer하고 독립 `READY` 작업을 계속한다.
+6. 완료 후보에서 remaining-work recalculation, implementation correction rescan과 adversarial review를 실행한다.
+7. 사용자에게는 전체 진행률, 현재 작업, 차단·결정 항목, 다음 안전 작업을 요약한다.
+
+카드나 Issue 작성 자체는 구현·runtime·UX·Human/Player·사용자 승인 PASS가 아니다. 모든 기존 프로젝트에 빈 항목을 일괄 생성하지 않고 새 material work, 작업 재개, Goal 변경, major closeout 또는 다음 Slice 진입 시 필요한 범위에서만 적용한다.
