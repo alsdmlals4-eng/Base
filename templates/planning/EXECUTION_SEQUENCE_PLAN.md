@@ -27,7 +27,7 @@
 
 ### 기계 검증 work-contract receipt (L1+ 필수)
 
-아래 repository-owned JSON receipt를 실제 값으로 작성하고, 새 설계·제작·구현 전에 `python <resolved-Base-root-at-current-Base-or-project-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <receipt.json>`을 실행한다. `PASS`/`REUSED_EVIDENCE`는 비어 있는 표나 추측으로 통과할 수 없고, `NOT_APPLICABLE`은 L0의 순수 기계 수정만 허용한다. project receipt는 project repository에 두고, Base pin이나 tool root를 확인할 수 없으면 `BLOCKED_UNVERIFIED`로 둔다.
+`PROJECT_WORK_KANBAN_CHECKLIST`: 아래 repository-owned JSON receipt를 실제 값으로 작성하고, 새 설계·제작·구현 전에 `python <resolved-Base-root-at-current-Base-or-project-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <receipt.json> --phase start --expected-source-sha <fresh-read-project-source-sha> --render-markdown`을 실행한다. `PASS`/`REUSED_EVIDENCE`는 비어 있는 표나 추측으로 통과할 수 없고, `NOT_APPLICABLE`은 L0의 순수 기계 수정만 허용한다. project receipt는 project repository에 두고, Base pin이나 tool root를 확인할 수 없으면 `BLOCKED_UNVERIFIED`로 둔다.
 
 ```json
 {
@@ -39,28 +39,60 @@
         "source_and_evidence": "exact repository SHA, official source, or approved benchmark path",
         "observed_pattern": "directly observed reusable pattern",
         "project_fit_and_difference": "why the pattern fits here and what must not be copied",
-        "disposition": "ADOPT | ADAPT | REJECT"
+        "disposition": "ADAPT"
       }
-    ],
-    "reason_not_applicable": "L0 only",
-    "blocked_sources": ["required unreadable source when BLOCKED_UNVERIFIED"]
+    ]
   },
   "context_configuration_hygiene": {
     "scope": "only files and consumers in this task",
     "inventory": [
       {
         "path": "repository-relative path",
-        "classification": "ACTIVE_OWNER | COMPATIBILITY | ARCHIVE | OBSOLETE_CANDIDATE | UNKNOWN_UNVERIFIED",
+        "classification": "ACTIVE_OWNER",
         "owner_or_provenance": "current owner or verified source",
         "references_and_consumers": "actual readback result",
-        "removal_proposed": false,
-        "references_and_consumers_zero_before_removal": true,
-        "git_recoverable_removal_and_readback": true
+        "removal_proposed": false
+      }
+    ]
+  },
+  "project_work_kanban": {
+    "goal_or_slice_issue_ref": "existing approved Goal locator",
+    "source_main_sha": "0123456789abcdef0123456789abcdef01234567",
+    "work_item_refs": ["TASK-01"],
+    "active_work_item_ref": "TASK-01",
+    "next_action": "perform the next approved task",
+    "work_items": [
+      {
+        "work_item_id": "TASK-01",
+        "title": "observable approved outcome",
+        "status": "IN_PROGRESS",
+        "canon_owner": "repository-relative canonical owner",
+        "actual_consumers": ["actual project consumer"],
+        "depends_on": [],
+        "acceptance_criteria": ["AC-01"],
+        "required_evidence": ["E2_TEST"],
+        "checklist": [
+          {
+            "id": "AC-01",
+            "text": "condition, action, and expected result",
+            "status": "NOT_RUN"
+          }
+        ],
+        "verification": [
+          {
+            "level": "E2_TEST",
+            "status": "NOT_RUN",
+            "evidence": []
+          }
+        ],
+        "next_action": "run the first approved implementation or verification step"
       }
     ]
   }
 }
 ```
+
+작업 전환은 다음 승인 작업을 먼저 `IN_PROGRESS`와 `active_work_item_ref`로 기록한 뒤 `--phase resume --expected-source-sha <fresh-read-project-source-sha> --render-markdown`으로 다시 검사한다. 최종 마감은 모든 필수 작업의 evidence를 같은 최종 HEAD에서 재검증하고 `--phase closeout --expected-source-sha <fresh-read-project-source-sha> --expected-head-sha <fresh-read-final-head-sha> --render-markdown`을 사용한다. `TRUSTED_VERIFICATION_TARGET_HEAD`: receipt의 `verified_head_sha`를 기대값으로 다시 복사하지 않고 신뢰한 caller가 현재 최종 HEAD를 별도로 읽어 전달한다.
 
 ## 선행 조건
 
