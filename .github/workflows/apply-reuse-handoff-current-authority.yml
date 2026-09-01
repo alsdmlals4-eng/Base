@@ -1,0 +1,69 @@
+name: Apply reuse handoff current-authority correction
+
+on:
+  push:
+    branches:
+      - fix/reuse-handoff-current-authority-20260902
+    paths:
+      - .github/workflows/apply-reuse-handoff-current-authority.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out current task branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: fix/reuse-handoff-current-authority-20260902
+          fetch-depth: 0
+
+      - name: Apply bounded JSON correction and verify focused contract
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json")
+          data = json.loads(path.read_text(encoding="utf-8"))
+          data["updated_at"] = "2026-09-02"
+
+          rules = data["entry_rules"]
+          rules["project_specific_next_action_uses_current_project_authority"] = True
+          rules["legacy_workspace_requires_current_project_authority"] = True
+
+          data["projects"]["SWITCHY"]["next_project_work_action"] = (
+              "Read current project authority, current GitHub main, active context/current decision owner, "
+              "actual implementation, and open PRs first; treat Base project snapshots as non-authoritative "
+              "history, then reuse grid, route-stack, phase, explainability, replay, UI, and symbol contracts "
+              "only through an approved finite-delivery task."
+          )
+          data["projects"]["TEN_PACES"]["next_project_work_action"] = (
+              "Read current project authority, current GitHub main, active context/current planning owners, "
+              "actual implementation, and open PRs first; consult migration/history sources only when current "
+              "project authority explicitly requires them, then reuse hidden-plan, explainability, deterministic "
+              "replay, UI, symbol, and telegraph contracts only when a current approved project task consumes "
+              "them, without exposing protected hidden information or promoting Human/device evidence."
+          )
+
+          path.write_text(
+              json.dumps(data, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+          rm .github/workflows/apply-reuse-handoff-current-authority.yml
+          python -m unittest tests.test_reuse_first_preflight_enforcement -v
+
+      - name: Commit final production diff
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json tests/test_reuse_first_preflight_enforcement.py .github/workflows/apply-reuse-handoff-current-authority.yml
+          git commit -m "fix: resolve reuse handoff state from project authority"
+          git push origin HEAD:fix/reuse-handoff-current-authority-20260902
