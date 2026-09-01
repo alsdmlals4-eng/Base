@@ -45,5 +45,8 @@
 - final review correction (starter gate + Intake root receipt example): 20 tests PASS
 - selected governance/skill/reference suite: 66 tests PASS
 - canonical reference freshness, generated Base artifacts, Skill implementation evidence, required-gate topology: PASS
-- final independent review: PASS (Critical/Important findings: 0)
-- full regression after all corrections: 2,429 tests PASS, 54 skipped, exit 0
+- independent review before PR: PASS (Critical/Important findings: 0)
+- PR CI correction: `local-skill-contract-learning-test-sync`가 요구하는 기존 운영체계 회귀검사를 추가해, 모든 L1+ 프로젝트 시작점의 same-pin receipt gate를 다시 고정했다.
+- final local full regression after the CI-coupling correction: 2,430 tests PASS, 54 skipped, exit 0
+- PR #822 exact-head CI: required `ci-gate`와 모든 필수 validation job PASS
+- post-merge `main` readback: Squash merge commit `d060ffabdc827b929f66c4a6a1ad329a866885ac`에서 Game Project Operating System의 Windows publication smoke·core regression·`ci-gate`를 포함한 모든 job PASS
