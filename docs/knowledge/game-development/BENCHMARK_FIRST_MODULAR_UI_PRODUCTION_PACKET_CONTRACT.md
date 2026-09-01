@@ -22,13 +22,21 @@ benchmark_order: EXTERNAL_THEN_PROJECT_FIT
 asset_strategy: MODULAR_PARTS_FIRST
 ```
 
-`repository`는 canonical `owner/repo` identity다. URL·로컬 경로·branch 이름을 넣지 않는다. 각 segment는 영문 소문자·숫자·`_ . -`를 사용할 수 있지만 `.` 또는 `..`만으로 구성할 수 없다. `./.` 등 path traversal처럼 해석될 수 있는 표기는 `SOURCE_IDENTITY`다. 유효한 project identity가 없으면 외부 source와 자기 저장소를 안전하게 비교할 수 없으므로 external benchmark 판정도 fail-closed다.
+`repository`는 canonical `owner/repo` identity다. URL·로컬 경로·branch 이름을 넣지 않는다. 각 segment는 영문 소문자·숫자·`_ . -`를 사용할 수 있지만 `.` 또는 `..`만으로 구성할 수 없다. `owner/.`, `owner/..`, `../repo`, `./.`처럼 path traversal로 해석될 수 있는 표기는 `SOURCE_IDENTITY`다. 유효한 project identity가 없으면 외부 source와 자기 저장소를 안전하게 비교할 수 없으므로 external benchmark 판정도 fail-closed다.
 
 ## 3. 외부 reference
 
 각 reference는 source, evidence_kind, origin, version, observed, apply, reject, verification을 가진다. `SOURCE_CODE` 또는 `PRODUCT_OBSERVATION`이 `origin=EXTERNAL`이고 공개 HTTP(S) locator일 때만 외부 비교 분모를 충족한다. 프로젝트 내부 문서는 `origin=PROJECT` / `INTERNAL_REUSE`로 기록한다.
 
-GitHub source에서 `source_repository`를 쓰면 canonical `owner/repo`이며 URL의 저장소와 일치해야 한다. 자기 저장소, localhost, private/loopback IP, credentials 포함 URL, malformed port, control/whitespace가 있는 locator는 외부 비교 증거가 아니다. 이것은 출처 형식 검사이며 실제 원문 접근·라이선스·연구 시점을 증명하지 않는다.
+`URL_DOT_SEGMENTS_NORMALIZED_BEFORE_REPOSITORY_IDENTITY`: GitHub URL의 repository identity는 제한된 횟수로 percent-decode한 뒤 `.`·`..` 경로 segment를 정규화하고 나서 추출한다. 상위 root를 벗어나는 traversal, backslash, control character는 외부 근거로 인정하지 않는다. `https://github.com/other/../owner/repo/...`처럼 앞의 segment만 읽어 자기 저장소 검사를 우회할 수 없다.
+
+`LEGACY_NUMERIC_IP_NORMALIZED_OR_REJECTED`: canonical IP뿐 아니라 `127.1`, `0177.0.0.1`, `2130706433`, `0x7f000001` 같은 inet_aton-style 1~4 component decimal/octal/hex IPv4 표기도 DNS 조회 없이 정규화한다. loopback·private·link-local·reserved 등 non-global 주소이거나 숫자 IP처럼 보이지만 안전하게 해석할 수 없는 host는 benchmark credit 전에 거부한다.
+
+`NON_GITHUB_SOURCE_CODE_REQUIRES_SOURCE_REPOSITORY`: GitHub가 아닌 repository host의 `SOURCE_CODE`는 canonical `owner/repo` 형태의 `source_repository`를 반드시 기록한다. 그 identity는 packet의 `repository`와 달라야 한다. 제공된 source URL에서 repository identity를 구조적으로 확인할 수 있는 경우에는 선언값과 URL identity가 일치해야 한다.
+
+`PRODUCT_OBSERVATION_DOES_NOT_REQUIRE_REPOSITORY_IDENTITY`: 공식 제품 페이지·개발자 글·공개 제작 기록 같은 `PRODUCT_OBSERVATION`은 실제 repository를 전제로 하지 않으므로 존재하지 않는 `source_repository`를 발명하지 않는다. 다만 선택적으로 기록한 identity는 canonical해야 하고 현재 packet의 자기 저장소와 달라야 한다.
+
+GitHub source에서 `source_repository`를 쓰면 canonical `owner/repo`이며 정규화된 URL의 저장소와 일치해야 한다. 자기 저장소, localhost, private/loopback IP, credentials 포함 URL, malformed port, control/whitespace가 있는 locator는 외부 비교 증거가 아니다. 이 검사는 출처 형식과 선언된 identity 관계만 확인하며 실제 원문 접근·출처 진위·라이선스·연구 시점을 증명하지 않고 네트워크 요청도 수행하지 않는다.
 
 ## 4. Surface·action·state
 
