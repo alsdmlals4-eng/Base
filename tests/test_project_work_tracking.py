@@ -11,6 +11,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 CLI = ROOT / "tools/validate_work_contract_receipt.py"
 SOURCE = "1bc9c0cbc679f1d88cf1652d48df9273ba234401"
+HEAD = "a" * 40
 
 
 def receipt():
@@ -30,6 +31,10 @@ def receipt():
 def run_cli(value, *args):
     if "--expected-source-sha" not in args:
         args = ("--expected-source-sha", SOURCE, *args)
+    if "--phase" in args:
+        phase_index = args.index("--phase")
+        if phase_index + 1 < len(args) and args[phase_index + 1] == "closeout" and "--expected-head-sha" not in args:
+            args = ("--expected-head-sha", HEAD, *args)
     with tempfile.TemporaryDirectory() as directory:
         path = Path(directory) / "receipt.json"
         path.write_text(json.dumps(value), encoding="utf-8")
@@ -58,7 +63,7 @@ def done_receipt():
     value = tracked_receipt(); board = value["project_work_kanban"]
     board.update(active_work_item_ref=None, next_action="STOP_APPROVED_SCOPE_COMPLETE")
     task = board["work_items"][0]
-    task.update(status="DONE", verified_head_sha="a" * 40, repository_readback="PASS", readback_evidence=["recorded exact-head readback"], rollback="Revert isolated change", must_fix_remaining=0, blocked_unverified_remaining=0, user_decision_required_remaining=0, next_action="STOP_APPROVED_SCOPE_COMPLETE")
+    task.update(status="DONE", verified_head_sha=HEAD, repository_readback="PASS", readback_evidence=["recorded exact-head readback"], rollback="Revert isolated change", must_fix_remaining=0, blocked_unverified_remaining=0, user_decision_required_remaining=0, next_action="STOP_APPROVED_SCOPE_COMPLETE")
     task["checklist"][0].update(status="PASS", evidence=["recorded test run on exact head"])
     task["verification"][0].update(status="PASS", evidence=["recorded test run on exact head"])
     return value
@@ -160,6 +165,33 @@ class ProjectWorkTrackingCLITests(unittest.TestCase):
     def test_closeout_stops_instead_of_inventing_another_goal(self):
         value = done_receipt(); value["project_work_kanban"]["next_action"] = "Invent another unrelated game"
         self.assert_rejected(value, "STOP_APPROVED_SCOPE_COMPLETE", "--phase", "closeout")
+
+    def test_closeout_rejects_wrong_trusted_final_head(self):
+        self.assert_rejected(
+            done_receipt(),
+            "verified_head_sha does not match trusted expected head",
+            "--phase", "closeout",
+            "--expected-head-sha", "b" * 40,
+        )
+
+    def test_closeout_requires_trusted_final_head(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "receipt.json"
+            path.write_text(json.dumps(done_receipt()), encoding="utf-8")
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(CLI),
+                    "--receipt", str(path),
+                    "--phase", "closeout",
+                    "--expected-source-sha", SOURCE,
+                ],
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+        self.assertNotEqual(0, result.returncode, result.stdout)
+        self.assertIn("expected_head_sha from the trusted final-head caller is required for closeout", result.stdout)
 
     def test_all_nested_malformed_fields_fail_without_traceback(self):
         from tools.validate_work_contract_receipt import validate_execution_receipt
