@@ -85,14 +85,19 @@ def validate_tracking(
     active = board.get("active_work_item_ref")
     in_progress = [key for key, task in tasks.items() if task.get("status") == "IN_PROGRESS"]
     reviewing = [key for key, task in tasks.items() if task.get("status") == "VERIFY_REVIEW"]
+    active_candidates = in_progress + reviewing
     if len(in_progress) > 1 or len(reviewing) > 1:
         errors.append("project_work_kanban WIP limit exceeded (IN_PROGRESS=1, VERIFY_REVIEW=1)")
-    if active is not None and (not isinstance(active, str) or active not in tasks or tasks[active].get("status") != "IN_PROGRESS"):
-        errors.append("active_work_item_ref must identify the IN_PROGRESS task")
-    if in_progress and active != in_progress[0]:
-        errors.append("active_work_item_ref must match the current IN_PROGRESS task")
-    if phase in {"start", "resume"} and not in_progress:
-        errors.append(f"{phase} requires one IN_PROGRESS task; record blockers without authorizing execution")
+    if active is not None and (
+        not isinstance(active, str)
+        or active not in tasks
+        or tasks[active].get("status") not in {"IN_PROGRESS", "VERIFY_REVIEW"}
+    ):
+        errors.append("active_work_item_ref must identify an IN_PROGRESS or VERIFY_REVIEW task")
+    if active_candidates and active not in active_candidates:
+        errors.append("active_work_item_ref must match the current active task")
+    if phase in {"start", "resume"} and not active_candidates:
+        errors.append(f"{phase} requires one IN_PROGRESS or VERIFY_REVIEW task; record blockers without authorizing execution")
     if phase == "closeout" and (active is not None or not tasks or any(t.get("status") != "DONE" for t in tasks.values())):
         errors.append("closeout requires all required work_items DONE and no active task")
     if phase == "closeout" and board.get("next_action") != "STOP_APPROVED_SCOPE_COMPLETE":
