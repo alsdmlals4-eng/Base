@@ -261,6 +261,35 @@ verdict:
 
 `REPOSITORY_NATIVE_EVIDENCE_CAPTURE != AI_AUTO_PASS`.
 
+### 선택형 runtime visual capture manifest
+
+`OPTIONAL_RUNTIME_VISUAL_CAPTURE_MANIFEST`
+
+플레이어가 실제로 보게 되는 화면·레이아웃·모션이 이번 변경의 수용 기준이고, 그 판단을 위해 **fresh runtime image를 보관해야 할 때만** 프로젝트의 기존 evidence owner에 아래와 같은 작은 readback을 남긴다. 로직·데이터 전용 변경, 정적 기획 시안, 결정적 assertion만으로 수용 기준을 충분히 검증한 경우에는 사용하지 않는다.
+
+```yaml
+runtime_visual_capture_manifest:
+  source_commit_or_build:
+  run_or_entry_identity:
+  visible_scene_or_state:
+  viewport_or_resolution:
+  input_or_fixture:
+  artifact_path:
+  sha256:
+  dimensions:
+  bytes:
+  actual_consumers: []
+  diagnostics_or_source_delta:
+  storage_owner:
+  evidence_ceiling:
+```
+
+`SMALLEST_REPRESENTATIVE_CAPTURE_SET`: 정상·읽기 가능 상태 하나와, 결과를 실제로 바꾸는 distinct impact/result 또는 unavailable state가 있을 때 그 상태만 보관한다. 모든 프레임·모든 상태를 보관하거나, 이미지가 필요한지 확인하지 않은 채 capture를 기본 산출물로 만들지 않는다.
+
+`NO_COMMON_CAPTURE_SCHEMA_OR_BINARY_POLICY`: 이 YAML은 공통 JSON schema, 새 CLI/app/adapter, repository binary 보관 의무, 일률적인 용량 예산을 만들지 않는다. 저장소/CI artifact 중 무엇을 보관할지는 해당 프로젝트의 기존 권리·개인정보·용량·release 정책 owner가 결정한다. `actual_consumers`에는 실제 screen/scene/UI 또는 review consumer만 적고, 계획상 소비처를 구현 완료로 쓰지 않는다.
+
+`RUNTIME_VISUAL_CAPTURE_IS_NOT_HUMAN_OR_DEVICE_PASS`: hash·경로·상태가 맞는 machine runtime capture는 선언된 실행 artifact가 기록됐다는 증거일 뿐이다. Human UX, 접근성 사용자, 물리 device/platform, 성능·release, 자산 권리, 최종 사용자 승인을 PASS로 승격하지 않는다. source/build/run identity와 capture path/hash의 freshness는 기존 `FRESH_RUNTIME_ARTIFACT_GATE` owner를 계속 따른다.
+
 ---
 
 ## RM-TOOL-005 · PUBLIC_VIDEO_RESEARCH_INGEST_ADAPTER
