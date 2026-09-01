@@ -245,9 +245,12 @@ existing_solution_inventory:
   existing_solution_disposition:
   existing_solution_evidence:
     existing_solution_user_approval:
+benchmark_preflight_receipt:
+context_configuration_hygiene:
+project_work_kanban:
 ```
 
-`benchmark_preflight_receipt`와 `context_configuration_hygiene`는 위 `request` metadata나 `existing_solution_evidence`의 하위 필드가 아니다. L1+ 작업에서 project/Base repository가 소유하는 **별도 root receipt JSON**이다. 아래 예시는 `validate_work_contract_receipt.py`에 그대로 전달할 수 있는 최소 구조이며, 실제 작업에서는 placeholder가 아닌 fresh-read evidence와 이번 scope의 inventory를 기록한다.
+`PROJECT_WORK_KANBAN_CHECKLIST`: `benchmark_preflight_receipt`, `context_configuration_hygiene`, `project_work_kanban`은 위 `request` metadata나 `existing_solution_evidence`의 하위 필드가 아니다. L1+ 작업에서 project/Base repository가 소유하는 **같은 root receipt JSON의 형제 필드**다. 별도 빈 PM 보드나 두 번째 상태 정본을 만들지 않는다. 아래 예시는 `validate_work_contract_receipt.py`의 실제 start 실행 Gate에 전달할 수 있는 최소 구조이며, 실제 작업에서는 예시 값을 fresh-read evidence, 현재 승인 Goal과 그 Goal의 모든 필수 작업으로 바꾼다.
 
 WORK_CONTRACT_RECEIPT_ROOT_JSON_EXAMPLE
 
@@ -276,11 +279,45 @@ WORK_CONTRACT_RECEIPT_ROOT_JSON_EXAMPLE
         "removal_proposed": false
       }
     ]
+  },
+  "project_work_kanban": {
+    "goal_or_slice_issue_ref": "existing approved Goal locator",
+    "source_main_sha": "0123456789abcdef0123456789abcdef01234567",
+    "work_item_refs": ["TASK-01"],
+    "active_work_item_ref": "TASK-01",
+    "next_action": "perform the next approved task",
+    "work_items": [
+      {
+        "work_item_id": "TASK-01",
+        "title": "observable approved outcome",
+        "status": "IN_PROGRESS",
+        "canon_owner": "repository-relative canonical owner",
+        "actual_consumers": ["actual project consumer"],
+        "depends_on": [],
+        "acceptance_criteria": ["AC-01"],
+        "required_evidence": ["E2_TEST"],
+        "checklist": [
+          {
+            "id": "AC-01",
+            "text": "condition, action, and expected result",
+            "status": "NOT_RUN"
+          }
+        ],
+        "verification": [
+          {
+            "level": "E2_TEST",
+            "status": "NOT_RUN",
+            "evidence": []
+          }
+        ],
+        "next_action": "run the first approved implementation or verification step"
+      }
+    ]
   }
 }
 ```
 
-실행 경로는 `python <resolved-Base-root-at-current-Base-or-project-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <repository-owned-json-receipt>`이다. Base root·adapter pin·receipt를 해석하지 못하거나 nonzero이면 `BLOCKED_UNVERIFIED`이며 새 설계·제작·구현을 시작하지 않는다.
+실행 경로는 `python <resolved-Base-root-at-current-Base-or-project-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <repository-owned-json-receipt> --phase start --expected-source-sha <fresh-read-project-source-sha> --render-markdown`이다. Base root·adapter pin·receipt를 해석하지 못하거나 nonzero이면 `BLOCKED_UNVERIFIED`이며 새 설계·제작·구현을 시작하지 않는다. 작업 전환은 다음 승인 작업을 먼저 active로 기록한 뒤 같은 trusted source와 `--phase resume`으로 검사한다. 마감은 모든 필수 작업을 같은 최종 HEAD에서 다시 검증하고 `--phase closeout --expected-source-sha <fresh-read-project-source-sha> --expected-head-sha <fresh-read-final-head-sha> --render-markdown`을 실행한다. `TRUSTED_VERIFICATION_TARGET_HEAD`: receipt의 `verified_head_sha`를 기대값으로 복사하지 않고 신뢰한 caller가 final HEAD를 별도로 읽는다.
 
 ## Read first
 
