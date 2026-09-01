@@ -15,6 +15,12 @@
 - `POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP`: GitHub 병합 뒤 exact new main에서 전체 승인 범위를 적대적으로 다시 검토하고 필수 교정을 새 Branch/PR로 처리한다. repository primary canon·asset manifest·exact-SHA human projection과 runtime evidence를 readback하고 `PROGRESS_READBACK_REQUIRED`로 진행도·남은 작업을 다시 계산해야 완료다. V4 Notion exception은 실제 적용될 때만 추가 destination으로 갱신한다.
 - `ISSUE_SUCCESSOR_FRESHNESS_REQUIRED`: GitHub Issues를 사용하는 프로젝트는 병합 뒤 exact new main·current canon·실제 구현·증거와 open Issue를 다시 대조한다. `MERGE_LINKED_ISSUE_READBACK_REQUIRED`로 이번 merge에 연결되어 자동 종료된 Issue도 전체 책임 완료 여부를 다시 읽는다. `open`/`closed` 상태만으로 현재 권한이나 완료를 만들지 않으며, `CURRENT_VALID / DEFERRED_VALID / COMPLETED / SUPERSEDED / CONFLICT_WITH_CURRENT_CANON / REVIEW_REQUIRED`로 판정한 뒤 필요한 disposition·reopen/review routing과 readback을 수행한다. 상세 계약은 `docs/POSTMERGE_ISSUE_SUCCESSOR_FRESHNESS_POLICY.md`를 따른다.
 
+## L1+ 작업 시작 receipt gate
+
+`PROJECT_START_CANON_CHECKLIST_REQUIRED`: L1+ 기획·시안·구현·교정은 Project AGENTS와 exact implementation을 fresh-read하고 `skills/PROJECT_BASE_ADAPTER.json`의 adapter/route validation을 통과한 뒤 `WORK_PROJECT_START_CANON_CHECKLIST.md`를 먼저 실행한다. checklist가 요구하는 `benchmark_preflight_receipt`와 scope-limited hygiene inventory는 project repository에만 기록한다.
+
+`PINNED_BASE_RECEIPT_VALIDATION_REQUIRED`: adapter/route validation으로 확인한 exact Base pin과 같은 checkout에서 `python <resolved-Base-root>/tools/validate_work_contract_receipt.py --receipt <project-repository-owned-receipt.json>`을 실행한다. Base tool을 pin에 맞게 해석할 수 없거나 결과가 nonzero이면 `BLOCKED_UNVERIFIED`이며 새 기획·시안·구현을 시작하지 않는다. 이 gate는 프로젝트별 버튼·Flow·wireframe·세계관·soft-coded 값을 고정하지 않고, 현재 consumer에 맞는 benchmark 판단과 안전한 context 정리만 확인한다.
+
 ## 한눈에 보기
 
 | 항목 | 현재 기준 |
@@ -138,6 +144,7 @@ AI·자동 검사
 ```text
 프로젝트 AGENTS.md
 → 이 START_HERE.md
+→ L1+이면 WORK_PROJECT_START_CANON_CHECKLIST.md와 pinned Base receipt validation
 → ACTIVE_CONTEXT.md
 → DOCUMENTATION_MAP.md·DEVELOPMENT_GATES.md
 → DESIGN_DOCUMENT_REGISTRY.json·현재 책임 원본

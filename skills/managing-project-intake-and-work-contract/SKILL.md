@@ -242,21 +242,45 @@ reuse_preflight_evidence: []
 reuse_disposition:
 reuse_learning_handoff:
 existing_solution_inventory:
-existing_solution_disposition:
-existing_solution_evidence:
-  existing_solution_user_approval:
-  benchmark_preflight_receipt:
-    state: PASS | REUSED_EVIDENCE | NOT_APPLICABLE | BLOCKED_UNVERIFIED
-    entries: [] # each: source_and_evidence, observed_pattern, project_fit_and_difference, disposition ADOPT|ADAPT|REJECT
-    reason_not_applicable:
-    blocked_sources: []
-  context_configuration_hygiene:
-    scope:
-    inventory: [] # each: path, classification, owner_or_provenance, references_and_consumers
-    classification: ACTIVE_OWNER | COMPATIBILITY | ARCHIVE | OBSOLETE_CANDIDATE | UNKNOWN_UNVERIFIED
-    removal_evidence: [] # required only when removal is proposed: REFERENCES_AND_CONSUMERS_ZERO_BEFORE_REMOVAL + GIT_RECOVERABLE_REMOVAL_AND_READBACK
-  receipt_validation_command: python tools/validate_work_contract_receipt.py --receipt <repository-owned-json-receipt>
+  existing_solution_disposition:
+  existing_solution_evidence:
+    existing_solution_user_approval:
 ```
+
+`benchmark_preflight_receipt`와 `context_configuration_hygiene`는 위 `request` metadata나 `existing_solution_evidence`의 하위 필드가 아니다. L1+ 작업에서 project/Base repository가 소유하는 **별도 root receipt JSON**이다. 아래 예시는 `validate_work_contract_receipt.py`에 그대로 전달할 수 있는 최소 구조이며, 실제 작업에서는 placeholder가 아닌 fresh-read evidence와 이번 scope의 inventory를 기록한다.
+
+WORK_CONTRACT_RECEIPT_ROOT_JSON_EXAMPLE
+
+```json
+{
+  "work_level": "L1",
+  "benchmark_preflight_receipt": {
+    "state": "PASS",
+    "entries": [
+      {
+        "source_and_evidence": "exact repository SHA and directly relevant approved benchmark",
+        "observed_pattern": "observed owner-to-consumer boundary",
+        "project_fit_and_difference": "reuse the boundary without copying project-specific values or presentation",
+        "disposition": "ADAPT"
+      }
+    ]
+  },
+  "context_configuration_hygiene": {
+    "scope": "only current task paths and their direct consumers",
+    "inventory": [
+      {
+        "path": "repository-relative current owner path",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "verified current repository owner",
+        "references_and_consumers": "direct consumer/readback checked",
+        "removal_proposed": false
+      }
+    ]
+  }
+}
+```
+
+실행 경로는 `python <resolved-Base-root-at-current-Base-or-project-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <repository-owned-json-receipt>`이다. Base root·adapter pin·receipt를 해석하지 못하거나 nonzero이면 `BLOCKED_UNVERIFIED`이며 새 설계·제작·구현을 시작하지 않는다.
 
 ## Read first
 

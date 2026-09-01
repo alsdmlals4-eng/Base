@@ -1,3 +1,27 @@
+---
+archive_metadata:
+  archive_id: base-archive-2026-07-19-schema-v3-final-audit
+  status: SUPERSEDED
+  classification: EVIDENCE_RETENTION
+  archived_at: 2026-09-01
+  original_path: docs/audits/2026-07-19-base-schema-v3-final-audit.md
+  archived_path: docs/archive/audits/2026-07-19-base-schema-v3-final-audit.md
+  content_sha256: 76c269f53f71a81b5aeda076522d438fc93da5b833644ce7a1a0c719bbf8ce51
+  superseded_by:
+    - docs/OPERATING_MODEL.md
+    - docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json
+    - docs/CHANGELOG.md
+  reason: schema-v3 전환 PR #9/#10의 최종 검증 결과를 보존하되, 완료 조건과 정책을 현재 상태로 오인하지 않도록 기본 docs 작업면에서 격리한다.
+  unique_material_preserved:
+    - PR #8 requirement trace를 통한 무손실 승계 판정
+    - Actions, Codex visual inspection, cold-start, protection 상태의 당시 증거
+  active_authority: false
+  implementation_authority: NONE
+  compatibility_consumers: []
+  rollback_ref: f0db0b54624a068e950e14234a782716d0d4e281
+  validation_status: PASS
+---
+
 # 최종 읽기 전용 감사
 
 ## 1. 총평
@@ -18,7 +42,7 @@
 
 | 요구사항 | 반영 위치 | 상태 | 검증 증거 | 누락·위험 |
 |---|---|---|---|---|
-| 요구사항·PR #8 무손실 추적 | `docs/audits/2026-07-19-base-schema-v3-read-only-audit.md` | [검증] | PR #8 부모와 병합 tree, 제거 템플릿 4종 대조 | 단순 역사 정보는 복원하지 않음 |
+| 요구사항·PR #8 무손실 추적 | `docs/archive/audits/2026-07-19-base-schema-v3-read-only-audit.md` | [검증] | PR #8 부모와 병합 tree, 제거 템플릿 4종 대조 | 단순 역사 정보는 복원하지 않음 |
 | Markdown 기본·JSON 역할별 혼용 | `AGENTS.md`, Registry v3 Schema, 작성·발행 Skill | [검증] | Markdown/JSON 생성·Governance 회귀 테스트 | 동일 서술의 이중 책임 원본은 금지 |
 | PDF 상시 동기화 | `tools/build_design_documents.py`, Manifest v3, Governance | [검증] | stale source/generator 실패 테스트 | 사람이 매번 검수했다는 뜻은 아님 |
 | 선택 DOCX·다이어그램 | Registry v3, 두 생성기 | [검증] | Markdown no-DOCX, JSON DOCX, Mermaid 조건부 생성 테스트 | Word 검토가 필요한 문서만 공개 DOCX 사용 |

@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import json
+import re
 import unittest
 from pathlib import Path
+
+from tools.validate_work_contract_receipt import validate_receipt
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,6 +19,10 @@ INTAKE_SKILL = ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md
 DECOMPOSITION_OWNER = ROOT / "skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md"
 EXECUTION_PLAN = ROOT / "templates/planning/EXECUTION_SEQUENCE_PLAN.md"
 RECEIPT_VALIDATOR = ROOT / "tools/validate_work_contract_receipt.py"
+PROJECT_START_HERE = ROOT / "templates/project-operations/PROJECT_START_HERE.md"
+AI_WORKFLOW = ROOT / "templates/project-operations/AI_WORKFLOW.md"
+CURRENT_ROUTER = ROOT / "templates/project-operations/WORK_PROJECT_EXECUTION_CURRENT_ROUTER.md"
+BASE_PROJECT_ROUTER = ROOT / "templates/project-operations/.agents/skills/base-project-router/SKILL.md"
 
 
 class WorkProjectStartCanonChecklistContractTests(unittest.TestCase):
@@ -147,6 +155,45 @@ class WorkProjectStartCanonChecklistContractTests(unittest.TestCase):
             "git_recoverable_removal_and_readback is required",
         ):
             self.assertIn(token, validator)
+
+    def test_intake_skill_root_receipt_example_is_accepted_by_the_validator(self) -> None:
+        intake = self._read(INTAKE_SKILL)
+        match = re.search(
+            r"WORK_CONTRACT_RECEIPT_ROOT_JSON_EXAMPLE\s*```json\s*(\{.*?\})\s*```",
+            intake,
+            flags=re.DOTALL,
+        )
+        self.assertIsNotNone(match, "intake Skill must provide an executable root receipt example")
+        assert match is not None
+        self.assertEqual([], validate_receipt(json.loads(match.group(1))))
+
+    def test_receipt_command_resolves_the_base_tool_from_current_or_pinned_authority(self) -> None:
+        for source in (INTAKE_SKILL, DECOMPOSITION_OWNER, EXECUTION_PLAN, CHECKLIST):
+            with self.subTest(source=source):
+                text = self._read(source)
+                self.assertIn("<resolved-Base-root", text)
+                self.assertNotIn(
+                    "python tools/validate_work_contract_receipt.py",
+                    text,
+                )
+
+    def test_every_project_start_entrypoint_routes_l1_plus_work_through_the_pinned_base_receipt_gate(self) -> None:
+        for source in (
+            STARTER,
+            PROJECT_START_HERE,
+            AI_WORKFLOW,
+            CURRENT_ROUTER,
+            BASE_PROJECT_ROUTER,
+        ):
+            with self.subTest(source=source):
+                text = self._read(source)
+                self.assertIn("WORK_PROJECT_START_CANON_CHECKLIST.md", text)
+                self.assertIn("PROJECT_START_CANON_CHECKLIST_REQUIRED", text)
+                self.assertIn("PROJECT_BASE_ADAPTER.json", text)
+                self.assertIn("validate_work_contract_receipt.py", text)
+                self.assertIn("benchmark_preflight_receipt", text)
+                self.assertIn("<resolved-Base-root", text)
+                self.assertIn("BLOCKED_UNVERIFIED", text)
 
     def test_canon_correction_precedes_new_planning_production_or_implementation(self) -> None:
         text = self._read(CHECKLIST)

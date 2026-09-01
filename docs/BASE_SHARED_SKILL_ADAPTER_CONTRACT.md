@@ -55,6 +55,10 @@ Base 공용 판단·절차·상태·품질 기준
 7. 프로젝트에서 검증된 공용 개선은 `managing-base-change-proposals`를 통해 Base로 승격하고, 프로젝트 복사본을 영구 정본으로 유지하지 않는다.
 8. Base 커밋 갱신은 자동 덮어쓰기가 아니다. 프로젝트 정본·route·adapter·validator를 같은 변경 묶음에서 검증한다.
 
+### L1+ project work receipt
+
+프로젝트 L1+ 작업의 benchmark preflight와 context/configuration hygiene는 project repository가 소유한 receipt에 기록한다. route/adapter 검증 뒤, adapter가 승인한 exact Base pin과 같은 checkout의 `tools/validate_work_contract_receipt.py`를 실행한다. free-form `validators` metadata에 이 절차를 복사해 실행 권위로 만들지 않는다. Base root·pin·receipt를 확인하지 못하거나 validator가 실패하면 `BLOCKED_UNVERIFIED`이며 새 기획·제작·구현을 시작하지 않는다.
+
 ## 프로젝트 route Registry 최소 계약
 
 ```json

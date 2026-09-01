@@ -1,3 +1,28 @@
+---
+archive_metadata:
+  archive_id: base-archive-2026-07-19-schema-v3-read-only-audit
+  status: SUPERSEDED
+  classification: EVIDENCE_RETENTION
+  archived_at: 2026-09-01
+  original_path: docs/audits/2026-07-19-base-schema-v3-read-only-audit.md
+  archived_path: docs/archive/audits/2026-07-19-base-schema-v3-read-only-audit.md
+  content_sha256: 4cc376b1d362482beb9d1fe18f557d9d0fa62bb1ace69f7b8c24be3a9e89551e
+  superseded_by:
+    - docs/OPERATING_MODEL.md
+    - docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json
+    - docs/CHANGELOG.md
+  reason: schema-v3 전환 전 PR #8의 비교와 누락 판정을 보존하되, 현재 작업 정본으로 사용되지 않도록 기본 docs 작업면에서 격리한다.
+  unique_material_preserved:
+    - PR #8 전환 전 read-only requirement trace
+    - 당시 실제 GitHub Actions와 미검증 범위
+  active_authority: false
+  implementation_authority: NONE
+  compatibility_consumers:
+    - docs/archive/audits/2026-07-19-base-schema-v3-final-audit.md
+  rollback_ref: 118892e18d270359684fee4c750e6bdb513de324
+  validation_status: PASS
+---
+
 # 최종 읽기 전용 감사 — Base schema v3 전환 전
 
 ## 1. 총평

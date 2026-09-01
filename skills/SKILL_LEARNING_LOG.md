@@ -756,3 +756,13 @@
 - 안전 경계: 이 validator와 Base contract는 실제 프로젝트의 genre·world·wireframe·button·asset·runtime 결론을 고정하거나 human/runtime PASS로 승격하지 않는다. V3 자료는 compatibility/history 또는 migration evidence로 보존하며, old 이름·날짜만으로 삭제하지 않는다.
 - 검증: receipt validator의 positive/negative unit tests, V4 active-route/partition-owner regression, focused intake/template tests, canonical-reference freshness와 exact-head CI를 차례로 실행한다.
 - 다음 검토 트리거: active consumer가 V3 Notion default write를 재도입하는 경우, L1 receipt가 evidence 없이 통과하는 경우, V4 contract semantic owner가 다시 unassigned가 되는 경우, 실제 프로젝트 migration/exception pilot.
+
+## 2026-09-01 — Exact Base pin에서 receipt validator 해석
+
+- 상태: `OBSERVATION`
+- 호출 트리거: 프로젝트 시작 template와 router에는 L1+ benchmark/hygiene receipt를 검사하라는 규칙이 있었지만, 일부 공용 intake·분해·계획 surface가 `python tools/validate_work_contract_receipt.py`라는 Base-relative 경로를 그대로 제시했다.
+- 실제 관찰: Base checkout 안에서는 이 상대 경로가 동작하지만, Base Skill을 adapter로 채택한 프로젝트에서는 project-local `tools/`를 잘못 가리키거나 도구 부재를 정상 검사 실패로 오인할 수 있다. 반대로 Base validator를 프로젝트에 무단 복사하면 Base 공용 검증 로직의 두 번째 정본이 생긴다.
+- 결정: L1+ receipt는 project repository가 소유하고, 실행기는 current Base 또는 `skills/PROJECT_BASE_ADAPTER.json`이 확인한 exact Base pin의 root에서 해석한다. pin·root·receipt 중 하나라도 확인할 수 없거나 validator가 nonzero면 `BLOCKED_UNVERIFIED`이며 새 기획·시안·구현을 시작하지 않는다.
+- 검증: 의도적 RED에서 세 active generic relative command surface를 검출했고, source correction 뒤 project-start entrypoint·command-resolution·archive lifecycle focused regression, work-contract receipt validator, canonical reference freshness, generated artifact check, 전체 2,427개 회귀를 실행한다.
+- 안전 경계: 이 변경은 프로젝트별 장르·세계관·버튼·flow·wireframe·soft-coded 값을 고정하지 않으며, 기존 Base pin을 자동 갱신하거나 프로젝트의 실제 runtime/human/user evidence를 PASS로 승격하지 않는다.
+- 다음 검토 트리거: project adapter pin과 resolved Base checkout이 불일치하는 경우, project-local validator copy가 새 정본으로 나타나는 경우, L1+ mutation이 receipt 검증을 우회하는 경우.

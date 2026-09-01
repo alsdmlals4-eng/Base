@@ -9,6 +9,8 @@ Confirm that `skills/PROJECT_BASE_ADAPTER.json` records a `protected_baseline` c
 
 After a zero exit, read `skills/PROJECT_BASE_ADAPTER.json` and the current generated snapshot. Refuse routing when the validator reports a stale pin, mismatched pin, hash drift, alias cycle, or generated-view drift.
 
+For every L1+ task, `PROJECT_START_CANON_CHECKLIST_REQUIRED` applies before new planning, asset production, or implementation. Read `WORK_PROJECT_START_CANON_CHECKLIST.md`, then require the project-repository-owned `benchmark_preflight_receipt` and hygiene inventory to pass `python <resolved-Base-root-at-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <project-repository-owned-receipt.json>`. Resolve the Base root only after the adapter check and only when its checked-out commit matches the adapter's accepted Base pin. Missing receipt, missing Base root, pin mismatch, or a nonzero validator result is `BLOCKED_UNVERIFIED`; do not route into mutation.
+
 Resolve `effective_routes` exactly as generated. A project-local route has precedence over a same-name Base route. The router contains no reusable workflow instructions; follow the selected canonical project package or Base package at its recorded path.
 
 When `godot-live-editor-operations` is an effective project-local route, keep this router read-only: first complete the Base adapter validation above, then read `GODOT_LIVE_EDITOR_CAPABILITY_MANIFEST.json` and `.agents/skills/godot-live-editor-operations/SKILL.md`. Refuse engine execution when the Manifest is missing, `NOT_CONFIGURED`, Schema-invalid, stale, or bound to a different project. The selected adapter owns the engine-operation contract; this router does not duplicate or execute it.
