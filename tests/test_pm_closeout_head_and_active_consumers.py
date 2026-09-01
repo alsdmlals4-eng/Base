@@ -14,6 +14,15 @@ ACTIVE_CONSUMERS = (
     "skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md",
     "templates/planning/EXECUTION_SEQUENCE_PLAN.md",
 )
+CLOSEOUT_CONSUMERS = (
+    "templates/project-operations/.agents/skills/base-project-router/SKILL.md",
+    "templates/project-operations/AI_WORKFLOW.md",
+    "templates/project-operations/PROJECT_START_HERE.md",
+    "templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md",
+    "templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_STARTER_PROMPT.md",
+    "templates/project-operations/WORK_PROJECT_EXECUTION_CURRENT_ROUTER.md",
+    "templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md",
+)
 
 
 class PMCloseoutHeadAndActiveConsumerTests(unittest.TestCase):
@@ -84,6 +93,13 @@ class PMCloseoutHeadAndActiveConsumerTests(unittest.TestCase):
             with self.subTest(path=path):
                 self.assertIn("--expected-head-sha", text)
                 self.assertIn("TRUSTED_VERIFICATION_TARGET_HEAD", text)
+
+    def test_every_real_closeout_consumer_forwards_the_trusted_final_head(self) -> None:
+        for path in CLOSEOUT_CONSUMERS:
+            text = (ROOT / path).read_text(encoding="utf-8")
+            with self.subTest(path=path):
+                self.assertIn("--phase closeout", text)
+                self.assertIn("--expected-head-sha", text)
 
 
 if __name__ == "__main__":
