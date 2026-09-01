@@ -52,7 +52,7 @@
         "RM-VIS-002": "enabled"
       },
       "blocker": "no current adoption blocker; runtime or product changes still require fresh Switchy authority and the existing acceptance/human-evidence gates",
-      "revisit": "re-read current main before project work and preserve SX-DEC-059 finite-delivery authority; adopt only modules consumed by an approved task"
+      "revisit": "re-read current project main, AGENTS.md, current decisions/context, and open PRs before project work; preserve current finite-delivery authority and adopt only modules consumed by an approved task"
     },
     "TETRIS": {
       "repository": "alsdmlals4-eng/Tetris",
@@ -176,8 +176,8 @@
         "runtime_validation": "NOT_RUN_NO_MANIFEST_INSTALLED"
       },
       "evidence": "historical manifest-only attempts #167/#169 were deferred during concurrent planning churn; current Ten Paces later stabilized and the first-five-duel Phase I–VI implementation was authorized and merged, so that churn is historical evidence rather than the current blocker",
-      "blocker": "Base reuse preinstallation remains intentionally unrun; adoption now requires a current approved project task, fresh main + exact Notion + open-PR overlap checks, and an actually consumed module",
-      "revisit": "during the next approved Ten Paces project task, re-read current main, exact Notion state and open PRs, then install or adapt only modules actually consumed by that task while preserving hidden-information and Human/device evidence boundaries"
+      "blocker": "Base reuse preinstallation remains intentionally unrun; adoption requires a current approved project task, fresh project main + current repository owners + open-PR overlap checks, and an actually consumed module",
+      "revisit": "during the next approved Ten Paces project task, re-read current project main, AGENTS.md, ACTIVE_CONTEXT, current repository owners, and open PRs, then install or adapt only modules actually consumed by that task while preserving hidden-information and Human/device evidence boundaries"
     },
     "OMENWARD": {
       "repository": "alsdmlals4-eng/omenward",

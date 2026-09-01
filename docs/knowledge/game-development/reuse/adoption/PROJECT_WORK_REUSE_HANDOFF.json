@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-08-25",
+  "updated_at": "2026-09-02",
   "state": "CURRENT_PROJECT_WORK_HANDOFF",
   "purpose": "Route each future project work session through current project authority, existing reusable modules, bounded project adaptation, truthful verification, and project-to-Base learning handoff.",
   "install_policy": "ONLY_DURING_APPROVED_PROJECT_WORK",
@@ -183,7 +183,7 @@
         "RM-VIS-002"
       ],
       "project_owned_identity": "LIFO cargo routing, switch semantics, sealed layout, BUILD/RUN transition, and logistics puzzle readability remain Switchy-owned.",
-      "next_project_work_action": "Re-read current main and the SX-DEC-059 acceptance/human-evidence gates; reuse grid, route-stack, phase, explainability, replay, UI, and symbol contracts only through an approved finite-delivery task.",
+      "next_project_work_action": "Re-read current project main, AGENTS.md, current decisions/context, and open PRs; preserve the current finite-delivery and acceptance/human-evidence authority, then reuse grid, route-stack, phase, explainability, replay, UI, and symbol contracts only through an approved task.",
       "do_not_flatten_project_identity": true
     },
     "TETRIS": {
@@ -294,7 +294,7 @@
         "RM-VIS-004"
       ],
       "project_owned_identity": "Hidden simultaneous planning, ten-pace resolution, public-information AI, information boundaries, and explainable replay remain Ten Paces-owned.",
-      "next_project_work_action": "Read current main + exact Notion state + open PRs first; the first-five-duel Phase I–VI is already implemented, so reuse hidden-plan, explainability, deterministic replay, UI, symbol, and telegraph contracts only when a current approved project task actually consumes them, without exposing protected hidden information or promoting Human/device evidence.",
+      "next_project_work_action": "Read current project main, AGENTS.md, ACTIVE_CONTEXT, current repository human-facing/structured owners, and open PRs first; reuse hidden-plan, explainability, deterministic replay, UI, symbol, and telegraph contracts only when a current approved project task actually consumes them, without exposing protected hidden information or promoting Human/device evidence.",
       "do_not_flatten_project_identity": true
     },
     "OMENWARD": {
