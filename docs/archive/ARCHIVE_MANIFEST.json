@@ -33,6 +33,58 @@
         "Validate Base v9 RC run 30525963038",
         "Validate Game Project Operating System run 30525958819"
       ]
+    },
+    {
+      "archive_id": "base-archive-2026-07-19-schema-v3-read-only-audit",
+      "classification": "EVIDENCE_RETENTION",
+      "lifecycle": "EVIDENCE_RETENTION",
+      "status": "SUPERSEDED",
+      "original_path": "docs/audits/2026-07-19-base-schema-v3-read-only-audit.md",
+      "current_path": "docs/archive/audits/2026-07-19-base-schema-v3-read-only-audit.md",
+      "content_sha256": "4cc376b1d362482beb9d1fe18f557d9d0fa62bb1ace69f7b8c24be3a9e89551e",
+      "archived_at": "2026-09-01",
+      "superseded_by": [
+        "docs/OPERATING_MODEL.md",
+        "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json",
+        "docs/CHANGELOG.md"
+      ],
+      "reason": "PR #8 전환 전 read-only 비교와 누락 판정을 보존하되, 현재 작업 정본으로 오인되지 않도록 기본 docs 작업면에서 격리한다.",
+      "unique_material_preserved": [
+        "PR #8 전환 전 requirement trace",
+        "당시 GitHub Actions와 미검증 범위"
+      ],
+      "active_authority": false,
+      "implementation_authority": "NONE",
+      "compatibility_consumers": [
+        "docs/archive/audits/2026-07-19-base-schema-v3-final-audit.md"
+      ],
+      "rollback_ref": "118892e18d270359684fee4c750e6bdb513de324",
+      "validation_status": "PASS"
+    },
+    {
+      "archive_id": "base-archive-2026-07-19-schema-v3-final-audit",
+      "classification": "EVIDENCE_RETENTION",
+      "lifecycle": "EVIDENCE_RETENTION",
+      "status": "SUPERSEDED",
+      "original_path": "docs/audits/2026-07-19-base-schema-v3-final-audit.md",
+      "current_path": "docs/archive/audits/2026-07-19-base-schema-v3-final-audit.md",
+      "content_sha256": "76c269f53f71a81b5aeda076522d438fc93da5b833644ce7a1a0c719bbf8ce51",
+      "archived_at": "2026-09-01",
+      "superseded_by": [
+        "docs/OPERATING_MODEL.md",
+        "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json",
+        "docs/CHANGELOG.md"
+      ],
+      "reason": "PR #9/#10의 최종 schema-v3 검증 결과를 보존하되, 과거 완료 조건과 정책을 현재 상태로 오인하지 않도록 기본 docs 작업면에서 격리한다.",
+      "unique_material_preserved": [
+        "PR #8 requirement trace를 통한 무손실 승계 판정",
+        "Actions, Codex visual inspection, cold-start, protection 상태의 당시 증거"
+      ],
+      "active_authority": false,
+      "implementation_authority": "NONE",
+      "compatibility_consumers": [],
+      "rollback_ref": "f0db0b54624a068e950e14234a782716d0d4e281",
+      "validation_status": "PASS"
     }
   ]
 }

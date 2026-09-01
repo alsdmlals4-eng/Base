@@ -19,7 +19,10 @@ ENGINE_UPDATE_REQUIRES_CONCRETE_BENEFIT_OR_BLOCKER
 ENGINE_UPDATE_IN_PLANNED_MAINTENANCE_WINDOW
 ENGINE_MIGRATION_REQUIRES_SEPARATE_REALITY_GATE
 MCP_IS_ADAPTER_CAPABILITY_NOT_ENGINE_SELECTION_AUTHORITY
-NOTION_HUMAN_FACING_CANON
+REPOSITORY_PRIMARY_CANON
+HUMAN_GDD_PDF_DERIVED_VIEW
+V4_NOTION_EXCEPTION_ONLY
+NO_NEW_NOTION_WRITE_BY_DEFAULT
 REPOSITORY_RUNTIME_TRUTH
 WORK_EXECUTION_SURFACE_NOT_CANON
 ```
@@ -112,7 +115,7 @@ Unity/Cocos/기타 엔진의 MCP·CLI·Asset Store·LTS·AI 기능이 좋아졌�
 엔진 교체는 최소 다음을 비교해야 한다.
 
 - 현재 프로젝트의 실제 Scene/Resource/script/test/build/runtime 종속량;
-- Base/Notion/Codex handoff 및 CI/tooling 재작성 비용;
+- Base/project repository/derived human view/Codex handoff 및 CI/tooling 재작성 비용;
 - 2D/3D 제작 속도와 editor 인지부하;
 - AI agent / MCP / CLI의 실제 behavior E2E 성공률;
 - build/export/platform/SDK 생태계;
@@ -135,8 +138,9 @@ Chat
 
 Work
 → 긴 multi-step 조사·분석·감사
-→ 연결된 GitHub/Notion/파일을 넘나드는 비코딩 작업
-→ Base·Notion·문서·표·보고서·검수·인수인계
+→ 연결된 project repository/derived view/파일을 넘나드는 비코딩 작업
+→ Base·repository 문서·표·보고서·검수·인수인계
+→ 실제 적용되는 V4 예외 또는 legacy migration source는 해당 scope에서만
 → 완료까지 이어지는 장기 프로젝트 작업
 
 Codex
@@ -146,14 +150,16 @@ Codex
 
 `Work는 실행 작업면이며 새 정본 저장소가 아니다`.
 
-- `NOTION_HUMAN_FACING_CANON`: 사람이 읽고 비교·수정하는 Project Home, Flow, Visual, GDD, 표는 Notion 정본을 유지한다.
-- `REPOSITORY_RUNTIME_TRUTH`: Markdown/JSON/game data/code/Scene/Resource/test/build/runtime evidence는 GitHub repository가 소유한다.
-- `WORK_EXECUTION_SURFACE_NOT_CANON`: Work 대화/중간 상태만으로 새 결정이나 구현 완료를 정본으로 승격하지 않는다. 필요한 결과는 기존 Notion/GitHub owner에 기록하고 readback한다.
+- `REPOSITORY_PRIMARY_CANON`: 현재 Project Home, Flow, Visual, GDD, 표, Markdown/JSON/game data/code/Scene/Resource/test/build/runtime evidence는 project repository의 owner에 기록한다.
+- `HUMAN_GDD_PDF_DERIVED_VIEW`: 사람용 설명은 exact source SHA와 evidence ceiling을 밝힌 repository-derived PDF 또는 repository-native view로 제공한다. 파생본만 수정해서는 정본이 바뀌지 않는다.
+- `V4_NOTION_EXCEPTION_ONLY` / `NO_NEW_NOTION_WRITE_BY_DEFAULT`: Notion은 explicit approved exception 또는 unique legacy migration source에서만 해당 owner·scope·exit/revisit 조건을 확인해 사용하며, 새 기획·결정·핸드오프의 기본 작업면이 아니다.
+- `REPOSITORY_RUNTIME_TRUTH`: 실제 빌드·런타임·검증 결과는 repository의 actual implementation과 evidence가 소유한다.
+- `WORK_EXECUTION_SURFACE_NOT_CANON`: Work 대화/중간 상태만으로 새 결정이나 구현 완료를 정본으로 승격하지 않는다. 필요한 결과는 repository owner와 exact-SHA 파생 human view에 기록·readback하고, V4 예외가 실제 적용될 때만 별도 destination을 추가 readback한다.
 
 ### 기본 선택
 
 - 짧은 질문·논의·판단: Chat.
-- 여러 단계의 프로젝트 기획·조사·검수·Notion/Base 작업: Work 우선.
+- 여러 단계의 프로젝트 기획·조사·검수·repository/Base 작업: Work 우선. Notion은 실제 적용되는 V4 예외·migration scope에서만 추가로 다룬다.
 - 실제 게임 구현: Codex.
 
 Work에서 시작했더라도 실제 product implementation boundary에 도달하면 기존 GPT→Codex handoff를 유지한다.
@@ -164,7 +170,7 @@ Work에서 시작했더라도 실제 product implementation boundary에 도달�
 - Godot 최신 릴리스: `OBSERVE_ONLY_UNLESS_UPDATE_TRIGGER`.
 - Unity: `FUTURE_CANARY_CANDIDATE`, 현재 포트폴리오 migration authority 없음.
 - ChatGPT Work: `DEFAULT_FOR_LONG_MULTISTEP_NONCODING_PROJECT_WORK`.
-- Notion/GitHub: 기존 DOMAIN_SPLIT_CANON 유지.
+- Project authority: `REPOSITORY_PRIMARY_CANON` + `HUMAN_GDD_PDF_DERIVED_VIEW` 유지. Notion은 `V4_NOTION_EXCEPTION_ONLY` / `NO_NEW_NOTION_WRITE_BY_DEFAULT` 경계를 따른다.
 
 ## 6. 재검토 조건
 

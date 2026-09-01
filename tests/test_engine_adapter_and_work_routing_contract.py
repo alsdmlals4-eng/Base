@@ -17,7 +17,10 @@ class EngineAdapterAndWorkRoutingContractTests(unittest.TestCase):
             "NO_AUTOMATIC_LATEST_FOLLOW",
             "CANARY_BEFORE_ENGINE_BASELINE_PROMOTION",
             "ENGINE_MIGRATION_REQUIRES_SEPARATE_REALITY_GATE",
-            "NOTION_HUMAN_FACING_CANON",
+            "REPOSITORY_PRIMARY_CANON",
+            "HUMAN_GDD_PDF_DERIVED_VIEW",
+            "V4_NOTION_EXCEPTION_ONLY",
+            "NO_NEW_NOTION_WRITE_BY_DEFAULT",
             "REPOSITORY_RUNTIME_TRUTH",
         ):
             self.assertIn(term, policy)
@@ -43,11 +46,14 @@ class EngineAdapterAndWorkRoutingContractTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
 
-    def test_work_does_not_replace_notion_or_repository_authority(self) -> None:
+    def test_work_does_not_replace_the_v4_repository_first_authority(self) -> None:
         policy = (ROOT / "docs/knowledge/game-development/ENGINE_BASELINE_AND_ADAPTER_POLICY.md").read_text(encoding="utf-8")
         self.assertIn("Work는 실행 작업면이며 새 정본 저장소가 아니다", policy)
-        self.assertIn("Notion", policy)
-        self.assertIn("GitHub", policy)
+        self.assertIn("REPOSITORY_PRIMARY_CANON", policy)
+        self.assertIn("HUMAN_GDD_PDF_DERIVED_VIEW", policy)
+        self.assertIn("V4_NOTION_EXCEPTION_ONLY", policy)
+        self.assertNotIn("NOTION_HUMAN_FACING_CANON", policy)
+        self.assertNotIn("DOMAIN_SPLIT_CANON", policy)
 
 
 if __name__ == "__main__":

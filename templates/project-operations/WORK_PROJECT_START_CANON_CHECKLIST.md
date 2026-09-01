@@ -137,7 +137,7 @@ PROJECT_START_CANON_CHECKLIST:
           disposition: ADOPT | ADAPT | REJECT
       reason_not_applicable: # L0 only
       blocked_sources: []
-    receipt_validation_command: python tools/validate_work_contract_receipt.py --receipt <repository-owned-json-receipt>
+    receipt_validation_command: python <resolved-Base-root-at-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <project-repository-owned-json-receipt>
     player_promise:
     pointed_fun:
     core_loop:
@@ -232,7 +232,7 @@ PROJECT_START_CANON_CHECKLIST:
 
 `GENRE_WORLD_VISUAL_BENCHMARK_RECEIPT_REQUIRED` · `MANDATORY_BENCHMARK_REVERSE_ENGINEERING_PREFLIGHT` · `BENCHMARK_PREFLIGHT_BEFORE_WORK_REQUIRED`
 
-모든 L1+ 프로젝트 작업은 fresh-read 뒤 exact repository revision의 같은 책임·실제 consumer를 먼저 비교한다. 기획·시스템·서사·Art Direction·UI/UX·에셋처럼 플레이어가 보는 의미를 material하게 바꾸는 경우에는 `genre_and_subgenre`, `world_and_setting_tone`, `visual_style_and_composition_anchor`도 current owner와 actual consumer에서 복원한다. benchmark는 원출처·관찰 사실·현재 프로젝트와의 차이·`ADOPT / ADAPT / REJECT`만 남기며, 다른 작품의 설정·그림체·구도·고정 버튼 목록을 복사하거나 evidence 없는 추측으로 채우지 않는다. `benchmark_preflight_state`가 `PASS` 또는 freshness가 유지된 `REUSED_EVIDENCE`가 아니면 새 설계·제작·구현으로 들어가지 않는다.
+모든 L1+ 프로젝트 작업은 fresh-read 뒤 exact repository revision의 같은 책임·실제 consumer를 먼저 비교한다. 기획·시스템·서사·Art Direction·UI/UX·에셋처럼 플레이어가 보는 의미를 material하게 바꾸는 경우에는 `genre_and_subgenre`, `world_and_setting_tone`, `visual_style_and_composition_anchor`도 current owner와 actual consumer에서 복원한다. benchmark는 원출처·관찰 사실·현재 프로젝트와의 차이·`ADOPT / ADAPT / REJECT`만 남기며, 다른 작품의 설정·그림체·구도·고정 버튼 목록을 복사하거나 evidence 없는 추측으로 채우지 않는다. `benchmark_preflight_state`가 `PASS` 또는 freshness가 유지된 `REUSED_EVIDENCE`가 아니면 새 설계·제작·구현으로 들어가지 않는다. receipt validator는 project-relative 도구 경로를 추측하지 않고, adapter/route validation으로 확인한 exact Base pin의 Base root에서 실행한다.
 
 L0 기계 수정이나 이 형식의 판단이 전혀 관련 없는 작업은 `NOT_APPLICABLE`과 이유를 남긴다. 현재 source가 읽히지 않으면 기억·대화·파일명으로 채우지 않고 `BLOCKED_UNVERIFIED`로 둔다.
 

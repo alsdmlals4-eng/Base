@@ -39,6 +39,12 @@
 
 백업·보류·제거 후보와 전체 skills 폴더는 기본 읽기에서 제외한다.
 
+### L1+ 시작 receipt gate
+
+`PROJECT_START_CANON_CHECKLIST_REQUIRED`: L1+ 작업은 Project AGENTS·exact implementation·`skills/PROJECT_BASE_ADAPTER.json`의 Base pin을 fresh-read·validation한 뒤 `WORK_PROJECT_START_CANON_CHECKLIST.md`를 먼저 실행한다. project repository가 소유한 `benchmark_preflight_receipt`와 context hygiene inventory를 작성하고, adapter validation으로 확인한 exact Base checkout에서 `python <resolved-Base-root>/tools/validate_work_contract_receipt.py --receipt <project-repository-owned-receipt.json>`을 실행한다. 실패하거나 Base root/pin을 해석하지 못하면 `BLOCKED_UNVERIFIED`로 두며 기획·제작·구현을 진행하지 않는다.
+
+이 gate는 현재 project consumer에 맞는 ADOPT/ADAPT/REJECT 판단과 안전한 정리만 요구한다. Base가 특정 게임의 장르·세계관·메뉴·버튼·wireframe·수치를 고정하는 규칙은 아니다.
+
 ## 3. 요청·Skill 라우팅
 
 ```yaml

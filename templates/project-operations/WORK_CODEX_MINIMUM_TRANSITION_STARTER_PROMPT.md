@@ -50,6 +50,8 @@ CHECKLIST_IS_ROUTING_RECEIPT_NOT_SECOND_CANON
 
 안전한 read-only bootstrap·Git remote refresh 뒤, 새 기획·에셋 production·Codex mutation 전에 `WORK_PROJECT_START_CANON_CHECKLIST.md`를 실행해 다음을 확인해.
 
+`PINNED_BASE_RECEIPT_VALIDATION_REQUIRED`: 모든 L1+ 작업은 Project `AGENTS.md`·exact implementation·`skills/PROJECT_BASE_ADAPTER.json`을 fresh-read하고 adapter/route validation을 먼저 통과한다. 그 뒤 project repository가 소유한 `benchmark_preflight_receipt`와 scope-limited hygiene inventory를 작성해, adapter validation으로 확인된 exact Base pin과 같은 checkout에서 `python <resolved-Base-root>/tools/validate_work_contract_receipt.py --receipt <project-repository-owned-receipt.json>`을 실행한다. Base root/pin/receipt를 해석하지 못하거나 validator가 nonzero이면 `BLOCKED_UNVERIFIED`이며, `READY_AFTER_CORRECTION`, 새 Slice, 에셋 production, Codex mutation으로 진행하지 않는다. 이 Gate는 현재 프로젝트 consumer에 맞는 benchmark·안전한 정리만 확인하며 프로젝트별 장르·버튼·세계관·wireframe·soft-coded 값을 고정하지 않는다.
+
 ```text
 핵심 재미 / player promise / core loop
 → 핵심·지원 시스템과 actual consumer

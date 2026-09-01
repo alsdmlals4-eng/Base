@@ -1,0 +1,81 @@
+{
+  "work_level": "L3",
+  "benchmark_preflight_receipt": {
+    "state": "PASS",
+    "entries": [
+      {
+        "source_and_evidence": "781dfe8faf0da26c04abb437ae68f94db2cb106b; skills/SKILL_REGISTRY.json, skills/BASE_SHARED_SKILL_ROUTES.json, and generated artifact checks were read from the exact Base worktree.",
+        "observed_pattern": "Active Skills are registry-routed and project-only facts enter through a pinned adapter; the work-contract validator already rejects empty L1+ benchmark evidence and unsafe removal claims.",
+        "project_fit_and_difference": "Adopt the same single-owner routing in every project without copying Base Skill bodies or forcing project-specific UI, setting, genre, or values.",
+        "disposition": "ADOPT"
+      },
+      {
+        "source_and_evidence": "docs/operations/BASE_REPOSITORY_INTEGRITY_AUDIT_2026-07-30.md and docs/archive/ARCHIVE_MANIFEST.json record the existing hash-and-rollback archive lifecycle.",
+        "observed_pattern": "Historical material leaves default routing but retains a manifest, original-path provenance, destination content hash, and rollback reference.",
+        "project_fit_and_difference": "Adapt this to two schema-v3 audit records only; keep active templates, schemas, prompts, and compatibility consumers outside this cleanup scope.",
+        "disposition": "ADAPT"
+      },
+      {
+        "source_and_evidence": "Direct reference scans found active tests or compatibility consumers for v7/v8 prompts, v1 schemas, and the project execution compatibility appendix.",
+        "observed_pattern": "Versioned names are not sufficient evidence of obsolescence when a current consumer or regression fixture remains.",
+        "project_fit_and_difference": "Reject broad age/name deletion and retain these items until a separately scoped consumer-zero audit proves a safe disposition.",
+        "disposition": "REJECT"
+      }
+    ]
+  },
+  "context_configuration_hygiene": {
+    "scope": "Base active skill and project-start routing including the default Work-to-Codex starter, the active engine baseline/adapter workspace-authority explanation, and the two schema-v3 historical audit documents only; unrelated open PRs, project repositories, runtime assets, and compatibility consumers are excluded.",
+    "inventory": [
+      {
+        "path": "skills/SKILL_REGISTRY.json",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "Current Base active Skill registry; 30 registered ACTIVE paths were resolved in the exact worktree.",
+        "references_and_consumers": "docs/generated/BASE_ACTIVE_SKILLS.md, package integrity tests, entrypoint routing, and generated artifact checks."
+      },
+      {
+        "path": "skills/BASE_SHARED_SKILL_ROUTES.json",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "Current Base shared project-extension route registry.",
+        "references_and_consumers": "Base shared adapter contract, project routing policy, project adapter tests, and two resolved shared route paths."
+      },
+      {
+        "path": "docs/knowledge/game-development/ENGINE_BASELINE_AND_ADAPTER_POLICY.md",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "Current engine-neutral core and Godot adapter policy, read with its direct engine-routing regression test.",
+        "references_and_consumers": "P06/P08 routing documents and tests/test_engine_adapter_and_work_routing_contract.py; V3 workspace authority tokens were removed because the active V4 workspace contract supersedes them."
+      },
+      {
+        "path": "templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "Current L1+ project startup checklist and receipt contract template.",
+        "references_and_consumers": "Current router, Codex transition prompts, five-phase contract, local visual delivery profile, and checklist contract tests."
+      },
+      {
+        "path": "templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_STARTER_PROMPT.md",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "Default Work-to-Codex starter identified by WORK_EXECUTION_EVIDENCE_IDENTITY_INTEGRITY.md.",
+        "references_and_consumers": "Current router, local visual starter, minimal restart contracts, and the project-start receipt gate regression; it now requires the same adapter-pinned validator before mutation."
+      },
+      {
+        "path": "templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v7.md",
+        "classification": "COMPATIBILITY",
+        "owner_or_provenance": "Explicit superseded compatibility prompt retained by the current v9 path.",
+        "references_and_consumers": "v9 prompt, migration documentation, and regression tests reference it."
+      },
+      {
+        "path": "docs/audits/2026-07-19-base-schema-v3-read-only-audit.md",
+        "classification": "ARCHIVE",
+        "owner_or_provenance": "Historical PR #8 pre-transition audit with unique read-only comparison evidence.",
+        "references_and_consumers": "Referenced by the paired final audit before archive link correction; no active runtime, Skill, or current owner consumer.",
+        "removal_proposed": false
+      },
+      {
+        "path": "docs/audits/2026-07-19-base-schema-v3-final-audit.md",
+        "classification": "ARCHIVE",
+        "owner_or_provenance": "Historical PR #9/#10 final verification evidence.",
+        "references_and_consumers": "Referenced only by historical changelog context; no active runtime, Skill, or current owner consumer.",
+        "removal_proposed": false
+      }
+    ]
+  }
+}

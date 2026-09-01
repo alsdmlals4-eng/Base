@@ -27,7 +27,7 @@
 
 ### 기계 검증 work-contract receipt (L1+ 필수)
 
-아래 repository-owned JSON receipt를 실제 값으로 작성하고, 새 설계·제작·구현 전에 `python tools/validate_work_contract_receipt.py --receipt <receipt.json>`을 실행한다. `PASS`/`REUSED_EVIDENCE`는 비어 있는 표나 추측으로 통과할 수 없고, `NOT_APPLICABLE`은 L0의 순수 기계 수정만 허용한다.
+아래 repository-owned JSON receipt를 실제 값으로 작성하고, 새 설계·제작·구현 전에 `python <resolved-Base-root-at-current-Base-or-project-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <receipt.json>`을 실행한다. `PASS`/`REUSED_EVIDENCE`는 비어 있는 표나 추측으로 통과할 수 없고, `NOT_APPLICABLE`은 L0의 순수 기계 수정만 허용한다. project receipt는 project repository에 두고, Base pin이나 tool root를 확인할 수 없으면 `BLOCKED_UNVERIFIED`로 둔다.
 
 ```json
 {

@@ -481,6 +481,27 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
             self.assertIn("managing-project-intake-and-work-contract", text)
             self.assertIn("사용자", text)
 
+    def test_l1_plus_project_entrypoints_fail_closed_on_missing_pinned_receipt(self) -> None:
+        """Every installed project entrypoint must expose the same receipt gate."""
+        for relative in (
+            "templates/project-operations/PROJECT_START_HERE.md",
+            "templates/project-operations/AI_WORKFLOW.md",
+            "templates/project-operations/WORK_PROJECT_EXECUTION_CURRENT_ROUTER.md",
+            "templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_STARTER_PROMPT.md",
+            "templates/project-operations/.agents/skills/base-project-router/SKILL.md",
+        ):
+            with self.subTest(entrypoint=relative):
+                text = (ROOT / relative).read_text(encoding="utf-8")
+                for token in (
+                    "WORK_PROJECT_START_CANON_CHECKLIST.md",
+                    "PROJECT_BASE_ADAPTER.json",
+                    "benchmark_preflight_receipt",
+                    "validate_work_contract_receipt.py",
+                    "<resolved-Base-root",
+                    "BLOCKED_UNVERIFIED",
+                ):
+                    self.assertIn(token, text)
+
 
 if __name__ == "__main__":
     unittest.main()

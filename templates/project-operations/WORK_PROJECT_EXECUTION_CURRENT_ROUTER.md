@@ -66,6 +66,8 @@ Project의 기존 Stage·Task·Decision 이름은 유지하고 `FIVE_PHASE_PROJE
 
 `WORK_PROJECT_START_CANON_CHECKLIST.md`로 다음을 확인한다.
 
+`PROJECT_START_CANON_CHECKLIST_REQUIRED`: 모든 L1+ 작업은 checklist의 `benchmark_preflight_receipt`와 scope-limited hygiene inventory를 project repository에 남긴다. `skills/PROJECT_BASE_ADAPTER.json` adapter/route validation으로 확인한 exact Base pin과 같은 checkout에서 `python <resolved-Base-root>/tools/validate_work_contract_receipt.py --receipt <project-repository-owned-receipt.json>`이 PASS 또는 material drift 없는 REUSED_EVIDENCE인지 확인하기 전에는 새 기획·시안·구현으로 들어가지 않는다. Base root 또는 pin을 확인하지 못하면 `BLOCKED_UNVERIFIED`다.
+
 ```text
 핵심 재미 / player promise / core-session-meta loop
 핵심·지원 시스템 / actual consumer

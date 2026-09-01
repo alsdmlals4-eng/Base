@@ -132,6 +132,37 @@ class V9GovernanceDocumentTests(unittest.TestCase):
         for term in ("DEC-2026-07-30-001", archive_path, "ARCHIVE_HISTORY", "PR #72"):
             self.assertIn(term, audit)
 
+    def test_schema_v3_audits_are_archived_as_non_authoritative_evidence(self) -> None:
+        manifest = json.loads(read("docs/archive/ARCHIVE_MANIFEST.json"))
+        records = {record["archive_id"]: record for record in manifest["records"]}
+        expected = {
+            "base-archive-2026-07-19-schema-v3-read-only-audit": (
+                "docs/audits/2026-07-19-base-schema-v3-read-only-audit.md",
+                "docs/archive/audits/2026-07-19-base-schema-v3-read-only-audit.md",
+            ),
+            "base-archive-2026-07-19-schema-v3-final-audit": (
+                "docs/audits/2026-07-19-base-schema-v3-final-audit.md",
+                "docs/archive/audits/2026-07-19-base-schema-v3-final-audit.md",
+            ),
+        }
+
+        for archive_id, (original_path, archive_path) in expected.items():
+            with self.subTest(archive_id=archive_id):
+                self.assertFalse((ROOT / original_path).exists(), original_path)
+                archived = ROOT / archive_path
+                self.assertTrue(archived.is_file(), archive_path)
+                record = records[archive_id]
+                self.assertEqual(record["classification"], "EVIDENCE_RETENTION")
+                self.assertEqual(record["original_path"], original_path)
+                self.assertEqual(record["current_path"], archive_path)
+                self.assertFalse(record["active_authority"])
+                self.assertEqual(record["implementation_authority"], "NONE")
+                body = archived_body(archived.read_text(encoding="utf-8"))
+                self.assertEqual(
+                    record["content_sha256"],
+                    hashlib.sha256(body.encode("utf-8")).hexdigest(),
+                )
+
     def test_skills_readme_is_a_registry_router_not_a_manual_legacy_skill_table(self) -> None:
         readme = read("skills/README.md")
 
