@@ -68,6 +68,31 @@ class ReuseFirstPreflightEnforcementTests(unittest.TestCase):
         self.assertTrue(exit_gate["promotion_is_not_automatic"])
         self.assertEqual(exit_gate["required_fields"], handoff["exit_handoff_fields"])
 
+    def test_project_handoff_resolves_mutable_state_from_current_authority(self) -> None:
+        handoff = json.loads(
+            read(
+                "docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json"
+            )
+        )
+        entry_rules = handoff["entry_rules"]
+        self.assertTrue(
+            entry_rules[
+                "project_specific_next_action_uses_current_project_authority"
+            ]
+        )
+        self.assertTrue(
+            entry_rules["legacy_workspace_requires_current_project_authority"]
+        )
+
+        switchy_action = handoff["projects"]["SWITCHY"]["next_project_work_action"]
+        ten_paces_action = handoff["projects"]["TEN_PACES"]["next_project_work_action"]
+
+        self.assertIn("current project authority", switchy_action.lower())
+        self.assertNotIn("SX-DEC-", switchy_action)
+        self.assertIn("current project authority", ten_paces_action.lower())
+        self.assertNotIn("exact Notion state", ten_paces_action)
+        self.assertIn("migration/history", ten_paces_action)
+
     def test_gate_does_not_force_unbounded_research_or_project_adoption(self) -> None:
         intake = read("skills/managing-project-intake-and-work-contract/SKILL.md")
         agents = read("AGENTS.md")
