@@ -1,0 +1,52 @@
+name: Apply current project handoff regression update
+
+on:
+  push:
+    branches:
+      - fix/current-project-handoff-routing-20260902
+    paths:
+      - .github/workflows/apply-current-project-handoff-regression-update.yml
+
+permissions:
+  contents: write
+
+jobs:
+  update-and-verify:
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/current-project-handoff-routing-20260902
+          fetch-depth: 0
+      - name: Replace retired authority assertion
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("tests/test_reuse_adoption_profiles.py")
+          text = path.read_text(encoding="utf-8")
+          old = '        self.assertIn("exact Notion", ten["revisit"])\n'
+          new = '        self.assertNotIn("Notion", ten["revisit"])\n        self.assertIn("current project main", ten["revisit"].lower())\n        self.assertIn("current repository owners", ten["revisit"].lower())\n'
+          if text.count(old) != 1:
+              raise SystemExit("stale Ten Paces assertion anchor missing or ambiguous")
+          path.write_text(text.replace(old, new), encoding="utf-8")
+          PY
+      - name: Verify focused and evidence suites
+        shell: bash
+        run: |
+          python -m unittest tests/test_reuse_first_preflight_enforcement.py tests/test_reuse_adoption_profiles.py -v
+          python -m py_compile tests/test_reuse_first_preflight_enforcement.py tests/test_reuse_adoption_profiles.py
+          python -m json.tool docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json > /dev/null
+          python -m json.tool docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json > /dev/null
+      - name: Remove one-shot workflow and commit final diff
+        shell: bash
+        run: |
+          rm .github/workflows/apply-current-project-handoff-regression-update.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add tests/test_reuse_adoption_profiles.py .github/workflows/apply-current-project-handoff-regression-update.yml
+          git commit -m "test: align handoff regression with repository authority"
+          test "$(git diff --name-only origin/main...HEAD | sort | tr '\n' ' ')" = "docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json tests/test_reuse_adoption_profiles.py tests/test_reuse_first_preflight_enforcement.py "
+          git push origin HEAD:fix/current-project-handoff-routing-20260902
