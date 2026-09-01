@@ -86,7 +86,6 @@ class P08AiOperationsContractTests(unittest.TestCase):
         ):
             self.assertIn(term, policy)
 
-
     def test_intake_ai_solution_layer_selection_routes_before_build(self) -> None:
         intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
         capability = (ROOT / "docs/CAPABILITY_COMPOSITION_MAP.md").read_text(encoding="utf-8")
@@ -104,6 +103,20 @@ class P08AiOperationsContractTests(unittest.TestCase):
             "AGI_ASI_AWARENESS_ONLY",
         ):
             self.assertIn(term, capability)
+
+    def test_intake_pm_closeout_binds_recorded_evidence_to_independent_git_truth(self) -> None:
+        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        for term in (
+            "PROJECT_WORK_KANBAN_CHECKLIST",
+            "--phase start",
+            "--phase resume",
+            "--phase closeout",
+            "--expected-source-sha <fresh-read-project-source-sha>",
+            "--expected-head-sha <fresh-read-final-head-sha>",
+            "TRUSTED_VERIFICATION_TARGET_HEAD",
+            "receipt의 `verified_head_sha`를 기대값으로 복사하지 않고",
+        ):
+            self.assertIn(term, intake)
 
 
 if __name__ == "__main__":
