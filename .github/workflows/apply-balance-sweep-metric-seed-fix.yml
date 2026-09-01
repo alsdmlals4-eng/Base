@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   apply-and-verify:
-    if: github.actor != 'github-actions[bot]'
+    if: ${{ github.actor != 'github-actions[bot]' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,57 +27,16 @@ jobs:
 
           source_path = Path("tools/reuse_modules/balance_scenario_batch_simulator.py")
           source = source_path.read_text(encoding="utf-8")
-          old_source = '''            seed_sets.append({int(run["seed"]) for run in grouped[variant]})
-            series.append(
-'''
-          new_source = '''            variant_seed_set = {int(run["seed"]) for run in grouped[variant]}
-            metric_seed_set = {
-                int(run["seed"])
-                for run in grouped[variant]
-                if metric in run.get("metrics", {})
-            }
-            if metric_seed_set != variant_seed_set:
-                raise ValueError(
-                    f"sweep metric {metric!r} must be present for every seed "
-                    f"in variant {variant!r}"
-                )
-            seed_sets.append(metric_seed_set)
-            series.append(
-'''
+          old_source = "            seed_sets.append({int(run[\"seed\"]) for run in grouped[variant]})\n            series.append(\n"
+          new_source = "            variant_seed_set = {int(run[\"seed\"]) for run in grouped[variant]}\n            metric_seed_set = {\n                int(run[\"seed\"])\n                for run in grouped[variant]\n                if metric in run.get(\"metrics\", {})\n            }\n            if metric_seed_set != variant_seed_set:\n                raise ValueError(\n                    f\"sweep metric {metric!r} must be present for every seed \"\n                    f\"in variant {variant!r}\"\n                )\n            seed_sets.append(metric_seed_set)\n            series.append(\n"
           if source.count(old_source) != 1:
               raise SystemExit("source patch anchor missing or ambiguous")
           source_path.write_text(source.replace(old_source, new_source), encoding="utf-8")
 
           test_path = Path("tests/test_balance_scenario_batch_source_patterns.py")
           tests = test_path.read_text(encoding="utf-8")
-          anchor = '''    def test_strategy_baselines_never_become_player_skill_or_difficulty_truth(self) -> None:
-'''
-          new_test = '''    def test_parameter_sweep_rejects_metric_missing_from_any_seed(self) -> None:
-        module = load_module()
-        runs = make_runs()
-        for run in runs:
-            if (run["variant"], run["seed"]) in {("hp_30", 2), ("hp_75", 1)}:
-                run["metrics"] = {}
-        manifest = {
-            "schema_version": 1,
-            "project_id": "TEST",
-            "runs": runs,
-            "parameter_sweeps": [
-                {
-                    "parameter": "enemy_hp",
-                    "metric": "score",
-                    "points": [
-                        {"value": 30, "variant": "hp_30"},
-                        {"value": 75, "variant": "hp_75"},
-                    ],
-                }
-            ],
-        }
-
-        with self.assertRaisesRegex(ValueError, "present for every seed"):
-            module.analyze_manifest(manifest)
-
-'''
+          anchor = "    def test_strategy_baselines_never_become_player_skill_or_difficulty_truth(self) -> None:\n"
+          new_test = "    def test_parameter_sweep_rejects_metric_missing_from_any_seed(self) -> None:\n        module = load_module()\n        runs = make_runs()\n        for run in runs:\n            if (run[\"variant\"], run[\"seed\"]) in {(\"hp_30\", 2), (\"hp_75\", 1)}:\n                run[\"metrics\"] = {}\n        manifest = {\n            \"schema_version\": 1,\n            \"project_id\": \"TEST\",\n            \"runs\": runs,\n            \"parameter_sweeps\": [\n                {\n                    \"parameter\": \"enemy_hp\",\n                    \"metric\": \"score\",\n                    \"points\": [\n                        {\"value\": 30, \"variant\": \"hp_30\"},\n                        {\"value\": 75, \"variant\": \"hp_75\"},\n                    ],\n                }\n            ],\n        }\n\n        with self.assertRaisesRegex(ValueError, \"present for every seed\"):\n            module.analyze_manifest(manifest)\n\n"
           if tests.count(anchor) != 1:
               raise SystemExit("test insertion anchor missing or ambiguous")
           test_path.write_text(tests.replace(anchor, new_test + anchor), encoding="utf-8")
@@ -87,14 +46,13 @@ jobs:
         run: |
           python -m unittest tests/test_balance_scenario_batch_source_patterns.py -v
           python -m py_compile tools/reuse_modules/balance_scenario_batch_simulator.py tests/test_balance_scenario_batch_source_patterns.py
-      - name: Remove one-shot workflow and commit exact two-file change
+      - name: Remove one-shot workflow and commit exact final diff
         shell: bash
         run: |
           rm .github/workflows/apply-balance-sweep-metric-seed-fix.yml
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add tools/reuse_modules/balance_scenario_batch_simulator.py tests/test_balance_scenario_batch_source_patterns.py .github/workflows/apply-balance-sweep-metric-seed-fix.yml
-          git diff --cached --exit-code -- .github/workflows/apply-balance-sweep-metric-seed-fix.yml || true
-          test "$(git diff --cached --name-only | sort | tr '\n' ' ')" = "tests/test_balance_scenario_batch_source_patterns.py tools/reuse_modules/balance_scenario_batch_simulator.py "
+          test "$(git diff --cached --name-only | sort | tr '\n' ' ')" = ".github/workflows/apply-balance-sweep-metric-seed-fix.yml tests/test_balance_scenario_batch_source_patterns.py tools/reuse_modules/balance_scenario_batch_simulator.py "
           git commit -m "fix: require sweep metric coverage for every seed"
           git push origin HEAD:fix/balance-sweep-metric-seed-integrity-20260902
