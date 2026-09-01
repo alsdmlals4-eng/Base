@@ -106,12 +106,14 @@ class PMCloseoutHeadAndActiveConsumerTests(unittest.TestCase):
                 self.assertIn("FINAL_PR_HEAD_CI_REVIEW_REQUIRED", text)
                 self.assertIn("제품·정본·consumer·검증 evidence", text)
 
-    def test_every_real_closeout_consumer_forwards_the_trusted_final_head(self) -> None:
-        for path in CLOSEOUT_CONSUMERS:
+    def test_every_real_closeout_consumer_forwards_subject_and_tail_contract(self) -> None:
+        for path in (*ACTIVE_CONSUMERS, *CLOSEOUT_CONSUMERS):
             text = (ROOT / path).read_text(encoding="utf-8")
             with self.subTest(path=path):
                 self.assertIn("--phase closeout", text)
                 self.assertIn("--expected-head-sha", text)
+                self.assertIn("VERIFIED_SUBJECT_HEAD", text)
+                self.assertIn("FINAL_PR_HEAD_CI_REVIEW_REQUIRED", text)
 
 
 if __name__ == "__main__":
