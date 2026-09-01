@@ -161,7 +161,9 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
         self.assertIn("current approved project task", ten["blocker"])
         self.assertNotIn("concurrent planning main", ten["blocker"])
         self.assertIn("next approved Ten Paces project task", ten["revisit"])
-        self.assertIn("exact Notion", ten["revisit"])
+        self.assertNotIn("Notion", ten["revisit"])
+        self.assertIn("current project main", ten["revisit"].lower())
+        self.assertIn("current repository owners", ten["revisit"].lower())
 
     def test_little_boat_defer_remains_and_omenward_defer_is_superseded(self) -> None:
         matrix = load_matrix()
