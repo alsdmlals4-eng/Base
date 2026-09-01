@@ -122,10 +122,12 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         self.assertIn("의미 있는 선택 없이 빠른 보상만 반복", package)
         self.assertIn("외부 자료에서 정의되지 않은 DDD", package)
 
-    def test_benchmark_and_work_sequence_are_integrated_modes_not_new_skills(self) -> None:
+    def test_benchmark_work_sequence_and_feature_contract_routing_are_integrated_modes(self) -> None:
         intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
         concepts = (ROOT / "skills/analyzing-and-refining-game-concepts/SKILL.md").read_text(encoding="utf-8")
         registry = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
+        decomposition = (ROOT / "skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md").read_text(encoding="utf-8")
+        sequence_plan = (ROOT / "templates/planning/EXECUTION_SEQUENCE_PLAN.md").read_text(encoding="utf-8")
 
         self.assertIn("`decompose-and-sequence`", intake)
         self.assertIn("BLOCKS / INFORMS / USES_OUTPUT / SHARES_RESOURCE / VALIDATES", intake)
@@ -136,6 +138,9 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         for tag in (
             "work-decomposition",
             "dependency-map",
+            "feature-code-contract-modularity",
+            "feature-contract-change",
+            "feature-boundary-change",
             "benchmark-research",
             "player-reviews",
             "playtest-design",
@@ -151,6 +156,10 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
             "templates/planning/GAME_BENCHMARK_PLAYER_EVIDENCE.md",
         ):
             self.assertTrue((ROOT / path).is_file(), path)
+
+        self.assertIn("작업 분해가 필요하지 않은 작은 기능을 포함해 `references/work-decomposition-and-sequencing.md`", intake)
+        self.assertIn("## 2.2 기능별 코드·계약 모듈화", decomposition)
+        self.assertIn("## 기능별 코드·계약 경계", sequence_plan)
 
     def test_benchmark_reverse_engineering_pipeline_is_required_check_consumed(self) -> None:
         guide = (ROOT / "docs/BENCHMARKING_REFERENCE_GUIDE.md").read_text(encoding="utf-8")
