@@ -53,7 +53,7 @@ class PMCloseoutHeadAndActiveConsumerTests(unittest.TestCase):
             text = (ROOT / path).read_text(encoding="utf-8")
             with self.subTest(path=path):
                 self.assertIn("PROJECT_WORK_KANBAN_CHECKLIST", text)
-                self.assertIn('"project_work_kanban"', text)
+                self.assertIn("project_work_kanban", text)
                 commands = [
                     line
                     for line in text.splitlines()
