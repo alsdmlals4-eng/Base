@@ -194,3 +194,86 @@ rollback:
 - 변경이 있으면 exact diff·HEAD 또는 merged main·rollback이 연결됐다.
 
 그 외에는 실제 상태에 따라 `VERIFY_REVIEW`, `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED` 또는 `DEFERRED`를 유지한다.
+
+## 10. 실행 가능한 PM receipt와 갱신 Gate
+
+`PM_EXECUTION_GATE_REQUIRED` · `PM_CHECKLIST_VISIBLE_AT_START_TRANSITION_CLOSEOUT`
+
+책임 원본은 `docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md` §14다. `tools/project_work_tracking.py`는 위 카드의 **검증·Markdown 출력 모듈**이며 별도 PM 상태 저장소가 아니다. 기존 project/Base work-contract JSON receipt에 **root `project_work_kanban`**을 추가한다. `PROJECT_START_CANON_CHECKLIST` YAML 아래의 예시를 JSON의 중첩 root로 복사하지 않는다. `benchmark_preflight_receipt`·`context_configuration_hygiene`와 형제 필드로 둔다.
+
+### 최소 데이터 투영
+
+아래는 형식 설명이다. 꺾쇠 placeholder는 실제 값으로 바꾸며 빈 틀은 실행 Gate를 통과하지 않는다. 별도 receipt 파일을 중복 생성하지 말고 프로젝트가 현재 소유한 receipt를 확장한다.
+
+```json
+{
+  "project_work_kanban": {
+    "goal_or_slice_issue_ref": "<current approved Goal issue or repository locator>",
+    "source_main_sha": "<40-character fresh-read source SHA>",
+    "work_item_refs": ["TASK-01"],
+    "active_work_item_ref": "TASK-01",
+    "next_action": "<next safe action within approved scope>",
+    "work_items": [{
+      "work_item_id": "TASK-01",
+      "title": "<observable outcome>",
+      "status": "IN_PROGRESS",
+      "canon_owner": "<existing canonical path>",
+      "actual_consumers": ["<actual consumer>"],
+      "depends_on": [],
+      "acceptance_criteria": ["AC-01"],
+      "required_evidence": ["E2_TEST"],
+      "checklist": [{"id": "AC-01", "text": "<condition, action, result>", "status": "NOT_RUN"}],
+      "verification": [{"level": "E2_TEST", "status": "NOT_RUN", "evidence": []}],
+      "next_action": "<first verification or implementation step>"
+    }]
+  }
+}
+```
+
+`work_items`는 **현재 승인 Goal의 필수 독립 작업**이다. `work_item_refs`와 ID 집합이 정확히 일치해야 한다. 선택적 미래 기능을 섞거나 미완료 필수 항목을 지워 분모를 줄이지 않는다. 단일 작업도 전체 적용 checklist를 포함한다. 기존 작업이 있으면 ID·Issue·owner를 재사용하고, 독립 Issue가 필요 없는 작은 단계는 해당 카드 안에 둔다.
+
+`acceptance_criteria`는 checklist의 필수 ID 목록이다. 문장·조건은 해당 checklist의 `text`에 기록한다. 모든 PASS에는 실제 `evidence` locator 목록을 둔다. 선택적 N/A에는 `reason`이 필요하고 필수 AC·필수 evidence는 N/A로 면제할 수 없다. `required_evidence`는 실제 승인 계약에서 선택하며, UI 작업에서 테스트만 넣어 runtime·화면 요구를 지우지 않는다. 모듈은 승인 원문의 완전성이나 증거 진실성을 대신 판단하지 않는다.
+
+DONE 추가 필드: `verified_head_sha`(실제 검증한 40자 HEAD), `repository_readback: PASS`, 비어 있지 않은 `readback_evidence`, `rollback`, 정수 `must_fix_remaining: 0`, `blocked_unverified_remaining: 0`, `user_decision_required_remaining: 0`. 해당 작업의 적용 checklist와 필수 evidence 모두 PASS여야 한다. evidence가 외부 Artifact라면 만료 전에 방법·결과·exact 대상·장기 보존 근거를 기존 Issue/PR에 남긴다.
+
+### 실행·재개·마감
+
+```text
+project AGENTS / approved owner / actual implementation fresh-read
+→ existing Goal issue + required remaining work reconciliation
+→ same repository receipt에 현재 ID·scope·evidence·next action 갱신
+→ adapter가 승인한 exact Base checkout 확인
+→ validate_work_contract_receipt.py --receipt <receipt> --phase start --expected-source-sha <fresh-read-source-sha> --render-markdown
+→ 사용자에게 전체 적용 작업 목록·현재 항목·완료/필수 수·차단·다음 행동 표시
+→ 한 작업 수행·검증·owner readback
+→ 같은 receipt와 기존 Issue/card 갱신
+→ 다음 작업 선택 전 --phase resume으로 재검사
+→ 모든 필수 작업 검증 뒤 --phase closeout으로 마감 검사
+```
+
+기존 CLI의 기본 phase가 `start`이므로 PM을 활성화하는 opt-in flag가 없다. L1+에서 PM 필드 누락, 잘못된 진행률, 미완료 dependency, WIP 초과, evidence 없는 PASS/DONE은 nonzero exit다. `BLOCKED_UNVERIFIED` benchmark는 올바른 실패 기록일 수 있지만 실행 허가는 아니다. `validate_receipt()` Python API는 **과거 구조 검사 호환용**이고 실행 승인에 사용하지 않는다. 실행 consumer는 CLI 또는 `validate_execution_receipt()`를 쓴다.
+
+오래된 receipt에 PM 필드가 없으면 `PM_RECONCILIATION_REQUIRED`로 현재 승인 작업을 복원하고 receipt bookkeeping만 교정한 뒤 재실행한다. 이 교정은 새로운 제품 기능을 시작하는 권한이 아니다. 완전히 차단된 상태도 Issue와 receipt에 보존하되 실행 Gate는 통과시키지 않는다. 독립 작업이 준비됐으면 그 작업을 active로 선택해 계속한다.
+
+시작/재개에는 IN_PROGRESS 1개, VERIFY_REVIEW 최대 1개가 기본이다. 프로젝트의 명시적 다른 WIP 계약은 별도 adapter 변경·검증 없이 이 기본 모듈에 조용히 주입하지 않는다. 현재 모듈로 표현되지 않는 project exception은 `BLOCKED_UNVERIFIED`로 기록하고 기존 승인 계약에 맞춰 bounded adaptation한다.
+
+마감은 모든 필수 작업 DONE, active null, `next_action: STOP_APPROVED_SCOPE_COMPLETE`일 때만 가능하다. 승인 범위가 끝났으면 종료하며 다음 Goal을 자동 발명하지 않는다. 아직 병합·postmerge가 필수 작업이면 분모에 남겨 완료로 표시하지 않는다. 중단 시 `finished / remaining / blocker / resume_condition / why`를 보존하고 같은 지시를 지우지 말고 완료 표시와 근거를 남긴다.
+
+`--render-markdown`은 파생 text-native 출력이다. 별도 HTML·보드·PM 앱을 설치하지 않으며 입력의 URL·명령·HTML을 실행하지 않는다. `--expected-source-sha`는 신뢰한 caller가 fresh-read한 값을 전달한다. 모듈 자체가 GitHub 최신성을 조회하지 않으므로 SHA 형식 검사만으로 freshness를 주장하지 않는다. 기존 project pin은 정상 adoption PR로 검증하기 전까지 유지하고, Base 병합을 모든 프로젝트 설치 완료로 보고하지 않는다.
+
+## 11. 새 세션용 여섯 절 인계 — 기존 정본 재사용
+
+새 파일 `DESIGN.md / STATUS.md / INBOX.md`를 일괄 만들지 않는다. 아래 여섯 절은 기존 handoff의 작은 실행 요약으로 사용하고 분야별 사실은 기존 owner를 가리킨다.
+
+1. **합격 기준:** 한 문장 목표와 관찰 가능한 AC ID·필수 evidence. 목표 문장만으로 완료 판정하지 않는다.
+2. **먼저 읽기:** project AGENTS·Active Context·승인 Decision·실제 consumer·현재 PM receipt의 exact revision과 필요한 section/읽기 범위. 범위 밖의 숨은 의존성이 발견되면 필요한 만큼 확장한다.
+3. **규칙과 이유:** 기존 Method의 authority·reason·source·adjustment condition·validation을 사용한다. 문구 금지만 늘리지 않는다.
+4. **한 바퀴:** fresh-read → 승인된 의미 있는 작업 하나 → 정적/자동 검사 → 필요 시 격리 checkpoint → 실제 runtime/화면/입력 확인 → 교정 → 정본·PM 상태·증거 갱신 → 다음 승인 작업 또는 정상 종료.
+5. **커밋 순서:** 복구용 checkpoint는 `IN_PROGRESS / VERIFY_REVIEW`로 남길 수 있으나 DONE·품질 승인·병합을 뜻하지 않는다. checkpoint에 미완료와 다음 검증을 기록한다. 저장된 미커밋 파일이 세션 종료만으로 삭제된다고 주장하지 않는다. 사용자 변경·다른 workstream은 staging하지 않으며 main 직접 push하지 않는다. 완료용 commit과 exact-head PR 검토는 별도 Gate다.
+6. **QA와 학습:** 실제 화면·상태·consumer·exact build를 캡처하고 이미지를 직접 읽는다. 캡처 생성과 시각 합격을 분리한다. 같은 지적의 원인을 재현한 뒤 프로젝트 전용/공용을 분류하고 가능한 검사를 만든다. 반복 횟수만으로 Base 강제 규칙을 자동 승격하지 않는다.
+
+`FRESH_SESSION_HANDOFF_NOT_NEW_LOOP` · `CHECKPOINT_IS_NOT_COMPLETION`
+
+각 실행의 기록·예산·중단·복구는 기존 continuous-work/Loop owner를 재사용한다. 제품별 CLI 옵션을 이름만 바꿔 이식하지 않는다. `codex exec` 새 실행과 `--ephemeral`의 세션 파일 비보존은 다른 개념이며, 새 실행에서도 필요한 evidence는 별도 보존한다. Claude의 `--max-turns`를 Codex 옵션으로 가정하지 않는다. 구독 경로 실패를 유료 API로 우회하거나 OS 서비스·스케줄러를 이 문서만으로 활성화하지 않는다.
+
+원출처 비교: 사용자가 제공한 `kIUhkiAecM8` 댓글 텍스트(영상 전체 시청 증거 아님), OpenAI non-interactive Codex 문서 `https://developers.openai.com/codex/noninteractive`, GitHub sub-issue 문서 `https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/adding-sub-issues`. 새 세션·파일 기억·작은 작업은 ADAPT, 무한 개발·새 정본·자동 정책 승격은 REJECT다. 재사용 교훈은 **문구 존재 검사와 실제 실행 Gate 검사를 반드시 구분한다**는 것이다. 이 개선의 검증 owner는 `tests/test_project_work_tracking.py`이고 실제 현재 작업 적용 기록은 Base Issue #825에 둔다.
