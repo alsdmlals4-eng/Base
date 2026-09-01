@@ -94,6 +94,18 @@ class PMCloseoutHeadAndActiveConsumerTests(unittest.TestCase):
                 self.assertIn("--expected-head-sha", text)
                 self.assertIn("TRUSTED_VERIFICATION_TARGET_HEAD", text)
 
+    def test_closeout_docs_do_not_require_a_receipt_to_hash_itself(self) -> None:
+        for path in (
+            "templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md",
+            "templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md",
+        ):
+            text = (ROOT / path).read_text(encoding="utf-8")
+            with self.subTest(path=path):
+                self.assertIn("VERIFIED_SUBJECT_HEAD", text)
+                self.assertIn("RECEIPT_ONLY_TAIL_COMMIT", text)
+                self.assertIn("FINAL_PR_HEAD_CI_REVIEW_REQUIRED", text)
+                self.assertIn("제품·정본·consumer·검증 evidence", text)
+
     def test_every_real_closeout_consumer_forwards_the_trusted_final_head(self) -> None:
         for path in CLOSEOUT_CONSUMERS:
             text = (ROOT / path).read_text(encoding="utf-8")
