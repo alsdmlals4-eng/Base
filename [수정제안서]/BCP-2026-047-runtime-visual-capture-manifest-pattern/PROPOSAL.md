@@ -5,7 +5,7 @@
 - 출처 프로젝트: `alsdmlals4-eng/Ten-Paces-Hidden-Moves`
 - 기준 커밋: `4032cf550295da6d55646a8fb64fb27acaf1ddc3` (project PR #304 merge commit)
 - 제출일: `2026-09-01`
-- 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 상태: `IMPLEMENTED`
 - 지식 상태: `관찰`
 
 ## 후보보고서 상태와 정본 경계
@@ -112,13 +112,14 @@ This is a candidate complement to existing Base evidence language, not a proposa
 
 - 사용자 승인 근거: `2026-09-01` current task의 “인게임 캡처 이미지 증거도 항상 남겨서 확인이 용이하게 할 것”과 필요한 도구·모듈·Skill 흡수 허용 지시. 이 근거는 evidence-bound Base 교정에만 적용하며 프로젝트별 화면·자산·게임 의미를 승인하지 않는다.
 - Base implementation approval ref: `2026-09-01 current user instruction — runtime capture evidence retention and Base correction/merge authority`.
-- 현재 lifecycle: `APPROVED_FOR_IMPLEMENTATION`.
+- 현재 lifecycle: `IMPLEMENTED`.
 
-### 최소 구현 범위
+### 구현 closeout
 
-- `RM-TOOL-004` existing owner에 선택형 manifest 예시와 최소 보관·증거 ceiling만 추가한다.
-- 이 proposal의 registry `implementation_pr`는 exact implementation PR이 생성되고 병합 closeout이 끝날 때까지 `null`로 유지한다.
-- 구현 PR: pending creation on `codex/runtime-capture-manifest-20260901`.
+- `RM-TOOL-004` existing owner에 선택형 manifest 예시와 최소 보관·증거 ceiling만 추가했다.
+- 구현 PR: [PR #819](https://github.com/alsdmlals4-eng/Base/pull/819), squash merge commit `19fb7b437b764ac2d0cf438e4361c0d02e71a40a`.
+- 병합 readback: squash 결과 tree가 PR #819 exact head와 일치함을 확인했다. PR exact head의 `ci-gate`와 관련 원격 검사는 PASS였다.
+- 이 closeout은 capture 자체를 Human/Player/device/accessibility/performance/release/right/final approval PASS로 승격하지 않는다.
 
 ### 새 Skill·문서·registry가 필요 없는 이유
 
