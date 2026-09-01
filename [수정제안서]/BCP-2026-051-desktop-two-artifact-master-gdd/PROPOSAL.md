@@ -1,4 +1,4 @@
-# BCP-2026-047 · Desktop GPT 2파일 통합 제작 기획서 프로필
+# BCP-2026-051 · Desktop GPT 2파일 통합 제작 기획서 프로필
 
 ## 출처와 상태
 
@@ -6,6 +6,7 @@
 - 기준 Base: `7cfc75d607d1ed4d0f8323d4389e64da93df00c8`
 - 제출일: `2026-08-28`
 - 상태: `APPROVED_FOR_IMPLEMENTATION`
+- 식별자 정비: `2026-09-01`에 registry-backed runtime visual capture proposal이 `BCP-2026-047`임을 확인했다. 이 registry 밖 Desktop proposal은 내용·승인 상태를 바꾸지 않고 `BCP-2026-051`로 재배정한다.
 - 지식 상태: `사용자 승인 운영 요구 + current Base 책임 충돌 확인 + 구현 전 계약`
 - 승인 근거:
   - 사용자 메시지: `사용자용(사람) 기획서 pdf 파일과 ai용 기획서 2개만 만들면 될거같아`
