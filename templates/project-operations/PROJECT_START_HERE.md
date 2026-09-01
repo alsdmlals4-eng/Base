@@ -21,7 +21,7 @@
 
 `PINNED_BASE_RECEIPT_VALIDATION_REQUIRED`: adapter/route validation으로 확인한 exact Base pin과 같은 checkout에서 `python <resolved-Base-root>/tools/validate_work_contract_receipt.py --receipt <project-repository-owned-receipt.json> --phase start --expected-source-sha <fresh-read-project-source-sha> --render-markdown`을 실행한다. 기대 SHA는 receipt에서 복사하지 않고 신뢰한 caller가 실제 source를 fresh-read한 값이다. Base tool을 pin에 맞게 해석할 수 없거나 결과가 nonzero이면 `BLOCKED_UNVERIFIED`이며 새 기획·시안·구현을 시작하지 않는다. 이 gate는 프로젝트별 버튼·Flow·wireframe·세계관·soft-coded 값을 고정하지 않고, 현재 consumer에 맞는 benchmark 판단, 안전한 context 정리와 PM 기록 일관성을 확인한다.
 
-`PM_EXECUTION_GATE_REQUIRED`: 실제 전체 작업·현재 항목·완료/필수 수·차단·다음 행동을 표시한다. 기존 카드/Issue를 재사용하고 작업 전환 때 다음 승인 작업을 먼저 active로 선택·기록한 뒤 `--phase resume`으로 검사한다. 마감은 `--phase closeout`이다. phase가 바뀌어도 trusted source와 출력 옵션은 유지한다. root JSON과 완료 증거 계약은 `WORK_PROJECT_START_CANON_CHECKLIST.md` §12.1 및 `PROJECT_WORK_ITEM_CHECKLIST.md` §10을 따른다. 형식이 올바른 차단 목록을 표시하는 것은 실행 PASS가 아니다.
+`PM_EXECUTION_GATE_REQUIRED`: 실제 전체 작업·현재 항목·완료/필수 수·차단·다음 행동을 표시한다. 기존 카드/Issue를 재사용하고 작업 전환 때 다음 승인 작업을 먼저 active로 선택·기록한 뒤 `--phase resume --expected-source-sha <fresh-read-project-source-sha> --render-markdown`으로 검사한다. 마감은 `--phase closeout --expected-source-sha <fresh-read-project-source-sha> --expected-head-sha <fresh-read-final-head-sha> --render-markdown`이다. `TRUSTED_VERIFICATION_TARGET_HEAD`는 신뢰한 caller가 receipt와 독립적으로 fresh-read한다. root JSON과 완료 증거 계약은 `WORK_PROJECT_START_CANON_CHECKLIST.md` §12.1 및 `PROJECT_WORK_ITEM_CHECKLIST.md` §10을 따른다. 형식이 올바른 차단 목록을 표시하는 것은 실행 PASS가 아니다.
 
 ## 한눈에 보기
 
