@@ -108,6 +108,12 @@ class BaseV942CompatibilityReleaseTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assertIn("Base v9.4.2 compatibility release check passed", result.stdout)
 
+    def test_release_checker_uses_canonical_git_blobs_not_checkout_line_endings(self) -> None:
+        source = RELEASE_CHECKER_PATH.read_text(encoding="utf-8")
+        self.assertIn('working_tree_evidence = blob("HEAD", EVIDENCE_PATH.relative_to(ROOT).as_posix())', source)
+        self.assertIn("working tree evidence file is dirty", source)
+        self.assertNotIn("evidence_blob != EVIDENCE_PATH.read_bytes()", source)
+
     def test_required_workflow_executes_v942_release_contract(self) -> None:
         workflow = WORKFLOW_PATH.read_text(encoding="utf-8")
         self.assertIn("base-v9.4.2.lock.json", workflow)
