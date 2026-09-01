@@ -119,7 +119,12 @@ print(json.dumps({
         adapter.close(request)
         self.assertTrue(workspace.exists())
         registered = git(self.repo, "worktree", "list", "--porcelain").stdout
-        self.assertIn(str(workspace), registered)
+        registered_worktrees = [
+            Path(line.removeprefix("worktree ")).resolve()
+            for line in registered.splitlines()
+            if line.startswith("worktree ")
+        ]
+        self.assertIn(workspace.resolve(), registered_worktrees)
         git(self.repo, "worktree", "remove", "--force", str(workspace))
 
 

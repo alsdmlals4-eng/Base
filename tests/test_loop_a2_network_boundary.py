@@ -78,7 +78,7 @@ class LinuxUnshareDeniedNetworkBoundaryTests(BoundaryTestCase):
         boundary = LinuxUnshareDeniedNetworkBoundary(unshare_executable="unshare")
         environment = self.environment()
         environment["SAFE_SENTINEL"] = "present"
-        with patch("tools.loop_a2_runtime.network_boundary.platform.system", return_value="Linux"), patch("tools.loop_a2_runtime.network_boundary.shutil.which", return_value="/usr/bin/unshare"), patch("tools.loop_a2_runtime.network_boundary.subprocess.run", return_value=_Completed(returncode=0, stdout='["lo"]\n')) as run:
+        with patch("tools.loop_a2_runtime.network_boundary.platform.system", return_value="Linux"), patch("tools.loop_a2_runtime.network_boundary._resolve_executable", return_value="/usr/bin/unshare"), patch("tools.loop_a2_runtime.network_boundary.subprocess.run", return_value=_Completed(returncode=0, stdout='["lo"]\n')) as run:
             plan = boundary.prepare(policy="DENIED", argv=("python", "-m", "unittest", "tests.test_example"), cwd=Path.cwd(), environment=environment)
         self.assertIsInstance(plan, NetworkExecutionPlan)
         assert plan is not None
@@ -98,7 +98,7 @@ class LinuxUnshareDeniedNetworkBoundaryTests(BoundaryTestCase):
 
     def test_successful_probe_is_cached_per_boundary_instance(self) -> None:
         boundary = LinuxUnshareDeniedNetworkBoundary(unshare_executable="unshare")
-        with patch("tools.loop_a2_runtime.network_boundary.platform.system", return_value="Linux"), patch("tools.loop_a2_runtime.network_boundary.shutil.which", return_value="/usr/bin/unshare"), patch("tools.loop_a2_runtime.network_boundary.subprocess.run", return_value=_Completed(returncode=0, stdout='["lo"]\n')) as run:
+        with patch("tools.loop_a2_runtime.network_boundary.platform.system", return_value="Linux"), patch("tools.loop_a2_runtime.network_boundary._resolve_executable", return_value="/usr/bin/unshare"), patch("tools.loop_a2_runtime.network_boundary.subprocess.run", return_value=_Completed(returncode=0, stdout='["lo"]\n')) as run:
             first = boundary.prepare(policy="DENIED", argv=("python", "-c", "print(1)"), cwd=Path.cwd(), environment=self.environment())
             second = boundary.prepare(policy="DENIED", argv=("python", "-c", "print(2)"), cwd=Path.cwd(), environment=self.environment())
         self.assertIsNotNone(first)
