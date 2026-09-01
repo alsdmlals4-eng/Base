@@ -75,6 +75,7 @@ class ReuseFirstPreflightEnforcementTests(unittest.TestCase):
             )
         )
         entry_rules = handoff["entry_rules"]
+        self.assertTrue(entry_rules["project_canon_overrides_base_reference"])
         self.assertTrue(
             entry_rules[
                 "project_specific_next_action_uses_current_project_authority"
