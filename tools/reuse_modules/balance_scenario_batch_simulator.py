@@ -446,6 +446,7 @@ def _parameter_sweep_reports(
         point_variants: set[str] = set()
         series: list[dict[str, Any]] = []
         seed_sets: list[set[int]] = []
+        metric_seed_sets: list[set[int]] = []
 
         for point_index, point in enumerate(raw_points):
             if not isinstance(point, dict):
@@ -483,7 +484,19 @@ def _parameter_sweep_reports(
                     f"sweep metric {metric!r} summary must be finite"
                 )
 
-            seed_sets.append({int(run["seed"]) for run in grouped[variant]})
+            variant_seed_set = {int(run["seed"]) for run in grouped[variant]}
+            metric_seed_set = {
+                int(run["seed"])
+                for run in grouped[variant]
+                if metric in run.get("metrics", {})
+            }
+            if metric_seed_set != variant_seed_set:
+                raise ValueError(
+                    f"parameter sweep metric {metric!r} must exist for every seed "
+                    f"in variant {variant!r}"
+                )
+            seed_sets.append(variant_seed_set)
+            metric_seed_sets.append(metric_seed_set)
             series.append(
                 {
                     "parameter_value": parameter_value,
@@ -496,6 +509,14 @@ def _parameter_sweep_reports(
         if any(seed_set != first_seed_set for seed_set in seed_sets[1:]):
             raise ValueError(
                 "parameter sweep variants must use the same seed set"
+            )
+        first_metric_seed_set = metric_seed_sets[0]
+        if any(
+            seed_set != first_metric_seed_set
+            for seed_set in metric_seed_sets[1:]
+        ):
+            raise ValueError(
+                "parameter sweep metric samples must use the same seed set"
             )
 
         series.sort(key=lambda item: (item["parameter_value"], item["variant"]))
@@ -522,6 +543,8 @@ def _parameter_sweep_reports(
                 "series": series,
                 "seed_set_equal_across_points": True,
                 "seed_count_per_point": len(first_seed_set),
+                "metric_seed_set_equal_across_points": True,
+                "metric_seed_count_per_point": len(first_metric_seed_set),
                 "single_tunable_only": True,
                 "automatic_best_value": False,
                 "threshold_crossings": crossings,
