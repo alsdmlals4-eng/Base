@@ -5,7 +5,7 @@
 - 출처 프로젝트: `alsdmlals4-eng/Ten-Paces-Hidden-Moves`
 - 기준 커밋: `4032cf550295da6d55646a8fb64fb27acaf1ddc3` (project PR #304 merge commit)
 - 제출일: `2026-09-01`
-- 상태: `SUBMITTED`
+- 상태: `APPROVED_FOR_IMPLEMENTATION`
 - 지식 상태: `관찰`
 
 ## 후보보고서 상태와 정본 경계
@@ -110,7 +110,18 @@ This is a candidate complement to existing Base evidence language, not a proposa
 
 ## 승인과 구현
 
-- 사용자 승인 근거: user direction on `2026-09-01` permits reusable tools/modules/skills to be promoted to Base when suitable; it authorizes this proposal submission, not an active Base implementation.
-- Base implementation approval ref: `미승인`.
-- 구현 PR: `없음`.
-- 롤백: reject/defer the proposal or revert only its registry record and proposal file; never remove the Ten Paces project evidence as a consequence.
+- 사용자 승인 근거: `2026-09-01` current task의 “인게임 캡처 이미지 증거도 항상 남겨서 확인이 용이하게 할 것”과 필요한 도구·모듈·Skill 흡수 허용 지시. 이 근거는 evidence-bound Base 교정에만 적용하며 프로젝트별 화면·자산·게임 의미를 승인하지 않는다.
+- Base implementation approval ref: `2026-09-01 current user instruction — runtime capture evidence retention and Base correction/merge authority`.
+- 현재 lifecycle: `APPROVED_FOR_IMPLEMENTATION`.
+
+### 최소 구현 범위
+
+- `RM-TOOL-004` existing owner에 선택형 manifest 예시와 최소 보관·증거 ceiling만 추가한다.
+- 이 proposal의 registry `implementation_pr`는 exact implementation PR이 생성되고 병합 closeout이 끝날 때까지 `null`로 유지한다.
+- 구현 PR: pending creation on `codex/runtime-capture-manifest-20260901`.
+
+### 새 Skill·문서·registry가 필요 없는 이유
+
+기존 `RM-TOOL-004`와 Fresh Runtime Artifact Gate가 capture source·저장·freshness·evidence ceiling을 이미 소유한다. 따라서 공통 schema, 새 Skill, capture app, project adapter, binary 보관 정책을 추가하면 단일 사례의 관찰을 과도한 공용 체계로 승격하게 된다.
+
+- 롤백: 이 owner-local 문단과 해당 lifecycle 상태만 revert한다. Ten Paces project evidence 또는 다른 프로젝트의 캡처를 삭제하지 않는다.
