@@ -345,6 +345,34 @@ export_or_build_step:
 
 의도적으로 숨기는 정보가 있어도 행동 목적·선택 가능성·숨김의 결과를 혼동시키지 않는다.
 
+### Blueprint wireframe decision surface
+
+`BLUEPRINT_WIREFRAME_DECISION_SURFACE` · `WIREFRAME_WITHIN_EXISTING_TWO_ARTIFACTS`
+
+`TWO_ARTIFACT_PROFILE_CONDITIONALLY_APPLIES`: 사용자가 `DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD` profile을 선택했을 때만 이 record를 같은 ID의 사용자용 Blueprint PDF와 AI Markdown 안에 합성한다. 다른 publication profile에서는 그 프로젝트의 현행 design-document owner에 record를 두며, 이 양식이 두 산출물이나 중복 Blueprint 원본을 강제하지 않는다.
+
+`WIRE_FRAME_ONLY_FOR_MATERIAL_PLAYER_FACING_SURFACE`: 이번 feature의 player-facing surface 중 레이아웃, 입력, 상태 또는 화면 동선 결정을 위해 필요한 화면만 기록한다. wireframe는 별도 파일·보드·이미지가 아니라 선택된 정본 안의 text-native 구조 표현이다. 적용하지 않는 surface는 `NOT_APPLICABLE_WITH_REASON`으로 남긴다.
+
+`SMALLEST_REPRESENTATIVE_WIREFRAME_SET`: 같은 navigation/state contract를 재사용하는 화면을 중복 작성하지 말고, 현재 구현·검수 결정을 위해 필요한 최소 대표 집합만 선택한다.
+
+| field | wireframe decision record |
+|---|---|
+| screen_id | |
+| priority | P0 / P1 / P2 |
+| target viewport / aspect | |
+| input mode | keyboard / controller / touch / mixed |
+| entry / exit / cancel / re-entry | |
+| player goal / question / visual hierarchy | |
+| primary / secondary action | |
+| normal state | |
+| disabled / error / unavailable state | |
+| planned or actual consumer | scene / UI owner / planned surface |
+| `SCREEN_LEVEL_COMPOSITION_REQUIRED` reference | screen inventory row or reuse evidence |
+| wireframe status | REUSE / ADAPT / NEW_MINIMUM / NOT_APPLICABLE_WITH_REASON |
+| evidence reference | capture, test, or `NOT_RUN` reason |
+
+`WIREFRAME_NOT_RUNTIME_OR_USER_APPROVAL_EVIDENCE`: 이 record는 화면 구조와 navigation을 검토하는 `DOCUMENTED` evidence다. 실제 capture가 없으면 runtime은 `NOT_RUN`이며, capture·자동 테스트·wireframe 모두 Human/Player·device·UX·release 승인을 대체하지 않는다.
+
 ### Accessibility
 
 | 요구 | 기본 방식 | 대체 방식 | 검증 상태 |

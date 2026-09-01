@@ -64,6 +64,18 @@ PLAN
 
 `REUSE_OR_ADAPT_EXISTING_BLUEPRINT_BEFORE_NEW_REPRESENTATION`: 기존 정본에 유효한 Blueprint·flow·system representation이 있으면 먼저 재사용하고 현재 범위에 필요한 부분만 adapt해. `NO_MASS_BLUEPRINT_BACKFILL`: untouched project/system을 일괄 변환하지 말고 이번 Master GDD에서 실제로 중요한 flow/system만 두 산출물 안에 구성해.
 
+### Blueprint wireframe 결정 surface
+
+`BLUEPRINT_WIREFRAME_DECISION_SURFACE`와 `WIREFRAME_WITHIN_EXISTING_TWO_ARTIFACTS`를 적용해. 와이어프레임은 세 번째 설계 파일·Notion view·보드·이미지 묶음이 아니라 PDF와 AI Markdown 안에서 동일한 `screen_id`를 공유하는 text-native 구조 검토 자료야.
+
+`TWO_ARTIFACT_PROFILE_CONDITIONALLY_APPLIES`: 이 지시문은 사용자가 `DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD` profile을 명시적으로 선택한 경우에만 사용한다. 이 profile 밖의 프로젝트에는 두 산출물이나 이 지시문의 Blueprint 위치를 강제하지 말고, 해당 프로젝트의 현행 design-document owner를 따라.
+
+`WIRE_FRAME_ONLY_FOR_MATERIAL_PLAYER_FACING_SURFACE`: 이번 Blueprint의 player-facing surface 중 layout, input, state 또는 navigation 결정에 실제로 필요한 것만 고른다. 각각 `screen_id`, `priority`, target viewport / aspect, input mode, entry / exit / cancel / re-entry, player goal/question, visual hierarchy, primary / secondary action, normal state, disabled / error / unavailable state, planned or actual consumer, `SCREEN_LEVEL_COMPOSITION_REQUIRED` reference, evidence reference를 기록해. 적용되지 않는 surface에는 `NOT_APPLICABLE_WITH_REASON`을 남겨.
+
+`SMALLEST_REPRESENTATIVE_WIREFRAME_SET`: 동일 navigation/state contract의 변형 화면은 같은 wireframe를 참조하고, 현재 결정·구현·검수에 필요한 최소 대표 화면만 만든다. 모든 기존 화면의 backfill이나 장식용 wireframe는 금지한다.
+
+`WIREFRAME_NOT_RUNTIME_OR_USER_APPROVAL_EVIDENCE`: wireframe는 `DOCUMENTED` 구조 증거일 뿐이야. 실제 capture가 없으면 runtime 상태를 `NOT_RUN`으로 쓰고, capture·자동 test·wireframe를 Human/Player·device·UX·release 승인으로 올려 쓰지 마. 구현 후에는 `GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md`의 screen row와 runtime evidence owner를 readback해서 planned or actual consumer를 확인해.
+
 정본 충돌을 발견하면 임의로 혼합하지 말고 다음 순서로 판정해.
 
 ```text

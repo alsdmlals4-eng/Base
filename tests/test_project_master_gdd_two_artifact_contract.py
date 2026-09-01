@@ -8,6 +8,7 @@ INSTRUCTION = (
     ROOT
     / "templates/project-operations/GPT_WORK_PROJECT_MASTER_GDD_TWO_ARTIFACT_INSTRUCTION.md"
 )
+FEATURE_SPEC_TEMPLATE = ROOT / "templates/planning/GAME_FEATURE_DESIGN_SPEC.md"
 PROJECT_OPERATIONS_README = ROOT / "templates/project-operations/README.md"
 CUSTOM_INSTRUCTIONS = ROOT / "templates/custom-instructions.gpt.md"
 NOTION_BLUEPRINT_CONTRACT = (
@@ -70,6 +71,29 @@ class ProjectMasterGddTwoArtifactContractTests(unittest.TestCase):
                 "VERIFICATION READ",
             ),
         )
+
+    def test_blueprint_wireframes_are_conditional_decision_surfaces_with_evidence_boundaries(self):
+        required = (
+            "BLUEPRINT_WIREFRAME_DECISION_SURFACE",
+            "WIREFRAME_WITHIN_EXISTING_TWO_ARTIFACTS",
+            "TWO_ARTIFACT_PROFILE_CONDITIONALLY_APPLIES",
+            "WIRE_FRAME_ONLY_FOR_MATERIAL_PLAYER_FACING_SURFACE",
+            "SMALLEST_REPRESENTATIVE_WIREFRAME_SET",
+            "SCREEN_LEVEL_COMPOSITION_REQUIRED",
+            "screen_id",
+            "priority",
+            "entry / exit / cancel / re-entry",
+            "primary / secondary action",
+            "disabled / error / unavailable state",
+            "planned or actual consumer",
+            "WIREFRAME_NOT_RUNTIME_OR_USER_APPROVAL_EVIDENCE",
+            "NOT_RUN",
+        )
+        for path in (POLICY, INSTRUCTION, FEATURE_SPEC_TEMPLATE):
+            self.assertTrue(path.exists(), f"wireframe owner must exist: {path}")
+            text = path.read_text(encoding="utf-8")
+            for token in required:
+                self.assertIn(token, text, f"{path} must preserve Blueprint wireframe token: {token}")
 
     def test_layered_profile_uses_text_native_exact_diagrams_and_image_gate(self):
         text = POLICY.read_text(encoding="utf-8")
