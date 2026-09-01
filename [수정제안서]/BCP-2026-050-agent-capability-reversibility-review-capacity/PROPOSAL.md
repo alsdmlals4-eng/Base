@@ -130,11 +130,11 @@ AND
 )
 ```
 
-- `HAS_MUTATING_OR_PRIVILEGED_CAPABILITY`: task가 filesystem mutation, shell, network, secret, MCP/connector 또는 remote write 중 하나 이상을 실제로 사용한다. read-only API/MCP 조사라도 network, secret 또는 privileged connector capability를 사용하면 이 조건에 포함된다.
+- `HAS_MUTATING_OR_PRIVILEGED_CAPABILITY`: task가 filesystem mutation, command/process execution(`shell=False` argument-array child process와 service/process control 포함), network, secret, MCP/connector 또는 remote write 중 하나 이상을 실제로 사용한다.
 - `BOUNDARY_NOT_ALREADY_CLEAR`: 현재 작업 계약만으로 allowed/denied capability와 보호 범위를 즉시 확인할 수 없다.
 - `REVERSIBILITY_NOT_ALREADY_CLEAR`: worst reachable effect, rollback 또는 confirmation requirement 중 하나 이상이 명확하지 않다.
 - `COMPLETION_EVIDENCE_NOT_ALREADY_CLEAR`: validation command, expected result, destination readback 또는 evidence ceiling 중 하나 이상이 없거나 현재 task에 적용되는지 명확하지 않다.
-- 따라서 병렬·장기 작업이 아니더라도 비가역 remote write와 불명확한 rollback이 있는 단일 작업, 또는 mutation 경계는 명확하지만 완료 증거가 불명확한 작업은 projection 대상이다.
+- 따라서 병렬·장기 작업이 아니더라도 비가역 remote write와 불명확한 rollback이 있는 단일 작업, 직접 실행한 local process의 영향·복구 경계가 불명확한 작업, 또는 mutation 경계는 명확하지만 완료 증거가 불명확한 작업은 projection 대상이다.
 
 ### Human Review Capacity Gate 활성 조건
 
@@ -153,11 +153,11 @@ AND
 
 비사용 조건은 위 활성 predicate를 우회하지 않는다. `HAS_MUTATING_OR_PRIVILEGED_CAPABILITY`와 세 불명확성 조건 중 하나가 함께 참이면 projection을 유지한다.
 
-- network·secret·MCP/connector·remote write를 사용하지 않는 local unprivileged read-only 조사;
+- network·secret·MCP/connector·remote write·command/process execution을 사용하지 않는 local unprivileged read-only 조사;
 - existing project contract가 같은 capability·worst effect·rollback·confirmation·completion evidence 정보를 더 강하게 소유하고 현재 task에서 즉시 readback되는 경우;
 - L0 오탈자 또는 deterministic single-file change에서 protected scope·reversibility·validation·destination readback·evidence ceiling이 이미 명확한 경우.
 
-read-only라는 이름만으로 면제하지 않는다. API/MCP/network/secret을 사용하는 read-only 조사는 활성 predicate를 그대로 적용한다. 민감한 세부를 공개할 수 없다는 사실도 비사용 조건이 아니다. 활성 조건을 만족하면 opaque/redacted projection을 유지하고 raw secret·private locator만 생략한다.
+read-only라는 이름만으로 면제하지 않는다. API/MCP/network/secret 또는 command/process execution을 사용하는 read-only 조사는 활성 predicate를 그대로 적용한다. 민감한 세부를 공개할 수 없다는 사실도 비사용 조건이 아니다. 활성 조건을 만족하면 opaque/redacted projection을 유지하고 raw secret·private locator만 생략한다.
 
 ### 그대로 복사하면 안 되는 요소
 
@@ -228,8 +228,15 @@ read-only라는 이름만으로 면제하지 않는다. API/MCP/network/secret�
 - proposal-only 검증:
   - 신규 entry가 `SUBMITTED`, `approval_ref: null`, `implementation_pr: null`인지 확인;
   - candidate number가 Registry뿐 아니라 repository proposal paths/content와 same-goal open PR에서도 고유한지 확인;
-  - proposal registry JSON Schema와 `tools/check_base_change_proposals.py --base-ref 32f4dd5ba6042dc34611e2c8912f300b90491e0a`;
-  - `tests/test_base_change_proposals.py`;
+  - validation base는 제안의 최초 조사 `source_commit`이 아니라 **현재 HEAD가 실제로 포함하는 최신 main**이어야 한다. 현재 branch에서 다음처럼 resolved 40-char merge-base가 fetched `origin/main`과 같은지 확인한 뒤 사용한다:
+
+    ```bash
+    CURRENT_MAIN_SHA="$(git merge-base HEAD "$(git rev-parse origin/main)")"
+    test "$CURRENT_MAIN_SHA" = "$(git rev-parse origin/main)"
+    python tools/check_base_change_proposals.py --base-ref "$CURRENT_MAIN_SHA"
+    ```
+
+  - proposal registry JSON Schema와 `tests/test_base_change_proposals.py`;
   - changed paths가 `[수정제안서]/**` 안에만 있는지 확인;
   - exact-head `ci-gate`, independent review, unresolved thread와 latest-main reconciliation.
 - 향후 승인 구현의 예상 검증:
@@ -248,9 +255,15 @@ read-only라는 이름만으로 면제하지 않는다. API/MCP/network/secret�
 - 필요한 이유: active owner를 변경하지 않고 검토 가능한 candidate와 rollback 경계를 남기기 위해서다.
 - 설치·적용 방법: 설치 없음. 새 dependency, API, credential, service 또는 paid credit 없음.
 - 설치 후 확인 명령:
-  - `python tools/check_base_change_proposals.py --base-ref 32f4dd5ba6042dc34611e2c8912f300b90491e0a`
-  - `python -m unittest tests.test_base_change_proposals -v`
-  - `git diff --check`
+
+  ```bash
+  CURRENT_MAIN_SHA="$(git merge-base HEAD "$(git rev-parse origin/main)")"
+  test "$CURRENT_MAIN_SHA" = "$(git rev-parse origin/main)"
+  python tools/check_base_change_proposals.py --base-ref "$CURRENT_MAIN_SHA"
+  python -m unittest tests.test_base_change_proposals -v
+  git diff --check
+  ```
+
 - 최소 권한: proposal-only branch write와 PR creation. `main` direct push, force push, admin/ruleset bypass, secret, workflow permission 또는 project write 불필요.
 
 ## 승인과 구현
