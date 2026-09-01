@@ -19,7 +19,7 @@ SHA = re.compile(r"[0-9a-f]{40}\Z")
 
 
 def text(value: Any) -> bool:
-    return isinstance(value, str) and bool(value.strip()) and not any(unicodedata.category(c) in {"Cc", "Cf"} and c not in "\n\r\t" for c in value) and not (value.strip().startswith("<") and value.strip().endswith(">")) and value.strip().upper() not in {"TODO", "TBD", "N/A"}
+    return isinstance(value, str) and bool(value.strip()) and not any(unicodedata.category(c) in {"Cc", "Cf", "Cs"} and c not in "\n\r\t" for c in value) and not (value.strip().startswith("<") and value.strip().endswith(">")) and value.strip().upper() not in {"TODO", "TBD", "N/A"}
 
 
 def strings(value: Any, *, nonempty: bool = True) -> bool:
