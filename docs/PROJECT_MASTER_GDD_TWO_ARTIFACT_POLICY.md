@@ -60,6 +60,32 @@ PDF의 목차·요약·cross-reference와 AI Markdown의 registry·상세 sectio
 - `REUSE_OR_ADAPT_EXISTING_BLUEPRINT_BEFORE_NEW_REPRESENTATION`: current authority에 유효한 Blueprint·flow·system representation이 있으면 먼저 재사용하고, 현재 profile과 touched scope에 필요한 부분만 adapt한다.
 - `NO_MASS_BLUEPRINT_BACKFILL`: 이 profile을 선택해도 untouched project/system을 일괄 변환하지 않는다. 현재 GDD 범위의 material flow/system만 두 산출물 안에 필요한 최소 깊이로 구성한다.
 
+#### 1.1.1 Blueprint wireframe 결정 surface
+
+`BLUEPRINT_WIREFRAME_DECISION_SURFACE`
+
+`WIREFRAME_WITHIN_EXISTING_TWO_ARTIFACTS`
+
+`TWO_ARTIFACT_PROFILE_CONDITIONALLY_APPLIES`: 이 규칙은 사용자가 `DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD` profile을 명시적으로 선택한 경우에만 `HUMAN_MASTER_GDD_PDF`와 `AI_PRODUCTION_SPEC_MARKDOWN` 안에 적용한다. 다른 publication profile은 해당 프로젝트의 현행 design-document owner를 따르며, 이 규칙을 근거로 두 산출물을 강제하거나 중복 Blueprint 원본을 만들지 않는다.
+
+Blueprint wireframe는 세 번째 설계 파일·이미지 묶음·별도 보드가 아니라, 위 profile 안에서는 `HUMAN_MASTER_GDD_PDF`와 `AI_PRODUCTION_SPEC_MARKDOWN`에 같은 `screen_id`로 연결하는 text-native 구조 검토 surface다. 이 surface는 화면의 구도와 동선 결정을 검토하는 자료이며, 실제 UI asset·Godot scene·runtime capture의 대체본이 아니다.
+
+`WIRE_FRAME_ONLY_FOR_MATERIAL_PLAYER_FACING_SURFACE`: player-facing 화면·overlay·전환 중 레이아웃, 입력, 상태 또는 화면 사이 동선이 현재 Blueprint 결정에 material한 것에만 wireframe를 둔다. 비시각 system, 이미 검증되어 그대로 재사용하는 surface 또는 현 scope에 없는 surface는 `NOT_APPLICABLE_WITH_REASON`으로 남기며 빈 frame이나 장식용 화면을 만들지 않는다.
+
+각 적용 wireframe는 최소한 다음을 PDF와 AI Markdown에서 공통 ID로 추적한다.
+
+- `screen_id`, `priority`, target viewport / aspect, input mode
+- entry / exit / cancel / re-entry
+- player goal·player question과 visual hierarchy
+- primary / secondary action
+- normal state와 disabled / error / unavailable state 한 가지 이상
+- planned or actual consumer, 구현 owner와 `SCREEN_LEVEL_COMPOSITION_REQUIRED` row/reference
+- wireframe status, evidence reference와 아직 실행하지 않은 runtime/UX 상태 (`NOT_RUN` 포함)
+
+`SMALLEST_REPRESENTATIVE_WIREFRAME_SET`: 한 Goal·Playable Slice에서 실제 결정·구현 순서·검수에 필요한 가장 작은 대표 화면 집합만 선택한다. 같은 navigation/state contract를 재사용하는 화면은 one-to-many reference로 연결하고, 모든 화면의 backfill을 요구하지 않는다.
+
+`WIREFRAME_NOT_RUNTIME_OR_USER_APPROVAL_EVIDENCE`: wireframe는 구조·navigation·상태 설계의 `DOCUMENTED` evidence일 뿐이다. 실제 capture가 없으면 runtime 상태는 `NOT_RUN`으로 유지하고, capture가 있어도 user/device/UX/release approval을 대신하지 않는다. 구현 후에는 프로젝트의 `GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md`와 runtime evidence owner를 통해 screen reference, actual consumer, capture를 별도로 readback한다.
+
 ### 1.2 Prospective Blueprint 사전 구현 승인 Gate
 
 `BLUEPRINT_PRE_IMPLEMENTATION_REVIEW_GATE`
