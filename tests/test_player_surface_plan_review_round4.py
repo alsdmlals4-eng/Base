@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 CHECKER = ROOT / "tools/validate_player_surface_plan.py"
 FIXTURE_FILE = ROOT / "tests/test_player_surface_plan.py"
+PACKET_CONTRACT = ROOT / "docs/knowledge/game-development/BENCHMARK_FIRST_MODULAR_UI_PRODUCTION_PACKET_CONTRACT.md"
 
 
 def _load(path: Path, name: str):
@@ -98,6 +99,17 @@ class PlayerSurfacePlanReviewRound4Tests(unittest.TestCase):
         )
         packet["references"][0].pop("source_repository", None)
         self.assertEqual(self.checker.validate_packet(packet), [])
+
+    def test_packet_contract_records_source_identity_hardening(self):
+        text = PACKET_CONTRACT.read_text(encoding="utf-8")
+        for token in [
+            "URL_DOT_SEGMENTS_NORMALIZED_BEFORE_REPOSITORY_IDENTITY",
+            "LEGACY_NUMERIC_IP_NORMALIZED_OR_REJECTED",
+            "NON_GITHUB_SOURCE_CODE_REQUIRES_SOURCE_REPOSITORY",
+            "PRODUCT_OBSERVATION_DOES_NOT_REQUIRE_REPOSITORY_IDENTITY",
+        ]:
+            with self.subTest(token=token):
+                self.assertIn(token, text)
 
 
 if __name__ == "__main__":
