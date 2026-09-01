@@ -21,6 +21,7 @@ LEGACY_CONTEXT_CONFIGURATION_HYGIENE_REQUIRED
 ACTUAL_IMPLEMENTATION_EVIDENCE_NO_SPECULATION
 REUSE_VALID_RECEIPT_UNTIL_MATERIAL_DRIFT
 STARTUP_CANON_CHECKLIST_USER_REPORT_REQUIRED
+TRUSTED_VERIFICATION_TARGET_HEAD
 REPOSITORY_PRIMARY_CANON
 NO_NEW_NOTION_WRITE_BY_DEFAULT
 ```
@@ -552,5 +553,7 @@ GPT는 현재 승인 범위에서 다음을 연속 수행한다.
 3. 작업·검증·readback 뒤 PASS·FAIL·blocker와 exact evidence를 카드에 반영한다.
 4. `[x]`는 evidence-backed `PASS`에만 사용하고 `NOT_APPLICABLE`은 이유와 함께 진행률 분모에서 제외한다.
 5. blocker가 생기면 해당 작업만 defer하고 독립 `READY` 작업을 먼저 active로 선택·기록한 뒤 resume Gate를 통과해 계속한다.
-6. 완료 후보에서 remaining-work recalculation, implementation correction rescan과 adversarial review를 실행한다. `--phase closeout --expected-source-sha <fresh-read-project-source-sha> --render-markdown`은 모든 필수 작업 DONE, active null, `STOP_APPROVED_SCOPE_COMPLETE`일 때만 통과한다.
+6. 완료 후보에서 remaining-work recalculation, implementation correction rescan과 adversarial review를 실행한다. `--phase closeout --expected-source-sha <fresh-read-project-source-sha> --expected-head-sha <fresh-read-final-head-sha> --render-markdown`은 모든 필수 작업 DONE, active null, `STOP_APPROVED_SCOPE_COMPLETE`일 때만 통과한다.
 7. 사용자에게는 전체 진행률, 현재 작업, 차단·결정 항목, 다음 안전 작업을 요약한다. 완료 task의 오래된 next-action은 실행 지시로 출력하지 않는다.
+
+`TRUSTED_VERIFICATION_TARGET_HEAD`: closeout의 expected head는 receipt 내부가 아니라 신뢰한 caller가 current branch/PR에서 별도로 fresh-read한다. 모든 DONE 항목의 `verified_head_sha`와 적용 evidence가 그 동일한 최종 HEAD에 묶여야 한다. closeout 뒤 새 commit이 추가되면 evidence를 영향 범위에 맞게 다시 확인하고 closeout을 재실행한다. start/resume은 이전 완료 기록을 보존하지만 최종 closeout은 현재 최종 HEAD와 일치해야 한다.
