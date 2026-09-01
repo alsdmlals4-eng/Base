@@ -88,8 +88,14 @@ def validate_receipt(receipt: object) -> list[str]:
     return errors
 
 
-def validate_execution_receipt(receipt: object, *, phase: str = "start", expected_source_sha: str | None = None) -> list[str]:
-    """Execution readiness requires a trusted caller source, not a receipt self-claim."""
+def validate_execution_receipt(
+    receipt: object,
+    *,
+    phase: str = "start",
+    expected_source_sha: str | None = None,
+    expected_head_sha: str | None = None,
+) -> list[str]:
+    """Execution readiness requires trusted caller source and final-head values."""
     errors = validate_receipt(receipt)
     if not isinstance(receipt, dict):
         return errors
@@ -101,7 +107,14 @@ def validate_execution_receipt(receipt: object, *, phase: str = "start", expecte
     if receipt.get("work_level") != "L0" or "project_work_kanban" in receipt:
         if expected_source_sha is None:
             errors.append("expected_source_sha from the trusted fresh-read caller is required for execution")
-        errors.extend(validate_tracking(receipt.get("project_work_kanban"), phase=phase, expected_source_sha=expected_source_sha))
+        errors.extend(
+            validate_tracking(
+                receipt.get("project_work_kanban"),
+                phase=phase,
+                expected_source_sha=expected_source_sha,
+                expected_head_sha=expected_head_sha,
+            )
+        )
     return errors
 
 
@@ -110,6 +123,7 @@ def main() -> int:
     parser.add_argument("--receipt", required=True, type=Path)
     parser.add_argument("--phase", choices=("start", "resume", "closeout"), default="start")
     parser.add_argument("--expected-source-sha", help="Exact source SHA supplied by the trusted caller; required for L1+")
+    parser.add_argument("--expected-head-sha", help="Exact final HEAD supplied independently by the trusted caller; required for closeout")
     parser.add_argument("--render-markdown", action="store_true", help="Print a shape-validated derived PM view; blocked execution remains nonzero")
     args = parser.parse_args()
     try:
@@ -117,7 +131,12 @@ def main() -> int:
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         print(f"WORK CONTRACT RECEIPT: FAIL\n- cannot read JSON receipt: {exc}")
         return 2
-    errors = validate_execution_receipt(receipt, phase=args.phase, expected_source_sha=args.expected_source_sha)
+    errors = validate_execution_receipt(
+        receipt,
+        phase=args.phase,
+        expected_source_sha=args.expected_source_sha,
+        expected_head_sha=args.expected_head_sha,
+    )
     if errors:
         print("WORK CONTRACT RECEIPT: FAIL")
         for error in errors:
