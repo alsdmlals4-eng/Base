@@ -1,5 +1,7 @@
 {
   "schema_version": 3,
+  "status": "V3_COMPATIBILITY_AND_HISTORY_ONLY",
+  "active_route_for_new_work": false,
   "authority_model": "DOMAIN_SPLIT_CANON",
   "project_workspace": "NOTION_DEFAULT_PROJECT_WORKSPACE",
   "human_facing_canon": "NOTION_HUMAN_FACING_CANON",

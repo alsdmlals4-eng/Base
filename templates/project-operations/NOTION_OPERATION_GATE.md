@@ -1,6 +1,6 @@
 # Project Notion Operation Gate
 
-이 문서는 Base를 채택한 프로젝트에서 **Notion을 실제로 읽고 수정할 때의 공용 실행 계약**이다. Notion 제품 기능의 전체 설명서가 아니며, 프로젝트 기획 정본·Human Home 정책·Visual workflow·repository runtime truth를 대체하지 않는다.
+이 문서는 Base를 채택한 프로젝트에서 **V4 exception 또는 legacy migration 때문에 Notion을 실제로 읽고 수정할 때의 공용 실행 계약**이다. Notion 제품 기능의 전체 설명서가 아니며, 새 프로젝트의 기본 workspace·프로젝트 기획 정본·Visual workflow·repository runtime truth를 대체하지 않는다.
 
 상위 제품 동작 참조는 `docs/knowledge/methods/NOTION_OFFICIAL_PRODUCT_OPERATING_REFERENCE.md`다. 이 문서는 그 공식 제품 동작을 프로젝트 실행 규칙으로 좁혀 적용하며, 제품 기능 자체의 의미·제약이 바뀌면 상위 참조를 먼저 확인한다.
 
@@ -13,8 +13,9 @@ NOTION_OPERATION_GATE
 
 ## 1. Authority boundary
 
-- 사람용 프로젝트 개요·기획·시각 자료·사람이 수정하는 표/Flow는 `NOTION_HUMAN_FACING_CANON`을 따른다.
-- Markdown/JSON/game data/code/scene/resource/test와 실제 build/runtime evidence는 `REPOSITORY_STRUCTURED_CANON` / `REPOSITORY_RUNTIME_TRUTH`를 따른다.
+- 현재 기획·결정·시각 자료·표·Flow/Wireframe과 Markdown/JSON/game data/code/scene/resource/test는 V4 `REPOSITORY_PRIMARY_CANON`을 따른다.
+- 사람이 읽는 milestone PDF는 `HUMAN_GDD_PDF_DERIVED_VIEW`이며, 실제 build/runtime evidence는 `REPOSITORY_RUNTIME_TRUTH`를 따른다.
+- Notion은 UNIQUE legacy material을 이관하거나 프로젝트 `AGENTS.md`가 지정한 V4 exception을 처리할 때만 허용된 보조 surface다.
 - raw ID, schema, Record Key, revision, prompt, hash, automation metadata 같은 AI/System 정보는 사람용 Home 기본 콘텐츠로 복제하지 않는다.
 - Notion 변경이 structured/runtime 의미를 바꾸면 repository owner에 동기화하기 전 구현·runtime 완료를 주장하지 않는다.
 

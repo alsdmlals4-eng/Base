@@ -9,7 +9,7 @@ Base v9.1 projects use the focused [project adapter and routing contract](refere
 
 ## Core principle
 
-신규 설치, 기존 구조 감사, 구형 파일 정리, 승인된 마이그레이션과 운영체계 검수는 같은 책임 원본·참조·복구 계약을 공유한다. `Work Mode`와 `Skill Mode`를 구분하며, 읽기 전용 조사와 승인된 쓰기 작업을 혼동하지 않는다. 프로젝트 workspace는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json`의 `DOMAIN_SPLIT_CANON`을 따른다. 기본 사람용 workspace는 `NOTION_DEFAULT_PROJECT_WORKSPACE` / `NOTION_HUMAN_FACING_CANON`, 구조화·runtime truth는 `REPOSITORY_STRUCTURED_CANON`, Google Sheets는 `COMPATIBILITY_ONLY` legacy migration input이다.
+신규 설치, 기존 구조 감사, 구형 파일 정리, 승인된 마이그레이션과 운영체계 검수는 같은 책임 원본·참조·복구 계약을 공유한다. `Work Mode`와 `Skill Mode`를 구분하며, 읽기 전용 조사와 승인된 쓰기 작업을 혼동하지 않는다. 프로젝트 workspace는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`의 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`를 따른다. `REPOSITORY_PRIMARY_CANON`이 현재 기획·구조화·runtime truth를 소유하고, `HUMAN_GDD_PDF_DERIVED_VIEW`는 exact-SHA 사람이 보는 파생본이다. Notion과 Google Sheets는 V4 exception 또는 read-only/compatibility migration input이며 V3 `DOMAIN_SPLIT_CANON`은 history-only다.
 
 Google Sheets legacy migration의 공용 의미·폐기 경계는 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`를 따른다. 이 참조는 Sheet를 신규 입력면이나 active project workspace로 재승격하지 않는다. 기존 consumer가 사용하는 legacy literal `project_google_sheet`는 `google_sheet_compatibility_source`의 호환 alias일 뿐이며 신규 install·active sync·정본 권위를 뜻하지 않는다.
 
@@ -107,15 +107,15 @@ hera_source_delta_guard:
 - 기존 승인 결정·수치·자산·실패·보류·참조는 조사와 승인 없이 제거하지 않는다.
 - 파일 존재와 실제 실행·강제를 구분한다.
 - 새 AI가 과거 대화 없이 `CURRENT_CONFIRMED_DECISIONS.md`에서 현재 승인 상태와 다음 작업을 찾을 수 있어야 한다.
-- 질문 전에 최신 `main`, 기존 Decision, 분야 정본, 동일 Goal의 PR과 정확한 Project Notion workspace를 비교하고 이미 답한 질문은 반복하지 않는다. legacy Sheet는 `google_sheet_compatibility_source`에 UNIQUE 미이관 정보가 있을 때만 대조한다.
-- 승인된 Decision은 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`와 workspace authority contract에 따라 Repository 정본과 적용 가능한 `NOTION_HUMAN_FACING_CANON`에 기록하고 **destination readback**한다. Google Sheets 쓰기는 active Decision sync 요구사항이 아니다.
+- 질문 전에 최신 `main`, 기존 Decision, 분야 정본, 동일 Goal의 PR과 실제 repository implementation을 비교하고 이미 답한 질문은 반복하지 않는다. legacy Notion/Sheet는 UNIQUE 미이관 정보가 있을 때만 대조한다.
+- 승인된 Decision은 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`와 V4 workspace authority contract에 따라 repository 정본에 기록하고 commit/readback한다. 사람이 보는 milestone 검토는 exact-SHA PDF로 생성하며, Notion 쓰기는 V4 exception을 제외하고 active Decision sync 요구사항이 아니다.
 - `BEST_LONG_TERM_EFFICIENT_METHOD`를 운영체계의 작업목표로 사용한다. 응답 속도·최소 토큰보다 정확성, 출시 품질, 유지보수성, 재사용성, 되돌리기 가능성, 수명주기 총비용을 우선하고, 공식/1차 자료·벤치마크·현업 운영·실무 성공/실패 사례를 최소 3개 실질 대안과 비교한다.
-- `POSTMERGE_GITHUB_NOTION_ADVERSARIAL_PROGRESS_LOOP`: GitHub 병합 뒤 exact new main을 재조회하고 전체 승인 범위를 적대적으로 검토한다. 유효 finding은 `POSTMERGE_CORRECTION_REQUIRED`로 latest main의 새 Branch/PR에서 교정·회귀 검증한다. 적용 가능한 Notion current-state는 GitHub 증거 뒤에만 갱신하고, GitHub/Notion 양쪽 destination을 다시 읽어 `PROGRESS_READBACK_REQUIRED`와 남은 작업 계산을 닫는다.
+- `POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP`: GitHub 병합 뒤 exact new main을 재조회하고 전체 승인 범위를 적대적으로 검토한다. 유효 finding은 `POSTMERGE_CORRECTION_REQUIRED`로 latest main의 새 Branch/PR에서 교정·회귀 검증한다. repository 정본·파생 PDF·필요 시 legacy migration readback을 다시 확인해 `PROGRESS_READBACK_REQUIRED`와 남은 작업 계산을 닫는다.
 - `REMAINING_WORK_COMPLETION_GATE`: Base 공용 완료 규칙을 모든 프로젝트 작업에도 적용한다. 계획된 작업을 끝낸 뒤 `REMAINING_WORK_RECALCULATION_REQUIRED`와 `IMPLEMENTATION_CORRECTION_RESCAN`을 수행하고, 새 유효 finding이 있으면 `NEW_FINDING_REOPENS_REMAINING_WORK`로 BUILD/verify를 재개한다. 최종 후보의 기존 `POST_CHANGE_MONITOR_LOOP`가 곧 `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`이며 별도 두 번째 검토 루프를 만들지 않는다.
 
 ### `REMAINING_WORK_COMPLETION_GATE`
 
-프로젝트에서 계획된 남은 작업이 0으로 보이는 순간은 완료가 아니라 `COMPLETION_CANDIDATE`다. 실제 Repository·적용 가능한 Notion·Decision·PR·구현·Test·consumer·evidence 상태를 다시 읽어 `REMAINING_WORK_RECALCULATION_REQUIRED`를 수행한다.
+프로젝트에서 계획된 남은 작업이 0으로 보이는 순간은 완료가 아니라 `COMPLETION_CANDIDATE`다. 실제 repository·적용 가능한 V4 exception/legacy migration source·Decision·PR·구현·Test·consumer·evidence 상태를 다시 읽어 `REMAINING_WORK_RECALCULATION_REQUIRED`를 수행한다.
 
 ```text
 planned project work exhausted
@@ -123,7 +123,7 @@ planned project work exhausted
    ├─ remaining > 0 → BUILD / verify 계속
    └─ remaining = 0 → COMPLETION_CANDIDATE
 → IMPLEMENTATION_CORRECTION_RESCAN
-   implementation / canon / Notion / tests / consumers / PRs / runtime/readback evidence
+   implementation / canon / V4 exception or legacy migration / tests / consumers / PRs / runtime/readback evidence
    ├─ valid finding → NEW_FINDING_REOPENS_REMAINING_WORK
    │  → existing owner 최소 교정
    │  → regression + destination readback
@@ -136,26 +136,26 @@ planned project work exhausted
 → completion report
 ```
 
-`IMPLEMENTATION_CORRECTION_RESCAN`은 `running-adversarial-review-and-refinement`가 소유하며 새 Skill이 아니다. 프로젝트 core/승인 intent와 실제 구현의 불일치, 정본·Notion/Repository drift, untouched Test·Template·consumer·reference, 동일 Goal PR, rollback/복구, runtime/readback evidence를 다시 공격한다. 검증된 finding은 현재 승인 범위의 남은 작업으로 편입한다. `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED` 역시 새 cycle이 아니라 최종 completion candidate를 입력으로 한 동일 `POST_CHANGE_MONITOR_LOOP`를 뜻한다.
+`IMPLEMENTATION_CORRECTION_RESCAN`은 `running-adversarial-review-and-refinement`가 소유하며 새 Skill이 아니다. 프로젝트 core/승인 intent와 실제 구현의 불일치, repository와 적용 가능한 V4 exception/legacy migration source의 drift, untouched Test·Template·consumer·reference, 동일 Goal PR, rollback/복구, runtime/readback evidence를 다시 공격한다. 검증된 finding은 현재 승인 범위의 남은 작업으로 편입한다. `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED` 역시 새 cycle이 아니라 최종 completion candidate를 입력으로 한 동일 `POST_CHANGE_MONITOR_LOOP`를 뜻한다.
 
 승인 범위 안에 완료 조건을 막는 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, 미해결 `DEFER`가 남으면 `전체 완료`라고 보고하지 않는다. 해당 상태와 재개 조건을 그대로 노출한다. 범위 밖 future improvement는 별도 후보로 `DEFER`할 수 있으나 현재 범위의 미완료를 숨기는 용도로 사용하지 않는다.
 
 ## Project workspace authority contract
 
 ```yaml
-workspace_authority: DOMAIN_SPLIT_CANON
-default_project_workspace: NOTION_DEFAULT_PROJECT_WORKSPACE
-human_facing_canon: NOTION_HUMAN_FACING_CANON
-structured_runtime_canon: REPOSITORY_STRUCTURED_CANON
-google_sheets: COMPATIBILITY_ONLY
+workspace_authority: DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE
+project_canon: REPOSITORY_PRIMARY_CANON
+human_facing_view: HUMAN_GDD_PDF_DERIVED_VIEW
+notion: LEGACY_OPTIONAL_READ_ONLY_MIGRATION_SOURCE
+google_sheets: MIGRATION_COMPATIBILITY_ONLY
 google_sheet_compatibility_source: OPTIONAL_LEGACY_MIGRATION_INPUT
 ```
 
-- 사람용 프로젝트 계획·결정·설명·시각 자료는 정확한 Project relation의 Notion workspace에 둔다.
-- 구조화 상태·Commit·runtime truth·실제 코드/데이터/씬/자산/Test는 Repository가 소유한다.
-- 기존 Google Sheet의 값·수식·이미지·사용자 편집은 삭제 전에 `UNIQUE / DUPLICATE / OBSOLETE`로 감사한다.
-- Sheet-only 고유 정보는 현행 owner로 이관 → readback/Test → consumer/reference 확인 후에만 원본 수명주기를 판정한다.
-- 신규 install은 Google Sheet URL이나 tab을 요구하거나 생성하지 않는다.
+- 현재 프로젝트 계획·결정·설명·시각 source, 구조화 상태·Commit·runtime truth·실제 코드/데이터/씬/자산/Test는 repository가 소유한다.
+- 사람용 milestone 검토는 source SHA와 evidence ceiling이 있는 PDF로 발행한다.
+- 기존 Notion/Google Sheet의 값·수식·이미지·사용자 편집은 삭제 전에 `UNIQUE / DUPLICATE / OBSOLETE`로 감사한다.
+- legacy-only 고유 정보는 repository 또는 명시적 non-canon 보관소로 이관 → readback/Test → consumer/reference 확인 후에만 원본 수명주기를 판정한다.
+- 신규 install은 Notion workspace나 Google Sheet URL/tab을 요구하거나 생성하지 않는다. V4 Notion exception은 explicit approval 및 기록된 owner·scope·value·exit/revisit 조건을 요구한다.
 
 ## HiGodot provider adoption contract
 
@@ -414,7 +414,7 @@ KEEP_UNRESOLVED
 
 - Work Mode와 Skill Mode·쓰기 권한이 명확하다.
 - 사용자가 Skill을 선언하지 않아도 trigger로 필요한 Skill Mode를 자동 선택했다.
-- `NOTION_DEFAULT_PROJECT_WORKSPACE`, `NOTION_HUMAN_FACING_CANON`, `REPOSITORY_STRUCTURED_CANON`, `COMPATIBILITY_ONLY`의 역할이 구분됐다.
+- `REPOSITORY_PRIMARY_CANON`, `HUMAN_GDD_PDF_DERIVED_VIEW`, `LEGACY_OPTIONAL_READ_ONLY_MIGRATION_SOURCE`, `MIGRATION_COMPATIBILITY_ONLY`의 역할이 구분됐다.
 - 기존 프로젝트는 `audit`와 승인 없이 대규모 변경하지 않았다.
 - 구형 파일은 고유 정보·참조·파생본·복구·승인에 따라 판정됐다.
 - legacy Sheet는 active workspace로 재승격되지 않았고 UNIQUE material은 현행 owner 이관·readback/Test·consumer 확인을 거쳤다.

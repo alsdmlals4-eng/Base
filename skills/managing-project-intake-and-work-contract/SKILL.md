@@ -46,7 +46,7 @@ latest user request
 → docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json + current adoption profile/matrix + REUSABLE_MODULE_REGISTRY
 → Base accumulated knowledge/case/reference owners relevant to the current decision
 → targeted cross-project verified implementation/pattern evidence only when the registry/profile/current bottleneck points to it
-→ benchmark + professional practice + success/failure cases only when decision-relevant
+→ benchmark + professional practice + success/failure cases (all L1+ work: task-appropriate source set)
 → owner-specific reuse/adapt/reference/no-reuse disposition
 → >= 3 materially distinct alternatives
 → Implementation Reality Gate
@@ -58,6 +58,10 @@ latest user request
 `REUSE_FIRST_PREFLIGHT_REQUIRED`: 신규 또는 의미 있게 개정하는 시스템·메커닉·데이터/콘텐츠 구조·UI/UX·시각/Asset·도구/자동화·workflow·Skill/Eval·QA/Test는 신규 설계·제작 전에 위 source order를 실제로 확인한다. 현재 프로젝트에서 이미 해결된 구현·컴포넌트·Scene·Resource·자산·테스트가 있으면 그것이 첫 후보이고, 프로젝트의 승인된 Asset/Reference/Benchmark와 Base의 reuse handoff/profile/matrix/Registry 및 **Base accumulated knowledge/case/reference**를 fresh external research보다 먼저 확인한다. 다른 프로젝트는 모든 프로젝트를 전수 검색하지 않고 Registry/profile/current bottleneck이 가리키는 직접 관련 consumer만 targeted cross-project evidence로 확인한다.
 
 적용 대상에서 preflight가 `NOT_RUN`이면 신규 제작·custom design·`BUILD_NEW` readiness는 `BLOCKED_UNVERIFIED`다. 동일 승인 범위에서 이미 수행한 preflight의 scope·consumer·freshness가 변하지 않았으면 `REUSED_EVIDENCE`로 재사용할 수 있다. 오탈자·형식 정리처럼 새 설계/제작 판단이 없는 기계적 작업은 이유가 있는 `NOT_APPLICABLE`을 허용한다. Base나 타 프로젝트 후보는 프로젝트 정본·고유 경험을 덮어쓰지 않으며, 발견만으로 project adoption·Asset 승인·runtime proof가 되지 않는다. disposition은 해당 owner가 이미 가진 `REUSE / ADAPT / REFERENCE_ONLY / NO_REUSE / BUILD_NEW` 등 기존 어휘를 사용하고 새 공용 taxonomy를 만들지 않는다.
+
+`MANDATORY_BENCHMARK_REVERSE_ENGINEERING_PREFLIGHT` / `BENCHMARK_PREFLIGHT_BEFORE_WORK_REQUIRED`: Base·프로젝트의 모든 L1+ 작업은 변경 전에 task-appropriate benchmark를 실제로 수행한다. 먼저 exact repository revision의 같은 책임·실제 consumer·현재 설정을 비교하고, 그 뒤 current Base 사례·승인 Reference/Benchmark·직접 관련 유사 구현·필요한 공식 원출처를 검토한다. 결과는 기존 work contract 또는 start receipt에 `benchmark_preflight_state: PASS | REUSED_EVIDENCE | NOT_APPLICABLE | BLOCKED_UNVERIFIED`, `source_and_evidence`, `observed_pattern`, `project_fit_and_difference`, `ADOPT / ADAPT / REJECT | NOT_APPLICABLE`로 남긴다. 이 절차는 고정된 게임 장르·화면·메뉴 목록·그림체·구도를 주입하지 않는다. 현재 프로젝트의 세계관·플랫폼·계약·실제 소비처에 맞는 방향과 필요한 flow를 찾는 비교 단계다. L0 순수 기계 수정만 이유가 있는 `NOT_APPLICABLE`이고, 필수 원출처를 읽지 못하면 추측으로 진행하지 않는다.
+
+`LEGACY_CONTEXT_CONFIGURATION_HYGIENE_REQUIRED`: 같은 preflight에서 이번 범위의 context·설정·entrypoint·문서·생성물을 `ACTIVE_OWNER | COMPATIBILITY | ARCHIVE | OBSOLETE_CANDIDATE | UNKNOWN_UNVERIFIED`로 구분한다. `NO_BROAD_SWEEP_WITHOUT_SCOPE`: token 절감을 이유로 저장소 전체를 무차별 재작성하지 않는다. `NO_DELETION_BY_AGE_OR_NAME`: 날짜·구형 이름·파일명만으로 삭제하지 않는다. 실제 제거는 `REFERENCES_AND_CONSUMERS_ZERO_BEFORE_REMOVAL`과 `GIT_RECOVERABLE_REMOVAL_AND_READBACK`을 충족한 뒤 연결 문서·생성물·검증 경로를 다시 읽고 수행한다. source·consumer·provenance를 읽지 못한 자료는 `UNKNOWN_UNVERIFIED`로 보존하며, archive·compatibility 자료를 current owner로 오인하지 않도록 entrypoint와 documentation map만 먼저 교정한다.
 
 `PRE_BUILD_BEFORE_AFTER_EXPECTED_EFFECT_REPORT`: 위 조사가 끝난 뒤 BUILD 전에 사용자에게 최소 다음을 한 묶음으로 보고한다.
 
@@ -128,7 +132,7 @@ exact video/source identity readback
 
 승인 결정 복원·중복 질문 방지·Repository/Notion 동기화: `docs/CONFIRMED_DECISION_SYNC_POLICY.md`
 
-프로젝트 workspace 권위: `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json` (`NOTION_DEFAULT_PROJECT_WORKSPACE`, `NOTION_HUMAN_FACING_CANON`, `REPOSITORY_STRUCTURED_CANON`, Google Sheets `COMPATIBILITY_ONLY`).
+프로젝트 workspace 권위: `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` (`DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`, `REPOSITORY_PRIMARY_CANON`, `HUMAN_GDD_PDF_DERIVED_VIEW`, legacy Notion/Google Sheets migration boundary). V3 `PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json`은 `V3_COMPATIBILITY_AND_HISTORY_ONLY`이며 신규 project work route가 아니다.
 
 legacy Google Sheets 해석·이관이 필요한 경우에만 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`와 compatibility 계약을 참고한다. 이는 신규 입력이나 active workspace 권위를 만들지 않는다. 기존 consumer가 사용하는 legacy literal `project_google_sheet`는 `google_sheet_compatibility_source`의 호환 alias일 뿐이며 신규 Sheet·active sync·정본 권위를 뜻하지 않는다.
 
@@ -520,19 +524,18 @@ status: PASS/PARTIAL/FAIL/UNVERIFIED
 ## Project workspace handling
 
 ```yaml
-workspace_authority: DOMAIN_SPLIT_CANON
-default_project_workspace: NOTION_DEFAULT_PROJECT_WORKSPACE
-human_facing_canon: NOTION_HUMAN_FACING_CANON
-structured_canon: REPOSITORY_STRUCTURED_CANON
-google_sheets: COMPATIBILITY_ONLY
+workspace_authority: DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE
+project_canon: REPOSITORY_PRIMARY_CANON
+human_facing_view: HUMAN_GDD_PDF_DERIVED_VIEW
+notion: LEGACY_OPTIONAL_READ_ONLY_MIGRATION_SOURCE
+google_sheets: MIGRATION_COMPATIBILITY_ONLY
 google_sheet_compatibility_source: OPTIONAL_LEGACY_MIGRATION_INPUT
 ```
 
-- 정확한 Project relation의 Notion workspace를 사람용 계획·결정·설명 정본으로 읽는다.
-- 최신 Repository 정본·실제 파일을 구조화·runtime truth로 읽고, 사람용 기록과 의미가 맞는지 destination readback한다.
-- Base 자체 작업처럼 프로젝트 Notion destination이 적용되지 않으면 목적지를 발명하지 않는다.
-- 기존 Google Sheet가 실제 존재하면 고유 사용자 수정·수식·이미지를 `UNIQUE / DUPLICATE / OBSOLETE`로 판정한다. `UNIQUE`만 현행 owner로 이관 → readback/Test → consumer/reference 확인한다.
-- Sheet는 신규 입력·active Decision sync·완료 판정에 필요하지 않으며 신규 프로젝트에 생성하지 않는다.
+- 최신 repository 정본·실제 파일을 현재 계획·결정·구조화·runtime truth로 읽고, 사람용 PDF에는 exact source SHA와 evidence ceiling을 기록한다.
+- Base 자체 작업처럼 project-scoped migration surface가 적용되지 않으면 목적지를 발명하지 않는다.
+- 기존 Notion 또는 Google Sheet가 실제 존재하면 고유 사용자 자료를 `UNIQUE / DUPLICATE / OBSOLETE`로 판정한다. `UNIQUE`만 repository 또는 명시적 non-canon 보관소로 이관 → readback/Test → consumer/reference 확인한다.
+- Notion과 Sheet는 신규 입력·active Decision sync·완료 판정에 필요하지 않으며 신규 프로젝트에 생성하지 않는다. V4 예외는 explicit user approval, owner, scope, measurable value, revisit/exit 조건이 있을 때만 적용한다.
 
 ## State model
 
@@ -629,7 +632,7 @@ remaining_unknowns: []
 - 연속작업 중 사용자 결정·고위험 행위는 자동 승인하지 않았고, recoverable/local blocker는 recovery ladder와 independent-ready-task scan 없이 전역 종료하지 않았다.
 - 승인된 동일 범위의 구현·검증 방법과 병합에는 기존 approval reference와 `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`를 재사용했다.
 - `STRONGER_WORK_CONTRACT_OVERRIDES_COPY_INTEGRATION`이 적용되는 다른 workstream PR은 `explicit absorption authorization` 없이 흡수하지 않았다.
-- `NOTION_DEFAULT_PROJECT_WORKSPACE` / `NOTION_HUMAN_FACING_CANON`과 `REPOSITORY_STRUCTURED_CANON`의 역할이 분리됐고 Google Sheets는 `COMPATIBILITY_ONLY`다.
+- `REPOSITORY_PRIMARY_CANON`과 `HUMAN_GDD_PDF_DERIVED_VIEW`의 역할이 분리됐고 Notion/Google Sheets는 V4 exception 또는 migration source로만 남는다.
 - 새 기능 또는 의미 있는 기능 계약 변경은 크기와 무관하게 정본 owner·공개/통합 경계·실제 consumer/의존 방향·검증·롤백이 `execution_sequence_path`의 기능별 코드·계약 경계에 연결됐다.
 - 큰 작업은 독립 검증 가능한 결과·의존성·병렬 묶음·게이트로 분해됐다.
 - 실제 사용한 Work Mode·Skill·Skill Mode의 이유와 결과·증거를 보고했다.

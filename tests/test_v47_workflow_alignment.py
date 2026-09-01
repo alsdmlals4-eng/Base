@@ -39,13 +39,14 @@ class V47WorkflowAlignmentTests(unittest.TestCase):
         self.assertNotIn("| QA runtime evidence | `tools/qa-evidence-studio/README.md`", docs_map)
         self.assertIn("REPOSITORY_NATIVE_EVIDENCE_CAPTURE", docs_map)
 
-    def test_operating_model_uses_notion_and_repository_not_google_sheet_gdd_authority(self) -> None:
+    def test_operating_model_uses_repository_first_not_google_sheet_gdd_authority(self) -> None:
         operating = read("docs/OPERATING_MODEL.md")
-        self.assertIn("NOTION_DEFAULT_PROJECT_WORKSPACE", operating)
-        self.assertIn("REPOSITORY_STRUCTURED_CANON", operating)
+        self.assertIn("DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE", operating)
+        self.assertIn("REPOSITORY_PRIMARY_CANON", operating)
+        self.assertIn("HUMAN_GDD_PDF_DERIVED_VIEW", operating)
         self.assertIn("REPOSITORY_RUNTIME_TRUTH", operating)
-        self.assertIn("GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL", operating)
-        self.assertIn("docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md", operating)
+        self.assertIn("COMPATIBILITY_ONLY", operating)
+        self.assertIn("docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md", operating)
         self.assertNotIn("GDD Google Sheets는 `USER_FACING_GDD_WORKSPACE`", operating)
 
     def test_reuse_catalog_uses_repository_native_evidence_capture(self) -> None:

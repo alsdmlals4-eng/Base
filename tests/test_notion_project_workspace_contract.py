@@ -11,9 +11,11 @@ def text(path: str) -> str:
 
 
 class NotionProjectWorkspaceContractTests(unittest.TestCase):
-    def test_machine_workspace_authority_is_notion_and_project_scoped(self) -> None:
+    def test_v3_machine_workspace_contract_is_retained_for_compatibility_only(self) -> None:
         contract = json.loads(text("docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json"))
         self.assertEqual(3, contract["schema_version"])
+        self.assertEqual("V3_COMPATIBILITY_AND_HISTORY_ONLY", contract["status"])
+        self.assertFalse(contract["active_route_for_new_work"])
         self.assertEqual("NOTION_DEFAULT_PROJECT_WORKSPACE", contract["project_workspace"])
         self.assertEqual("PROJECT_RELATION_REQUIRED", contract["project_relation"])
         self.assertEqual("WORK_MASTER", contract["work_master"])
@@ -21,7 +23,7 @@ class NotionProjectWorkspaceContractTests(unittest.TestCase):
         self.assertEqual("VISUAL_MAP_DERIVED", contract["visual_map"])
         self.assertEqual("REPOSITORY_RUNTIME_TRUTH", contract["runtime_truth"])
 
-    def test_canon_authority_is_split_by_domain(self) -> None:
+    def test_v3_split_domain_details_are_not_the_active_new_work_route(self) -> None:
         contract = json.loads(text("docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json"))
         self.assertEqual("DOMAIN_SPLIT_CANON", contract["authority_model"])
         self.assertEqual("NOTION_HUMAN_FACING_CANON", contract["human_facing_canon"])
@@ -35,22 +37,30 @@ class NotionProjectWorkspaceContractTests(unittest.TestCase):
             "RESOURCE", "TEST", "RUNTIME_EVIDENCE",
         }.issubset(set(contract["repository_priority_domains"])))
         self.assertEqual("SYNC_BEFORE_IMPLEMENTATION", contract["cross_domain_sync"])
+        active = json.loads(text("docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json"))
+        self.assertEqual("ACTIVE_DEFAULT", active["status"])
+        self.assertEqual(
+            "REPOSITORY_PRIMARY_CANON_WITH_DERIVED_HUMAN_PDF",
+            active["authority_model"],
+        )
 
-    def test_managing_design_documents_uses_split_canon(self) -> None:
+    def test_managing_design_documents_uses_repository_first_with_scoped_legacy_notion(self) -> None:
         skill = text("skills/managing-design-documents/SKILL.md")
         for token in (
-            "NOTION_HUMAN_FACING_CANON", "REPOSITORY_STRUCTURED_CANON",
-            "PROPOSED_NOTION_CHANGE", "SYNC_BEFORE_IMPLEMENTATION", "COMPATIBILITY_ONLY",
+            "PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json", "REPOSITORY_PRIMARY_CANON",
+            "HUMAN_GDD_PDF_DERIVED_VIEW", "PROPOSED_LEGACY_CHANGE",
+            "SYNC_BEFORE_IMPLEMENTATION", "COMPATIBILITY_ONLY",
         ):
             self.assertIn(token, skill)
         self.assertNotIn("USER_FACING_GDD_WORKSPACE", skill)
         self.assertNotIn("프로젝트 Google Sheets까지 같은 승인 단위에서 동기화", skill)
 
-    def test_confirmed_decision_sync_uses_split_canon(self) -> None:
+    def test_confirmed_decision_sync_uses_repository_first_canon(self) -> None:
         policy = text("docs/CONFIRMED_DECISION_SYNC_POLICY.md")
         for token in (
-            "DOMAIN_SPLIT_CANON", "NOTION_HUMAN_FACING_CANON", "REPOSITORY_STRUCTURED_CANON",
-            "PROPOSED_NOTION_CHANGE", "SYNC_BEFORE_IMPLEMENTATION", "NOTION_UPDATED",
+            "PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json", "REPOSITORY_PRIMARY_CANON",
+            "HUMAN_GDD_PDF_DERIVED_VIEW", "PROPOSED_LEGACY_CHANGE",
+            "DERIVED_VIEW_UPDATED", "SYNC_BEFORE_IMPLEMENTATION",
             "COMPATIBILITY_ONLY",
         ):
             self.assertIn(token, policy)

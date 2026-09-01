@@ -25,11 +25,12 @@ latest user instruction
 
 모든 과거 Base 파일을 고정 목록으로 읽지 않는다. 현재 Documentation Map, router, nearest `AGENTS.md`, path-specific instructions가 현재 작업에 필요한 owner를 결정한다.
 
-## DOMAIN_SPLIT_CANON
+## V4 repository-first authority
 
-- `NOTION_HUMAN_FACING_CANON`: 사람이 읽고 비교·수정하는 프로젝트 개요·기획·Visual/Asset·사람용 표·Flow/Storyboard.
-- `REPOSITORY_STRUCTURED_CANON`: Markdown·JSON·게임 데이터·코드·씬·리소스·config·tests.
+- `REPOSITORY_PRIMARY_CANON`: 사람이 읽고 비교·수정하는 프로젝트 개요·기획·Visual/Asset·표·Flow/Wireframe/Storyboard, Markdown·JSON·게임 데이터·코드·씬·리소스·config·tests.
 - `REPOSITORY_RUNTIME_TRUTH`: 실제 build/runtime/test evidence.
+- `HUMAN_GDD_PDF_DERIVED_VIEW`: exact source SHA와 evidence ceiling을 가진 사람용 milestone snapshot.
+- Notion은 UNIQUE legacy material의 migration source 또는 프로젝트 AGENTS가 명시한 좁은 V4 exception이다. 새 기본 workspace나 active decision sync 정본으로 사용하지 않는다.
 - Google Sheets는 unique unmigrated material이 남은 경우의 `MIGRATION_ONLY_UNTIL_REMOVAL` compatibility source다.
 
 ## Rules

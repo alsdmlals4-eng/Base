@@ -15,6 +15,9 @@ REMAINING_WORK_AND_ORDER_DERIVED_FROM_CURRENT_CANON
 PROJECT_CANON_AND_ACTUAL_IMPLEMENTATION_FIRST
 FRESH_READ_BEFORE_PROJECT_WORK_REQUIRED
 GENRE_WORLD_VISUAL_BENCHMARK_RECEIPT_REQUIRED
+MANDATORY_BENCHMARK_REVERSE_ENGINEERING_PREFLIGHT
+BENCHMARK_PREFLIGHT_BEFORE_WORK_REQUIRED
+LEGACY_CONTEXT_CONFIGURATION_HYGIENE_REQUIRED
 ACTUAL_IMPLEMENTATION_EVIDENCE_NO_SPECULATION
 REUSE_VALID_RECEIPT_UNTIL_MATERIAL_DRIFT
 STARTUP_CANON_CHECKLIST_USER_REPORT_REQUIRED
@@ -30,7 +33,8 @@ NO_NEW_NOTION_WRITE_BY_DEFAULT
 안전한 read-only authority bootstrap와 Git remote refresh
 → current Project repository exact SHA·actual implementation·open workstream 확인
 → 현재 장르·하위 장르·세계관/setting tone·시각/구도 anchor와 실제 소비처 확인
-→ 관련 benchmark를 원출처와 evidence status로 구분하고 `ADOPT / ADAPT / REJECT` 판정
+→ task-appropriate benchmark·역공학을 원출처와 evidence status로 확인하고 `ADOPT / ADAPT / REJECT` 판정
+→ 이번 scope의 context·설정·entrypoint·문서·생성물을 hygiene 분류하고 active owner 혼동을 선교정
 → 핵심 재미·핵심 시스템·SWOT·남은 작업·작업순서 체크리스트 작성
 → 정본 상태 분류
 → 현재 승인 범위의 누락·충돌·stale 상태 선교정
@@ -121,6 +125,9 @@ PROJECT_START_CANON_CHECKLIST:
         project_fit_and_difference:
         decision: ADOPT | ADAPT | REJECT | NOT_APPLICABLE
         owner_or_consumer:
+    benchmark_preflight_state: PASS | REUSED_EVIDENCE | NOT_APPLICABLE | BLOCKED_UNVERIFIED
+    benchmark_preflight_scope:
+    benchmark_preflight_reason_not_applicable:
     player_promise:
     pointed_fun:
     core_loop:
@@ -180,6 +187,15 @@ PROJECT_START_CANON_CHECKLIST:
     handoff_readback:
     human_pdf_freshness_readback:
 
+  context_configuration_hygiene:
+    scope:
+    inventory: []
+    classification: ACTIVE_OWNER | COMPATIBILITY | ARCHIVE | OBSOLETE_CANDIDATE | UNKNOWN_UNVERIFIED
+    entrypoint_or_token_saving_correction: []
+    references_and_consumers_zero_before_removal:
+    git_recoverable_removal_and_readback:
+    cleanup_result: NO_CHANGE | CORRECTED | REMOVAL_VERIFIED | DEFERRED_UNKNOWN_UNVERIFIED
+
   legacy_migration:
     notion_unique_canon_count:
     codex_notion_dependency_count:
@@ -196,13 +212,19 @@ PROJECT_START_CANON_CHECKLIST:
     result: READY_AFTER_CORRECTION | BLOCKED_UNVERIFIED
 ```
 
-### 4.1 장르·세계관·시각 벤치마크 receipt
+### 4.1 필수 benchmark·역공학 receipt
 
-`GENRE_WORLD_VISUAL_BENCHMARK_RECEIPT_REQUIRED`
+`GENRE_WORLD_VISUAL_BENCHMARK_RECEIPT_REQUIRED` · `MANDATORY_BENCHMARK_REVERSE_ENGINEERING_PREFLIGHT` · `BENCHMARK_PREFLIGHT_BEFORE_WORK_REQUIRED`
 
-기획·시스템·서사·Art Direction·UI/UX·에셋처럼 플레이어가 보는 의미를 material하게 바꾸는 작업은 fresh-read 뒤 `genre_and_subgenre`, `world_and_setting_tone`, `visual_style_and_composition_anchor`를 current owner와 actual consumer에서 복원한다. benchmark는 원출처·관찰 사실·현재 프로젝트와의 차이·`ADOPT / ADAPT / REJECT`만 남기며, 다른 작품의 설정·그림체·구도를 복사하거나 evidence 없는 추측으로 채우지 않는다.
+모든 L1+ 프로젝트 작업은 fresh-read 뒤 exact repository revision의 같은 책임·실제 consumer를 먼저 비교한다. 기획·시스템·서사·Art Direction·UI/UX·에셋처럼 플레이어가 보는 의미를 material하게 바꾸는 경우에는 `genre_and_subgenre`, `world_and_setting_tone`, `visual_style_and_composition_anchor`도 current owner와 actual consumer에서 복원한다. benchmark는 원출처·관찰 사실·현재 프로젝트와의 차이·`ADOPT / ADAPT / REJECT`만 남기며, 다른 작품의 설정·그림체·구도·고정 버튼 목록을 복사하거나 evidence 없는 추측으로 채우지 않는다. `benchmark_preflight_state`가 `PASS` 또는 freshness가 유지된 `REUSED_EVIDENCE`가 아니면 새 설계·제작·구현으로 들어가지 않는다.
 
 L0 기계 수정이나 이 형식의 판단이 전혀 관련 없는 작업은 `NOT_APPLICABLE`과 이유를 남긴다. 현재 source가 읽히지 않으면 기억·대화·파일명으로 채우지 않고 `BLOCKED_UNVERIFIED`로 둔다.
+
+### 4.1.1 legacy context·configuration hygiene receipt
+
+`LEGACY_CONTEXT_CONFIGURATION_HYGIENE_REQUIRED`
+
+작업 시작 범위 안에서만 context·설정·entrypoint·문서·생성물을 `ACTIVE_OWNER | COMPATIBILITY | ARCHIVE | OBSOLETE_CANDIDATE | UNKNOWN_UNVERIFIED`로 분류한다. `NO_BROAD_SWEEP_WITHOUT_SCOPE`: token 절감 명목의 전체 저장소 대량 재작성은 하지 않는다. `NO_DELETION_BY_AGE_OR_NAME`: 오래된 날짜·구형 이름·파일명은 삭제 근거가 아니다. `OBSOLETE_CANDIDATE`는 `REFERENCES_AND_CONSUMERS_ZERO_BEFORE_REMOVAL`과 `GIT_RECOVERABLE_REMOVAL_AND_READBACK`을 만족한 경우에만 실제 제거하며, 그렇지 않으면 `DEFERRED_UNKNOWN_UNVERIFIED`로 보존하고 active entrypoint·문서 지도에서의 오인만 먼저 교정한다.
 
 ## 4.2 사용자에게 보여줄 시작 보고
 

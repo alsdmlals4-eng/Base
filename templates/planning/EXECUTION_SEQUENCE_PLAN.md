@@ -12,9 +12,18 @@
 
 새 기능 또는 기능 계약·공개 경계를 의미 있게 바꾸는 경우 아래 표를 기존 owner·경로와 연결해 작성한다. 별도 Registry·중복 정본은 만들지 않는다. 단일 단계·단일 파일의 작은 기능도 새 경계를 만들거나 바꾸면 한 행을 작성한다. 이미 승인된 기능 경계를 그대로 구현해 변경 사항이 없으면 `N/A`와 기존 계약 경로·사유를 기록한다.
 
-| 기능·모듈 ID | 사용자 가치·책임·비목표 | 계약 정본 owner | 구현·데이터·테스트 위치 | 공개 출력·통합 경계 | 실제 consumer·의존 방향 | 검증·롤백 |
-|---|---|---|---|---|---|---|
-| F-01 |  |  |  |  |  |  |
+| 기능·모듈 ID | 사용자 가치·책임·비목표 | 계약 정본 owner | 구현·데이터·테스트 위치 | 변동 값 owner·고정 경계 | 공개 출력·통합 경계 | 실제 consumer·의존 방향 | 검증·롤백 |
+|---|---|---|---|---|---|---|---|
+| F-01 |  |  |  |  |  |  |  |
+
+## 작업 시작 고정 preflight
+
+| 항목 | 현재 source·exact SHA | 관찰 사실·현재 consumer | 비교/역공학 결론 | 상태 |
+|---|---|---|---|---|
+| Benchmark / reverse engineering |  |  | `ADOPT / ADAPT / REJECT / NOT_APPLICABLE` | `PASS / REUSED_EVIDENCE / NOT_APPLICABLE / BLOCKED_UNVERIFIED` |
+| Legacy context / configuration hygiene |  | `ACTIVE_OWNER / COMPATIBILITY / ARCHIVE / OBSOLETE_CANDIDATE / UNKNOWN_UNVERIFIED` | entrypoint 교정 또는 안전한 정리 계획 | `NO_CHANGE / CORRECTED / REMOVAL_VERIFIED / DEFERRED_UNKNOWN_UNVERIFIED` |
+
+`BENCHMARK_PREFLIGHT_BEFORE_WORK_REQUIRED`: L1+ 작업은 이 표를 완료한 뒤에만 새 설계·제작·구현으로 진행한다. benchmark는 프로젝트에 맞는 flow·wireframe·기능·시각 방향을 찾는 비교이며, 고정된 메뉴·버튼·장르·구도를 주입하지 않는다. `NO_DELETION_BY_AGE_OR_NAME`: hygiene의 실제 제거는 references·consumer 0, Git recoverability, destination readback와 재검증을 확보한 경우에만 허용한다.
 
 ## 선행 조건
 

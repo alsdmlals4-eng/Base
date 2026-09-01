@@ -18,6 +18,36 @@ def text(path: str | Path) -> str:
 
 
 class RepositoryFirstWorkspaceContractTests(unittest.TestCase):
+    def test_active_entrypoints_do_not_restore_v3_as_the_default_workspace(self) -> None:
+        legacy_contract = json.loads(
+            text("docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json")
+        )
+
+        self.assertEqual(
+            "V3_COMPATIBILITY_AND_HISTORY_ONLY", legacy_contract["status"]
+        )
+        self.assertFalse(legacy_contract["active_route_for_new_work"])
+
+        active_entrypoints = (
+            "docs/DOCUMENTATION_MAP.md",
+            "docs/OPERATING_MODEL.md",
+            "skills/managing-project-intake-and-work-contract/SKILL.md",
+            "skills/managing-game-project-operating-system/SKILL.md",
+            "skills/managing-design-documents/SKILL.md",
+            "templates/AGENTS.project.md",
+            "templates/project-operations/README.md",
+        )
+        retired_default = (
+            "현재 기본 계약은 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json`"
+        )
+
+        for path in active_entrypoints:
+            with self.subTest(path=path):
+                source = text(path)
+                self.assertIn("PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json", source)
+                self.assertIn("REPOSITORY_PRIMARY_CANON", source)
+                self.assertNotIn(retired_default, source)
+
     def test_machine_contract_is_repository_first_and_notion_optional(self) -> None:
         contract = json.loads(text(ACTIVE_CONTRACT))
 

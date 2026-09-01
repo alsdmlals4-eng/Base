@@ -1,18 +1,21 @@
 # Project Operations Templates
 
-이 디렉터리는 Base를 채택한 프로젝트가 **프로젝트 운영 상태·결정·handoff·설계 문서 연결**을 시작할 때 복사/적용하는 템플릿 묶음이다. 설치 템플릿 자체는 프로젝트의 활성 상태 정본이 아니며, 실제 프로젝트에서 생성·채택된 문서와 정확한 Project Notion workspace가 정본 역할을 가진다.
+이 디렉터리는 Base를 채택한 프로젝트가 **프로젝트 운영 상태·결정·handoff·설계 문서 연결**을 시작할 때 복사/적용하는 템플릿 묶음이다. 설치 템플릿 자체는 프로젝트의 활성 상태 정본이 아니며, 실제 프로젝트에서 생성·채택된 repository 문서·데이터·코드·검증 evidence가 정본 역할을 가진다. Notion은 V4 exception 또는 legacy migration에 실제로 필요한 경우에만 제한적으로 읽고 수정한다.
 
 ## Workspace authority
 
-현재 기본 계약은 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json`의 `DOMAIN_SPLIT_CANON`이다.
+현재 기본 계약은 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`의 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`다. V3 `DOMAIN_SPLIT_CANON`은 compatibility/history only이며 새 프로젝트나 새 project work의 기본 설치 경로가 아니다.
 
 ```text
-NOTION_DEFAULT_PROJECT_WORKSPACE
-├─ NOTION_HUMAN_FACING_CANON: 사람이 읽고 판단하는 프로젝트 계획·결정·설명·시각 자료
-└─ Project relation으로 프로젝트 간 격리
+REPOSITORY_PRIMARY_CANON
+├─ 현재 기획·결정·Flow/Wireframe·구조화 상태·Commit
+└─ 실제 코드/데이터/씬/자산·runtime truth·검증 증거
 
-REPOSITORY_STRUCTURED_CANON
-└─ 구조화 상태·Commit·실제 코드/데이터/씬/자산·runtime truth·검증 증거
+HUMAN_GDD_PDF_DERIVED_VIEW
+└─ exact repository SHA와 evidence ceiling이 연결된 사람용 milestone snapshot
+
+NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
+└─ UNIQUE legacy material 발견·이관 또는 V4 exception이 실제로 필요한 좁은 범위
 
 Google Sheets
 └─ COMPATIBILITY_ONLY: 기존 프로젝트의 UNIQUE legacy material 이관 입력
@@ -33,13 +36,13 @@ Google Sheets
 - Notion: 기존 고유 미이관 자료가 있을 때 입력 자료로만 읽으며 신규 출력·갱신·동기화·readback 대상에서 제외한다.
 - 보호 경계: DOCX·ZIP·별도 appendix·이미지 묶음을 만들지 않고, 새 이미지 생성은 사용자의 별도 명시적 요청이 있을 때만 진행한다.
 
-이 profile은 master-GDD 작업에 사용자가 명시적으로 선택한 경우에만 적용한다. 기존 `DOMAIN_SPLIT_CANON`, 일반 Notion 프로젝트 운영, 다른 publication profile을 전역 폐기하거나 자동 대체하지 않는다.
+이 profile은 master-GDD 작업에 사용자가 명시적으로 선택한 경우에만 적용한다. V4 repository-first 정본, 다른 publication profile 또는 프로젝트별 좁은 exception을 자동 대체하지 않는다.
 
 ## Notion project operation gate
 
 세부 실행 원본은 `templates/project-operations/NOTION_OPERATION_GATE.md`다. 아래 내용은 설치·콜드 스타트용 요약이며 충돌 시 세부 실행 원본을 우선한다.
 
-프로젝트에서 Notion을 읽거나 수정하는 AI/자동화는 `NOTION_OPERATION_GATE`를 기본 안전 계약으로 사용한다. 이 규칙은 사람용 Home에 새 메타데이터를 추가하는 규칙이 아니라, AI/System 작업면에서 **무엇을 어떤 범위로 수정할지** 통제하는 규칙이다.
+프로젝트에서 Notion을 읽거나 수정해야 하는 V4 exception 또는 legacy migration의 AI/자동화는 `NOTION_OPERATION_GATE`를 사용한다. 새 기본 프로젝트 workspace로 Notion을 만들거나 active Decision sync를 복원하는 규칙은 아니다. 이 규칙은 AI/System 작업면에서 **무엇을 어떤 범위로 수정할지** 통제한다.
 
 ```text
 Project / destination 확인
@@ -77,7 +80,7 @@ Notion의 자동화 관련 기능은 목적에 따라 구분한다.
 
 ## Repository design root
 
-프로젝트가 Base 운영 템플릿을 채택할 때 설계 문서 폴더 `[기획서]`는 **저장소 루트**에 둔다. `templates/project-operations/` 자체나 중첩된 하위 폴더를 프로젝트의 활성 design root로 사용하지 않는다. Notion 사람용 workspace와 Repository `[기획서]` 구조화 문서는 서로 역할이 다르며, 어느 한쪽도 다른 쪽의 복사본으로 운영하지 않는다.
+프로젝트가 Base 운영 템플릿을 채택할 때 설계 문서 폴더 `[기획서]`는 **저장소 루트**에 둔다. `templates/project-operations/` 자체나 중첩된 하위 폴더를 프로젝트의 활성 design root로 사용하지 않는다. Flow, wireframe, benchmark decision, 승인 asset과 구현 contract도 이 repository owner에 연결하며, 사람이 보는 PDF는 정확한 source SHA의 파생본이다.
 
 `DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD`를 선택한 master-GDD 작업에서는 `docs/design/PROJECT_AI_PRODUCTION_SPEC.md`가 AI 기획·구현 계약 owner이고 PDF는 동일 SHA의 사람용 snapshot이다. 이 선택형 경로는 저장소의 실제 code/data/scene/resource/test/runtime truth를 대체하지 않는다.
 
@@ -87,7 +90,7 @@ Notion의 자동화 관련 기능은 목적에 따라 구분한다.
 |---|---|
 | `PROJECT_START_HERE.md` | 프로젝트 콜드 스타트 진입점 |
 | `ACTIVE_CONTEXT.md` | 현재 작업 단계·blocker·다음 행동 |
-| `CURRENT_CONFIRMED_DECISIONS.md` | 승인 Decision과 Repository/Notion readback 상태 |
+| `CURRENT_CONFIRMED_DECISIONS.md` | 승인 Decision과 repository main readback, 적용 가능한 V4 exception/migration readback 상태 |
 | `DECISION_LOG.md` | 결정 이력 |
 | `GRILL_ME_DECISION_RECORD.md` | 단일 Grill Me 질문·답변·승인·반영 증거 |
 | `GRILL_ME_BATCH_CHECKPOINT.md` | 최대 10건 승인 Decision 배치 checkpoint |
@@ -111,11 +114,11 @@ Notion의 자동화 관련 기능은 목적에 따라 구분한다.
 프로젝트 Repository 확인
 → 프로젝트 AGENTS / START_HERE / 실제 파일 확인
 → 저장소 루트의 [기획서] design root 확인
-→ 정확한 Project Notion workspace와 Project relation 확인
+→ V4 repository-first authority와 project-local design root 확인
 → templates/project-operations에서 필요한 최소 템플릿만 프로젝트에 적용
 → CURRENT_CONFIRMED_DECISIONS / ACTIVE_CONTEXT / Documentation Map 연결
 → 기존 legacy Sheet·HTML·Figma·custom Tool 자료가 있으면 UNIQUE/DUPLICATE/OBSOLETE 판정
-→ UNIQUE만 현재 Notion/Repository owner로 이관
+→ UNIQUE만 현재 repository owner로 이관
 → destination readback/Test + consumer/reference 확인
 → 프로젝트 작업 시작
 ```
@@ -126,23 +129,22 @@ Base 저장소 자체를 콜드 스타트할 때 이 디렉터리의 예시/빈 
 
 ## 승인 Decision 동기화
 
-활성 Decision은 다음 순서를 기본으로 한다.
+활성 Decision은 repository에서 다음 순서를 기본으로 한다.
 
 ```text
 사용자 승인
 → GitHub 추적
 → 활성 Branch의 CURRENT_CONFIRMED_DECISIONS + 분야 정본
-→ 적용 가능한 NOTION_HUMAN_FACING_CANON record
-→ destination readback
 → 논리 Commit
 → APPROVED_PENDING_MERGE
 → exact-head review / checks
 → merge
-→ main readback + 적용 가능한 Notion readback
+→ main readback
+→ V4 exception 또는 legacy migration write가 실제 있었다면 그 destination readback
 → SYNCED_TO_MAIN
 ```
 
-`DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD` profile의 master-GDD 산출 작업에서는 승인 Decision과 현재 구현 사실을 AI spec/repository owner에 추적하며 Notion 동기화는 완료 조건에서 제외한다.
+`DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD` profile의 master-GDD 산출 작업에서는 승인 Decision과 현재 구현 사실을 AI spec/repository owner에 추적한다. 이는 V4 기본 경로와 일치하며 Notion write는 별도 exception/migration scope가 확인된 경우에만 수행한다.
 
 `COMPATIBILITY_ONLY` legacy Sheet의 존재·쓰기 권한·행 상태는 active Decision sync 완료 조건이 아니다.
 
@@ -152,13 +154,13 @@ Base 저장소 자체를 콜드 스타트할 때 이 디렉터리의 예시/빈 
 
 ## Definition of Done
 
-- 정확한 프로젝트 Repository와 Project Notion workspace를 구분했다.
-- 사람용 `NOTION_HUMAN_FACING_CANON`과 구조화 `REPOSITORY_STRUCTURED_CANON`의 owner가 명확하다.
+- 정확한 프로젝트 Repository와 V4 `REPOSITORY_PRIMARY_CANON` owner를 확인했다.
+- 사람이 보는 PDF가 필요한 경우 exact-SHA `HUMAN_GDD_PDF_DERIVED_VIEW`로 생성했으며 repository를 대체하지 않는다.
 - 저장소 루트의 `[기획서]` design root가 유지된다.
-- 승인 Decision은 Branch/Commit과 적용 가능한 Notion record에 추적된다.
-- Notion write는 정확한 Project relation으로 격리되고 destination readback을 가진다.
-- `NOTION_OPERATION_GATE`가 적용되어 object scope, bounded edit, readback, automation/webhook 역할이 구분된다.
-- 사람용 Home과 AI/System 작업면이 섞이지 않으며 repository `runtime truth` 경계를 유지한다.
+- 승인 Decision은 Branch/Commit과 repository 분야 owner에 추적된다.
+- 실제 V4 exception/migration Notion write가 있었다면 정확한 scope, Project relation, destination readback을 가진다.
+- 예외 write에는 `NOTION_OPERATION_GATE`가 적용되어 object scope, bounded edit, readback, automation/webhook 역할이 구분된다.
+- repository `runtime truth` 경계를 유지하며, Notion/정적 문서만으로 runtime 성공을 주장하지 않는다.
 - Google Sheets는 `COMPATIBILITY_ONLY`이며 신규 입력·active sync·완료 판정에 필요하지 않다.
 - legacy `UNIQUE` material은 현행 owner 이관·readback/Test·consumer 확인 없이 삭제하지 않는다.
 - 실제로 수행하지 않은 runtime/사용자 검증은 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`로 남긴다.

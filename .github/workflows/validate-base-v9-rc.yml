@@ -95,6 +95,8 @@ jobs:
             tests.test_universal_loop_v1_closure_learning_reuse \
             tests.test_project_gdd_google_sheets_contract \
             tests.test_notion_project_isolation_core_system_contract \
+            tests.test_repository_first_workspace_contract \
+            tests.test_feature_code_contract_modularity \
             tests.test_pr530_selective_integration_contract \
             tests.test_p08_ai_operations_contract \
             tests.test_vertical_slice_v9_contract \

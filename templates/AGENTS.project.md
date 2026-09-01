@@ -31,27 +31,28 @@
 
 `current Base` 규칙은 과거 고정 파일목록으로 추정하지 않는다. Base의 최신 `AGENTS.md`·`START_HERE.md`와 현재 Documentation Map/Skill Registry가 가리키는 최소 관련 owner를 읽는다. 프로젝트-local copy가 더 오래되면 최신 사용자 지시와 현재 프로젝트 정본을 보호한 채 freshness 차이를 명시하고 current Base와 reconcile한다.
 
-## DOMAIN_SPLIT_CANON
+## V4 repository-first project authority
 
 ```text
-NOTION_HUMAN_FACING_CANON
-→ 사람이 읽고 비교·수정하는 프로젝트 개요·기획·Visual/Story Bible
-→ Asset/Reference/Benchmark catalog
-→ 사람용 budget/tier/roster/economy/progression table
-→ Flow / Storyboard / visual relationship surface
-
-REPOSITORY_STRUCTURED_CANON
+REPOSITORY_PRIMARY_CANON
+→ 현재 프로젝트 개요·기획·결정·Visual/Story Bible·Asset/Reference/Benchmark catalog·budget/tier/roster/economy/progression source·Flow/Storyboard source
 → Markdown / JSON / game data / code / scene / resource / config / tests
 
 REPOSITORY_RUNTIME_TRUTH
 → 실제 build / runtime / automated test / log / screenshot-video evidence
+
+HUMAN_GDD_PDF_DERIVED_VIEW
+→ exact source SHA와 evidence ceiling을 가진 사람이 보는 milestone snapshot
+
+NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
+→ existing unique material의 migration input 또는 V4 exception
 
 Google Sheets
 → MIGRATION_ONLY_UNTIL_REMOVAL
 → unique unmigrated material이 남은 경우의 compatibility source only
 ```
 
-Notion 승인·이미지 업로드·정적 mockup·Sheet row는 runtime 구현 증거가 아니다. Notion 변경이 structured/runtime 의미를 바꾸면 repository owner에 동기화한 뒤 구현·완료를 주장한다.
+현재 workspace contract는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`의 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`다. V3 `DOMAIN_SPLIT_CANON`과 `NOTION_HUMAN_FACING_CANON`은 compatibility/history 또는 V4 exception에서만 사용하며 새 작업의 기본 정본이 아니다. PDF·Notion legacy material·정적 mockup·Sheet row는 runtime 구현 증거가 아니다.
 
 ## Notion operation gate
 
@@ -147,7 +148,8 @@ AGENTS.md
 
 ```text
 route
-→ current repository/Notion facts 조사
+→ current repository facts 조사
+→ 적용 가능한 V4 exception / legacy migration facts 조사
 → 필요한 경우 clarify
 → 사용자 마지막 재진술 확인
 → executable contract
@@ -203,7 +205,7 @@ audit
 - `milestone_sync`
 - `always_sync`
 
-한 질문에 경쟁하는 활성 원본을 만들지 않는다. 사람용 비교·시각 표면은 Notion, structured/runtime 원본은 repository라는 `DOMAIN_SPLIT_CANON`을 우선한다. DOCX·PDF는 명시적으로 publication artifact인 경우가 아니면 독립 정본으로 수정하지 않는다.
+한 질문에 경쟁하는 활성 원본을 만들지 않는다. 현재 기획·시각·structured/runtime 원본은 `REPOSITORY_PRIMARY_CANON`을 우선하고 PDF는 exact-SHA publication artifact다. Notion은 V4 exception 또는 legacy migration input일 뿐 독립 정본이 아니다. DOCX·PDF는 명시적으로 publication artifact인 경우가 아니면 독립 정본으로 수정하지 않는다.
 
 ## Validation
 

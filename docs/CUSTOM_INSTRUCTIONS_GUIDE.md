@@ -19,8 +19,8 @@ latest user request
 project AGENTS + Active Context + approved contract
 → current project operating authority
 
-Notion / repository
-→ domain-specific canon and evidence
+repository / derived human PDF / scoped legacy migration source
+→ domain-specific canon, review view and evidence
 
 adopted Base contract
 → current shared operating rules
@@ -42,7 +42,7 @@ AI 지시의 `HARD_CONSTRAINT / RECOMMENDED_DEFAULT / JUDGMENT_SPACE`, Context c
 - 기억·과거 대화를 현재 정본으로 승격하지 않는 규칙.
 - Base 작업에서는 최신 Base `AGENTS.md`, `START_HERE.md`, 책임 원본과 실제 evidence를 다시 읽는 bootstrap.
 - 프로젝트 작업에서는 최신 프로젝트 `AGENTS.md`, Active Context, 승인 계약, 분야별 정본, 실제 evidence를 다시 읽는 bootstrap.
-- `DOMAIN_SPLIT_CANON`처럼 장기적인 정본 분할 원칙.
+- V4 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`처럼 장기적인 정본·파생본·legacy 경계 원칙.
 - 세부 Gate를 복제하지 않고 현재 채택된 Base 규칙을 실제로 읽고 실행한다는 dynamic lookup rule.
 
 ## 3. 맞춤설정에 넣지 않을 것
@@ -61,7 +61,7 @@ AI 지시의 `HARD_CONSTRAINT / RECOMMENDED_DEFAULT / JUDGMENT_SPACE`, Context c
 
 Base의 현재 Gate가 최소 대안 수, 적대적 검토 횟수, PR 보호, runtime evidence 등의 세부값을 바꾸더라도 맞춤설정은 다시 복사할 필요가 없어야 한다. **맞춤설정은 current Base contract를 읽는 방법을 소유하고, Base가 실제 절차를 소유한다.**
 
-## 4. 권위와 `DOMAIN_SPLIT_CANON`
+## 4. 권위와 V4 `REPOSITORY_PRIMARY_CANON`
 
 프로젝트 작업의 기본 권위는 다음과 같이 해석한다.
 
@@ -84,23 +84,24 @@ latest user instruction
 → external references / memory / past conversation / inference
 ```
 
-도구별 정본은 하나의 도구에 몰아넣지 않는다.
+정본, 사람이 보는 파생본, legacy migration source를 혼동하지 않는다.
 
 ```text
-NOTION_HUMAN_FACING_CANON
-→ 사람이 읽고 비교·수정하는 프로젝트 개요·기획·시각 방향·에셋 카탈로그
-→ human-editable budget/tier/roster/economy/progression tables
-→ Flow / Storyboard / visual relationship surface
+REPOSITORY_PRIMARY_CANON + REPOSITORY_RUNTIME_TRUTH
+→ 사람이 읽고 비교·수정하는 프로젝트 개요·기획·시각 방향·에셋 카탈로그·budget/tier/roster/economy/progression·Flow/Wireframe/Storyboard
+→ Markdown / JSON / game data / code / scene / resource / config / tests / build/runtime evidence
 
-REPOSITORY_STRUCTURED_CANON + REPOSITORY_RUNTIME_TRUTH
-→ Markdown / JSON / game data / code / scene / resource / config / tests
-→ build/runtime evidence
+HUMAN_GDD_PDF_DERIVED_VIEW
+→ exact source SHA와 evidence ceiling이 있는 사람이 보는 milestone snapshot
+
+Notion
+→ 실제 UNIQUE legacy material의 read-only migration source 또는 프로젝트 AGENTS가 허용한 좁은 V4 exception
 
 Google Sheets
 → unique unmigrated material이 남은 경우의 migration compatibility only
 ```
 
-Notion 승인, 이미지 업로드, static mockup, 맞춤설정 문구 자체는 runtime 구현 증거가 아니다.
+Notion exception/migration readback, 이미지 업로드, static mockup, 맞춤설정 문구 자체는 runtime 구현 증거가 아니다.
 
 ## 5. ChatGPT 제품 Personalization
 
@@ -131,7 +132,7 @@ Project-only memory
 → 공유 프로젝트·민감 작업·의도적인 context-isolation 실험처럼 격리가 목적일 때 사용
 ```
 
-이 선택은 **authority를 바꾸지 않는다.** `Default memory`를 사용해도 다른 프로젝트의 기억이나 과거 대화를 현재 프로젝트 사실로 승격하지 않는다. 현재 프로젝트의 `AGENTS.md`, Active Context, 승인 계약, Notion/GitHub 분야별 정본과 actual evidence를 fresh-read하고 **프로젝트 정본을 readback**한 뒤 판단한다.
+이 선택은 **authority를 바꾸지 않는다.** `Default memory`를 사용해도 다른 프로젝트의 기억이나 과거 대화를 현재 프로젝트 사실로 승격하지 않는다. 현재 프로젝트의 `AGENTS.md`, Active Context, 승인 계약, repository 분야별 정본과 actual evidence를 fresh-read하고 **프로젝트 정본을 readback**한 뒤 판단한다. 실제 V4 exception/migration source만 추가로 targeted read한다.
 
 교차 프로젝트 연결은 무제한 전체 탐색이 아니라 current Base의 Reuse-First 경계를 따른다. 현재 프로젝트 → 승인 Asset/Reference/Benchmark → Base reuse/knowledge → 현재 병목과 직접 관련된 targeted cross-project evidence → 필요한 외부 benchmark 순으로 좁혀 확인한다. 다른 프로젝트의 규칙·세계관·수치가 현재 프로젝트로 자동 전이되지 않게 한다.
 
