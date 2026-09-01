@@ -63,31 +63,40 @@ class PlayerSurfacePlanReviewRound4Tests(unittest.TestCase):
                 )
                 self.rejected(packet, "REFERENCE_ORIGIN")
 
-    def test_non_github_external_source_requires_source_repository_identity(self):
+    def test_non_github_repository_source_requires_source_repository_identity(self):
+        packet = self.fixtures.packet()
+        packet["references"][0].update(
+            evidence_kind="SOURCE_CODE",
+            source="https://gitlab.com/example/fixture-game/-/blob/main/ui.gd",
+        )
+        packet["references"][0].pop("source_repository", None)
+        self.rejected(packet, "REFERENCE_ORIGIN")
+
+    def test_non_github_repository_identity_must_differ_from_project(self):
+        packet = self.fixtures.packet()
+        packet["references"][0].update(
+            evidence_kind="SOURCE_CODE",
+            source="https://gitlab.com/example/fixture-game/-/blob/main/ui.gd",
+            source_repository="example/fixture-game",
+        )
+        self.rejected(packet, "EXTERNAL_BENCHMARK_REQUIRED")
+
+    def test_non_github_repository_source_with_distinct_identity_is_valid(self):
+        packet = self.fixtures.packet()
+        packet["references"][0].update(
+            evidence_kind="SOURCE_CODE",
+            source="https://gitlab.com/other/reference-game/-/blob/main/ui.gd",
+            source_repository="other/reference-game",
+        )
+        self.assertEqual(self.checker.validate_packet(packet), [])
+
+    def test_public_product_observation_does_not_invent_repository_identity(self):
         packet = self.fixtures.packet()
         packet["references"][0].update(
             evidence_kind="PRODUCT_OBSERVATION",
             source="https://factorio.com/blog/post/fff-246",
         )
         packet["references"][0].pop("source_repository", None)
-        self.rejected(packet, "REFERENCE_ORIGIN")
-
-    def test_non_github_source_repository_must_differ_from_project(self):
-        packet = self.fixtures.packet()
-        packet["references"][0].update(
-            evidence_kind="PRODUCT_OBSERVATION",
-            source="https://factorio.com/blog/post/fff-246",
-            source_repository="example/fixture-game",
-        )
-        self.rejected(packet, "EXTERNAL_BENCHMARK_REQUIRED")
-
-    def test_non_github_source_with_distinct_canonical_identity_is_valid(self):
-        packet = self.fixtures.packet()
-        packet["references"][0].update(
-            evidence_kind="PRODUCT_OBSERVATION",
-            source="https://factorio.com/blog/post/fff-246",
-            source_repository="wube-software/factorio",
-        )
         self.assertEqual(self.checker.validate_packet(packet), [])
 
 
