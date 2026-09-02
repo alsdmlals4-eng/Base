@@ -128,6 +128,37 @@ class ReviewRegressions(unittest.TestCase):
         self.assertNotIn('[x]', result.stdout)
         self.assertIn('VERIFY_REVIEW_STALE_HEAD', result.stdout)
 
+    def test_missing_closeout_head_render_does_not_claim_complete(self):
+        # Bypass run_cli's convenience injection so the actual missing-argument path is exercised.
+        import json
+        from pathlib import Path
+        import subprocess
+        import sys
+        import tempfile
+        from tests.test_project_work_tracking import CLI
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'receipt.json'
+            path.write_text(json.dumps(done_receipt()), encoding='utf-8')
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    str(CLI),
+                    '--receipt', str(path),
+                    '--phase', 'closeout',
+                    '--expected-source-sha', SOURCE,
+                    '--render-markdown',
+                ],
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn('expected_head_sha from the trusted final-head caller is required for closeout', result.stdout)
+        self.assertIn('0 / 1', result.stdout)
+        self.assertNotIn('[x]', result.stdout)
+        self.assertIn('VERIFY_REVIEW_STALE_HEAD', result.stdout)
+
 
 if __name__ == '__main__':
     unittest.main()
