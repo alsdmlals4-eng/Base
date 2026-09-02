@@ -1,8 +1,8 @@
 # 2D Character Animation Routing and Rigging Design
 
-**Date:** 2026-09-03  
-**Repository:** `alsdmlals4-eng/Base`  
-**Approved direction:** current conversation, user instruction `권장안대로 진행해` after the Spine research and recommendation.  
+**Date:** 2026-09-03
+**Repository:** `alsdmlals4-eng/Base`
+**Approved direction:** current conversation, user instruction `권장안대로 진행해` after the Spine research and recommendation.
 **Baseline:** `850204b3e5de81a4045111b4a050c46c5a292b59`
 
 ## Problem
