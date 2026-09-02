@@ -22,6 +22,20 @@ jobs:
           ref: fix/source-receipt-ledger-integrity-r2-20260902
           fetch-depth: 0
 
+      - name: Repair staged patch replacement semantics
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('.tmp/apply_source_receipt_final_fixes.py')
+          text = path.read_text(encoding='utf-8')
+          old = 'source, count = parser_pattern.subn(parser_replacement, source)'
+          new = 'source, count = parser_pattern.subn(lambda _match: parser_replacement, source)'
+          if text.count(old) != 1:
+              raise SystemExit('regex replacement repair anchor missing or ambiguous')
+          path.write_text(text.replace(old, new), encoding='utf-8')
+          PY
+
       - name: Add final review regressions and prove RED
         shell: bash
         run: |
