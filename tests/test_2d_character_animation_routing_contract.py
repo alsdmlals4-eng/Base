@@ -157,6 +157,42 @@ class CharacterAnimationRoutingContractTests(unittest.TestCase):
             ),
         )
 
+    def test_interruptible_windup_commits_only_at_domain_active_transition(self) -> None:
+        domain = markdown_section(self.routing, "## 7. Domain 권위 경계")
+        require_markers(
+            self,
+            domain,
+            (
+                "DOMAIN_OWNS_ACTION_CLOCK_AND_ACTIVE_COMMIT",
+                "wind-up",
+                "authoritative active transition",
+                "exactly once",
+                "animation event cannot advance",
+                "start cost / reservation",
+                "refund·forfeit",
+            ),
+        )
+        self.assertNotIn(
+            "결과를 exactly once 확정한 뒤 visual adapter가 표현 sequence를 요청",
+            domain,
+        )
+
+        start = self.template.index("domain_authority_boundary:")
+        end = self.template.index("\nexternal_runtime_trial:", start)
+        template_domain = self.template[start:end]
+        require_markers(
+            self,
+            template_domain,
+            (
+                "wind_up_start_predicate",
+                "authoritative_active_transition",
+                "start_cost_or_reservation_predicate",
+                "active_outcome_commit_predicate",
+                "cancel_refund_or_forfeit_predicate",
+                "committed_visual_payload",
+            ),
+        )
+
     def test_external_runtime_requires_trial_pin_license_performance_and_rollback(self) -> None:
         preamble = self.routing.split("## 1. 먼저 해결할 플레이어 문제", 1)[0]
         section = markdown_section(self.routing, "## 8. 외부 리그 Runtime trial 기록")
@@ -205,6 +241,66 @@ class CharacterAnimationRoutingContractTests(unittest.TestCase):
                 "REVALIDATE_PRICE_AND_LICENSE_AT_DECISION_TIME",
             ),
         )
+
+    def test_every_route_uses_the_same_auditable_decision_axes(self) -> None:
+        alternatives_start = self.template.index("alternatives:")
+        alternatives_end = self.template.index("\nselected_route:", alternatives_start)
+        alternatives = self.template[alternatives_start:alternatives_end]
+        routes = (
+            "FRAME",
+            "GODOT_NATIVE_RIG",
+            "EXTERNAL_RIG_RUNTIME",
+            "EXTERNAL_RIG_BAKED",
+        )
+        axes = (
+            "player_value_fit",
+            "visual_identity_and_silhouette",
+            "authoring_and_revision_cost",
+            "runtime_performance",
+            "platform_and_export_fit",
+            "license_and_distribution",
+            "maintenance_and_versioning",
+            "removal_and_rollback",
+            "evidence",
+            "disposition",
+        )
+        for index, route in enumerate(routes):
+            start = alternatives.index(f"  - route: {route}")
+            end = (
+                alternatives.index(f"  - route: {routes[index + 1]}", start)
+                if index + 1 < len(routes)
+                else len(alternatives)
+            )
+            route_block = alternatives[start:end]
+            require_markers(self, route_block, axes)
+
+    def test_template_parts_preserve_per_part_source_and_mirroring_fields(self) -> None:
+        contract_start = self.template.index("rig_source_contract:")
+        parts_start = self.template.index("  parts:", contract_start)
+        parts_end = self.template.index("  protected_identity:", parts_start)
+        parts = self.template[parts_start:parts_end]
+        require_markers(
+            self,
+            parts,
+            (
+                "      mirror_allowed:",
+                "      source_path:",
+                "      source_sha256:",
+            ),
+        )
+
+    def test_runtime_windows_validation_can_be_not_applicable(self) -> None:
+        start = self.template.index("  runtime_windows:")
+        end = self.template.index("  runtime_android_or_other_target:", start)
+        section = self.template[start:end]
+        self.assertIn("NOT_APPLICABLE", section)
+
+    def test_template_preserves_installed_and_imported_evidence_states(self) -> None:
+        status_line = next(
+            line for line in self.template.splitlines() if line.startswith("status:")
+        )
+        self.assertIn("INSTALLED", status_line)
+        self.assertIn("IMPORTED", status_line)
 
     def test_template_records_decision_evidence_and_evidence_ceiling(self) -> None:
         require_markers(

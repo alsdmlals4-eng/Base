@@ -10,7 +10,7 @@ source_sha:
 created_at:
 updated_at:
 owner:
-status: IDEA | RESEARCHED | FEASIBLE | TRIAL_APPROVED | ASSET_READY | IMPLEMENTED | MACHINE_VERIFIED | RUNTIME_VERIFIED | HUMAN_APPROVED | SHIP_APPROVED | DEFERRED | REJECTED
+status: IDEA | RESEARCHED | FEASIBLE | TRIAL_APPROVED | INSTALLED | IMPORTED | ASSET_READY | IMPLEMENTED | MACHINE_VERIFIED | RUNTIME_VERIFIED | HUMAN_APPROVED | SHIP_APPROVED | DEFERRED | REJECTED
 
 actual_consumer:
   consumer_id:
@@ -42,26 +42,50 @@ current_path:
 
 alternatives:
   - route: FRAME
-    fit:
-    lifecycle_cost:
+    player_value_fit:
+    visual_identity_and_silhouette:
+    authoring_and_revision_cost:
+    runtime_performance:
+    platform_and_export_fit:
+    license_and_distribution:
+    maintenance_and_versioning:
+    removal_and_rollback:
     risks: []
     evidence:
     disposition: ADOPT | ADAPT | TEST | REJECT | NOT_APPLICABLE
   - route: GODOT_NATIVE_RIG
-    fit:
-    lifecycle_cost:
+    player_value_fit:
+    visual_identity_and_silhouette:
+    authoring_and_revision_cost:
+    runtime_performance:
+    platform_and_export_fit:
+    license_and_distribution:
+    maintenance_and_versioning:
+    removal_and_rollback:
     risks: []
     evidence:
     disposition: ADOPT | ADAPT | TEST | REJECT | NOT_APPLICABLE
   - route: EXTERNAL_RIG_RUNTIME
-    fit:
-    lifecycle_cost:
+    player_value_fit:
+    visual_identity_and_silhouette:
+    authoring_and_revision_cost:
+    runtime_performance:
+    platform_and_export_fit:
+    license_and_distribution:
+    maintenance_and_versioning:
+    removal_and_rollback:
     risks: []
     evidence:
     disposition: ADOPT | ADAPT | TEST | REJECT | NOT_APPLICABLE
   - route: EXTERNAL_RIG_BAKED
-    fit:
-    lifecycle_cost:
+    player_value_fit:
+    visual_identity_and_silhouette:
+    authoring_and_revision_cost:
+    runtime_performance:
+    platform_and_export_fit:
+    license_and_distribution:
+    maintenance_and_versioning:
+    removal_and_rollback:
     risks: []
     evidence:
     disposition: ADOPT | ADAPT | TEST | REJECT | NOT_APPLICABLE
@@ -105,6 +129,9 @@ rig_source_contract:
       deformation_safe_area:
       attachment_slot:
       skin_group:
+      mirror_allowed:
+      source_path:
+      source_sha256:
   protected_identity: []
   not_applicable_reason:
 
@@ -123,6 +150,12 @@ interruption_contract:
 domain_authority_boundary:
   state_owner:
   visual_adapter:
+  wind_up_start_predicate:
+  start_cost_or_reservation_predicate:
+  authoritative_active_transition:
+  active_outcome_commit_predicate:
+  cancel_refund_or_forfeit_predicate:
+  committed_visual_payload:
   animation_events_allowed: []
   forbidden_authority:
     - damage
@@ -162,7 +195,7 @@ validation_matrix:
     status: NOT_RUN | PASS | FAIL | BLOCKED_UNVERIFIED
     evidence:
   runtime_windows:
-    status: NOT_RUN | PASS | FAIL | BLOCKED_UNVERIFIED
+    status: NOT_RUN | PASS | FAIL | BLOCKED_UNVERIFIED | NOT_APPLICABLE
     evidence:
   runtime_android_or_other_target:
     status: NOT_RUN | PASS | FAIL | BLOCKED_UNVERIFIED | NOT_APPLICABLE

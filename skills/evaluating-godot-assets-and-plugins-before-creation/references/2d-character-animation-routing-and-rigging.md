@@ -200,6 +200,7 @@ missing_asset_fallback:
 
 ```text
 ANIMATION_IS_PRESENTATION_CONSUMER_NOT_DOMAIN_AUTHORITY
+DOMAIN_OWNS_ACTION_CLOCK_AND_ACTIVE_COMMIT
 ```
 
 애니메이션 event, 완료 signal, mix 종료, frame callback은 다음 domain outcome의 권위가 아니다.
@@ -210,9 +211,15 @@ cost
 reward
 save
 progress
+animation event cannot advance domain state
 ```
 
-게임 도메인이 결과를 exactly once 확정한 뒤 visual adapter가 표현 sequence를 요청한다. 시각 이벤트는 사운드·VFX·카메라·다음 표현 단계처럼 멱등 또는 복구 가능한 presentation cue만 발생시킨다. 애니메이션이 중단·스킵·교체돼도 damage·cost·reward·save·progress는 중복되거나 누락되지 않는다.
+- 게임 도메인이 action intent와 authoritative clock을 소유하고 `wind-up` 상태를 먼저 시작한다. visual adapter는 이 상태를 표현하지만 active outcome을 아직 확정하지 않는다.
+- 시작 시 지불·예약해야 하는 cost가 있다면 도메인이 `start cost / reservation`과 취소 시 refund·forfeit 규칙을 명시적으로 소유한다. 애니메이션 event가 비용을 차감하거나 환불하지 않는다.
+- 도메인이 취소·중단 조건을 판단한다. authoritative active transition 전에 취소되면 active outcome을 commit하지 않고, 선언된 cost/refund 규칙을 한 번만 적용한 뒤 interrupted/recovery visual로 수렴한다.
+- authoritative active transition에서 도메인이 조건을 다시 확인하고 damage·reward·progress 등 active outcome을 exactly once commit한다. 그 뒤 committed visual payload를 보내 `Active`와 `Recovery` 표현을 재생한다.
+- save는 위 domain commit을 기록할 뿐 animation frame·event·완료 signal을 authoritative clock으로 사용하지 않는다.
+- 시각 이벤트는 사운드·VFX·카메라처럼 멱등 또는 복구 가능한 presentation cue만 발생시킨다. 애니메이션이 느리거나 중단·스킵·교체돼도 domain clock과 각 commit 시점은 이동하지 않고 결과는 중복되거나 누락되지 않는다.
 
 ## 8. 외부 리그 Runtime trial 기록
 
