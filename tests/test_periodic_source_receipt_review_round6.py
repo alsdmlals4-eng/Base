@@ -85,7 +85,7 @@ class PeriodicSourceReceiptReviewRound6Tests(unittest.TestCase):
             with self.subTest(order=[row["receipt_ref"] for row in rows]):
                 with self.assertRaisesRegex(
                     AnalysisBlocked,
-                    "historical durable Source requires explicit receipt-time classification",
+                    "historical inactive Source requires receipt-time classification",
                 ):
                     reconcile(current, rows)
 
