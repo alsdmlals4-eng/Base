@@ -66,6 +66,26 @@ Do not invent:
 
 If an atlas is needed, record expected frame order, dimensions, padding/bleed assumptions, alpha requirement, and naming. Runtime import remains a later gate.
 
+## Animation route and rig-ready source boundary
+
+Before generating pose/action assets for an actual character consumer, determine whether the source must remain frame-specific or be prepared for rigging. Use:
+
+- `../../evaluating-godot-assets-and-plugins-before-creation/references/2d-character-animation-routing-and-rigging.md`
+- `../../../templates/planning/2D_CHARACTER_ANIMATION_ROUTE_RECORD.md`
+
+```text
+FRAME
+GODOT_NATIVE_RIG
+EXTERNAL_RIG_RUNTIME
+EXTERNAL_RIG_BAKED
+```
+
+- `FRAME` remains the default for pixel-grid identity, extreme smear, frame-specific silhouette redesign, many concurrent small units, or a small bounded state set.
+- A rig route requires an actual consumer and explicit part records for `pivot`, `parent_bone`, `draw_order`, `hidden_underlap`, `overlap_margin`, `deformation_safe_area`, `attachment_slot`, and `skin_group` where applicable.
+- Do not cut a finished flat image after generation when the consumer already requires hidden joint overlap or interchangeable attachments. Put the rig-ready part boundary in the source-art brief first.
+- Do not force rig-ready decomposition onto assets whose identity depends on individually redrawn frames.
+- Pose approval, layered source art, or a complete rig is not import, machine, runtime, performance, Human, or shipping proof.
+
 ## Figma organization
 
 Use direct Figma placement for candidate comparison. Place new pose/action candidates in `02_WIP` when write access is available. After explicit user approval, retain the selected identity/pose reference in the appropriate `01_APPROVED_REFERENCE` character/unit section; reusable pose structure may also qualify for the existing reuse-harvest process.
