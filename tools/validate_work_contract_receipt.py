@@ -127,6 +127,9 @@ def validate_execution_receipt(
         return errors
     if not choice(phase, {"start", "resume", "closeout"}):
         errors.append("phase must be start, resume or closeout")
+    if expected_head_sha is not None and phase != "closeout":
+        errors.append("expected_head_sha is accepted only for closeout")
+        expected_head_sha = None
     benchmark = receipt.get("benchmark_preflight_receipt")
     if isinstance(benchmark, dict) and benchmark.get("state") == "BLOCKED_UNVERIFIED":
         errors.append("BLOCKED_UNVERIFIED benchmark is a record, not execution authorization")
