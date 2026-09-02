@@ -1,0 +1,302 @@
+{
+  "work_level": "L2",
+  "prompt_approval_gate": {
+    "schema_version": 1,
+    "applicability": "REQUIRED",
+    "contract": {
+      "direction_anchor": "기존 intake owner를 강화해 새롭거나 의미가 바뀐 L1+ 작업의 사용자 지시를 source-aware prompt contract로 변환하고, 그 exact contract가 사용자에게 확인되기 전에는 mutation과 delegated execution을 fail closed로 차단한다.",
+      "task_and_success": "Base validator, canonical prompt owner, startup receipts, active consumers, tests를 통합해 미승인 L1+ start/resume/closeout은 실패하고 confirmed 또는 exact reused approval만 통과하게 한다.",
+      "context_and_sources": [
+        {
+          "source": "current user message: 권장 통합안승인 (2026-09-03 Asia/Seoul)",
+          "authority": "CURRENT_USER_INSTRUCTION"
+        },
+        {
+          "source": "Base main 850204b3e5de81a4045111b4a050c46c5a292b59 and current intake/validator/tests",
+          "authority": "BASE_CONTRACT"
+        },
+        {
+          "source": "current validator and unit-test behavior showing L1 receipts can pass without approval fields",
+          "authority": "ACTUAL_IMPLEMENTATION_EVIDENCE"
+        },
+        {
+          "source": "official prompt-engineering guidance and primary research summarized in the approved design",
+          "authority": "REFERENCE_ONLY"
+        }
+      ],
+      "constraints_and_protected_scope": [
+        "Keep managing-project-intake-and-work-contract as the single owner and add no broad Prompt Engineering Skill or Registry entry.",
+        "Preserve read-only discovery, L0 mechanical work, identical reruns, and exact approved continuation without repeated confirmation.",
+        "Do not modify unrelated open/draft/ready PRs, project repositories, released locks, runtime assets, permissions, or paid services.",
+        "Use branch/PR, no direct main push, force push, or ruleset bypass."
+      ],
+      "output_and_validation": [
+        "Machine-readable prompt_approval_gate in the existing root receipt.",
+        "prepare/start/resume/closeout fail-closed validator behavior with canonical digest verification.",
+        "Canonical reference and startup/adapter consumer propagation.",
+        "Focused tests, negative mutations, repository CI, minimum five full-scope adversarial loops, normal squash merge, and post-merge main readback."
+      ]
+    },
+    "conflict_scan": {
+      "anchor_matches_task": true,
+      "anchor_matches_output": true,
+      "source_authority_preserved": true,
+      "hard_constraints_preserved": true,
+      "later_instruction_conflict": false,
+      "protected_scope_visible": true,
+      "user_decisions_visible": true,
+      "counterevidence_preserved": true,
+      "unverified_claims_labeled": true,
+      "untrusted_context_cannot_authorize": true,
+      "unresolved_material_decisions": []
+    },
+    "approval": {
+      "state": "CONFIRMED",
+      "confirmation_question": "Base의 모든 새롭거나 의미가 바뀐 L1+ 작업에 이 exact prompt-contract 확인 및 fail-closed 실행 게이트를 적용하는 권장 통합안을 승인합니까?",
+      "approved_contract_summary": "기존 intake owner와 work-contract validator를 확장해 source-aware prompt contract를 한 번 확인받은 뒤에만 L1+ mutation·delegation을 허용하고, L0·read-only 조사·exact approved continuation은 중복 질문 없이 처리한다.",
+      "approval_reference": "current-user-message:2026-09-03:권장-통합안승인",
+      "approval_reference_authority": "CURRENT_USER_MESSAGE",
+      "approved_contract_sha256": "15666e321612abd323ca08833b4066ce31b1a3433c447933ef252d233df7048e",
+      "scope_changed_since_approval": false
+    }
+  },
+  "benchmark_preflight_receipt": {
+    "state": "PASS",
+    "entries": [
+      {
+        "source_and_evidence": "Base main 850204b3e5de81a4045111b4a050c46c5a292b59 intake owner, validator and tests",
+        "observed_pattern": "Documented approval is not currently enforced by the execution validator",
+        "project_fit_and_difference": "Extend the existing owner and receipt; do not add another Skill",
+        "disposition": "ADAPT"
+      },
+      {
+        "source_and_evidence": "Current official prompt guidance and primary research summarized in the approved design",
+        "observed_pattern": "Authority separation, concise contracts, objective fixtures and consequential-boundary confirmation improve reliability",
+        "project_fit_and_difference": "Use deterministic local validation and reject paid or per-tool approval layers",
+        "disposition": "ADOPT"
+      }
+    ]
+  },
+  "context_configuration_hygiene": {
+    "scope": "Current intake approval owner, validator, canonical startup receipt, direct active consumers and tests only",
+    "inventory": [
+      {
+        "path": "skills/managing-project-intake-and-work-contract/SKILL.md",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "Base current intake owner",
+        "references_and_consumers": "AGENTS, first-prompt reference and startup routes",
+        "removal_proposed": false
+      },
+      {
+        "path": "tools/validate_work_contract_receipt.py",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "Base current L1+ execution validator",
+        "references_and_consumers": "project-start, Codex, PM and CI consumers",
+        "removal_proposed": false
+      },
+      {
+        "path": "docs/superpowers/specs/2026-08-02-first-prompt-intake-gate-design.md",
+        "classification": "COMPATIBILITY",
+        "owner_or_provenance": "Merged historical design",
+        "references_and_consumers": "Compatibility evidence only",
+        "removal_proposed": false
+      }
+    ]
+  },
+  "project_work_kanban": {
+    "goal_or_slice_issue_ref": "docs/superpowers/specs/2026-09-03-prompt-approval-execution-gate-design.md",
+    "source_main_sha": "850204b3e5de81a4045111b4a050c46c5a292b59",
+    "work_item_refs": [
+      "PAEG-01",
+      "PAEG-02",
+      "PAEG-03",
+      "PAEG-04"
+    ],
+    "active_work_item_ref": "PAEG-01",
+    "next_action": "Commit failing prompt approval gate tests",
+    "work_items": [
+      {
+        "work_item_id": "PAEG-01",
+        "title": "Define approved receipt and RED fixtures",
+        "status": "IN_PROGRESS",
+        "canon_owner": "docs/superpowers/specs/2026-09-03-prompt-approval-execution-gate-design.md",
+        "actual_consumers": [
+          "tests/test_prompt_approval_execution_gate.py"
+        ],
+        "depends_on": [],
+        "acceptance_criteria": [
+          "AC-01",
+          "AC-02"
+        ],
+        "required_evidence": [
+          "E0_CONTRACT",
+          "E2_TEST"
+        ],
+        "checklist": [
+          {
+            "id": "AC-01",
+            "text": "Approved contract and work board are recorded",
+            "status": "IN_PROGRESS"
+          },
+          {
+            "id": "AC-02",
+            "text": "Pre-implementation validator fails intended tests",
+            "status": "NOT_RUN"
+          }
+        ],
+        "verification": [
+          {
+            "level": "E0_CONTRACT",
+            "status": "NOT_RUN",
+            "evidence": []
+          },
+          {
+            "level": "E2_TEST",
+            "status": "NOT_RUN",
+            "evidence": []
+          }
+        ],
+        "next_action": "Run RED tests"
+      },
+      {
+        "work_item_id": "PAEG-02",
+        "title": "Implement deterministic approval validator",
+        "status": "BACKLOG",
+        "canon_owner": "tools/validate_work_contract_receipt.py",
+        "actual_consumers": [
+          "project-start CLI",
+          "PM tests"
+        ],
+        "depends_on": [
+          "PAEG-01"
+        ],
+        "acceptance_criteria": [
+          "AC-03",
+          "AC-04"
+        ],
+        "required_evidence": [
+          "E1_STATIC",
+          "E2_TEST"
+        ],
+        "checklist": [
+          {
+            "id": "AC-03",
+            "text": "Unapproved L1+ execution fails closed",
+            "status": "NOT_RUN"
+          },
+          {
+            "id": "AC-04",
+            "text": "Confirmed and reused contracts pass",
+            "status": "NOT_RUN"
+          }
+        ],
+        "verification": [
+          {
+            "level": "E1_STATIC",
+            "status": "NOT_RUN",
+            "evidence": []
+          },
+          {
+            "level": "E2_TEST",
+            "status": "NOT_RUN",
+            "evidence": []
+          }
+        ],
+        "next_action": "Implement after RED"
+      },
+      {
+        "work_item_id": "PAEG-03",
+        "title": "Propagate canonical owner and active consumers",
+        "status": "BACKLOG",
+        "canon_owner": "skills/managing-project-intake-and-work-contract/SKILL.md",
+        "actual_consumers": [
+          "AGENTS.md",
+          "WORK_PROJECT_START_CANON_CHECKLIST.md"
+        ],
+        "depends_on": [
+          "PAEG-02"
+        ],
+        "acceptance_criteria": [
+          "AC-05",
+          "AC-06"
+        ],
+        "required_evidence": [
+          "E0_CONTRACT",
+          "E2_TEST"
+        ],
+        "checklist": [
+          {
+            "id": "AC-05",
+            "text": "Single owner and canonical reference remain intact",
+            "status": "NOT_RUN"
+          },
+          {
+            "id": "AC-06",
+            "text": "Active consumers preserve confirmation boundary",
+            "status": "NOT_RUN"
+          }
+        ],
+        "verification": [
+          {
+            "level": "E0_CONTRACT",
+            "status": "NOT_RUN",
+            "evidence": []
+          },
+          {
+            "level": "E2_TEST",
+            "status": "NOT_RUN",
+            "evidence": []
+          }
+        ],
+        "next_action": "Update owner and consumers"
+      },
+      {
+        "work_item_id": "PAEG-04",
+        "title": "Review, CI, normal merge and readback",
+        "status": "BACKLOG",
+        "canon_owner": "skills/running-adversarial-review-and-refinement/SKILL.md",
+        "actual_consumers": [
+          "Base PR",
+          "GitHub Actions",
+          "post-merge main"
+        ],
+        "depends_on": [
+          "PAEG-03"
+        ],
+        "acceptance_criteria": [
+          "AC-07",
+          "AC-08"
+        ],
+        "required_evidence": [
+          "E1_STATIC",
+          "E2_TEST"
+        ],
+        "checklist": [
+          {
+            "id": "AC-07",
+            "text": "At least five full review loops reach clean exit",
+            "status": "NOT_RUN"
+          },
+          {
+            "id": "AC-08",
+            "text": "Required CI, normal squash merge and main readback pass",
+            "status": "NOT_RUN"
+          }
+        ],
+        "verification": [
+          {
+            "level": "E1_STATIC",
+            "status": "NOT_RUN",
+            "evidence": []
+          },
+          {
+            "level": "E2_TEST",
+            "status": "NOT_RUN",
+            "evidence": []
+          }
+        ],
+        "next_action": "Run review and integration"
+      }
+    ]
+  }
+}
