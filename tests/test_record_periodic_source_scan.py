@@ -69,6 +69,8 @@ def write_json(path: Path, payload: object) -> None:
 
 
 class RecordPeriodicSourceScanTests(unittest.TestCase):
+    """Exercise both legacy direct execution and reviewed-corpus reconciliation."""
+
     def test_legacy_record_function_updates_only_requested_source(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / "ledger.json"
