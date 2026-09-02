@@ -341,7 +341,17 @@ NO_NEW_PAID_PM_TOOL
 NO_FLEET_WIDE_EMPTY_ARTIFACT_ROLLOUT
 IN_PROGRESS_WIP_LIMIT: 1
 VERIFY_REVIEW_WIP_LIMIT: 1
+EVIDENCE_WORK_LOOP_PROJECTION
 ```
+
+`templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md §11`은 이
+derived card를 사람이 빠르게 재개하기 위한 작은 작업 루프의 책임
+원본이다. `READ → PICK → BUILD → CHECK → COMMIT`은 기존 Goal/Issue, receipt,
+Active Context, continuous-work queue, evidence matrix를 읽기 쉽게 투영한
+것이며, 새 PM 상태 저장소나 기본 `PROMPT.md`·`DESIGN.md`·`INBOX.md`·`STATUS.md`
+파일을 만들라는 뜻이 아니다. Inbox 입력은 먼저 triage한 뒤에만 승인 work
+item에 연결하고, checkpoint commit·자동 검사·화면 capture·Human 검수를 서로
+다른 완료 증거로 유지한다.
 
 ### 14.1 권한과 작업 계층
 
