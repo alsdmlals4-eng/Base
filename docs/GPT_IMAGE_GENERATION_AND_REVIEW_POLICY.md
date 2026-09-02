@@ -3,7 +3,7 @@
 ```yaml
 status: CURRENT_ACTIVE
 workspace: REPOSITORY_FIRST
-updated_at: 2026-08-29
+updated_at: 2026-09-02
 ```
 
 이 문서는 Base를 적용한 프로젝트의 이미지·목업·UI 시각화 생성, 검수, 사용자 확정, repository 자산 승격, 실제 구현과 runtime evidence 경계를 정의한다.
@@ -243,16 +243,34 @@ GENERATED_CANDIDATE != USER_LOCKED != PROJECT_ASSET_APPROVED != IMPLEMENTED != R
 
 ## 5. Blueprint와 구현 경계
 
-Blueprint 검수 전에 필요한 이미지·시각자료 candidate를 제작할 수 있다.
+`BLUEPRINT_PASS_1_STRUCTURAL_DRAFT`
+
+`BLUEPRINT_PASS_1_ACTUAL_CONSUMER_CONTRACT`
+
+`REQUIRED_MATERIALS_NOT_ALL_PROJECT_ASSETS`
+
+`BLUEPRINT_PASS_2_FINAL`
+
+`VFX_BRIEF_AND_SOURCE_BEFORE_FINAL_BLUEPRINT`
+
+`ENGINE_NATIVE_VFX_IN_GODOT_PRODUCT_BUILD`
+
+Blueprint 검수에 필요한 이미지·시각자료 candidate는 1차 구조 Blueprint 뒤, 2차 최종 Blueprint 승인 전에 만들 수 있다.
 
 ```text
 PLAN
+→ BLUEPRINT_PASS_1_STRUCTURAL_DRAFT
 → REQUIRED_IMAGE_AND_MATERIAL_PREPARATION
-→ candidate review
 → BLUEPRINT_REVIEW_PUBLICATION
 → USER_FINAL_REVIEW_APPROVAL
 → IMPLEMENTATION_AUTHORIZED
 ```
+
+- `BLUEPRINT_PASS_1_STRUCTURAL_DRAFT`는 같은 두 산출물의 working revision에서 Flow, Screen Inventory, 대표 wireframe, entry/exit/cancel/re-entry, target viewport/input, state family, actual/planned consumer를 먼저 고정한다. `BLUEPRINT_PASS_1_ACTUAL_CONSUMER_CONTRACT`가 없는 자산 후보를 이미지 제작 목록으로 만들지 않는다.
+- `REQUIRED_MATERIALS_NOT_ALL_PROJECT_ASSETS`: 1차 Blueprint가 현재 Slice의 P0/P1 및 필요한 일부 P2로 식별한 image/UI/animation/audio/VFX-source material만 재사용·준비한다. 미래 전체 프로젝트 자산이나 P3 장식을 일괄 생성하지 않는다.
+- `VFX_BRIEF_AND_SOURCE_BEFORE_FINAL_BLUEPRINT`: 이미지·시각 작업은 VFX 목적, trigger, timing, layer, storyboard, texture/mask/sprite source, reduced-motion 동등 경로, 성능 budget과 fallback을 준비할 수 있다.
+- `ENGINE_NATIVE_VFX_IN_GODOT_PRODUCT_BUILD`: Particle, Shader, `AnimationPlayer`, Tween, Signal/event wiring, 중단·재진입, 실제 성능 측정과 runtime tuning은 최종 Blueprint 사용자 승인 뒤 Godot 제품 구현에서 수행한다.
+- `BLUEPRINT_REVIEW_PUBLICATION`은 image/material candidate review를 통합하는 `BLUEPRINT_PASS_2_FINAL`이다. 1차와 2차는 별도 추가 artifact가 아니라 기존 PDF+AI Markdown의 revision이다.
 
 `NEEDED_VISUAL_CANDIDATE_MAY_BE_GENERATED_BEFORE_USER_LOCK`은 이미지 candidate 준비 권한이다. 신규 구현 package의 제품 구현은 여전히 Blueprint 최종 승인 전 시작하지 않는다.
 
