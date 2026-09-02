@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import unittest
@@ -102,7 +103,9 @@ def errors(value: object, *, phase: str = "start") -> str:
 
 class PromptApprovalExecutionGateTests(unittest.TestCase):
     def test_l1_execution_rejects_missing_prompt_gate(self) -> None:
-        self.assertIn("prompt_approval_gate is required for L1+ execution", errors(tracked_receipt()))
+        value = tracked_receipt()
+        value.pop("prompt_approval_gate")
+        self.assertIn("prompt_approval_gate is required for L1+ execution", errors(value))
 
     def test_prepare_accepts_awaiting_contract_without_execution_authority(self) -> None:
         value = approved_receipt("AWAITING_USER_CONFIRMATION")
@@ -155,8 +158,14 @@ class PromptApprovalExecutionGateTests(unittest.TestCase):
         value["prompt_approval_gate"]["approval"]["scope_changed_since_approval"] = True
         self.assertIn("scope_changed_since_approval must be false", errors(value))
 
-    def test_malformed_gate_fails_without_traceback(self) -> None:
-        for malformed in (None, [], "approved", True, 7):
+    def test_missing_and_malformed_gate_fail_without_traceback(self) -> None:
+        missing = tracked_receipt()
+        missing["prompt_approval_gate"] = None
+        self.assertIn(
+            "prompt_approval_gate is required for L1+ execution",
+            errors(missing),
+        )
+        for malformed in ([], "approved", True, 7):
             with self.subTest(malformed=malformed):
                 value = tracked_receipt()
                 value["prompt_approval_gate"] = malformed
@@ -172,7 +181,10 @@ class PromptApprovalExecutionGateTests(unittest.TestCase):
             "state": "NOT_APPLICABLE",
             "reason_not_applicable": "whitespace only",
         }
-        self.assertEqual([], validate_execution_receipt(value))
+        self.assertEqual(
+            [],
+            validate_execution_receipt(value),
+        )
 
     def test_negative_mutations_are_independently_rejected(self) -> None:
         mutations = {
