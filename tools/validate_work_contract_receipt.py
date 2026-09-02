@@ -95,7 +95,7 @@ def validate_execution_receipt(
     expected_source_sha: str | None = None,
     expected_head_sha: str | None = None,
 ) -> list[str]:
-    """Execution readiness requires trusted caller source and final-head values."""
+    """Execution readiness requires trusted caller source and verified-subject HEAD values."""
     errors = validate_receipt(receipt)
     if not isinstance(receipt, dict):
         return errors
@@ -123,7 +123,7 @@ def main() -> int:
     parser.add_argument("--receipt", required=True, type=Path)
     parser.add_argument("--phase", choices=("start", "resume", "closeout"), default="start")
     parser.add_argument("--expected-source-sha", help="Exact source SHA supplied by the trusted caller; required for L1+")
-    parser.add_argument("--expected-head-sha", help="Exact final HEAD supplied independently by the trusted caller; required for closeout")
+    parser.add_argument("--expected-head-sha", help="Exact verified-subject HEAD supplied independently by the trusted caller; required for closeout")
     parser.add_argument("--render-markdown", action="store_true", help="Print a shape-validated derived PM view; blocked execution remains nonzero")
     args = parser.parse_args()
     try:
@@ -142,13 +142,22 @@ def main() -> int:
         for error in errors:
             print(f"- {error}")
         board = receipt.get("project_work_kanban") if isinstance(receipt, dict) else None
-        if args.render_markdown and isinstance(board, dict) and not validate_tracking(board, phase="inspect"):
+        shape_errors = (
+            validate_tracking(
+                board,
+                phase="inspect",
+                expected_source_sha=args.expected_source_sha,
+            )
+            if isinstance(board, dict)
+            else ["project_work_kanban is unavailable"]
+        )
+        if args.render_markdown and isinstance(board, dict) and not shape_errors:
             print("PM VIEW: INFORMATION ONLY; EXECUTION BLOCKED")
-            print(render_tracking(board))
+            print(render_tracking(board, expected_head_sha=args.expected_head_sha))
         return 1
     print(f"WORK CONTRACT RECEIPT: PASS (execution phase={args.phase}; recorded evidence only)")
     if args.render_markdown and isinstance(receipt.get("project_work_kanban"), dict):
-        print(render_tracking(receipt["project_work_kanban"]))
+        print(render_tracking(receipt["project_work_kanban"], expected_head_sha=args.expected_head_sha))
     return 0
 
 
