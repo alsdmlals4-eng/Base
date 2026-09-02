@@ -1,10 +1,11 @@
 # Base-current project work bootstrap
 
 - Status: `CURRENT_BASE_OPERATIONAL_OWNER`
-- Scope: use one fresh Base checkout to bootstrap PM/intake work against a target project without preinstalling Base files in that project.
+- Trigger: `ORDINARY_TARGET_PROJECT_WORK_TRIGGER`
+- Scope: let an ordinary target-project work session fresh-read and use the current Base PM/intake/workflow procedure without first copying Base files into that project.
 - Does not own: project product meaning, project canon, adopted Base release, protected paths, deployment, permissions, runtime approval, or release approval.
 
-`BASE_CURRENT_OPERATIONAL_BOOTSTRAP` · `NO_PROJECT_PREINSTALL_REQUIRED` · `NO_FLEET_PROJECT_MUTATION` · `EPHEMERAL_RECEIPT_ALLOWED` · `REGULAR_BOUNDED_RECEIPT_ONLY` · `GIT_REPLACEMENT_OBJECTS_DISABLED`
+`BASE_CURRENT_OPERATIONAL_BOOTSTRAP` · `PROJECT_WORK_FRESH_BASE_ENTRY` · `NO_PROJECT_PREINSTALL_REQUIRED` · `NO_FLEET_PROJECT_MUTATION` · `EPHEMERAL_RECEIPT_ALLOWED` · `REGULAR_BOUNDED_RECEIPT_ONLY` · `TRUSTED_COMMIT_STREAM_ENTRYPOINT` · `ABSOLUTE_SYSTEM_GIT_REQUIRED` · `LOCAL_COMMIT_OBJECTS_ONLY`
 
 ## 1. Authority boundary
 
@@ -12,21 +13,22 @@
 
 The latest user instruction and the target project's current `AGENTS.md`, approved decisions, actual code/data/scenes/assets/tests, current work items, and protected-path rules remain authoritative for project facts and product behavior. The project's adopted Base release and generated adapter remain unchanged unless a separate project adoption change is explicitly approved and validated.
 
-A fresh exact Base `main` checkout may provide the current **PM/intake/workflow procedure** as a nonpersistent operational overlay. This overlay does not silently replace the project's adopted Base contract, create a project-local Skill copy, rewrite project canon, or make Base the owner of project-specific facts. When current Base workflow guidance conflicts with a project-specific owner, preserve the project owner and record the drift instead of rewriting it by inference.
+A fresh exact Base `main` may provide the current **PM/intake/workflow procedure** as a nonpersistent operational overlay. This overlay does not silently replace the project's adopted Base contract, create a project-local Skill copy, rewrite project canon, or make Base the owner of project-specific facts. When current Base workflow guidance conflicts with a project-specific owner, preserve the project owner and record the drift instead of rewriting it by inference.
 
-## 2. Why this path exists
+## 2. When this route is used
 
-The normal adopted-adapter route remains valid for projects that already maintain a project-owned receipt and exact Base pin. It must not be a prerequisite for merely beginning a newly approved project task.
+The route applies to **ordinary target-project work**, not only Base maintenance. A project session must fresh-read the current Base operational owner when it needs current shared intake, PM checklist, work decomposition, evidence, review, or closeout behavior and the project does not already carry an equivalent current owner.
 
-`NO_PROJECT_PREINSTALL_REQUIRED` means a work session can:
+`NO_PROJECT_PREINSTALL_REQUIRED` means the session can:
 
-1. fresh-read the target project's exact revision and `AGENTS.md`;
-2. fresh-read an exact current Base revision and this owner;
-3. construct the task's root receipt in memory, stdin, a temporary file, or an existing project owner;
-4. run the Base-owned gate directly against the target repository;
-5. proceed only when the gate passes.
+1. fresh-read the target project's exact revision, `AGENTS.md`, current decisions/context, actual implementation and open-PR boundary;
+2. fresh-read the exact current Base `main`, root `AGENTS.md`, this owner and the task-appropriate shared owners;
+3. construct the task's root receipt in memory, then write one bounded temporary JSON file outside the project or update the existing project owner selected by project authority;
+4. apply the Base-current intake/PM contract without installing a wrapper, Skill copy, empty board, or generated adapter into the project;
+5. use the mechanical Base CLI when a local exact Base checkout and trusted launcher boundary are available;
+6. persist only the work state that the project already requires in its current repository owner.
 
-No project wrapper, copied validator, empty dashboard, generated adapter edit, reusable-workflow caller, daemon, scheduler, or fleet-wide project commit is required.
+An AI session that can read both repositories may apply this contract directly as an execution procedure. The CLI is a mechanical verification companion; inability to execute it does not authorize skipping the PM fields. Record the unavailable local execution as `ENV_GATED_EXPECTED_SKIP` or `BLOCKED_UNVERIFIED` according to the current evidence owner.
 
 ## 3. Required fresh-read order
 
@@ -42,69 +44,89 @@ latest user instruction and approved scope
 → root work receipt and executable start/resume/closeout gate
 ```
 
-Do not use an old chat summary, old Base SHA, project title, or receipt self-claim as the trusted revision input.
+Do not use an old chat summary, old Base SHA, project title, or receipt self-claim as a trusted revision input. Base identifies the shared procedure; the project still supplies all mutable project facts.
 
-## 4. Ephemeral and durable receipts
+## 4. Receipt ownership
 
 `EPHEMERAL_RECEIPT_ALLOWED` · `PERSIST_TO_EXISTING_PROJECT_OWNER_ONLY_WHEN_WORK_REQUIRES` · `REGULAR_BOUNDED_RECEIPT_ONLY`
 
 The executable receipt schema remains the root contract defined by `templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md`: `benchmark_preflight_receipt`, `context_configuration_hygiene`, and `project_work_kanban` are sibling fields.
 
-For a new session, the receipt may be supplied through bounded stdin or a temporary UTF-8 JSON file outside the project repository. A file receipt must be a nonsymlink regular file and may contain at most 2,000,000 bytes. FIFO, socket, device and other special paths are rejected before reading; the opened descriptor is rechecked and read with the same byte ceiling. This lets the PM view and start gate run without changing the project or accepting an unbounded/blocking input surface.
+For a newly resumed session, the receipt may exist in memory while the agent prepares it. Mechanical CLI validation accepts only a nonsymlink regular UTF-8 JSON file of at most 2,000,000 bytes. FIFO, socket, device, symlink and stdin are rejected. The opened descriptor is rechecked and read with the same byte ceiling. Duplicate JSON keys and non-finite JSON constants are rejected.
 
-When the approved work must persist across sessions, update the project's **existing** Issue, PR, Active Context, work receipt, or other current owner selected by project `AGENTS.md`. Create a new project-owned receipt only when no existing owner can carry the required durable state. Do not create a second design/status canon or distribute empty receipt files to every project.
+When approved work must persist across sessions, update the project's **existing** Issue, PR, Active Context, work receipt, or other current owner selected by project `AGENTS.md`. Create a new project-owned receipt only when no existing owner can carry the required durable state. Do not create a second design/status canon or distribute empty receipt files to every project.
 
 The Base CLI never writes the receipt or target repository.
 
-## 5. Commands
+## 5. Trusted mechanical invocation
 
-Fresh-read the exact Base and target-project revisions independently, then run from any directory:
+Direct execution of the working-copy path is unsupported because an unverified file cannot authenticate itself. `TRUSTED_COMMIT_STREAM_ENTRYPOINT` requires a trusted caller to:
+
+1. select an exact current Base commit independently;
+2. select an absolute system Git executable outside both repositories;
+3. read `tools/run_project_work_gate.py` as raw bytes from that exact local commit with replacement objects and lazy fetch disabled;
+4. compute SHA-256 over those exact bytes;
+5. stream those same bytes to isolated Python as standard input;
+6. pass the digest, exact Base root/SHA, exact project root/source SHA, and bounded receipt path.
+
+Conceptual command shape:
 
 ```text
-python -I <fresh-Base-root>/tools/run_project_work_gate.py \
-  --expected-base-sha <fresh-exact-Base-SHA> \
+<absolute-git> --no-replace-objects -C <base-root> \
+  cat-file blob <base-sha>:tools/run_project_work_gate.py \
+  > <trusted-temporary-entrypoint>
+
+<sha256-tool> <trusted-temporary-entrypoint>
+
+<isolated-python> -I - \
+  --entrypoint-source commit-stream \
+  --entrypoint-sha256 <digest-of-exact-stream> \
+  --git-executable <absolute-system-git> \
+  --base-root <exact-base-root> \
+  --expected-base-sha <exact-base-sha> \
   --project-root <target-project-root> \
-  --project-source-sha <fresh-exact-project-source-SHA> \
-  --receipt <receipt.json-or-> \
+  --project-source-sha <exact-project-source-sha> \
+  --receipt <bounded-regular-receipt.json> \
   --phase start \
-  --render-markdown
+  --render-markdown \
+  < <trusted-temporary-entrypoint>
 ```
 
-Before the next approved item, first select that item as `IN_PROGRESS` or `VERIFY_REVIEW` in the same receipt and set `active_work_item_ref`, then use `--phase resume`.
+The launcher must preserve raw bytes. Do not use a text pipeline that rewrites encoding or line endings. On Windows, use the repository's fresh-shell execution contract and binary-safe redirection/temporary-file handling.
 
-Final closeout additionally requires an independently fresh-read verified project subject HEAD:
+## 6. Verified operational closure
 
-```text
-python -I <fresh-Base-root>/tools/run_project_work_gate.py \
-  --expected-base-sha <fresh-exact-Base-SHA> \
-  --project-root <target-project-root> \
-  --project-source-sha <fresh-exact-project-source-SHA> \
-  --verified-head-sha <fresh-exact-verified-project-HEAD> \
-  --receipt <receipt.json-or-> \
-  --phase closeout \
-  --render-markdown
-```
+The streamed entrypoint validates a bounded `VERIFIED_BASE_OPERATIONAL_CLOSURE`, including:
 
-`-` reads one bounded receipt from stdin. The CLI requires an exact Base checkout, exact tracked executable bytes, an exact target Git root, and project revision objects that exist in that repository. It runs in isolated Python mode, removes inherited `GIT_*` overrides, disables Git replacement objects and optional locking, disables fsmonitor/untracked-cache participation for its read-only identity commands, and performs no Git writes.
+- root `AGENTS.md` and `START_HERE.md`;
+- this bootstrap owner;
+- the intake owner and Base project router;
+- project start and PM checklist owners;
+- the canonical receipt validator and work-tracking implementation;
+- the streamed entrypoint itself.
 
-## 6. Start, resume and closeout semantics
+Every closure file must be a tracked nonsymlink regular file whose working bytes equal the selected Base commit bytes. Validator modules are compiled from those already verified commit bytes; they are not reopened from mutable working paths after verification.
+
+`ABSOLUTE_SYSTEM_GIT_REQUIRED` and `LOCAL_COMMIT_OBJECTS_ONLY` mean the CLI uses only the supplied absolute Git executable, strips inherited Git/Python path overrides, disables replacement objects, lazy fetch, optional locks and automatic maintenance, and requires each supplied Git object itself to be a locally available `commit`. It performs no fetch and does not peel an annotated tag into a trusted commit identity.
+
+## 7. Start, resume and closeout semantics
 
 - `start` and `resume` compare the receipt's `source_main_sha` to the independently supplied project source SHA.
-- `closeout` additionally compares every required DONE item's `verified_head_sha` to the independently supplied verified project HEAD.
+- `closeout` additionally requires the supplied verified project HEAD to be a local commit descended from the supplied project source SHA, then compares every required DONE item's `verified_head_sha` to that exact HEAD.
 - Failed gates remain nonzero. A structurally valid blocked board may still be rendered as information, but receipt-owned execution actions are suppressed.
 - A checkpoint commit is a recovery point, not DONE, merge permission, runtime/visual approval, or user approval.
 - If protected merge and postmerge readback belong to the approved denominator, branch completion is `PREMERGE_CANDIDATE_NOT_CLOSEOUT`; perform protected merge and readback before final closeout.
 - Approved-scope exhaustion ends with `STOP_APPROVED_SCOPE_COMPLETE`; the next session does not invent a new Goal.
 
-## 7. Non-mutation and evidence ceiling
+## 8. Non-mutation and evidence ceiling
 
 `NO_FLEET_PROJECT_MUTATION`
 
 The bootstrap CLI is read-only for both repositories. It does not fetch, checkout, reset, stage, commit, push, edit, install, register services, change permissions, update adapters, or create project files. Repository preparation and mutation remain explicit operations governed by the target project's authority.
 
-A gate PASS proves that the supplied receipt is structurally consistent with the supplied exact revisions and that the locally executed Base entry files match the expected Base commit under replacement-object-disabled Git reads. It does not authenticate external evidence, prove that the receipt lists the complete product backlog, establish Godot/runtime/visual/Human/release PASS, or validate current-machine services.
+A gate PASS proves only that the supplied receipt is structurally consistent with the supplied exact revisions and that the streamed entrypoint, validators and declared Base operational closure match the selected Base commit under the documented local read-only boundary. It does not authenticate external evidence, prove the receipt contains the complete product backlog, establish project adoption, or establish Godot/runtime/visual/Human/device/release/player PASS.
 
-## 8. Existing adopted route and rollback
+## 9. Existing adopted route and rollback
 
 Projects may continue to use their adopted Base pin and project-owned wrapper/receipt when their current owner requires it. This Base-current route is an additional zero-install entry path, not a forced migration.
 
