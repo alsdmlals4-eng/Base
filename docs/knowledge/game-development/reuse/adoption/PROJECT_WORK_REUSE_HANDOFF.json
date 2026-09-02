@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-08-25",
+  "updated_at": "2026-09-02",
   "state": "CURRENT_PROJECT_WORK_HANDOFF",
   "purpose": "Route each future project work session through current project authority, existing reusable modules, bounded project adaptation, truthful verification, and project-to-Base learning handoff.",
   "install_policy": "ONLY_DURING_APPROVED_PROJECT_WORK",
@@ -72,7 +72,9 @@
     "project_canon_overrides_base_reference": true,
     "runtime_change_requires_project_authority": true,
     "open_or_concurrent_work_requires_fresh_owner_and_path_check": true,
-    "new_module_requires_unresolved_project_bottleneck": true
+    "new_module_requires_unresolved_project_bottleneck": true,
+    "project_specific_next_action_uses_current_project_authority": true,
+    "legacy_workspace_requires_current_project_authority": true
   },
   "reuse_modes": [
     "REUSE_EXISTING_PROJECT_IMPLEMENTATION",
@@ -183,7 +185,7 @@
         "RM-VIS-002"
       ],
       "project_owned_identity": "LIFO cargo routing, switch semantics, sealed layout, BUILD/RUN transition, and logistics puzzle readability remain Switchy-owned.",
-      "next_project_work_action": "Re-read current main and the SX-DEC-059 acceptance/human-evidence gates; reuse grid, route-stack, phase, explainability, replay, UI, and symbol contracts only through an approved finite-delivery task.",
+      "next_project_work_action": "Read current project authority, current GitHub main, active context/current decision owner, actual implementation, and open PRs first; treat Base project snapshots as non-authoritative history, then reuse grid, route-stack, phase, explainability, replay, UI, and symbol contracts only through an approved finite-delivery task.",
       "do_not_flatten_project_identity": true
     },
     "TETRIS": {
@@ -200,8 +202,8 @@
         "RM-VIS-001",
         "RM-VIS-002"
       ],
-      "project_owned_identity": "Enemy Telegraph -> one Shared Player Turn Budget across Line/Tetris -> Swap-Match Chain -> Action -> Enemy Resolve, READY carryover within the turn, Energy/Chain Stock/Tier plus Tempo semantics, and original presentation remain Tetris-owned; Tetris trade dress is excluded.",
-      "next_project_work_action": "Re-read current TETRIS-CORE-024, TETRIS-TIME-025 and the explicit BUILD gate; keep reuse modules deferred until an approved Shared Player Turn Budget/Line/Chain production task actually consumes them, without copying protected names, visuals, audio, or trade dress.",
+      "project_owned_identity": "Continuous realtime combat, persistent LINE/CHAIN workspace switching, tactical-pause Skill flow, enemy ETA telegraph, Combo/MP semantics, and original presentation remain Tetris-owned; protected Tetris trade dress is excluded.",
+      "next_project_work_action": "Read current project authority, current GitHub main, production canon index/current canon, actual implementation, and open PRs first; treat Base project snapshots and superseded combat owners as non-authoritative history, then reuse phase, explainability, replay, balance, UI, and symbol contracts only through an approved current production task without copying protected names, visuals, audio, or trade dress.",
       "do_not_flatten_project_identity": true
     },
     "URBAN_LEGEND": {
@@ -244,7 +246,7 @@
         "RM-VIS-004"
       ],
       "project_owned_identity": "Backpack placement, recipe combination, survivor auto-combat, REST workbench, reward cadence, and ninja fantasy remain Ninja Survival-owned.",
-      "next_project_work_action": "For each approved Phase-C task, select only the grid, survivor, phase, draft, explainability, wave, card, replay, balance, UI, symbol, or telegraph contract actually consumed by that task.",
+      "next_project_work_action": "Read current project authority, current GitHub main, confirmed decisions, active context, actual implementation, current validation gate, and open PRs first; select only the grid, survivor, phase, draft, explainability, wave, card, replay, balance, UI, symbol, or telegraph contract actually consumed by the approved current task.",
       "do_not_flatten_project_identity": true
     },
     "MY_LITTLE_BOAT": {
@@ -294,7 +296,7 @@
         "RM-VIS-004"
       ],
       "project_owned_identity": "Hidden simultaneous planning, ten-pace resolution, public-information AI, information boundaries, and explainable replay remain Ten Paces-owned.",
-      "next_project_work_action": "Read current main + exact Notion state + open PRs first; the first-five-duel Phase I–VI is already implemented, so reuse hidden-plan, explainability, deterministic replay, UI, symbol, and telegraph contracts only when a current approved project task actually consumes them, without exposing protected hidden information or promoting Human/device evidence.",
+      "next_project_work_action": "Read current project authority, current GitHub main, active context/current planning owners, actual implementation, and open PRs first; consult migration/history sources only when current project authority explicitly requires them, then reuse hidden-plan, explainability, deterministic replay, UI, symbol, and telegraph contracts only when a current approved project task consumes them, without exposing protected hidden information or promoting Human/device evidence.",
       "do_not_flatten_project_identity": true
     },
     "OMENWARD": {
@@ -313,7 +315,7 @@
         "RM-VIS-004"
       ],
       "project_owned_identity": "Player-constructed probability, TokenSource semantics, three omen wheels, irreversible lane commitment, pressure language, and causal review remain Omenward-owned.",
-      "next_project_work_action": "Keep the verified RM-SYS-003 sidecar isolated until an approved product task connects a consumer; then read current canon plus the resolved validator history (Issue #199 -> merged PR #201) before using roulette, phase, draft, explainability, wave, replay, balance, UI, symbol, or telegraph contracts.",
+      "next_project_work_action": "Read current project authority, current GitHub main, current decision index, active context, actual implementation, and open PRs first; keep sidecars isolated until an approved product task connects a consumer, then use only the roulette, phase, draft, explainability, wave, replay, balance, UI, symbol, or telegraph contracts required by that current task.",
       "do_not_flatten_project_identity": true
     }
   },

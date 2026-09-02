@@ -68,6 +68,56 @@ class ReuseFirstPreflightEnforcementTests(unittest.TestCase):
         self.assertTrue(exit_gate["promotion_is_not_automatic"])
         self.assertEqual(exit_gate["required_fields"], handoff["exit_handoff_fields"])
 
+    def test_project_handoff_resolves_mutable_state_from_current_authority(self) -> None:
+        handoff = json.loads(
+            read(
+                "docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json"
+            )
+        )
+        entry_rules = handoff["entry_rules"]
+        self.assertTrue(entry_rules["project_canon_overrides_base_reference"])
+        self.assertTrue(
+            entry_rules[
+                "project_specific_next_action_uses_current_project_authority"
+            ]
+        )
+        self.assertTrue(
+            entry_rules["legacy_workspace_requires_current_project_authority"]
+        )
+
+        # Base routes live project state and must not freeze historical snapshots.
+        actions = {
+            project_id: handoff["projects"][project_id]["next_project_work_action"]
+            for project_id in (
+                "SWITCHY",
+                "TETRIS",
+                "NINJA_SURVIVAL",
+                "TEN_PACES",
+                "OMENWARD",
+            )
+        }
+        for project_id, action in actions.items():
+            with self.subTest(project_id=project_id):
+                self.assertIn("current project authority", action.lower())
+
+        self.assertNotIn("SX-DEC-", actions["SWITCHY"])
+        self.assertNotIn("TETRIS-CORE-024", actions["TETRIS"])
+        self.assertNotIn("TETRIS-TIME-025", actions["TETRIS"])
+        self.assertNotIn("Phase-C", actions["NINJA_SURVIVAL"])
+        self.assertNotIn("exact Notion state", actions["TEN_PACES"])
+        self.assertIn("migration/history", actions["TEN_PACES"])
+        self.assertNotIn("Issue #", actions["OMENWARD"])
+        self.assertNotIn("PR #", actions["OMENWARD"])
+
+        # Historical project identity must not re-enter current Base routing.
+        tetris_identity = handoff["projects"]["TETRIS"]["project_owned_identity"]
+        self.assertIn("continuous realtime", tetris_identity.lower())
+        self.assertIn("line/chain", tetris_identity.lower())
+        self.assertIn("tactical", tetris_identity.lower())
+        self.assertNotIn("Shared Player Turn Budget", tetris_identity)
+        self.assertNotIn("READY", tetris_identity)
+        self.assertNotIn("Tempo", tetris_identity)
+
     def test_gate_does_not_force_unbounded_research_or_project_adoption(self) -> None:
         intake = read("skills/managing-project-intake-and-work-contract/SKILL.md")
         agents = read("AGENTS.md")
