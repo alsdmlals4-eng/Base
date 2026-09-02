@@ -23,6 +23,7 @@ import importlib.util
 import json
 from pathlib import Path
 import re
+import stat
 import subprocess
 from types import ModuleType
 from typing import Any
@@ -36,6 +37,7 @@ REQUIRED_BASE_FILES = (
 )
 SHA = re.compile(r"[0-9a-f]{40}\Z")
 MAX_RECEIPT_BYTES = 2_000_000
+_READ_CHUNK_BYTES = 64 * 1024
 
 
 class BootstrapError(RuntimeError):
@@ -43,18 +45,38 @@ class BootstrapError(RuntimeError):
 
 
 def _git(root: Path, *args: str, text: bool = True) -> subprocess.CompletedProcess[Any]:
+    environment = {
+        key: value
+        for key, value in os.environ.items()
+        if not key.upper().startswith("GIT_")
+    }
+    environment.update(
+        {
+            "GIT_CONFIG_NOSYSTEM": "1",
+            "GIT_CONFIG_GLOBAL": os.devnull,
+            "GIT_TERMINAL_PROMPT": "0",
+            "GIT_NO_REPLACE_OBJECTS": "1",
+            "GIT_OPTIONAL_LOCKS": "0",
+        }
+    )
     try:
         return subprocess.run(
-            ["git", "-C", str(root), *args],
+            [
+                "git",
+                "--no-replace-objects",
+                "-c",
+                "core.fsmonitor=false",
+                "-c",
+                "core.untrackedCache=false",
+                "-C",
+                str(root),
+                *args,
+            ],
             text=text,
             capture_output=True,
             check=False,
             timeout=20,
-            env={
-                **os.environ,
-                "GIT_CONFIG_NOSYSTEM": "1",
-                "GIT_TERMINAL_PROMPT": "0",
-            },
+            env=environment,
         )
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise BootstrapError(f"git command unavailable: {type(exc).__name__}") from exc
@@ -109,11 +131,28 @@ def _verify_base(expected_sha: str) -> None:
         raise BootstrapError("Base bootstrap executable files are not all tracked")
 
     for diff_args in (
-        ("diff", "--quiet", "HEAD", "--", *REQUIRED_BASE_FILES),
-        ("diff", "--cached", "--quiet", "HEAD", "--", *REQUIRED_BASE_FILES),
+        (
+            "diff",
+            "--no-ext-diff",
+            "--no-textconv",
+            "--quiet",
+            "HEAD",
+            "--",
+            *REQUIRED_BASE_FILES,
+        ),
+        (
+            "diff",
+            "--cached",
+            "--no-ext-diff",
+            "--no-textconv",
+            "--quiet",
+            "HEAD",
+            "--",
+            *REQUIRED_BASE_FILES,
+        ),
     ):
         if _git(base_root, *diff_args).returncode != 0:
-            raise BootstrapError("Base bootstrap executable files differ from HEAD")
+            raise BootstrapError("Base bootstrap executable bytes differ from HEAD")
 
     for relative in REQUIRED_BASE_FILES:
         committed = _git(base_root, "show", f"{expected_sha}:{relative}", text=False)
@@ -153,29 +192,77 @@ def _load_validators() -> tuple[ModuleType, ModuleType]:
     return tracking, validator
 
 
+def _decode_receipt(raw: bytes, label: str) -> str:
+    if len(raw) > MAX_RECEIPT_BYTES:
+        raise BootstrapError("receipt exceeds the 2000000-byte safety limit")
+    try:
+        return raw.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise BootstrapError(f"cannot read {label}: UnicodeDecodeError") from exc
+
+
+def _read_regular_receipt(path: Path) -> str:
+    try:
+        metadata = path.lstat()
+    except OSError as exc:
+        raise BootstrapError(f"cannot read receipt JSON: {type(exc).__name__}") from exc
+
+    if stat.S_ISLNK(metadata.st_mode):
+        raise BootstrapError("receipt path must not be a symlink")
+    if not stat.S_ISREG(metadata.st_mode):
+        raise BootstrapError("receipt path must be a regular file")
+    if metadata.st_size > MAX_RECEIPT_BYTES:
+        raise BootstrapError("receipt exceeds the 2000000-byte safety limit")
+
+    flags = os.O_RDONLY
+    for name in ("O_BINARY", "O_CLOEXEC", "O_NOFOLLOW", "O_NONBLOCK"):
+        flags |= getattr(os, name, 0)
+
+    try:
+        descriptor = os.open(path, flags)
+    except OSError as exc:
+        raise BootstrapError(f"cannot read receipt JSON: {type(exc).__name__}") from exc
+
+    try:
+        opened = os.fstat(descriptor)
+        if not stat.S_ISREG(opened.st_mode):
+            raise BootstrapError("receipt path must be a regular file")
+        if metadata.st_dev != opened.st_dev or metadata.st_ino != opened.st_ino:
+            raise BootstrapError("receipt path changed while it was being opened")
+        if opened.st_size > MAX_RECEIPT_BYTES:
+            raise BootstrapError("receipt exceeds the 2000000-byte safety limit")
+
+        chunks: list[bytes] = []
+        remaining = MAX_RECEIPT_BYTES + 1
+        while remaining > 0:
+            chunk = os.read(descriptor, min(_READ_CHUNK_BYTES, remaining))
+            if not chunk:
+                break
+            chunks.append(chunk)
+            remaining -= len(chunk)
+        raw = b"".join(chunks)
+    except BootstrapError:
+        raise
+    except OSError as exc:
+        raise BootstrapError(f"cannot read receipt JSON: {type(exc).__name__}") from exc
+    finally:
+        os.close(descriptor)
+
+    return _decode_receipt(raw, "receipt JSON")
+
+
 def _read_receipt(value: str) -> tuple[object, str]:
     if value == "-":
         source = "stdin"
         try:
-            payload = sys.stdin.read(MAX_RECEIPT_BYTES + 1)
+            raw = sys.stdin.buffer.read(MAX_RECEIPT_BYTES + 1)
         except (OSError, UnicodeError) as exc:
             raise BootstrapError(f"cannot read receipt from stdin: {type(exc).__name__}") from exc
-        if len(payload.encode("utf-8", errors="replace")) > MAX_RECEIPT_BYTES:
-            raise BootstrapError("receipt exceeds the 2000000-byte safety limit")
+        payload = _decode_receipt(raw, "receipt from stdin")
     else:
         path = Path(value).expanduser()
         source = str(path.resolve(strict=False))
-        try:
-            if path.is_symlink():
-                raise BootstrapError("receipt path must not be a symlink")
-            size = path.stat().st_size
-            if size > MAX_RECEIPT_BYTES:
-                raise BootstrapError("receipt exceeds the 2000000-byte safety limit")
-            payload = path.read_text(encoding="utf-8")
-        except BootstrapError:
-            raise
-        except (OSError, UnicodeError) as exc:
-            raise BootstrapError(f"cannot read receipt JSON: {type(exc).__name__}") from exc
+        payload = _read_regular_receipt(path)
     try:
         return json.loads(payload), source
     except json.JSONDecodeError as exc:
