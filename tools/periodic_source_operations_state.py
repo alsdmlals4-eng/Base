@@ -19,6 +19,11 @@ def update_operations_ledger(
     retained_candidates: Sequence[Mapping[str, object]],
     run_date: date,
 ) -> dict[str, object]:
+    if "receipt_reconciliation_state" in ledger:
+        raise AnalysisBlocked(
+            "BLOCKED_RECEIPT_RECONCILIATION_REQUIRED",
+            "identity-enabled Operations Ledger must mutate through the receipt reconciler",
+        )
     result = copy.deepcopy(dict(ledger))
     rows = result.get("sources")
     if result.get("schema_version") != 1 or not isinstance(rows, list):
