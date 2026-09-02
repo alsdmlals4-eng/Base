@@ -4,7 +4,7 @@
 - Scope: use one fresh Base checkout to bootstrap PM/intake work against a target project without preinstalling Base files in that project.
 - Does not own: project product meaning, project canon, adopted Base release, protected paths, deployment, permissions, runtime approval, or release approval.
 
-`BASE_CURRENT_OPERATIONAL_BOOTSTRAP` · `NO_PROJECT_PREINSTALL_REQUIRED` · `NO_FLEET_PROJECT_MUTATION` · `EPHEMERAL_RECEIPT_ALLOWED`
+`BASE_CURRENT_OPERATIONAL_BOOTSTRAP` · `NO_PROJECT_PREINSTALL_REQUIRED` · `NO_FLEET_PROJECT_MUTATION` · `EPHEMERAL_RECEIPT_ALLOWED` · `REGULAR_BOUNDED_RECEIPT_ONLY` · `GIT_REPLACEMENT_OBJECTS_DISABLED`
 
 ## 1. Authority boundary
 
@@ -46,11 +46,11 @@ Do not use an old chat summary, old Base SHA, project title, or receipt self-cla
 
 ## 4. Ephemeral and durable receipts
 
-`EPHEMERAL_RECEIPT_ALLOWED` · `PERSIST_TO_EXISTING_PROJECT_OWNER_ONLY_WHEN_WORK_REQUIRES`
+`EPHEMERAL_RECEIPT_ALLOWED` · `PERSIST_TO_EXISTING_PROJECT_OWNER_ONLY_WHEN_WORK_REQUIRES` · `REGULAR_BOUNDED_RECEIPT_ONLY`
 
 The executable receipt schema remains the root contract defined by `templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md`: `benchmark_preflight_receipt`, `context_configuration_hygiene`, and `project_work_kanban` are sibling fields.
 
-For a new session, the receipt may be supplied through stdin or a temporary UTF-8 JSON file outside the project repository. This lets the PM view and start gate run without changing the project.
+For a new session, the receipt may be supplied through bounded stdin or a temporary UTF-8 JSON file outside the project repository. A file receipt must be a nonsymlink regular file and may contain at most 2,000,000 bytes. FIFO, socket, device and other special paths are rejected before reading; the opened descriptor is rechecked and read with the same byte ceiling. This lets the PM view and start gate run without changing the project or accepting an unbounded/blocking input surface.
 
 When the approved work must persist across sessions, update the project's **existing** Issue, PR, Active Context, work receipt, or other current owner selected by project `AGENTS.md`. Create a new project-owned receipt only when no existing owner can carry the required durable state. Do not create a second design/status canon or distribute empty receipt files to every project.
 
@@ -85,7 +85,7 @@ python -I <fresh-Base-root>/tools/run_project_work_gate.py \
   --render-markdown
 ```
 
-`-` reads one receipt from stdin. The CLI requires an exact Base checkout, exact tracked executable bytes, an exact target Git root, and project revision objects that exist in that repository. It runs in isolated Python mode and performs no Git writes.
+`-` reads one bounded receipt from stdin. The CLI requires an exact Base checkout, exact tracked executable bytes, an exact target Git root, and project revision objects that exist in that repository. It runs in isolated Python mode, removes inherited `GIT_*` overrides, disables Git replacement objects and optional locking, disables fsmonitor/untracked-cache participation for its read-only identity commands, and performs no Git writes.
 
 ## 6. Start, resume and closeout semantics
 
@@ -102,7 +102,7 @@ python -I <fresh-Base-root>/tools/run_project_work_gate.py \
 
 The bootstrap CLI is read-only for both repositories. It does not fetch, checkout, reset, stage, commit, push, edit, install, register services, change permissions, update adapters, or create project files. Repository preparation and mutation remain explicit operations governed by the target project's authority.
 
-A gate PASS proves that the supplied receipt is structurally consistent with the supplied exact revisions. It does not authenticate external evidence, prove that the receipt lists the complete product backlog, establish Godot/runtime/visual/Human/release PASS, or validate current-machine services.
+A gate PASS proves that the supplied receipt is structurally consistent with the supplied exact revisions and that the locally executed Base entry files match the expected Base commit under replacement-object-disabled Git reads. It does not authenticate external evidence, prove that the receipt lists the complete product backlog, establish Godot/runtime/visual/Human/release PASS, or validate current-machine services.
 
 ## 8. Existing adopted route and rollback
 
