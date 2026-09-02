@@ -68,6 +68,35 @@ class ReuseFirstPreflightEnforcementTests(unittest.TestCase):
         self.assertTrue(exit_gate["promotion_is_not_automatic"])
         self.assertEqual(exit_gate["required_fields"], handoff["exit_handoff_fields"])
 
+    def test_project_handoff_routes_to_current_repository_owners(self) -> None:
+        handoff = json.loads(
+            read(
+                "docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json"
+            )
+        )
+        matrix = json.loads(
+            read(
+                "docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json"
+            )
+        )
+
+        switchy_handoff = handoff["projects"]["SWITCHY"]["next_project_work_action"]
+        switchy_revisit = matrix["projects"]["SWITCHY"]["revisit"]
+        self.assertNotIn("SX-DEC-059", switchy_handoff)
+        self.assertNotIn("SX-DEC-059", switchy_revisit)
+        self.assertIn("current project", switchy_handoff.lower())
+        self.assertIn("current project", switchy_revisit.lower())
+
+        ten_paces_fields = "\n".join(
+            [
+                handoff["projects"]["TEN_PACES"]["next_project_work_action"],
+                matrix["projects"]["TEN_PACES"]["blocker"],
+                matrix["projects"]["TEN_PACES"]["revisit"],
+            ]
+        )
+        self.assertNotIn("Notion", ten_paces_fields)
+        self.assertIn("current repository", ten_paces_fields.lower())
+
     def test_gate_does_not_force_unbounded_research_or_project_adoption(self) -> None:
         intake = read("skills/managing-project-intake-and-work-contract/SKILL.md")
         agents = read("AGENTS.md")
