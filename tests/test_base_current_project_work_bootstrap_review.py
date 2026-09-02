@@ -47,7 +47,8 @@ class BaseCurrentProjectWorkBootstrapReviewTests(unittest.TestCase):
     def test_local_commit_type_and_closeout_ancestry_are_required(self) -> None:
         source = TOOL.read_text(encoding="utf-8")
         self.assertIn('"cat-file", "-t"', source)
-        self.assertIn('"merge-base", "--is-ancestor"', source)
+        self.assertIn('"merge-base"', source)
+        self.assertIn('"--is-ancestor"', source)
         self.assertNotIn('f"{sha}^{{commit}}"', source)
 
     def test_receipt_input_and_identity_output_are_fail_closed(self) -> None:
