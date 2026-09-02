@@ -26,7 +26,7 @@ jobs:
         shell: bash
         run: |
           cat .tmp/source-receipt-review-fix/chunk-* > /tmp/source-receipt-review-fix.b64
-          test "$(wc -c < /tmp/source-receipt-review-fix.b64)" = "17912"
+          test "$(wc -c < /tmp/source-receipt-review-fix.b64)" = "17911"
           base64 -d /tmp/source-receipt-review-fix.b64 > /tmp/source-receipt-review-fix.tgz
           echo "9f2c87dcb14a96c5efbdd8fde3e9dd2a94ae1ca603b8d9b1083da981f33b9983  /tmp/source-receipt-review-fix.tgz" | sha256sum -c -
           tar -xzf /tmp/source-receipt-review-fix.tgz -C .
