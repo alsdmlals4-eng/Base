@@ -75,7 +75,7 @@ def patch_state() -> None:
 
 
 def _existing_material_state'''
-    source, count = parser_pattern.subn(parser_replacement, source)
+    source, count = parser_pattern.subn(lambda _match: parser_replacement, source)
     if count != 1:
         raise SystemExit("discovery seed parser anchor missing or ambiguous")
 
