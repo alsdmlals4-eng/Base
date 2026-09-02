@@ -150,6 +150,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          rm -f full-regression.log full-regression.exit
           test ! -e .github/workflows/zz-apply-base-current-project-work-pointers.yml
           test -z "$(git status --porcelain=v1 --untracked-files=all)"
           git diff --check HEAD^ HEAD
