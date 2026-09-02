@@ -57,7 +57,27 @@ Base 공용 판단·절차·상태·품질 기준
 
 ### L1+ project work receipt
 
-프로젝트 L1+ 작업의 benchmark preflight와 context/configuration hygiene는 project repository가 소유한 receipt에 기록한다. route/adapter 검증 뒤, adapter가 승인한 exact Base pin과 같은 checkout의 `tools/validate_work_contract_receipt.py`를 실행한다. free-form `validators` metadata에 이 절차를 복사해 실행 권위로 만들지 않는다. Base root·pin·receipt를 확인하지 못하거나 validator가 실패하면 `BLOCKED_UNVERIFIED`이며 새 기획·제작·구현을 시작하지 않는다.
+`PROJECT_WORK_KANBAN_CHECKLIST` · `PM_EXECUTION_GATE_REQUIRED`
+
+프로젝트 L1+ 작업의 benchmark preflight, context/configuration hygiene와 전체 승인 작업 목록은 project repository가 소유한 **같은 root receipt**에 기록한다. 기존 receipt에 `project_work_kanban`을 형제 필드로 추가하며, 별도 PM 정본·빈 보드·HTML 대시보드를 만들지 않는다. 실제 필드·상태·완료 증거 계약은 `templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md` §10을 따른다.
+
+route/adapter 검증 뒤, adapter가 승인한 exact Base pin과 같은 checkout의 고정 검사기를 실행한다. source SHA는 receipt에서 되받지 않고 신뢰한 caller가 프로젝트 `main`을 fresh-read해 전달한다.
+
+```text
+python <resolved-Base-root-at-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <project-repository-owned-receipt.json> --phase start --expected-source-sha <fresh-read-project-source-sha> --render-markdown
+```
+
+작업 전환은 다음 승인 작업을 먼저 `IN_PROGRESS` 또는 `VERIFY_REVIEW`로 선택하고 `active_work_item_ref`에 기록한 뒤 같은 trusted source로 `--phase resume --expected-source-sha <fresh-read-project-source-sha> --render-markdown`을 실행한다. 출력에는 전체 필수 작업, 완료/필수 수, 선택된 `ACTIVE` 작업, blocker·재개 조건과 다음 안전 행동이 보여야 한다. failed Gate의 receipt 문구는 실행 지시로 재출력하지 않는다.
+
+병합이 승인 범위에 포함되면 branch 작업 완료는 `PREMERGE_CANDIDATE_NOT_CLOSEOUT`일 뿐 최종 closeout이 아니다. exact PR HEAD의 CI·독립 검토·thread 0을 통과해 정상 보호 병합하고 merged `main`과 required postmerge readback을 fresh-read한 뒤, 같은 승인 Goal의 최종 projection을 merged-main 증거로 갱신해 다음을 실행한다.
+
+```text
+python <resolved-Base-root-at-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <project-repository-owned-receipt.json> --phase closeout --expected-source-sha <fresh-read-project-source-sha> --expected-head-sha <fresh-read-merged-main-sha> --render-markdown
+```
+
+모든 필수 DONE 항목의 `verified_head_sha`는 이 trusted merged-main HEAD와 일치해야 한다. merge·postmerge가 필수 작업이면 closeout 전에 DONE으로 표시하지 않는다. repository file에 final receipt metadata를 영구 반영해야 한다면 제품·정본·consumer를 바꾸지 않는 bounded follow-up receipt-only 변경으로 처리하고, 그 metadata tail을 이전 제품 검증의 대체 증거로 사용하지 않는다.
+
+Base root·pin·receipt를 확인하지 못하거나 validator가 nonzero이면 `BLOCKED_UNVERIFIED`이며 새 기획·제작·구현을 시작하지 않는다. `validate_receipt()`는 역사 구조 검사 호환용이며 실행 승인이 아니다. Free-form `validators` metadata에 이 절차를 복사해 별도 실행 권위로 만들지 않는다.
 
 ## 프로젝트 route Registry 최소 계약
 
