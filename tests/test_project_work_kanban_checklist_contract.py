@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 import unittest
 from pathlib import Path
@@ -131,10 +132,23 @@ class ProjectWorkKanbanChecklistContractTests(unittest.TestCase):
             "REUSE_EXISTING_WORK_ITEM_BEFORE_CREATE",
             "NO_ISSUE_EXPLOSION",
             "READY / IN_PROGRESS / VERIFY_REVIEW / BLOCKED_DECISION / DONE",
-            "progress_summary:",
-            "work_item_refs:",
+            "progress_summary",
+            "work_item_refs",
         ):
             self.assertIn(token, text)
+
+        section = text.split("### 12.1 Receipt extension", 1)[1].split("### 12.2", 1)[0]
+        match = re.search(r"```json\s*\n(.*?)\n```", section, re.S)
+        self.assertIsNotNone(match, "startup checklist must publish one executable root JSON example")
+        projection = json.loads(match.group(1))
+        board = projection["project_work_kanban"]
+        self.assertIn("source_main_sha", board)
+        self.assertIn("work_item_refs", board)
+        self.assertIn("work_items", board)
+        self.assertEqual(
+            board["work_item_refs"],
+            [item["work_item_id"] for item in board["work_items"]],
+        )
 
     def test_issue_forms_collect_goal_and_independent_task_contracts(self) -> None:
         goal = self._read(GOAL_FORM)

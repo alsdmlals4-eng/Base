@@ -66,7 +66,9 @@ Project의 기존 Stage·Task·Decision 이름은 유지하고 `FIVE_PHASE_PROJE
 
 `WORK_PROJECT_START_CANON_CHECKLIST.md`로 다음을 확인한다.
 
-`PROJECT_START_CANON_CHECKLIST_REQUIRED`: 모든 L1+ 작업은 checklist의 `benchmark_preflight_receipt`와 scope-limited hygiene inventory를 project repository에 남긴다. `skills/PROJECT_BASE_ADAPTER.json` adapter/route validation으로 확인한 exact Base pin과 같은 checkout에서 `python <resolved-Base-root>/tools/validate_work_contract_receipt.py --receipt <project-repository-owned-receipt.json>`이 PASS 또는 material drift 없는 REUSED_EVIDENCE인지 확인하기 전에는 새 기획·시안·구현으로 들어가지 않는다. Base root 또는 pin을 확인하지 못하면 `BLOCKED_UNVERIFIED`다.
+`PROJECT_START_CANON_CHECKLIST_REQUIRED`: 모든 L1+ 작업은 checklist의 `benchmark_preflight_receipt`와 scope-limited hygiene inventory를 project repository에 남긴다. `skills/PROJECT_BASE_ADAPTER.json` adapter/route validation으로 확인한 exact Base pin과 같은 checkout에서 `python <resolved-Base-root>/tools/validate_work_contract_receipt.py --receipt <project-repository-owned-receipt.json> --phase start --expected-source-sha <fresh-read-source-sha> --render-markdown`이 PASS 또는 material drift 없는 REUSED_EVIDENCE인지 확인하기 전에는 새 기획·시안·구현으로 들어가지 않는다. Base root 또는 pin을 확인하지 못하면 `BLOCKED_UNVERIFIED`다.
+
+`PM_EXECUTION_GATE_REQUIRED`: 같은 root receipt의 `project_work_kanban`도 실제 검사한다. 필드·상태·계산 규칙은 `PROJECT_WORK_ITEM_CHECKLIST.md` §10을 읽는다. 시작은 `--phase start --expected-source-sha <fresh-read-source-sha> --render-markdown`, 재개·작업 전환은 `--phase resume --expected-source-sha <fresh-read-source-sha> --render-markdown`, 완료는 `--phase closeout --expected-source-sha <fresh-read-source-sha> --expected-head-sha <fresh-read-final-head-sha> --render-markdown`으로 기존 CLI를 실행한다. `TRUSTED_VERIFICATION_TARGET_HEAD`는 신뢰한 caller가 receipt와 독립적으로 fresh-read하고 사용자에게 전체 필수 작업·현재 active·완료/필수 수·차단·다음 행동을 보여 준다. PM 목록을 만들었다는 말만 하고 생략하지 않는다. 실제 owner·증거와 같은 receipt/기존 Issue를 갱신한다. 빈 틀이나 과거 구조 검사 API의 성공은 작업 진입 허가가 아니다. 누락 시 승인된 작업의 receipt bookkeeping을 선교정하되 제품 작업은 시작하지 않는다.
 
 ```text
 핵심 재미 / player promise / core-session-meta loop
@@ -97,6 +99,8 @@ Phase 1 confirmed planning
 ```
 
 Codex는 `CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA`로 시작한다. 승인 Visual은 `APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST`로 소비하며, Notion attachment를 기본 입력으로 요구하지 않는다.
+
+새 세션의 최소 인계는 `PROJECT_WORK_ITEM_CHECKLIST.md` §11의 여섯 절로 기존 owner·현재 PM receipt·완료된 것과 다음 미완료 작업·결정 이유를 연결한다. `FRESH_SESSION_HANDOFF_NOT_NEW_LOOP`: 새 실행기나 무한 루프를 추가하지 않으며, `docs/GPT_CODEX_WORKFLOW_POLICY.md`의 역할과 `GPT_LOCAL_CODEX_ORCHESTRATION_RETIRED` 경계를 유지한다. checkpoint와 최종 품질 합격은 다르다.
 
 ## 5. Visual binary
 
@@ -153,6 +157,8 @@ bounded retry → evidence-equivalent fallback → blocked task만 defer
 → 최소 5회 full-scope adversarial review
 → blocking finding 0
 ```
+
+PM closeout의 모든 필수 항목 DONE과 `STOP_APPROVED_SCOPE_COMPLETE`를 확인한다. `CHECKPOINT_IS_NOT_COMPLETION`: checkpoint·문서 PASS·자동 테스트 PASS를 runtime·시각·사용자 승인·병합 PASS로 합치지 않는다. 필요한 병합과 postmerge readback도 PM 분모에 남긴다. Base 템플릿 병합만으로 프로젝트 adapter pin·시작 문서·실제 PM 사용이 동기화됐다고 주장하지 않는다.
 
 Phase 4까지 `HUMAN_USABILITY_EVIDENCE: NOT_RUN`, `PLAYER_EXPERIENCE_EVIDENCE: NOT_RUN`이다. 사용자 검증 전 다음 Slice로 자동 진입하지 않는다.
 

@@ -1,5 +1,15 @@
 # Loop A2 Local Executor
 
+## Current-use boundary
+
+`RETAINED_EXECUTOR_NOT_DEFAULT_WORK_ROUTE` · `HISTORICAL_RUN_EVIDENCE_NOT_CURRENT_PC_STATUS`
+
+The current role authority is `docs/GPT_CODEX_WORKFLOW_POLICY.md`, including `GPT_LOCAL_CODEX_ORCHESTRATION_RETIRED`. This document retains the bounded v1 executor contract and the exact historical runs below; it does not restore GPT/Work → local Codex as the default project workflow. A project-specific, explicitly adopted executor contract remains authoritative only for its recorded scope and version. Without fresh project adoption and current-machine preflight/readback, classify current use as `UNKNOWN_UNVERIFIED`, not installed, running, or retired by inference.
+
+The installer and daemon descriptions below explain preserved capabilities, not instructions to run them during ordinary project startup. Do not activate Startup, Scheduler, a queue consumer, paid API fallback, or A3 because this file exists. Do not delete a previously adopted installation or reset its state to resolve this documentation boundary.
+
+For ordinary project work, use the current Work router, the existing repository-owned PM receipt and `templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md` sections 10–11. `CHECKPOINT_IS_NOT_COMPLETION`: a recovery commit, successful model process, or `WAITING_INTEGRATION` receipt is not runtime/visual acceptance, merge permission, or completed approved work. A fresh headless session rehydrates approved files and remaining tasks; it does not authorize an endless new-goal loop. The PM validator checks recorded consistency, not user-PC liveness or historical executor revalidation.
+
 ## Purpose
 
 `tools/loop-a2-local-executor` is the local bridge between GPT/Work and the merged subscription-native Loop A2 runtime.

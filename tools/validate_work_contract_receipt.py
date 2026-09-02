@@ -3,20 +3,23 @@ from __future__ import annotations
 """Fail closed validation for repository-owned L1+ work-contract receipts."""
 
 import argparse
+import copy
 import json
+import re
 from pathlib import Path
 from typing import Any
 
+if __package__:
+    from .project_work_tracking import choice, render_tracking, validate_tracking
+else:
+    from project_work_tracking import choice, render_tracking, validate_tracking
 
 BENCHMARK_STATES = {"PASS", "REUSED_EVIDENCE", "NOT_APPLICABLE", "BLOCKED_UNVERIFIED"}
 DISPOSITIONS = {"ADOPT", "ADAPT", "REJECT"}
-HYGIENE_CLASSIFICATIONS = {
-    "ACTIVE_OWNER",
-    "COMPATIBILITY",
-    "ARCHIVE",
-    "OBSOLETE_CANDIDATE",
-    "UNKNOWN_UNVERIFIED",
-}
+HYGIENE_CLASSIFICATIONS = {"ACTIVE_OWNER", "COMPATIBILITY", "ARCHIVE", "OBSOLETE_CANDIDATE", "UNKNOWN_UNVERIFIED"}
+_EXACT_SHA = re.compile(r"[0-9a-f]{40}\Z")
+_RENDER_MISSING_HEAD = "0" * 40
+_RENDER_UNTRUSTED_RECORDED_HEAD = "1" * 40
 
 
 def _nonempty_string(value: Any) -> bool:
@@ -27,24 +30,43 @@ def _nonempty_list(value: Any) -> bool:
     return isinstance(value, list) and bool(value)
 
 
+def _render_inputs(
+    board: dict[str, Any],
+    *,
+    phase: str,
+    expected_head_sha: str | None,
+) -> tuple[dict[str, Any], str | None]:
+    """Apply trusted-head relabeling only to the final closeout phase."""
+    if phase != "closeout":
+        return board, None
+    if isinstance(expected_head_sha, str) and _EXACT_SHA.fullmatch(expected_head_sha) is not None:
+        return board, expected_head_sha
+
+    rendered = copy.deepcopy(board)
+    work_items = rendered.get("work_items")
+    if isinstance(work_items, list):
+        for task in work_items:
+            if isinstance(task, dict) and task.get("status") == "DONE":
+                task["verified_head_sha"] = _RENDER_UNTRUSTED_RECORDED_HEAD
+    return rendered, _RENDER_MISSING_HEAD
+
+
 def validate_receipt(receipt: object) -> list[str]:
-    """Return all contract errors; an empty list means the receipt is valid."""
+    """Historical record shape only; execution callers use validate_execution_receipt."""
     if not isinstance(receipt, dict):
         return ["receipt must be a JSON object"]
-
     errors: list[str] = []
     work_level = receipt.get("work_level")
-    if work_level not in {"L0", "L1", "L2", "L3", "L4"}:
+    if not choice(work_level, {"L0", "L1", "L2", "L3", "L4"}):
         errors.append("work_level must be one of L0, L1, L2, L3, L4")
-
     benchmark = receipt.get("benchmark_preflight_receipt")
     if not isinstance(benchmark, dict):
         errors.append("benchmark_preflight_receipt is required")
     else:
         state = benchmark.get("state")
-        if state not in BENCHMARK_STATES:
+        if not choice(state, BENCHMARK_STATES):
             errors.append("benchmark_preflight_receipt.state is invalid")
-        if state in {"PASS", "REUSED_EVIDENCE"}:
+        if choice(state, {"PASS", "REUSED_EVIDENCE"}):
             entries = benchmark.get("entries")
             if not _nonempty_list(entries):
                 errors.append(f"benchmark_preflight_receipt.entries is required for {state}")
@@ -53,19 +75,11 @@ def validate_receipt(receipt: object) -> list[str]:
                     if not isinstance(entry, dict):
                         errors.append(f"benchmark_preflight_receipt.entries[{index}] must be an object")
                         continue
-                    for field in (
-                        "source_and_evidence",
-                        "observed_pattern",
-                        "project_fit_and_difference",
-                    ):
+                    for field in ("source_and_evidence", "observed_pattern", "project_fit_and_difference"):
                         if not _nonempty_string(entry.get(field)):
-                            errors.append(
-                                f"benchmark_preflight_receipt.entries[{index}].{field} is required"
-                            )
-                    if entry.get("disposition") not in DISPOSITIONS:
-                        errors.append(
-                            f"benchmark_preflight_receipt.entries[{index}].disposition must be ADOPT, ADAPT, or REJECT"
-                        )
+                            errors.append(f"benchmark_preflight_receipt.entries[{index}].{field} is required")
+                    if not choice(entry.get("disposition"), DISPOSITIONS):
+                        errors.append(f"benchmark_preflight_receipt.entries[{index}].disposition must be ADOPT, ADAPT, or REJECT")
         elif state == "NOT_APPLICABLE":
             if work_level != "L0":
                 errors.append("NOT_APPLICABLE is restricted to L0")
@@ -73,7 +87,6 @@ def validate_receipt(receipt: object) -> list[str]:
                 errors.append("reason_not_applicable is required for NOT_APPLICABLE")
         elif state == "BLOCKED_UNVERIFIED" and not _nonempty_list(benchmark.get("blocked_sources")):
             errors.append("blocked_sources is required for BLOCKED_UNVERIFIED")
-
     hygiene = receipt.get("context_configuration_hygiene")
     if not isinstance(hygiene, dict):
         errors.append("context_configuration_hygiene is required")
@@ -90,13 +103,9 @@ def validate_receipt(receipt: object) -> list[str]:
                     continue
                 for field in ("path", "owner_or_provenance", "references_and_consumers"):
                     if not _nonempty_string(item.get(field)):
-                        errors.append(
-                            f"context_configuration_hygiene.inventory[{index}].{field} is required"
-                        )
-                if item.get("classification") not in HYGIENE_CLASSIFICATIONS:
-                    errors.append(
-                        f"context_configuration_hygiene.inventory[{index}].classification is invalid"
-                    )
+                        errors.append(f"context_configuration_hygiene.inventory[{index}].{field} is required")
+                if not choice(item.get("classification"), HYGIENE_CLASSIFICATIONS):
+                    errors.append(f"context_configuration_hygiene.inventory[{index}].classification is invalid")
                 if item.get("removal_proposed") is True:
                     if item.get("references_and_consumers_zero_before_removal") is not True:
                         errors.append("references_and_consumers_zero_before_removal is required")
@@ -105,22 +114,92 @@ def validate_receipt(receipt: object) -> list[str]:
     return errors
 
 
+def validate_execution_receipt(
+    receipt: object,
+    *,
+    phase: str = "start",
+    expected_source_sha: str | None = None,
+    expected_head_sha: str | None = None,
+) -> list[str]:
+    """Execution readiness requires trusted caller source and verified-subject HEAD values."""
+    errors = validate_receipt(receipt)
+    if not isinstance(receipt, dict):
+        return errors
+    if not choice(phase, {"start", "resume", "closeout"}):
+        errors.append("phase must be start, resume or closeout")
+    benchmark = receipt.get("benchmark_preflight_receipt")
+    if isinstance(benchmark, dict) and benchmark.get("state") == "BLOCKED_UNVERIFIED":
+        errors.append("BLOCKED_UNVERIFIED benchmark is a record, not execution authorization")
+    if receipt.get("work_level") != "L0" or "project_work_kanban" in receipt:
+        if expected_source_sha is None:
+            errors.append("expected_source_sha from the trusted fresh-read caller is required for execution")
+        errors.extend(
+            validate_tracking(
+                receipt.get("project_work_kanban"),
+                phase=phase,
+                expected_source_sha=expected_source_sha,
+                expected_head_sha=expected_head_sha,
+            )
+        )
+    return errors
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--receipt", required=True, type=Path)
+    parser.add_argument("--phase", choices=("start", "resume", "closeout"), default="start")
+    parser.add_argument("--expected-source-sha", help="Exact source SHA supplied by the trusted caller; required for L1+")
+    parser.add_argument("--expected-head-sha", help="Exact verified-subject HEAD supplied independently by the trusted caller; required for closeout")
+    parser.add_argument("--render-markdown", action="store_true", help="Print a shape-validated derived PM view; blocked execution remains nonzero")
     args = parser.parse_args()
     try:
         receipt = json.loads(args.receipt.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         print(f"WORK CONTRACT RECEIPT: FAIL\n- cannot read JSON receipt: {exc}")
         return 2
-    errors = validate_receipt(receipt)
+    errors = validate_execution_receipt(
+        receipt,
+        phase=args.phase,
+        expected_source_sha=args.expected_source_sha,
+        expected_head_sha=args.expected_head_sha,
+    )
     if errors:
         print("WORK CONTRACT RECEIPT: FAIL")
         for error in errors:
             print(f"- {error}")
+        board = receipt.get("project_work_kanban") if isinstance(receipt, dict) else None
+        shape_errors = (
+            validate_tracking(
+                board,
+                phase="inspect",
+                expected_source_sha=args.expected_source_sha,
+            )
+            if isinstance(board, dict)
+            else ["project_work_kanban is unavailable"]
+        )
+        if args.render_markdown and isinstance(board, dict) and not shape_errors:
+            render_board, render_head = _render_inputs(
+                board,
+                phase=args.phase,
+                expected_head_sha=args.expected_head_sha,
+            )
+            print("PM VIEW: INFORMATION ONLY; EXECUTION BLOCKED")
+            print(
+                render_tracking(
+                    render_board,
+                    expected_head_sha=render_head,
+                    execution_authorized=False,
+                )
+            )
         return 1
-    print("WORK CONTRACT RECEIPT: PASS")
+    print(f"WORK CONTRACT RECEIPT: PASS (execution phase={args.phase}; recorded evidence only)")
+    if args.render_markdown and isinstance(receipt.get("project_work_kanban"), dict):
+        render_board, render_head = _render_inputs(
+            receipt["project_work_kanban"],
+            phase=args.phase,
+            expected_head_sha=args.expected_head_sha,
+        )
+        print(render_tracking(render_board, expected_head_sha=render_head))
     return 0
 
 

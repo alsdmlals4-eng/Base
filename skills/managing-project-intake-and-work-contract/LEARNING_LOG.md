@@ -1,6 +1,16 @@
 # Managing Project Intake and Work Contracts — Learning Log
 
 
+## 2026-09-02 — PM checklist text needs executable consumers and independent final-head binding
+
+- **상태:** `OBSERVATION`
+- **호출 트리거:** 사용자가 프로젝트 작업에서 PM 전체 작업 체크리스트를 사용하라고 했지만 실제 실행·재개·마감에서 누락된다고 지적했고, 파일 기반 새 세션 인계 원칙을 기존 Base 구조에 안전하게 흡수하라고 요청했다.
+- **Finding:** Base에는 PM 카드·칸반 문구와 work-contract validator가 있었지만 active intake·분해·실행계획 일부는 PM 없는 과거 최소 receipt와 history-only 검사를 계속 안내했다. 또한 DONE 항목의 `verified_head_sha`를 receipt 내부에서만 확인해, closeout 뒤 코드가 바뀌어도 자기주장된 오래된 HEAD가 통과할 수 있었다. 교정 과정에서는 기존 PM 정본 회귀 테스트가 오래된 축약본으로 대체돼 실제 실패 원인이 왜곡되었고, 별도 신규 테스트만 추가하면 canonical freshness가 인정하는 companion·Learning Log 연결을 놓칠 수 있음도 재현됐다.
+- **Decision:** 새 PM 앱·HTML 대시보드·무한 루프·두 번째 상태 정본을 만들지 않는다. 기존 root work-contract receipt에 `project_work_kanban`을 형제 필드로 연결하고 active consumer가 `start → resume → closeout` 실행 Gate를 실제 호출하게 한다. source SHA와 final HEAD는 receipt 값을 되돌려 쓰지 않고 신뢰한 caller가 별도로 fresh-read해 전달한다. checkpoint commit은 복구점일 뿐 DONE·품질 승인·병합 권한이 아니며, 승인 범위가 끝나면 `STOP_APPROVED_SCOPE_COMPLETE`로 정상 종료한다.
+- **TDD / regression evidence:** RED run `33570853218`은 기존 PM 정본 회귀를 복구한 뒤 새 final-head 테스트 하나만 `expected_head_sha` 미지원으로 실패시켰다. RED run `33571250528`은 구현 뒤 오래된 active consumer 명령만 실패시켜 실제 연결 누락을 드러냈다. run `33572125623`의 canonical freshness는 intake Skill 변경에 companion regression과 이 Learning Log가 빠진 상태를 차단했다. 기존-suite companion은 `tests/test_p08_ai_operations_contract.py`, 직접 행동 회귀는 `tests/test_project_work_tracking.py`, `tests/test_pm_closeout_head_and_active_consumers.py`, `tests/test_project_work_kanban_checklist_contract.py`가 맡는다. 최종 exact-head 전체 GREEN·review·merge는 별도 완료 증거이며 이 기록 자체가 PASS를 주장하지 않는다.
+- **Evidence ceiling:** receipt·문서·정적 테스트는 기록 일관성과 실행 진입 계약을 검증한다. 외부 evidence 진실성, 승인 범위 완전성, 사용자 PC executor liveness, Godot runtime·시각·UX·Human QA, 프로젝트별 adapter adoption 또는 출시 상태를 증명하지 않는다.
+- **다음 검토 트리거:** PM 체크리스트 문구는 있으나 실제 start/resume/closeout consumer가 다시 history-only 검사로 우회하거나, final-head 기대값을 receipt에서 자기복사하거나, checkpoint를 DONE으로 세거나, 승인 범위 완료 뒤 새 Goal을 자동 발명하거나, Skill 변경이 기존 companion test·Learning Log 없이 standalone 테스트만 통과할 때.
+
 ## 2026-09-01 — Public video evidence and AI vocabulary need reader recovery and smallest-layer routing
 
 - **상태:** `OBSERVATION`

@@ -17,6 +17,7 @@ validation_environment:
 rollback_constraints:
 benchmark_preflight_receipt:
 context_configuration_hygiene:
+project_work_kanban:
 ```
 
 요구가 확정되지 않았거나 중요한 사용자 결정이 남아 있으면 실행 순서를 확정하지 않는다.
@@ -25,11 +26,19 @@ context_configuration_hygiene:
 
 분해 전에 최신 main, 현재 Decision, 관련 분야 정본, 동일 Goal의 열린·최근 병합 PR, 실제 구현과 개별 프로젝트 Sheet를 비교한다. `DUPLICATE_WORK`, `DUPLICATE_QUESTION`, `MISSING_CANON`, `MISSING_CONSUMER`, `CANON_CONFLICT`, `IMPLEMENTATION_CONFLICT`, `STALE_REFERENCE`, `MISSING_SYNC`가 있으면 새 작업 목록보다 복원과 정리를 먼저 배치한다. Base 저장소 자체의 Sheet 상태는 `BASE_EXCLUDED`다.
 
-### 1.2 필수 benchmark·역공학 preflight와 범위 한정 hygiene
+### 1.2 필수 benchmark·역공학 preflight, 범위 한정 hygiene와 PM 실행 Gate
 
-`MANDATORY_BENCHMARK_REVERSE_ENGINEERING_PREFLIGHT` / `BENCHMARK_PREFLIGHT_BEFORE_WORK_REQUIRED`: Base·프로젝트의 모든 L1+ 작업은 분해·작성·구현보다 먼저 exact repository revision의 같은 책임·실제 consumer를 비교하고, task-appropriate current Base 사례·승인 Reference/Benchmark·직접 관련 유사 구현·필요한 공식 원출처를 조사한다. 결과는 repository-owned `benchmark_preflight_receipt`에 `state: PASS | REUSED_EVIDENCE | NOT_APPLICABLE | BLOCKED_UNVERIFIED`, entry별 `source_and_evidence`, `observed_pattern`, `project_fit_and_difference`, `disposition: ADOPT | ADAPT | REJECT`로 남기고 `python <resolved-Base-root-at-current-Base-or-project-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <receipt.json>`을 통과한다. `PASS`/`REUSED_EVIDENCE`는 최소 한 entry, `BLOCKED_UNVERIFIED`는 unreadable source/blocker, `NOT_APPLICABLE`은 L0의 이유를 요구한다. benchmark는 프로젝트의 장르·세계관·화면·버튼·시각 구도를 고정하는 catalog가 아니라, 현재 consumer와 계약에 맞는 더 효율적인 방향을 찾는 evidence다.
+`MANDATORY_BENCHMARK_REVERSE_ENGINEERING_PREFLIGHT` / `BENCHMARK_PREFLIGHT_BEFORE_WORK_REQUIRED`: Base·프로젝트의 모든 L1+ 작업은 분해·작성·구현보다 먼저 exact repository revision의 같은 책임·실제 consumer를 비교하고, task-appropriate current Base 사례·승인 Reference/Benchmark·직접 관련 유사 구현·필요한 공식 원출처를 조사한다. 결과는 repository-owned root receipt의 `benchmark_preflight_receipt`에 `state: PASS | REUSED_EVIDENCE | NOT_APPLICABLE | BLOCKED_UNVERIFIED`, entry별 `source_and_evidence`, `observed_pattern`, `project_fit_and_difference`, `disposition: ADOPT | ADAPT | REJECT`로 남긴다. `PASS`/`REUSED_EVIDENCE`는 최소 한 entry, `BLOCKED_UNVERIFIED`는 unreadable source/blocker, `NOT_APPLICABLE`은 L0의 이유를 요구한다. benchmark는 프로젝트의 장르·세계관·화면·버튼·시각 구도를 고정하는 catalog가 아니라, 현재 consumer와 계약에 맞는 더 효율적인 방향을 찾는 evidence다.
 
-`LEGACY_CONTEXT_CONFIGURATION_HYGIENE_REQUIRED`: 시작 시 이번 scope의 context·설정·entrypoint·문서·생성물을 `context_configuration_hygiene`의 scoped `inventory`에 `ACTIVE_OWNER | COMPATIBILITY | ARCHIVE | OBSOLETE_CANDIDATE | UNKNOWN_UNVERIFIED`로 분류하고, 각 항목에 path·owner/provenance·references/consumers readback을 남긴다. `NO_BROAD_SWEEP_WITHOUT_SCOPE`와 `NO_DELETION_BY_AGE_OR_NAME`을 지킨다. `OBSOLETE_CANDIDATE`를 실제 제거할 때만 receipt validator가 `REFERENCES_AND_CONSUMERS_ZERO_BEFORE_REMOVAL` 및 `GIT_RECOVERABLE_REMOVAL_AND_READBACK`을 요구하게 하고, 연결 문서·생성물·검증을 다시 확인한다. source나 consumer가 불명확하면 `UNKNOWN_UNVERIFIED`로 보존하고 entrypoint의 오인만 최소 교정한다.
+`LEGACY_CONTEXT_CONFIGURATION_HYGIENE_REQUIRED`: 시작 시 이번 scope의 context·설정·entrypoint·문서·생성물을 같은 root receipt의 `context_configuration_hygiene` scoped `inventory`에 `ACTIVE_OWNER | COMPATIBILITY | ARCHIVE | OBSOLETE_CANDIDATE | UNKNOWN_UNVERIFIED`로 분류하고, 각 항목에 path·owner/provenance·references/consumers readback을 남긴다. `NO_BROAD_SWEEP_WITHOUT_SCOPE`와 `NO_DELETION_BY_AGE_OR_NAME`을 지킨다. `OBSOLETE_CANDIDATE`를 실제 제거할 때만 receipt validator가 `REFERENCES_AND_CONSUMERS_ZERO_BEFORE_REMOVAL` 및 `GIT_RECOVERABLE_REMOVAL_AND_READBACK`을 요구하게 하고, 연결 문서·생성물·검증을 다시 확인한다. source나 consumer가 불명확하면 `UNKNOWN_UNVERIFIED`로 보존하고 entrypoint의 오인만 최소 교정한다.
+
+`PROJECT_WORK_KANBAN_CHECKLIST` / `PM_EXECUTION_GATE_REQUIRED`: 위 두 기록만으로는 실행 권한이 생기지 않는다. 같은 repository-owned root receipt에 현재 승인 Goal의 필수 작업을 나타내는 `project_work_kanban`을 형제 필드로 두고, 기존 Issue·카드·owner를 재사용한다. 세 필드를 모두 기록한 뒤 다음 실제 실행 명령을 통과해야 한다.
+
+```text
+python <resolved-Base-root-at-current-Base-or-project-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <receipt.json> --phase start --expected-source-sha <fresh-read-project-source-sha> --render-markdown
+```
+
+다음 승인 작업으로 전환할 때는 먼저 그 작업을 `IN_PROGRESS`와 `active_work_item_ref`로 기록하고 `--phase resume`으로 재검사한다. 승인 범위 마감은 모든 필수 작업의 evidence를 같은 최종 HEAD에서 다시 확인한 뒤 `--phase closeout --expected-source-sha <fresh-read-project-source-sha> --expected-head-sha <fresh-read-final-head-sha> --render-markdown`으로 검사한다. `TRUSTED_VERIFICATION_TARGET_HEAD`: receipt 안의 SHA를 기대값으로 되돌려 쓰지 않고 신뢰한 caller가 source와 final HEAD를 별도로 fresh-read한다. root 예시와 DONE 증거 계약은 `templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md` §12.1과 `PROJECT_WORK_ITEM_CHECKLIST.md` §10을 따른다. 빈 PM 보드·미완료 작업 삭제·history-only `validate_receipt()` 호출로 실행 Gate를 우회하지 않는다.
 
 ## 2. 분해 단위
 
