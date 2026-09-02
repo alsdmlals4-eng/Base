@@ -91,7 +91,7 @@ def validate_tracking(
     if active is not None and (
         not isinstance(active, str)
         or active not in tasks
-        or tasks[active].get("status") not in {"IN_PROGRESS", "VERIFY_REVIEW"}
+        or not choice(tasks[active].get("status"), {"IN_PROGRESS", "VERIFY_REVIEW"})
     ):
         errors.append("active_work_item_ref must identify an IN_PROGRESS or VERIFY_REVIEW task")
     if active_candidates and active not in active_candidates:
