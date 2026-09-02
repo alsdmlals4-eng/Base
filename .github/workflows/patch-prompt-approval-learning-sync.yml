@@ -1,0 +1,77 @@
+name: Patch prompt approval learning sync
+
+on:
+  push:
+    branches:
+      - work/prompt-approval-gate-20260903
+    paths:
+      - .github/workflows/patch-prompt-approval-learning-sync.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+      - name: Update learning owner and existing companion suite
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          learning_path = Path("skills/managing-project-intake-and-work-contract/LEARNING_LOG.md")
+          learning = learning_path.read_text(encoding="utf-8")
+          title = "# Managing Project Intake and Work Contracts — Learning Log\n"
+          if not learning.startswith(title):
+              raise SystemExit("learning log title changed")
+          entry = r'''
+
+## 2026-09-03 — Documented prompt approval needs an executable receipt gate and no-repeat boundary
+
+- **상태:** `OBSERVATION`
+- **호출 트리거:** 사용자가 모든 새롭거나 의미가 바뀐 L1+ 작업에서 자신의 원문을 좋은 실행 프롬프트로 변환하고, AI가 맞게 이해했는지 한 번 확인받은 뒤에만 진행하도록 프롬프트 엔지니어링 조사·하드코딩·적대적 교정을 요청하고 권장 통합안을 승인했다.
+- **Finding:** 기존 intake는 `first-prompt → contract → Grill Me alignment gate → CONFIRMED`를 명시했고 테스트도 해당 문구의 존재를 확인했지만, 실제 `validate_work_contract_receipt.py`와 정상 L1 fixture는 prompt contract·approval state·approval locator·contract digest 없이도 실행할 수 있었다. 문서 규칙만 강화하면 같은 우회가 남고, 반대로 모든 read/tool call마다 확인을 강제하면 read-only 조사·L0·동일 검증 재실행·exact approved continuation을 막아 질문 피로와 연속작업 퇴행을 만든다. 구현 과정에서는 malformed `phase` 공개 입력의 traceback, cold-start consumer 누락, orphan reference, standalone 신규 테스트만으로는 canonical freshness를 통과하지 못하는 기존-suite/Learning Log 동기화 누락도 재현됐다.
+- **Decision:** 새 Prompt Engineering Skill·외부 승인 서버·유료 optimizer를 만들지 않는다. 기존 `managing-project-intake-and-work-contract`가 source-aware prompt contract와 사용자 확인을 계속 소유하고, 같은 repository-owned root receipt의 `prompt_approval_gate`와 `tools/prompt_approval_gate.py`가 shape·authority·conflict·approval state·SHA-256 drift를 검사한다. `--phase prepare`는 digest와 PM view만 보여 주며 `EXECUTION AUTHORIZED: NO`이고, L1+ `start / resume / closeout`은 `CONFIRMED | REUSED_APPROVAL`과 current digest를 요구한다. read-only 조사, L0 기계 작업, 동일 검증 재실행, exact approved continuation은 중복 질문하지 않는다. Digest는 계약 drift 탐지이지 승인자 신원 증명이 아니며 trusted caller가 approval locator의 권위와 freshness를 확인한다.
+- **TDD / regression evidence:** intentional RED run `33660677860`은 문서 승인과 실제 실행 Gate의 간극을 재현했다. run `33661639339`는 malformed phase traceback과 cold-start 소비자 누락을 발견했고, run `33663685024`는 2603개 core regression 중 packaged reference link와 stale diagnostic assertion만 남겨 owner propagation을 검증했다. 직접 행동 회귀는 `tests/test_prompt_approval_execution_gate.py`, cold-start는 `tests/test_pm_cold_start_contract.py`, routing/module boundary는 `tests/test_prompt_approval_routing_contract.py`, 실제 승인 receipt는 `tests/test_prompt_approval_work_receipt.py`, 기존-suite companion은 `tests/test_p08_ai_operations_contract.py`가 맡는다. 최종 exact-head CI·independent review·merge/readback은 별도 완료 증거다.
+- **Evidence ceiling:** repository contract와 tests는 필드·상태·digest·routing·fail-closed 동작을 증명하지만, ChatGPT 메시지 작성자 신원, 실제 오해·질문 피로 감소, cross-model prompt 품질, 프로젝트 adapter adoption, Godot runtime·UX·출시 상태를 증명하지 않는다.
+- **다음 검토 트리거:** L1+ 실행 receipt가 prompt approval 없이 다시 통과하거나, retrieved context·AI 텍스트가 approval authority로 승격되거나, approved contract 변경 뒤 stale digest가 통과하거나, exact continuation에도 같은 질문을 반복하거나, Skill 변경이 기존-suite companion·Learning Log·active consumer 없이 standalone 테스트만 통과할 때.
+'''
+          learning_path.write_text(title + entry + learning[len(title):], encoding="utf-8", newline="\n")
+
+          test_path = Path("tests/test_p08_ai_operations_contract.py")
+          test = test_path.read_text(encoding="utf-8")
+          marker = "\n\nif __name__ == \"__main__\":\n"
+          if test.count(marker) != 1:
+              raise SystemExit("test insertion marker changed")
+          method = r'''
+
+    def test_intake_prompt_approval_gate_blocks_unconfirmed_l1_execution(self) -> None:
+        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        for term in (
+            "PROMPT_APPROVAL_EXECUTION_GATE_REQUIRED",
+            "references/prompt-approval-execution-gate.md",
+            "prompt_approval_gate:",
+            "--phase prepare",
+            "CONFIRMED",
+            "REUSED_APPROVAL",
+            "start / resume / closeout",
+            "read-only 조사",
+            "exact approved continuation",
+        ):
+            self.assertIn(term, intake)
+'''
+          test_path.write_text(test.replace(marker, method + marker), encoding="utf-8", newline="\n")
+          PY
+      - name: Remove the one-shot workflow
+        run: rm .github/workflows/patch-prompt-approval-learning-sync.yml
+      - name: Commit and push the bounded sync
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add skills/managing-project-intake-and-work-contract/LEARNING_LOG.md tests/test_p08_ai_operations_contract.py .github/workflows/patch-prompt-approval-learning-sync.yml
+          git commit -m "docs: record prompt approval execution learning"
+          git push origin HEAD:${GITHUB_REF_NAME}
