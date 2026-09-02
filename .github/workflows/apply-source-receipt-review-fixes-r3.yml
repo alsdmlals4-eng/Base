@@ -54,15 +54,7 @@ jobs:
           rm .github/workflows/apply-source-receipt-review-fixes-r3.yml
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add -A \
-            tools/periodic_source_receipt_state.py \
-            tools/record_periodic_source_scan.py \
-            tests/test_periodic_source_receipt_state.py \
-            tests/test_record_periodic_source_scan.py \
-            tests/test_periodic_source_receipt_review_round3.py \
-            .tmp/source-receipt-review-fix \
-            .github/workflows/apply-source-receipt-review-fixes-r3.yml
-          test "$(git diff --name-only origin/main...HEAD | sort | tr '\n' ' ')" != ""
+          git add -u
           git commit -m "fix: rebuild Source Ledger state from receipt identities"
           test "$(git diff --name-only origin/main...HEAD | sort | tr '\n' ' ')" = "tests/test_periodic_source_receipt_review_round3.py tests/test_periodic_source_receipt_state.py tests/test_record_periodic_source_scan.py tools/periodic_source_receipt_state.py tools/record_periodic_source_scan.py "
           git push origin HEAD:fix/source-receipt-ledger-integrity-r2-20260902
