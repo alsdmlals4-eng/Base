@@ -47,19 +47,38 @@ class PromptApprovalRoutingContractTests(unittest.TestCase):
 
     def test_reference_template_and_validator_share_the_same_contract(self) -> None:
         reference = REFERENCE.read_text(encoding="utf-8")
-        template = json.loads(TEMPLATE.read_text(encoding="utf-8"))
+        template_text = TEMPLATE.read_text(encoding="utf-8")
+        template = json.loads(template_text)
         validator = VALIDATOR.read_text(encoding="utf-8")
+
         for required in (
             "PROMPT_APPROVAL_EXECUTION_GATE_REQUIRED",
+            "--phase prepare",
+            "EXECUTION AUTHORIZED: NO",
+            "compute_prompt_contract_sha256()",
+        ):
+            with self.subTest(reference=required):
+                self.assertIn(required, reference)
+
+        for required in (
+            "UNTRUSTED_CONTEXT",
+            "AWAITING_USER_CONFIRMATION",
+            "scope_changed_since_approval",
+            "unresolved_material_decisions",
+        ):
+            with self.subTest(template_and_validator=required):
+                self.assertIn(required, template_text)
+                self.assertIn(required, validator)
+
+        for required in (
             "CURRENT_USER_MESSAGE",
             "REPOSITORY_APPROVED_DECISION",
-            "UNTRUSTED_CONTEXT",
-            "--phase prepare",
-            "scope_changed_since_approval",
+            "prepare",
+            "REUSED_APPROVAL",
         ):
-            with self.subTest(required=required):
-                self.assertIn(required, reference)
-                self.assertIn(required, json.dumps(template, ensure_ascii=False) + validator)
+            with self.subTest(validator=required):
+                self.assertIn(required, validator)
+
         self.assertEqual("AWAITING_USER_CONFIRMATION", template["approval"]["state"])
         self.assertIsNone(template["approval"]["approved_contract_sha256"])
 
