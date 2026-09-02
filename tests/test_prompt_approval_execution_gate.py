@@ -105,7 +105,10 @@ class PromptApprovalExecutionGateTests(unittest.TestCase):
     def test_l1_execution_rejects_missing_prompt_gate(self) -> None:
         value = tracked_receipt()
         value.pop("prompt_approval_gate")
-        self.assertIn("prompt_approval_gate is required for L1+ execution", errors(value))
+        self.assertIn(
+            "prompt_approval_gate is required for L1+ preparation or execution",
+            errors(value),
+        )
 
     def test_prepare_accepts_awaiting_contract_without_execution_authority(self) -> None:
         value = approved_receipt("AWAITING_USER_CONFIRMATION")
@@ -162,7 +165,7 @@ class PromptApprovalExecutionGateTests(unittest.TestCase):
         missing = tracked_receipt()
         missing["prompt_approval_gate"] = None
         self.assertIn(
-            "prompt_approval_gate is required for L1+ execution",
+            "prompt_approval_gate is required for L1+ preparation or execution",
             errors(missing),
         )
         for malformed in ([], "approved", True, 7):
