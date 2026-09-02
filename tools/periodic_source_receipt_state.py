@@ -31,6 +31,39 @@ _BASE_COUNT_FIELD = "base_contribution_count_since_tracking_start"
 _RECONCILIATION_FIELD = "receipt_reconciliation_state"
 _RECONCILIATION_SCHEMA_VERSION = 1
 _SOURCE_CLASSIFICATIONS = {"DURABLE_ACTIVE", "DISCOVERY_ACTIVE"}
+_RECEIPT_FIELDS = {
+    "scan_date",
+    "start_main",
+    "final_main",
+    "disposition",
+    "high_nutrient_sources",
+    "scanned_source_ids",
+    "scanned_discovery_seed_ids",
+    "retained_candidate_source_ids",
+    "material_candidate_count_by_source",
+    "merged_base_contribution_refs",
+    "repository_change",
+    "pr_created",
+    "merge_sha",
+    "ledger_write",
+    "unverified_scope",
+}
+_HIGH_NUTRIENT_FIELDS = {
+    "source",
+    "nutrient_score",
+    "source_archetype",
+    "reusable_units",
+}
+_CONTRIBUTION_FIELDS = {
+    "source_id",
+    "source",
+    "pr",
+    "merge_sha",
+    "merge_date",
+    "merged_at",
+    "owner",
+    "refs",
+}
 
 
 class _AlreadyProcessed(Exception):
@@ -121,15 +154,45 @@ def normalize_receipt_ref(value: object) -> str:
 def parse_active_discovery_seed_ids(text: str) -> set[str]:
     if not isinstance(text, str):
         raise _blocked("discovery seed registry must be text")
-    identifiers = {
-        match.group(1)
-        for match in re.finditer(
-            r"(?m)^seed_id:\s*([A-Za-z0-9][A-Za-z0-9._-]*)\s*$", text
+
+    active: set[str] = set()
+    seen: set[str] = set()
+    fenced_ranges: list[tuple[int, int]] = []
+    for block in re.finditer(r"(?ms)^```yaml\s*\n(.*?)^```\s*$", text):
+        fenced_ranges.append(block.span())
+        body = block.group(1)
+        seed_matches = re.findall(
+            r"(?m)^seed_id:\s*([A-Za-z0-9][A-Za-z0-9._-]*)\s*$", body
         )
-    }
-    if not identifiers:
-        raise _blocked("discovery seed registry contains no seed_id entries")
-    return identifiers
+        if not seed_matches:
+            continue
+        if len(seed_matches) != 1:
+            raise _blocked("each discovery seed block must contain one seed_id")
+        seed_id = seed_matches[0]
+        if seed_id in seen:
+            raise _blocked("duplicate discovery seed ID")
+        seen.add(seed_id)
+        status_matches = re.findall(r"(?m)^status:\s*([^\s#]+)\s*$", body)
+        if len(status_matches) > 1:
+            raise _blocked("discovery seed block contains multiple status values")
+        if not status_matches or status_matches[0] == "ACTIVE_DISCOVERY_SEED":
+            active.add(seed_id)
+
+    loose_text = text
+    for start, end in reversed(fenced_ranges):
+        loose_text = loose_text[:start] + ("\n" * text[start:end].count("\n")) + loose_text[end:]
+    for match in re.finditer(
+        r"(?m)^seed_id:\s*([A-Za-z0-9][A-Za-z0-9._-]*)\s*$", loose_text
+    ):
+        seed_id = match.group(1)
+        if seed_id in seen:
+            raise _blocked("duplicate discovery seed ID")
+        seen.add(seed_id)
+        active.add(seed_id)
+
+    if not active:
+        raise _blocked("discovery seed registry contains no active seed_id entries")
+    return active
 
 
 def _existing_material_state(row: Mapping[str, object]) -> tuple[int, date | None]:
@@ -292,6 +355,11 @@ def _normalize_contribution_refs(
     seen: set[tuple[str, str]] = set()
     for raw_item in value:
         assert isinstance(raw_item, Mapping)
+        unsupported = set(raw_item) - _CONTRIBUTION_FIELDS
+        if unsupported:
+            raise _blocked(
+                "unsupported contribution fields: " + ", ".join(sorted(unsupported))
+            )
         source_id = _resolve_contribution_source(raw_item)
         if source_id not in retained_source_ids:
             raise _blocked("contribution Source must be retained")
@@ -381,6 +449,12 @@ def _normalize_high_nutrient_sources(value: object) -> list[dict[str, object]]:
     for raw in value:
         if not isinstance(raw, Mapping):
             raise _blocked("high_nutrient_sources rows must be objects")
+        unsupported = set(raw) - _HIGH_NUTRIENT_FIELDS
+        if unsupported:
+            raise _blocked(
+                "unsupported high-nutrient source fields: "
+                + ", ".join(sorted(unsupported))
+            )
         source_name = _nonempty_string(raw.get("source"), "high-nutrient source")
         score = raw.get("nutrient_score")
         if isinstance(score, bool) or not isinstance(score, int) or not 9 <= score <= 12:
@@ -431,6 +505,9 @@ def validate_actual_source_review_receipt(
 
     if not isinstance(receipt, Mapping):
         raise _blocked("actual Source review receipt must be an object")
+    unsupported = set(receipt) - _RECEIPT_FIELDS
+    if unsupported:
+        raise _blocked("unsupported receipt fields: " + ", ".join(sorted(unsupported)))
     checked = copy.deepcopy(dict(receipt))
     _, ledger_sources = _known_ledger_sources(ledger)
     current_discovery = set(known_discovery_seed_ids or set())
@@ -523,6 +600,13 @@ def validate_actual_source_review_receipt(
         checked["merge_sha"],
         merge_dates,
     )
+    used_merge_dates = {
+        str(item["merge_sha"])
+        for item in checked["merged_base_contribution_refs"]
+    }
+    unused_merge_dates = set(merge_dates) - used_merge_dates
+    if unused_merge_dates:
+        raise _blocked("unrelated contribution merge dates")
     if batch_date is not None:
         for contribution in checked["merged_base_contribution_refs"]:
             merge_date = _parse_iso_date(
@@ -720,6 +804,54 @@ def _capture_source_baseline(
     }
 
 
+def _validate_current_row_against_baseline(
+    source_id: str,
+    row: Mapping[str, object],
+    baseline: Mapping[str, object],
+) -> None:
+    material_count, material_date = _existing_material_state(row)
+    baseline_material_count = int(baseline["material_count"])
+    raw_baseline_material_date = baseline["material_date"]
+    baseline_material_date = (
+        None
+        if raw_baseline_material_date is None
+        else _parse_iso_date(raw_baseline_material_date, "baseline material date")
+    )
+    if material_count < baseline_material_count:
+        raise _blocked(
+            f"{source_id} material state regressed below reconciliation baseline"
+        )
+    if (
+        baseline_material_date is not None
+        and (material_date is None or material_date < baseline_material_date)
+    ):
+        raise _blocked(
+            f"{source_id} material date regressed below reconciliation baseline"
+        )
+
+    base_count, base_date, _ = _existing_base_contribution_state(row)
+    baseline_base_count = int(baseline["base_contribution_count"])
+    raw_baseline_base_date = baseline["base_contribution_date"]
+    baseline_base_date = (
+        None
+        if raw_baseline_base_date is None
+        else _parse_iso_date(
+            raw_baseline_base_date, "baseline Base contribution date"
+        )
+    )
+    if base_count < baseline_base_count:
+        raise _blocked(
+            f"{source_id} Base contribution state regressed below reconciliation baseline"
+        )
+    if (
+        baseline_base_date is not None
+        and (base_date is None or base_date < baseline_base_date)
+    ):
+        raise _blocked(
+            f"{source_id} Base contribution date regressed below reconciliation baseline"
+        )
+
+
 def _receipt_entry_envelope(entry: Mapping[str, object]) -> dict[str, object]:
     return {
         "source_state_at_scan": _normalize_source_state_at_scan(
@@ -770,6 +902,10 @@ def reconcile_operations_ledger_from_receipts(
         if source_id not in source_baselines:
             source_baselines[source_id] = _capture_source_baseline(source_id, row)
             newly_baselined_sources.add(source_id)
+        else:
+            _validate_current_row_against_baseline(
+                source_id, row, source_baselines[source_id]
+            )
     if identity_floor is None:
         identity_floor = batch_date
 

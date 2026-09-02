@@ -420,5 +420,71 @@ seed_id: youtube-solo-gamedev-zang
         self.assertEqual(DISCOVERY_SEEDS, state.parse_active_discovery_seed_ids(text))
 
 
+    def test_rejects_unknown_receipt_fields_that_change_payload_identity(self) -> None:
+        bad = receipt()
+        bad["candidate_packet_ids"] = ["anthropic-candidate-1"]
+        with self.assertRaisesRegex(AnalysisBlocked, "unsupported receipt fields"):
+            state.validate_actual_source_review_receipt(
+                bad,
+                ledger(),
+                known_discovery_seed_ids=DISCOVERY_SEEDS,
+                batch_date=BATCH_DATE,
+            )
+
+    def test_rejects_unknown_high_nutrient_fields(self) -> None:
+        bad = receipt()
+        bad["high_nutrient_sources"][0]["score_breakdown"] = {"primary": 3}
+        with self.assertRaisesRegex(AnalysisBlocked, "unsupported high-nutrient source fields"):
+            state.validate_actual_source_review_receipt(
+                bad,
+                ledger(),
+                known_discovery_seed_ids=DISCOVERY_SEEDS,
+                batch_date=BATCH_DATE,
+            )
+
+    def test_discovery_seed_parser_rejects_duplicates_and_excludes_retired_blocks(self) -> None:
+        duplicate = """```yaml
+seed_id: duplicate
+status: ACTIVE_DISCOVERY_SEED
+```
+```yaml
+seed_id: duplicate
+status: ACTIVE_DISCOVERY_SEED
+```
+"""
+        with self.assertRaisesRegex(AnalysisBlocked, "duplicate discovery seed ID"):
+            state.parse_active_discovery_seed_ids(duplicate)
+
+        mixed = """```yaml
+seed_id: active
+status: ACTIVE_DISCOVERY_SEED
+```
+```yaml
+seed_id: retired
+status: RETIRED
+```
+"""
+        self.assertEqual({"active"}, state.parse_active_discovery_seed_ids(mixed))
+
+    def test_rejects_unrelated_contribution_merge_date_evidence(self) -> None:
+        with self.assertRaisesRegex(AnalysisBlocked, "unrelated contribution merge dates"):
+            state.validate_actual_source_review_receipt(
+                receipt(),
+                ledger(),
+                known_discovery_seed_ids=DISCOVERY_SEEDS,
+                contribution_merge_dates={"2" * 40: "2026-09-01"},
+                batch_date=BATCH_DATE,
+            )
+
+    def test_rejects_current_ledger_state_that_regresses_below_persisted_baseline(self) -> None:
+        current = ledger()
+        current["sources"][0]["material_candidate_count_since_tracking_start"] = 5
+        current["sources"][0]["last_material_candidate_at"] = "2026-08-20"
+        once = reconcile(current, [])
+        once["sources"][0]["material_candidate_count_since_tracking_start"] = 4
+        with self.assertRaisesRegex(AnalysisBlocked, "regressed below reconciliation baseline"):
+            reconcile(once, [])
+
+
 if __name__ == "__main__":
     unittest.main()

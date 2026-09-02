@@ -217,5 +217,51 @@ class RecordPeriodicSourceScanTests(unittest.TestCase):
             self.assertEqual("2026-09-01", result["sources"][0]["last_successful_scan_at"])
 
 
+    def test_object_corpus_requires_supported_schema_and_no_unknown_fields(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            ledger_path = root / "ledger.json"
+            corpus_path = root / "corpus.json"
+            seeds_path = root / "seeds.md"
+            write_json(ledger_path, ledger())
+            seeds_path.write_text(
+                "```yaml\nseed_id: github-repositories-discovery\nstatus: ACTIVE_DISCOVERY_SEED\n```\n",
+                encoding="utf-8",
+            )
+            for payload in (
+                {"schema_version": 999, "receipts": []},
+                {"schema_version": 1, "receipts": [], "unexpected": True},
+            ):
+                with self.subTest(payload=payload):
+                    write_json(corpus_path, payload)
+                    with self.assertRaises(ValueError):
+                        record_receipt_corpus(
+                            ledger_path, corpus_path, seeds_path, "2026-09-02"
+                        )
+
+    def test_legacy_recorder_rejects_mutation_after_identity_state_exists(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            ledger_path = root / "ledger.json"
+            corpus_path = root / "corpus.json"
+            seeds_path = root / "seeds.md"
+            write_json(ledger_path, ledger())
+            write_json(corpus_path, [])
+            seeds_path.write_text(
+                "```yaml\nseed_id: github-repositories-discovery\nstatus: ACTIVE_DISCOVERY_SEED\n```\n",
+                encoding="utf-8",
+            )
+            record_receipt_corpus(
+                ledger_path, corpus_path, seeds_path, "2026-09-02"
+            )
+            with self.assertRaisesRegex(ValueError, "legacy recorder cannot mutate"):
+                record(
+                    ledger_path,
+                    "2026-09-03",
+                    ["anthropic"],
+                    ["anthropic"],
+                )
+
+
 if __name__ == "__main__":
     unittest.main()

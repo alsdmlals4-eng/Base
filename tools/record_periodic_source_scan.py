@@ -62,6 +62,10 @@ def record(
     payload = _load_json(path, label="operations Ledger JSON")
     if not isinstance(payload, dict):
         raise ValueError("ledger root must be an object")
+    if "receipt_reconciliation_state" in payload:
+        raise ValueError(
+            "legacy recorder cannot mutate a Ledger after receipt reconciliation starts"
+        )
     rows = payload.get("sources")
     if not isinstance(rows, list):
         raise ValueError("ledger sources must be a list")
@@ -94,6 +98,14 @@ def _load_receipt_corpus(
         entries = raw
         historical: list[object] = []
     elif isinstance(raw, dict):
+        allowed = {"schema_version", "receipts", "historical_discovery_seed_ids"}
+        unsupported = set(raw) - allowed
+        if unsupported:
+            raise ValueError(
+                "unsupported receipt corpus fields: " + ", ".join(sorted(unsupported))
+            )
+        if raw.get("schema_version") != 1:
+            raise ValueError("receipt corpus schema_version must equal 1")
         entries = raw.get("receipts")
         historical = raw.get("historical_discovery_seed_ids", [])
     else:
