@@ -90,7 +90,7 @@ def validate_prompt_approval_gate(
     gate: object,
     *,
     work_level: str,
-    phase: str,
+    phase: object,
 ) -> list[str]:
     """Validate prompt preparation and execution authorization for one root receipt."""
     if gate is None and work_level == "L0":
@@ -175,7 +175,7 @@ def validate_prompt_approval_gate(
     if approval.get("scope_changed_since_approval") is not False:
         errors.append(f"{prefix}.approval.scope_changed_since_approval must be false")
 
-    execution_phase = phase in {"start", "resume", "closeout"}
+    execution_phase = isinstance(phase, str) and phase in {"start", "resume", "closeout"}
     if state == "AWAITING_USER_CONFIRMATION":
         if execution_phase:
             errors.append(f"{prefix}.approval: {phase} requires CONFIRMED or REUSED_APPROVAL")
@@ -295,7 +295,7 @@ def validate_receipt(receipt: object) -> list[str]:
 def validate_execution_receipt(
     receipt: object,
     *,
-    phase: str = "start",
+    phase: object = "start",
     expected_source_sha: str | None = None,
     expected_head_sha: str | None = None,
 ) -> list[str]:
@@ -303,7 +303,8 @@ def validate_execution_receipt(
     errors = validate_receipt(receipt)
     if not isinstance(receipt, dict):
         return errors
-    if not choice(phase, {"prepare", "start", "resume", "closeout"}):
+    valid_phase = choice(phase, {"prepare", "start", "resume", "closeout"})
+    if not valid_phase:
         errors.append("phase must be prepare, start, resume or closeout")
 
     work_level = receipt.get("work_level")
@@ -379,7 +380,7 @@ def main() -> int:
         if args.render_markdown and isinstance(board, dict) and not shape_errors:
             render_board, render_head = _render_inputs(
                 board,
-                phase=args.phase,
+                phase=args.phase if isinstance(args.phase, str) else "start",
                 expected_head_sha=args.expected_head_sha,
             )
             print("PM VIEW: INFORMATION ONLY; EXECUTION BLOCKED")
