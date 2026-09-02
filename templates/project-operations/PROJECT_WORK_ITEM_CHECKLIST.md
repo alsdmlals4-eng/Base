@@ -267,7 +267,7 @@ project AGENTS / approved owner / actual implementation fresh-read
 
 오래된 receipt에 PM 필드가 없으면 `PM_RECONCILIATION_REQUIRED`로 현재 승인 작업을 복원하고 receipt bookkeeping만 교정한 뒤 재실행한다. 이 교정은 새로운 제품 기능을 시작하는 권한이 아니다. 완전히 차단된 상태도 Issue와 receipt에 보존한다. `--render-markdown`은 형식이 유효한 차단 목록·진행 수·실제 blocker·재개 조건을 `INFORMATION ONLY; EXECUTION BLOCKED`로 표시하지만 nonzero exit를 유지한다. 독립 작업이 준비됐으면 그 작업을 active로 먼저 선택한 뒤 재검사한다.
 
-시작/재개에는 IN_PROGRESS 1개, VERIFY_REVIEW 최대 1개가 기본이다. 프로젝트의 명시적 다른 WIP 계약은 별도 adapter 변경·검증 없이 이 기본 모듈에 조용히 주입하지 않는다. 현재 모듈로 표현되지 않는 project exception은 `BLOCKED_UNVERIFIED`로 기록하고 기존 승인 계약에 맞춰 bounded adaptation한다.
+시작/재개에서는 `active_work_item_ref`가 `IN_PROGRESS` 또는 `VERIFY_REVIEW` 작업 하나를 가리켜야 하며, 각 상태의 WIP는 최대 1개다. 프로젝트의 명시적 다른 WIP 계약은 별도 adapter 변경·검증 없이 이 기본 모듈에 조용히 주입하지 않는다. 현재 모듈로 표현되지 않는 project exception은 `BLOCKED_UNVERIFIED`로 기록하고 기존 승인 계약에 맞춰 bounded adaptation한다.
 
 마감은 모든 필수 작업 DONE, active null, `next_action: STOP_APPROVED_SCOPE_COMPLETE`일 때만 가능하다. 승인 범위가 끝났으면 종료하며 다음 Goal을 자동 발명하지 않는다. 완료 항목의 오래된 next_action은 renderer가 지시문으로 출력하지 않는다. 아직 병합·postmerge가 필수 작업이면 분모에 남겨 완료로 표시하지 않는다. 중단 시 `finished / remaining / blocker / resume_condition / why`를 보존하고 같은 지시를 지우지 말고 완료 표시와 근거를 남긴다.
 
