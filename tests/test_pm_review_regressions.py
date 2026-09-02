@@ -55,6 +55,21 @@ class ReviewRegressions(unittest.TestCase):
         for text in ('0 / 1', 'engine unavailable', 'verified engine ready'):
             self.assertIn(text, result.stdout)
 
+    def test_blocked_view_suppresses_untrusted_execution_actions(self):
+        value = tracked_receipt(); board = value['project_work_kanban']
+        board.update(active_work_item_ref=None, next_action='Deploy the release now')
+        board['work_items'][0].update(
+            status='BLOCKED_UNVERIFIED',
+            blocker='approval missing',
+            resume_condition='verified approval recorded',
+            next_action='Deploy the release now',
+        )
+        result = run_cli(value, '--render-markdown')
+        self.assertNotEqual(0, result.returncode)
+        self.assertNotIn('Deploy the release now', result.stdout)
+        self.assertIn('approval missing', result.stdout)
+        self.assertIn('verified approval recorded', result.stdout)
+
     def test_next_task_is_selected_before_resume_gate(self):
         value = done_receipt(); board = value['project_work_kanban']
         second = copy.deepcopy(tracked_receipt()['project_work_kanban']['work_items'][0])
@@ -69,6 +84,14 @@ class ReviewRegressions(unittest.TestCase):
         result = run_cli(value, '--phase', 'resume', '--render-markdown')
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assertIn('VERIFY_REVIEW', result.stdout)
+
+    def test_noncanonical_whitespace_in_identifiers_is_rejected(self):
+        value = tracked_receipt(); board = value['project_work_kanban']
+        board['work_items'][0]['work_item_id'] = ' PM-01 '
+        board['work_item_refs'] = [' PM-01 ']
+        board['active_work_item_ref'] = ' PM-01 '
+        errors = '\n'.join(check(value))
+        self.assertIn('canonical', errors)
 
     def test_closeout_binds_done_evidence_to_trusted_current_head(self):
         value = done_receipt()
@@ -92,6 +115,18 @@ class ReviewRegressions(unittest.TestCase):
             'expected_head_sha from the trusted final-head caller is required for closeout',
             missing_head_errors,
         )
+
+    def test_failed_closeout_render_does_not_claim_stale_head_complete(self):
+        result = run_cli(
+            done_receipt(),
+            '--phase', 'closeout',
+            '--expected-head-sha', 'b' * 40,
+            '--render-markdown',
+        )
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn('0 / 1', result.stdout)
+        self.assertNotIn('[x]', result.stdout)
+        self.assertIn('VERIFY_REVIEW_STALE_HEAD', result.stdout)
 
 
 if __name__ == '__main__':
