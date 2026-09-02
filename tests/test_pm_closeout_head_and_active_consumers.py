@@ -23,6 +23,10 @@ CLOSEOUT_CONSUMERS = (
     "templates/project-operations/WORK_PROJECT_EXECUTION_CURRENT_ROUTER.md",
     "templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md",
 )
+CANONICAL_CLOSEOUT_OWNERS = (
+    "templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md",
+    "templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md",
+)
 
 
 class PMCloseoutHeadAndActiveConsumerTests(unittest.TestCase):
@@ -85,20 +89,14 @@ class PMCloseoutHeadAndActiveConsumerTests(unittest.TestCase):
                 )
 
     def test_closeout_docs_require_the_trusted_verification_target(self) -> None:
-        for path in (
-            "templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md",
-            "templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md",
-        ):
+        for path in CANONICAL_CLOSEOUT_OWNERS:
             text = (ROOT / path).read_text(encoding="utf-8")
             with self.subTest(path=path):
                 self.assertIn("--expected-head-sha", text)
                 self.assertIn("TRUSTED_VERIFICATION_TARGET_HEAD", text)
 
     def test_closeout_docs_do_not_require_a_receipt_to_hash_itself(self) -> None:
-        for path in (
-            "templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md",
-            "templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md",
-        ):
+        for path in CANONICAL_CLOSEOUT_OWNERS:
             text = (ROOT / path).read_text(encoding="utf-8")
             with self.subTest(path=path):
                 self.assertIn("VERIFIED_SUBJECT_HEAD", text)
@@ -106,14 +104,28 @@ class PMCloseoutHeadAndActiveConsumerTests(unittest.TestCase):
                 self.assertIn("FINAL_PR_HEAD_CI_REVIEW_REQUIRED", text)
                 self.assertIn("제품·정본·consumer·검증 evidence", text)
 
-    def test_every_real_closeout_consumer_forwards_subject_and_tail_contract(self) -> None:
+    def test_every_real_closeout_consumer_routes_to_the_canonical_subject_contract(self) -> None:
         for path in (*ACTIVE_CONSUMERS, *CLOSEOUT_CONSUMERS):
             text = (ROOT / path).read_text(encoding="utf-8")
             with self.subTest(path=path):
                 self.assertIn("--phase closeout", text)
                 self.assertIn("--expected-head-sha", text)
-                self.assertIn("VERIFIED_SUBJECT_HEAD", text)
-                self.assertIn("FINAL_PR_HEAD_CI_REVIEW_REQUIRED", text)
+                self.assertTrue(
+                    "TRUSTED_VERIFICATION_TARGET_HEAD" in text
+                    or "PROJECT_WORK_ITEM_CHECKLIST.md" in text
+                    or "WORK_PROJECT_START_CANON_CHECKLIST.md" in text,
+                    f"{path} must route closeout to the canonical trusted-subject owner",
+                )
+
+    def test_canonical_start_resume_allows_a_review_only_active_task(self) -> None:
+        text = (ROOT / "templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("active_work_item_ref", text)
+        self.assertIn("IN_PROGRESS", text)
+        self.assertIn("VERIFY_REVIEW", text)
+        self.assertIn("각 상태의 WIP는 최대 1개", text)
+        self.assertNotIn("시작/재개에는 IN_PROGRESS 1개", text)
 
 
 if __name__ == "__main__":
