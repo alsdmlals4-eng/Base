@@ -1,0 +1,80 @@
+name: Apply clean Source receipt successor
+
+on:
+  push:
+    branches:
+      - fix/source-receipt-ledger-integrity-r3-20260902
+    paths:
+      - .github/workflows/apply-clean-source-receipt-successor.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  red-green-commit:
+    if: ${{ github.actor != 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out exact clean successor branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: fix/source-receipt-ledger-integrity-r3-20260902
+          fetch-depth: 0
+
+      - name: Prove retained review regressions are RED
+        shell: bash
+        run: |
+          set +e
+          python -m unittest tests.test_periodic_source_receipt_review_round4 -v > /tmp/source-receipt-clean-red.log 2>&1
+          red_rc=$?
+          set -e
+          cat /tmp/source-receipt-clean-red.log
+          test "$red_rc" -ne 0
+          grep -Eq "FAILED|ERROR" /tmp/source-receipt-clean-red.log
+
+      - name: Apply minimum production correction
+        run: python tools/apply_source_receipt_clean_successor_patch.py
+
+      - name: Prove GREEN across focused and adjacent Source owners
+        shell: bash
+        run: |
+          python -m py_compile \
+            tools/periodic_source_receipt_state.py \
+            tools/record_periodic_source_scan.py \
+            tools/periodic_source_operations_state.py \
+            tests/test_periodic_source_receipt_state.py \
+            tests/test_record_periodic_source_scan.py \
+            tests/test_periodic_source_receipt_review_round3.py \
+            tests/test_periodic_source_receipt_review_round4.py
+          python -m unittest \
+            tests.test_periodic_source_receipt_state \
+            tests.test_record_periodic_source_scan \
+            tests.test_periodic_source_receipt_review_round3 \
+            tests.test_periodic_source_receipt_review_round4 \
+            tests.test_periodic_source_analysis_auto_merge \
+            tests.test_periodic_source_analysis_runner \
+            -v
+          git diff --check
+
+      - name: Remove one-shot files and commit exact production diff
+        shell: bash
+        run: |
+          rm tools/apply_source_receipt_clean_successor_patch.py
+          rm .github/workflows/apply-clean-source-receipt-successor.yml
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add \
+            tools/periodic_source_receipt_state.py \
+            tools/record_periodic_source_scan.py \
+            tools/periodic_source_operations_state.py \
+            tests/test_periodic_source_receipt_state.py \
+            tests/test_record_periodic_source_scan.py \
+            tests/test_periodic_source_receipt_review_round3.py \
+            tests/test_periodic_source_receipt_review_round4.py
+          git add -u -- \
+            tools/apply_source_receipt_clean_successor_patch.py \
+            .github/workflows/apply-clean-source-receipt-successor.yml
+          git commit -m "fix: reconcile Source Ledger from reviewed receipt identities"
+          test "$(git diff --name-only origin/main...HEAD | sort | tr '\n' ' ')" = "tests/test_periodic_source_receipt_review_round3.py tests/test_periodic_source_receipt_review_round4.py tests/test_periodic_source_receipt_state.py tests/test_record_periodic_source_scan.py tools/periodic_source_operations_state.py tools/periodic_source_receipt_state.py tools/record_periodic_source_scan.py "
+          git push origin HEAD:fix/source-receipt-ledger-integrity-r3-20260902
