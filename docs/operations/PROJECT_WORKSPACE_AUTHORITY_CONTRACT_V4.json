@@ -18,6 +18,42 @@
   "codex_rehydration": "CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA",
   "codex_visual_input": "APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST",
   "missing_visual_route": "GPT_CREATE_REVIEW_APPROVE_THEN_REPOSITORY_MANIFEST",
+  "base_revision_lifecycle": {
+    "latest_discovery": "LATEST_BASE_DISCOVERY_REQUIRED",
+    "pin_semantics": "PIN_IS_EVIDENCE_NOT_FRESHNESS_BYPASS",
+    "project_adoption": "PROJECT_ADOPTED_BASE_CONTRACT_PRESERVED",
+    "drift_gate": "BASE_DRIFT_CLASSIFICATION_REQUIRED",
+    "execution_pin": "BASE_EXECUTION_SHA_PINNED_PER_BOUNDED_WORK",
+    "forbidden_modes": [
+      "NO_PERMANENT_STALE_PIN",
+      "NO_FLOATING_EXECUTION"
+    ],
+    "boundary_recheck": "BOUNDARY_FRESH_READ_REQUIRED",
+    "boundary_recheck_points": [
+      "IMPLEMENTATION_HANDOFF",
+      "PRE_MERGE",
+      "POST_MERGE",
+      "CLOSEOUT"
+    ],
+    "required_revision_fields": [
+      "base_observed_head_sha",
+      "base_adopted_contract_sha",
+      "base_execution_sha"
+    ]
+  },
+  "blueprint_preimplementation_lifecycle": [
+    "PLAN",
+    "BLUEPRINT_PASS_1_STRUCTURAL_DRAFT",
+    "REQUIRED_IMAGE_AND_MATERIAL_PREPARATION",
+    "BLUEPRINT_REVIEW_PUBLICATION",
+    "USER_FINAL_REVIEW_APPROVAL",
+    "IMPLEMENTATION_AUTHORIZED"
+  ],
+  "blueprint_pass_roles": {
+    "pass_1": "STRUCTURAL_BLUEPRINT_DRAFT",
+    "pass_2": "BLUEPRINT_PASS_2_FINAL",
+    "artifact_boundary": "NO_SEPARATE_BLUEPRINT_ARTIFACT"
+  },
   "required_project_entrypoints": [
     "AGENTS.md",
     "docs/START_HERE.md",
@@ -81,6 +117,11 @@
     "Human PDF review, document generation, static tests, and repository write success are distinct from runtime PASS, UX PASS, player PASS, and release PASS.",
     "Notion retirement does not require destructive deletion. Historical workspaces may remain read-only for audit and rollback.",
     "A project-specific Notion exception requires explicit user approval, a recorded scope and owner, a measurable value unavailable from the repository-first path, and an exit or revisit condition.",
-    "Google Sheets, Figma, HTML dashboards, ChatGPT Work, ChatGPT Library, and legacy Notion pages are not parallel project canon unless an explicit project-specific contract says otherwise."
+    "Google Sheets, Figma, HTML dashboards, ChatGPT Work, ChatGPT Library, and legacy Notion pages are not parallel project canon unless an explicit project-specific contract says otherwise.",
+    "Every L1+ project task observes the latest completed Base main before selecting an execution revision; a stored Base pin is evidence of adoption or execution and is not a freshness bypass.",
+    "The latest completed Base main does not silently replace project canon, approved decisions, actual implementation, or the project's adopted Base contract.",
+    "The selected Base execution SHA remains fixed for one bounded task or play-meaningful Slice; a later relevant Base change requires impact classification, reconciliation, and affected revalidation before the execution pin changes.",
+    "Implementation handoff, pre-merge, post-merge, and closeout each require a new Base freshness read and drift classification without converting execution into a floating latest reference.",
+    "The two-artifact Blueprint profile uses a structural first-pass revision before required image and material preparation and a final second-pass revision after candidate review; both passes remain revisions inside the same PDF and AI Markdown artifact boundary rather than additional canon."
   ]
 }
