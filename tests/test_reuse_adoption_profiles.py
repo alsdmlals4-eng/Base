@@ -137,7 +137,8 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
             installation["runtime_validation"],
         )
         self.assertIn("PRODUCTION_CONSUMER_NOT_CONNECTED", omenward["evidence_ceiling"])
-        self.assertEqual(199, omenward["followup_issue"])
+        self.assertNotIn("followup_issue", omenward)
+        self.assertIn("current-authority read order", omenward["revisit"])
         self.assertNotIn("runtime_rollout_policy", omenward)
 
     def test_ten_paces_rollout_is_deferred_by_current_project_work_gate(self) -> None:
@@ -161,7 +162,11 @@ class ReuseAdoptionProfileTests(unittest.TestCase):
         self.assertIn("current approved project task", ten["blocker"])
         self.assertNotIn("concurrent planning main", ten["blocker"])
         self.assertIn("next approved Ten Paces project task", ten["revisit"])
-        self.assertIn("exact Notion", ten["revisit"])
+        self.assertNotIn("exact Notion", ten["revisit"])
+        self.assertEqual(
+            "PROJECT_WORK_REUSE_HANDOFF.json#current_project_authority_read_order",
+            load_matrix()["current_authority_read_order_source"],
+        )
 
     def test_little_boat_defer_remains_and_omenward_defer_is_superseded(self) -> None:
         matrix = load_matrix()
