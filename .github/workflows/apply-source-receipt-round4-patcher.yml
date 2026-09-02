@@ -1,5 +1,6 @@
 name: Apply Source receipt round-four fixes
 
+# patcher-revision: 2
 on:
   push:
     branches:
