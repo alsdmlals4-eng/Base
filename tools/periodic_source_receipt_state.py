@@ -437,6 +437,7 @@ def _validate_source_classification(
     known_discovery_seed_ids: set[str],
     historical_discovery_seed_ids: set[str],
     source_state_at_scan: Mapping[str, str],
+    validate_current_source_state: bool,
 ) -> None:
     allowed_historical_discovery = (
         known_discovery_seed_ids | historical_discovery_seed_ids
@@ -447,6 +448,8 @@ def _validate_source_classification(
             raise _blocked(
                 "receipt-time classification contradicts durable lane"
             )
+        if not validate_current_source_state:
+            continue
         row = ledger_sources.get(source_id)
         if row is None:
             raise _blocked("unknown scanned Source ID")
@@ -463,6 +466,8 @@ def _validate_source_classification(
             raise _blocked(
                 "receipt-time classification contradicts discovery lane"
             )
+        if not validate_current_source_state:
+            continue
         if seed_id in known_discovery_seed_ids and seed_id not in ledger_sources:
             continue
         if (
@@ -571,15 +576,15 @@ def validate_actual_source_review_receipt(
     )
     if unused_classifications:
         raise _blocked("source_state_at_scan contains unrelated Source IDs")
-    if validate_current_source_state:
-        _validate_source_classification(
-            scanned_source_ids=scanned_sources,
-            scanned_discovery_seed_ids=scanned_discovery,
-            ledger_sources=ledger_sources,
-            known_discovery_seed_ids=current_discovery,
-            historical_discovery_seed_ids=historical_discovery,
-            source_state_at_scan=classification,
-        )
+    _validate_source_classification(
+        scanned_source_ids=scanned_sources,
+        scanned_discovery_seed_ids=scanned_discovery,
+        ledger_sources=ledger_sources,
+        known_discovery_seed_ids=current_discovery,
+        historical_discovery_seed_ids=historical_discovery,
+        source_state_at_scan=classification,
+        validate_current_source_state=validate_current_source_state,
+    )
     checked["scanned_source_ids"] = scanned_sources
     checked["scanned_discovery_seed_ids"] = scanned_discovery
 
@@ -1170,12 +1175,10 @@ def reconcile_operations_ledger_from_receipts(
             batch_date=batch_date,
             validate_current_source_state=False,
         )
-        identity_payload = {
-            "actual_source_review_receipt": identity_receipt,
-            "source_state_at_scan": envelope["source_state_at_scan"],
-            "contribution_merge_dates": envelope["contribution_merge_dates"],
-        }
-        payload_sha = _payload_hash(identity_payload)
+        # Envelope fields validate provenance and historical lane context.
+        # Their effective values are already folded into identity_receipt, so
+        # redundant explicit maps must not create a second material event.
+        payload_sha = _payload_hash(identity_receipt)
         identity_effects = _receipt_effect_projection(
             identity_receipt, ledger_sources
         )
