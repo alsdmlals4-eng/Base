@@ -10,6 +10,7 @@ human or repository actor referenced by an approval locator.
 import hashlib
 import json
 import re
+import unicodedata
 from typing import Any
 
 
@@ -49,10 +50,24 @@ _REQUIRED_CONFLICT_TRUE = (
     "untrusted_context_cannot_authorize",
 )
 _EXACT_SHA256 = re.compile(r"[0-9a-f]{64}\Z")
+_SENTINEL_TEXT = frozenset({"TODO", "TBD", "N/A"})
+_ALLOWED_TEXT_CONTROL_CHARACTERS = frozenset("\n\r\t")
 
 
-def _nonempty_string(value: Any) -> bool:
-    return isinstance(value, str) and bool(value.strip())
+def _text(value: Any) -> bool:
+    """Accept substantive prompt text and reject unfilled or hidden placeholders."""
+    if not isinstance(value, str):
+        return False
+    stripped = value.strip()
+    if not stripped or stripped.upper() in _SENTINEL_TEXT:
+        return False
+    if stripped.startswith("<") and stripped.endswith(">"):
+        return False
+    return not any(
+        unicodedata.category(character) in {"Cc", "Cf", "Cs"}
+        and character not in _ALLOWED_TEXT_CONTROL_CHARACTERS
+        for character in value
+    )
 
 
 def _nonempty_list(value: Any) -> bool:
@@ -60,7 +75,7 @@ def _nonempty_list(value: Any) -> bool:
 
 
 def _text_list(value: Any) -> bool:
-    return _nonempty_list(value) and all(_nonempty_string(item) for item in value)
+    return _nonempty_list(value) and all(_text(item) for item in value)
 
 
 def _choice(value: Any, allowed: frozenset[str]) -> bool:
@@ -125,7 +140,7 @@ def validate_prompt_approval_gate(
             errors.append(
                 f"{prefix}.approval.state must be NOT_APPLICABLE when applicability is NOT_APPLICABLE"
             )
-        elif not _nonempty_string(approval.get("reason_not_applicable")):
+        elif not _text(approval.get("reason_not_applicable")):
             errors.append(f"{prefix}.approval.reason_not_applicable is required")
         return errors
     if applicability != "REQUIRED":
@@ -136,7 +151,7 @@ def validate_prompt_approval_gate(
         errors.append(f"{prefix}.contract must be an object")
     else:
         for field in ("direction_anchor", "task_and_success"):
-            if not _nonempty_string(contract.get(field)):
+            if not _text(contract.get(field)):
                 errors.append(f"{prefix}.contract.{field} is required")
         for field in ("constraints_and_protected_scope", "output_and_validation"):
             if not _text_list(contract.get(field)):
@@ -150,7 +165,7 @@ def validate_prompt_approval_gate(
                 if not isinstance(source, dict):
                     errors.append(f"{source_prefix} must be an object")
                     continue
-                if not _nonempty_string(source.get("source")):
+                if not _text(source.get("source")):
                     errors.append(f"{source_prefix}.source is required")
                 if not _choice(source.get("authority"), PROMPT_CONTEXT_AUTHORITIES):
                     errors.append(f"{source_prefix}.authority is invalid")
@@ -180,9 +195,9 @@ def validate_prompt_approval_gate(
         errors.append(f"{prefix}.approval.state is invalid")
         return errors
 
-    if not _nonempty_string(approval.get("confirmation_question")):
+    if not _text(approval.get("confirmation_question")):
         errors.append(f"{prefix}.approval.confirmation_question is required")
-    if not _nonempty_string(approval.get("approved_contract_summary")):
+    if not _text(approval.get("approved_contract_summary")):
         errors.append(f"{prefix}.approval.approved_contract_summary is required")
     if approval.get("scope_changed_since_approval") is not False:
         errors.append(f"{prefix}.approval.scope_changed_since_approval must be false")
@@ -206,7 +221,7 @@ def validate_prompt_approval_gate(
         )
         return errors
 
-    if not _nonempty_string(approval.get("approval_reference")):
+    if not _text(approval.get("approval_reference")):
         errors.append(f"{prefix}.approval.approval_reference is required")
     if not _choice(
         approval.get("approval_reference_authority"), PROMPT_APPROVAL_AUTHORITIES
