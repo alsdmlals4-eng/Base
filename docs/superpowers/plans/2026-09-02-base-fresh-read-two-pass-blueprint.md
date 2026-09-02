@@ -10,6 +10,15 @@
 
 **Spec:** `docs/PROJECT_MASTER_GDD_TWO_ARTIFACT_POLICY.md`
 
+## Pre-merge execution receipt — 2026-09-02
+
+- Implementation, focused regressions, existing regression updates, canonical-reference propagation, and five whole-scope author review passes are complete.
+- PR #839 preserved the TDD history but was closed unmerged because the connected ready-state mutation is incompatible with GitHub's current GraphQL schema.
+- Ready successor PR #840 uses the same branch and implementation bytes.
+- Previously validated head `0cefed0d2e2686bdde7eae74a5ba0d5921a54e93` passed all required workflow families and canonical `ci-gate` under #839.
+- This receipt update intentionally creates a new exact head so #840 receives its own required `ci-gate`; the final integration checkbox remains open until expected-head squash and post-merge readback actually succeed.
+- A complete local checkout was unavailable because the execution environment could not resolve GitHub DNS. Full-repository evidence therefore comes from exact-head GitHub Actions; no local full-validation PASS is claimed.
+
 ## Global Constraints
 
 - Baseline is exact completed Base `main` SHA `a5a1e7eecc4c58a13c11b98b6c225cb1879e7167`; re-read current `main` at every integration boundary.
@@ -34,11 +43,11 @@
 - Consumes: V4 machine contract, two-artifact policy/instruction, image workflow owners, and Codex implementation handoff.
 - Produces: executable assertions for revision fields, forbidden pin modes, two-pass sequence, bounded asset/VFX preparation, and final-Blueprint handoff metadata.
 
-- [ ] **Step 1: Create the focused failing test**
+- [x] **Step 1: Create the focused failing test**
 
 Assert that the V4 contract exposes `base_observed_head_sha`, `base_adopted_contract_sha`, and `base_execution_sha`; that all Blueprint consumers contain the same pass-1 → materials → pass-2 sequence; and that Codex receives the final approved Blueprint revision.
 
-- [ ] **Step 2: Run the focused test against the unchanged baseline**
+- [x] **Step 2: Run the focused test against the unchanged baseline**
 
 Run:
 
@@ -48,7 +57,7 @@ python -m unittest tests.test_base_fresh_read_two_pass_blueprint_contract -v
 
 Expected: FAIL because the three-revision lifecycle and `BLUEPRINT_PASS_1_STRUCTURAL_DRAFT` do not yet exist.
 
-- [ ] **Step 3: Preserve the RED evidence**
+- [x] **Step 3: Preserve the RED evidence**
 
 Record the exact failing branch HEAD and workflow run. Do not call the baseline green.
 
@@ -61,7 +70,7 @@ Record the exact failing branch HEAD and workflow run. Do not call the baseline 
 - Consumes: current repository-first authority and exact-SHA Codex rehydration.
 - Produces: `base_revision_lifecycle`, `blueprint_preimplementation_lifecycle`, and stable required field names used by templates and tests.
 
-- [ ] **Step 1: Add the bounded Base revision lifecycle**
+- [x] **Step 1: Add the bounded Base revision lifecycle**
 
 Add machine-readable values for:
 
@@ -76,7 +85,7 @@ NO_FLOATING_EXECUTION
 BOUNDARY_FRESH_READ_REQUIRED
 ```
 
-- [ ] **Step 2: Add the two-pass Blueprint lifecycle**
+- [x] **Step 2: Add the two-pass Blueprint lifecycle**
 
 Use the ordered lifecycle:
 
@@ -91,11 +100,11 @@ PLAN
 
 Declare `BLUEPRINT_REVIEW_PUBLICATION` as `BLUEPRINT_PASS_2_FINAL` without creating another artifact.
 
-- [ ] **Step 3: Preserve project authority invariants**
+- [x] **Step 3: Preserve project authority invariants**
 
 Add invariants stating that latest Base never silently overrides project canon/adopted contract and that a later Base change is classified before the bounded execution pin changes.
 
-- [ ] **Step 4: Validate JSON**
+- [x] **Step 4: Validate JSON**
 
 Run:
 
@@ -117,27 +126,27 @@ Expected: exit 0.
 - Consumes: V4 lifecycle tokens and existing two-artifact/image approval boundaries.
 - Produces: one consistent human-readable process and compatibility meaning for legacy `PLAN` sequence references.
 
-- [ ] **Step 1: Define project-wide breadth and Slice depth**
+- [x] **Step 1: Define project-wide breadth and Slice depth**
 
 Add `PROJECT_WIDE_SYSTEM_COVERAGE_SLICE_DEPTH`: map all material project systems and boundaries, but make only the next play-meaningful Slice implementation-ready in depth.
 
-- [ ] **Step 2: Define Blueprint pass 1**
+- [x] **Step 2: Define Blueprint pass 1**
 
 Add `BLUEPRINT_PASS_1_STRUCTURAL_DRAFT` and `STRUCTURAL_BLUEPRINT_DRAFT_NOT_THIRD_ARTIFACT`. Require Flow, screen inventory, representative low-fidelity wireframes, entry/exit/cancel/re-entry, state/data/system flow, and actual/planned consumer records before asset production.
 
-- [ ] **Step 3: Bound image/material preparation**
+- [x] **Step 3: Bound image/material preparation**
 
 Add `REQUIRED_MATERIALS_NOT_ALL_PROJECT_ASSETS`. Reuse first; prepare only current-Slice P0/P1 and necessary P2 image, UI, animation, audio, VFX source, reference, and data materials.
 
-- [ ] **Step 4: Split VFX preparation from Godot implementation**
+- [x] **Step 4: Split VFX preparation from Godot implementation**
 
 Before the final Blueprint, specify VFX purpose, trigger, timing, layer, storyboard, source texture/mask, reduced-motion equivalent, budget, and fallback. Keep particles, shader, `AnimationPlayer`, Tween, Signal wiring, interruption behavior, performance measurement, and runtime tuning under `ENGINE_NATIVE_VFX_IN_GODOT_PRODUCT_BUILD`.
 
-- [ ] **Step 5: Define Blueprint pass 2**
+- [x] **Step 5: Define Blueprint pass 2**
 
 Keep `BLUEPRINT_REVIEW_PUBLICATION` as the compatibility token and identify it as `BLUEPRINT_PASS_2_FINAL`, integrating reviewed/locked candidates and final implementation/acceptance traceability.
 
-- [ ] **Step 6: Preserve evidence ceilings**
+- [x] **Step 6: Preserve evidence ceilings**
 
 Candidate generation remains distinct from user approval, canon registration, implementation, and runtime verification.
 
@@ -150,7 +159,7 @@ Candidate generation remains distinct from user approval, canon registration, im
 - Consumes: the three Base revision values and the final user-approved Blueprint revision.
 - Produces: exact handoff metadata and boundary drift behavior for Godot implementation.
 
-- [ ] **Step 1: Add revision metadata**
+- [x] **Step 1: Add revision metadata**
 
 Add:
 
@@ -165,11 +174,11 @@ user_final_approval_decision_id:
 implementation_authority_revision:
 ```
 
-- [ ] **Step 2: Add start and boundary rules**
+- [x] **Step 2: Add start and boundary rules**
 
 Codex observes latest completed Base, preserves the adopted project contract, uses the selected execution SHA during bounded work, and rechecks at implementation handoff, pre-merge, post-merge, and closeout.
 
-- [ ] **Step 3: Fail closed on relevant drift**
+- [x] **Step 3: Fail closed on relevant drift**
 
 Relevant Base or project changes require classification, reconciliation, and affected-test reruns. Unrelated changes are recorded while the existing execution pin continues.
 
@@ -183,11 +192,11 @@ Relevant Base or project changes require classification, reconciliation, and aff
 - Consumes: all changed contract files.
 - Produces: exact-head static evidence and mutation resistance for the new lifecycle.
 
-- [ ] **Step 1: Update the prior exact-order assertions**
+- [x] **Step 1: Update the prior exact-order assertions**
 
 Replace the old direct `PLAN → REQUIRED_IMAGE...` sequence with the pass-1 sequence while preserving existing approval and evidence-boundary assertions.
 
-- [ ] **Step 2: Run focused tests**
+- [x] **Step 2: Run focused tests**
 
 Run:
 
@@ -199,7 +208,7 @@ python -m unittest \
 
 Expected: PASS.
 
-- [ ] **Step 3: Run repository validation**
+- [x] **Step 3: Run repository validation**
 
 Run on the exact branch HEAD:
 
@@ -209,11 +218,11 @@ python tools/run_local_validation.py --trusted-history-commit <fresh-read-curren
 
 When a complete local checkout is unavailable, remote exact-head Actions and canonical `ci-gate` are required; the local gap remains explicit.
 
-- [ ] **Step 4: Perform five full-scope adversarial passes**
+- [x] **Step 4: Perform five full-scope adversarial passes**
 
 Review authority/freshness, two-pass ordering, asset/VFX scope, Codex handoff, and claim/rollback boundaries. Correct every valid finding and rerun affected tests.
 
-- [ ] **Step 5: Open and review the PR**
+- [x] **Step 5: Open and review the PR**
 
 Confirm exact changed paths, same-goal PR overlap, ruleset, required checks, review threads, and current `main` freshness.
 
