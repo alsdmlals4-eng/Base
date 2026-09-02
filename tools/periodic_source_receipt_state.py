@@ -158,32 +158,40 @@ def parse_active_discovery_seed_ids(text: str) -> set[str]:
     active: set[str] = set()
     seen: set[str] = set()
     fenced_ranges: list[tuple[int, int]] = []
+    seed_pattern = re.compile(
+        r"(?m)^seed_id:\s*([A-Za-z0-9][A-Za-z0-9._-]*)\s*$"
+    )
+    status_pattern = re.compile(r"(?m)^status:\s*([^\s#]+)\s*$")
+
     for block in re.finditer(r"(?ms)^```yaml\s*\n(.*?)^```\s*$", text):
         fenced_ranges.append(block.span())
         body = block.group(1)
-        seed_matches = re.findall(
-            r"(?m)^seed_id:\s*([A-Za-z0-9][A-Za-z0-9._-]*)\s*$", body
-        )
-        if not seed_matches:
-            continue
-        if len(seed_matches) != 1:
-            raise _blocked("each discovery seed block must contain one seed_id")
-        seed_id = seed_matches[0]
-        if seed_id in seen:
-            raise _blocked("duplicate discovery seed ID")
-        seen.add(seed_id)
-        status_matches = re.findall(r"(?m)^status:\s*([^\s#]+)\s*$", body)
-        if len(status_matches) > 1:
-            raise _blocked("discovery seed block contains multiple status values")
-        if not status_matches or status_matches[0] == "ACTIVE_DISCOVERY_SEED":
-            active.add(seed_id)
+        seed_matches = list(seed_pattern.finditer(body))
+        for index, match in enumerate(seed_matches):
+            seed_id = match.group(1)
+            if seed_id in seen:
+                raise _blocked("duplicate discovery seed ID")
+            seen.add(seed_id)
+            segment_end = (
+                seed_matches[index + 1].start()
+                if index + 1 < len(seed_matches)
+                else len(body)
+            )
+            record = body[match.start() : segment_end]
+            status_matches = status_pattern.findall(record)
+            if len(status_matches) > 1:
+                raise _blocked("discovery seed record contains multiple status values")
+            if not status_matches or status_matches[0] == "ACTIVE_DISCOVERY_SEED":
+                active.add(seed_id)
 
     loose_text = text
     for start, end in reversed(fenced_ranges):
-        loose_text = loose_text[:start] + ("\n" * text[start:end].count("\n")) + loose_text[end:]
-    for match in re.finditer(
-        r"(?m)^seed_id:\s*([A-Za-z0-9][A-Za-z0-9._-]*)\s*$", loose_text
-    ):
+        loose_text = (
+            loose_text[:start]
+            + ("\n" * text[start:end].count("\n"))
+            + loose_text[end:]
+        )
+    for match in seed_pattern.finditer(loose_text):
         seed_id = match.group(1)
         if seed_id in seen:
             raise _blocked("duplicate discovery seed ID")
@@ -556,6 +564,8 @@ def validate_actual_source_review_receipt(
     )
     if not scanned_sources and not scanned_discovery:
         raise _blocked("receipt must identify an actually reviewed Source")
+    if set(scanned_sources) & set(scanned_discovery):
+        raise _blocked("one Source ID cannot appear in both scanned Source lanes")
     unused_classifications = set(classification) - (
         set(scanned_sources) | set(scanned_discovery)
     )
@@ -945,6 +955,17 @@ def _validate_current_row_against_baseline(
 
 
 def _receipt_entry_envelope(entry: Mapping[str, object]) -> dict[str, object]:
+    allowed = {
+        "receipt_ref",
+        "actual_source_review_receipt",
+        "source_state_at_scan",
+        "contribution_merge_dates",
+    }
+    unsupported = set(entry) - allowed
+    if unsupported:
+        raise _blocked(
+            "unsupported receipt entry fields: " + ", ".join(sorted(unsupported))
+        )
     return {
         "source_state_at_scan": _normalize_source_state_at_scan(
             entry.get("source_state_at_scan")
@@ -1073,6 +1094,16 @@ def reconcile_operations_ledger_from_receipts(
     tracking_started = _parse_iso_date(
         result.get("tracking_started_at"), "tracking_started_at"
     )
+    raw_reconciliation_state = result.get(_RECONCILIATION_FIELD)
+    if raw_reconciliation_state is not None:
+        if not isinstance(raw_reconciliation_state, Mapping):
+            raise _blocked("invalid receipt reconciliation state")
+        persisted_tracking_start = _parse_iso_date(
+            raw_reconciliation_state.get("tracking_started_at"),
+            "reconciliation tracking_started_at",
+        )
+        if persisted_tracking_start != tracking_started:
+            raise _blocked("tracking_started_at changed after reconciliation began")
     current_seed_ids = set(known_discovery_seed_ids or set())
     historical_seed_ids = set(historical_discovery_seed_ids or set())
     (
@@ -1087,6 +1118,12 @@ def reconcile_operations_ledger_from_receipts(
     if previous_batch is not None and batch_date < previous_batch:
         raise _blocked("batch_date cannot move backwards")
 
+    missing_baselined_sources = set(source_baselines) - set(ledger_sources)
+    if missing_baselined_sources:
+        raise _blocked(
+            "baselined Source ID disappeared without identity migration: "
+            + ", ".join(sorted(missing_baselined_sources))
+        )
     for source_id, row in ledger_sources.items():
         if source_id not in source_baselines:
             source_baselines[source_id] = _capture_source_baseline(source_id, row)
@@ -1304,6 +1341,7 @@ def reconcile_operations_ledger_from_receipts(
 
     result[_RECONCILIATION_FIELD] = {
         "schema_version": _RECONCILIATION_SCHEMA_VERSION,
+        "tracking_started_at": tracking_started.isoformat(),
         "identity_floor_date": identity_floor.isoformat(),
         "last_batch_date": batch_date.isoformat(),
         "source_baselines": [
