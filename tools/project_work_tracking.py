@@ -5,8 +5,8 @@ This checks recorded consistency, not the truth of external evidence or approval
 """
 from __future__ import annotations
 
-import re
 import html
+import re
 import unicodedata
 from typing import Any
 
@@ -16,6 +16,7 @@ EVIDENCE_STATES = frozenset({"PASS", "FAIL", "PARTIAL", "NOT_RUN", "BLOCKED_UNVE
 LEVELS = frozenset({"E0_CONTRACT", "E1_STATIC", "E2_TEST", "E3_RUNTIME", "E4_VISUAL", "E5_PLAY", "E6_HUMAN_PLAYTEST"})
 BLOCKED = frozenset({"BLOCKED_UNVERIFIED", "USER_DECISION_REQUIRED", "DEFERRED"})
 SHA = re.compile(r"[0-9a-f]{40}\Z")
+_STALE_HEAD_STATUS = "VERIFY_REVIEW_STALE_HEAD"
 
 
 def text(value: Any) -> bool:
@@ -30,6 +31,10 @@ def choice(value: Any, allowed: Any) -> bool:
     return isinstance(value, str) and value in allowed
 
 
+def _canonical_identifier(value: Any) -> bool:
+    return text(value) and not any(character.isspace() for character in value)
+
+
 def _records(value: Any, key: str, prefix: str, errors: list[str]) -> dict[str, dict]:
     records: dict[str, dict] = {}
     if not isinstance(value, list) or not value:
@@ -40,16 +45,35 @@ def _records(value: Any, key: str, prefix: str, errors: list[str]) -> dict[str, 
             errors.append(f"{prefix}[{index}].{key} is required")
             continue
         identity = item[key]
+        if not _canonical_identifier(identity):
+            errors.append(f"{prefix}[{index}].{key} must be a canonical identifier without whitespace")
+            continue
         if identity in records:
             errors.append(f"{prefix}: duplicate {key} {identity}")
         records[identity] = item
     return records
 
 
-def progress(board: dict) -> tuple[int, int]:
-    """Parent counts required DONE work items, never averages child percentages."""
+def _trusted_head(value: Any) -> str | None:
+    return value if isinstance(value, str) and SHA.fullmatch(value) is not None else None
+
+
+def _render_status(task: dict, expected_head_sha: str | None) -> str:
+    trusted_head = _trusted_head(expected_head_sha)
+    if (
+        trusted_head is not None
+        and task.get("status") == "DONE"
+        and task.get("verified_head_sha") != trusted_head
+    ):
+        return _STALE_HEAD_STATUS
+    status = task.get("status")
+    return status if isinstance(status, str) else "INVALID"
+
+
+def progress(board: dict, *, expected_head_sha: str | None = None) -> tuple[int, int]:
+    """Count required DONE work items, excluding stale-head claims in derived views."""
     items = board["work_items"]
-    return sum(item["status"] == "DONE" for item in items), len(items)
+    return sum(_render_status(item, expected_head_sha) == "DONE" for item in items), len(items)
 
 
 def validate_tracking(
@@ -74,14 +98,14 @@ def validate_tracking(
         if not isinstance(expected_source_sha, str) or SHA.fullmatch(expected_source_sha) is None or source != expected_source_sha:
             errors.append("project_work_kanban.source_main_sha does not match trusted expected source")
 
-    trusted_head_valid = isinstance(expected_head_sha, str) and SHA.fullmatch(expected_head_sha) is not None
+    trusted_head_valid = _trusted_head(expected_head_sha) is not None
     if phase == "closeout" and not trusted_head_valid:
         errors.append("expected_head_sha from the trusted final-head caller is required for closeout")
 
     tasks = _records(board.get("work_items"), "work_item_id", "project_work_kanban.work_items", errors)
     refs = board.get("work_item_refs")
-    if not strings(refs) or len(refs) != len(set(refs)) or set(refs) != set(tasks):
-        errors.append("project_work_kanban.work_item_refs must match unique required work_items exactly")
+    if not strings(refs) or any(not _canonical_identifier(ref) for ref in refs) or len(refs) != len(set(refs)) or set(refs) != set(tasks):
+        errors.append("project_work_kanban.work_item_refs must match unique canonical required work_items exactly")
     active = board.get("active_work_item_ref")
     in_progress = [key for key, task in tasks.items() if task.get("status") == "IN_PROGRESS"]
     reviewing = [key for key, task in tasks.items() if task.get("status") == "VERIFY_REVIEW"]
@@ -89,11 +113,11 @@ def validate_tracking(
     if len(in_progress) > 1 or len(reviewing) > 1:
         errors.append("project_work_kanban WIP limit exceeded (IN_PROGRESS=1, VERIFY_REVIEW=1)")
     if active is not None and (
-        not isinstance(active, str)
+        not _canonical_identifier(active)
         or active not in tasks
         or not choice(tasks[active].get("status"), {"IN_PROGRESS", "VERIFY_REVIEW"})
     ):
-        errors.append("active_work_item_ref must identify an IN_PROGRESS or VERIFY_REVIEW task")
+        errors.append("active_work_item_ref must identify a canonical IN_PROGRESS or VERIFY_REVIEW task")
     if active_candidates and active not in active_candidates:
         errors.append("active_work_item_ref must match the current active task")
     if phase in {"start", "resume"} and not active_candidates:
@@ -115,8 +139,8 @@ def validate_tracking(
         if not strings(task.get("actual_consumers")):
             errors.append(f"{prefix}.actual_consumers is required")
         deps = task.get("depends_on")
-        if not strings(deps, nonempty=False) or len(deps) != len(set(deps)):
-            errors.append(f"{prefix}.depends_on must be unique dependency IDs")
+        if not strings(deps, nonempty=False) or any(not _canonical_identifier(dep) for dep in deps) or len(deps) != len(set(deps)):
+            errors.append(f"{prefix}.depends_on must be unique canonical dependency IDs")
             deps = []
         dependencies[identity] = deps
         for dep in deps:
@@ -130,8 +154,8 @@ def validate_tracking(
                     errors.append(f"{prefix}.{key} is required for {status}")
         checks = _records(task.get("checklist"), "id", prefix + ".checklist", errors)
         ac = task.get("acceptance_criteria")
-        if not strings(ac) or len(ac) != len(set(ac)):
-            errors.append(f"{prefix}.acceptance_criteria must contain unique required checklist IDs")
+        if not strings(ac) or any(not _canonical_identifier(item) for item in ac) or len(ac) != len(set(ac)):
+            errors.append(f"{prefix}.acceptance_criteria must contain unique canonical required checklist IDs")
             ac = []
         for acceptance in ac:
             if acceptance not in checks:
@@ -157,7 +181,7 @@ def validate_tracking(
                     errors.append(f"{prefix}.checklist[{check_id}].evidence is required for PASS")
         verification = _records(task.get("verification"), "level", prefix + ".verification", errors)
         required = task.get("required_evidence")
-        if not strings(required) or len(required) != len(set(required)) or any(level not in LEVELS for level in required):
+        if not strings(required) or any(not _canonical_identifier(level) for level in required) or len(required) != len(set(required)) or any(level not in LEVELS for level in required):
             errors.append(f"{prefix}.required_evidence must be unique known evidence levels")
             required = []
         for level, entry in verification.items():
@@ -220,19 +244,31 @@ def _plain(value: str) -> str:
     return value
 
 
-def render_tracking(board: dict) -> str:
-    """Render only after shape validation succeeds; no filesystem/network writes."""
-    completed, total = progress(board)
+def render_tracking(board: dict, *, expected_head_sha: str | None = None) -> str:
+    """Render shape-validated data without turning receipt text into instructions."""
+    completed, total = progress(board, expected_head_sha=expected_head_sha)
     lines = [f"## PM 작업 체크리스트 — {completed} / {total}", "", "이 표는 기록 일관성 검사를 통과한 파생 뷰이며 실제 증거 검수를 대신하지 않습니다.", ""]
+    effective_statuses: list[str] = []
     for task in board["work_items"]:
+        status = _render_status(task, expected_head_sha)
+        effective_statuses.append(status)
         checks = [c for c in task["checklist"] if c["status"] != "NOT_APPLICABLE"]
         passed = sum(c["status"] == "PASS" for c in checks)
         count = f"{passed} / {len(checks)}" if checks else "NO_APPLICABLE_CHECKLIST"
-        mark = "x" if task["status"] == "DONE" else " "
-        lines.append(f"- [{mark}] {_plain(task['work_item_id'])} · {task['status']} · {_plain(task['title'])} ({count})")
-        if task["status"] != "DONE":
-            lines.append(f"  다음: {_plain(task['next_action'])}")
-        if task["status"] in BLOCKED:
+        mark = "x" if status == "DONE" else " "
+        lines.append(f"- [{mark}] {_plain(task['work_item_id'])} · {status} · {_plain(task['title'])} ({count})")
+        if status == _STALE_HEAD_STATUS:
+            lines.append("  다음: trusted expected HEAD에서 evidence와 repository readback을 재검증")
+        elif status in BLOCKED:
             lines.append(f"  차단: {_plain(task['blocker'])}; 재개: {_plain(task['resume_condition'])}")
-    lines.extend(["", f"다음 안전 작업: {_plain(board['next_action'])}"])
+        elif status != "DONE":
+            lines.append(f"  다음: {_plain(task['next_action'])}")
+    remaining = [status for status in effective_statuses if status != "DONE"]
+    if _STALE_HEAD_STATUS in remaining:
+        safe_next = "trusted expected HEAD에서 stale evidence와 repository readback 재검증"
+    elif remaining and all(status in BLOCKED for status in remaining):
+        safe_next = "기록된 차단 해제 조건을 검증한 뒤 receipt 재검사"
+    else:
+        safe_next = _plain(board["next_action"])
+    lines.extend(["", f"다음 안전 작업: {safe_next}"])
     return "\n".join(lines)
