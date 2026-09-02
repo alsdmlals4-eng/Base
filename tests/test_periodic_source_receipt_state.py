@@ -203,5 +203,188 @@ class PeriodicSourceReceiptStateTests(unittest.TestCase):
             state.reconcile_operations_ledger_from_receipts(ledger(), [first, second])
 
 
+    def test_structured_contribution_updates_durable_ledger_once(self) -> None:
+        material = receipt(
+            disposition="MATERIAL_CHANGE",
+            repository_change="2_FILES",
+            pr_created="#649",
+            merge_sha="2" * 40,
+            merged_base_contribution_refs=[{
+                "source": "anthropic",
+                "pr": "#649",
+                "merge_sha": "2" * 40,
+                "owner": "docs/AI_SKILL_ADOPTION_GUIDE.md",
+            }],
+        )
+        entry = {"receipt_ref": "material-649", "actual_source_review_receipt": material}
+        once = state.reconcile_operations_ledger_from_receipts(ledger(), [entry])
+        twice = state.reconcile_operations_ledger_from_receipts(once, [entry])
+        rows = {row["source_id"]: row for row in once["sources"]}
+        self.assertEqual("2026-09-01", rows["anthropic"]["last_base_contribution_at"])
+        self.assertEqual("2" * 40, rows["anthropic"]["last_base_contribution_ref"])
+        self.assertEqual(1, rows["anthropic"]["base_contribution_count_since_tracking_start"])
+        self.assertEqual(once, twice)
+
+    def test_legacy_flat_contribution_infers_only_single_retained_source(self) -> None:
+        checked = state.validate_actual_source_review_receipt(
+            receipt(
+                disposition="MATERIAL_CHANGE",
+                repository_change="2_FILES",
+                pr_created=608,
+                merge_sha="3" * 40,
+                merged_base_contribution_refs=["PR#608", "3" * 40],
+            ),
+            ledger(),
+        )
+        self.assertEqual(
+            [{
+                "source_id": "anthropic",
+                "pr": 608,
+                "merge_sha": "3" * 40,
+                "refs": ["PR#608", "3" * 40],
+            }],
+            checked["merged_base_contribution_refs"],
+        )
+
+    def test_legacy_flat_contribution_rejects_ambiguous_sources(self) -> None:
+        with self.assertRaisesRegex(AnalysisBlocked, "legacy contribution refs require one retained Source"):
+            state.validate_actual_source_review_receipt(
+                receipt(
+                    disposition="MATERIAL_CHANGE",
+                    repository_change="2_FILES",
+                    pr_created=649,
+                    merge_sha="2" * 40,
+                    retained_candidate_source_ids=["anthropic", "godot"],
+                    material_candidate_count_by_source={"anthropic": 1, "godot": 1},
+                    merged_base_contribution_refs=["PR#649", "2" * 40],
+                ),
+                ledger(),
+            )
+
+    def test_structured_contribution_source_must_be_retained(self) -> None:
+        with self.assertRaisesRegex(AnalysisBlocked, "contribution Source must be retained"):
+            state.validate_actual_source_review_receipt(
+                receipt(
+                    disposition="MATERIAL_CHANGE",
+                    repository_change="2_FILES",
+                    pr_created=649,
+                    merge_sha="2" * 40,
+                    merged_base_contribution_refs=[{
+                        "source": "godot",
+                        "pr": 649,
+                        "merge_sha": "2" * 40,
+                    }],
+                ),
+                ledger(),
+            )
+
+    def test_discovery_only_contribution_does_not_create_durable_ledger_row(self) -> None:
+        discovery = receipt(
+            disposition="MATERIAL_CHANGE",
+            repository_change="2_FILES",
+            pr_created=649,
+            merge_sha="2" * 40,
+            scanned_source_ids=[],
+            scanned_discovery_seed_ids=["github-repositories-discovery"],
+            retained_candidate_source_ids=["github-repositories-discovery"],
+            material_candidate_count_by_source={"github-repositories-discovery": 1},
+            high_nutrient_sources=[],
+            merged_base_contribution_refs=["PR#649", "2" * 40],
+        )
+        reconciled = state.reconcile_operations_ledger_from_receipts(
+            ledger(),
+            [{"receipt_ref": "discovery-649", "actual_source_review_receipt": discovery}],
+        )
+        for row in reconciled["sources"]:
+            self.assertEqual(0, row["base_contribution_count_since_tracking_start"])
+        self.assertIsNone(row["last_base_contribution_at"])
+        self.assertIsNone(row["last_base_contribution_ref"])
+
+    def test_rejects_receipt_without_any_actually_reviewed_source_identity(self) -> None:
+        with self.assertRaisesRegex(AnalysisBlocked, "must identify an actually reviewed Source"):
+            state.validate_actual_source_review_receipt(
+                receipt(
+                    scanned_source_ids=[],
+                    scanned_discovery_seed_ids=[],
+                    retained_candidate_source_ids=[],
+                    material_candidate_count_by_source={},
+                    high_nutrient_sources=[],
+                ),
+                ledger(),
+            )
+
+    def test_durable_source_id_cannot_be_misfiled_as_discovery_seed(self) -> None:
+        with self.assertRaisesRegex(AnalysisBlocked, "durable Source ID must use scanned_source_ids"):
+            state.validate_actual_source_review_receipt(
+                receipt(
+                    scanned_source_ids=[],
+                    scanned_discovery_seed_ids=["anthropic"],
+                    retained_candidate_source_ids=[],
+                    material_candidate_count_by_source={},
+                    high_nutrient_sources=[],
+                ),
+                ledger(),
+            )
+
+    def test_reconciliation_adds_new_base_contribution_after_existing_watermark(self) -> None:
+        current = ledger()
+        anth = current["sources"][0]
+        anth["last_base_contribution_at"] = "2026-08-20"
+        anth["last_base_contribution_ref"] = "3" * 40
+        anth["base_contribution_count_since_tracking_start"] = 5
+        material = receipt(
+            disposition="MATERIAL_CHANGE",
+            repository_change="2_FILES",
+            pr_created=649,
+            merge_sha="2" * 40,
+            merged_base_contribution_refs=[{
+                "source": "anthropic",
+                "pr": 649,
+                "merge_sha": "2" * 40,
+            }],
+        )
+        entry = {"receipt_ref": "new-contribution", "actual_source_review_receipt": material}
+        once = state.reconcile_operations_ledger_from_receipts(current, [entry])
+        twice = state.reconcile_operations_ledger_from_receipts(once, [entry])
+        rows = {row["source_id"]: row for row in once["sources"]}
+        self.assertEqual(6, rows["anthropic"]["base_contribution_count_since_tracking_start"])
+        self.assertEqual("2026-09-01", rows["anthropic"]["last_base_contribution_at"])
+        self.assertEqual("2" * 40, rows["anthropic"]["last_base_contribution_ref"])
+        self.assertEqual(once, twice)
+
+    def test_existing_material_count_requires_date_watermark(self) -> None:
+        current = ledger()
+        anth = current["sources"][0]
+        anth["material_candidate_count_since_tracking_start"] = 5
+        entry = {"receipt_ref": "new-material", "actual_source_review_receipt": receipt()}
+        with self.assertRaisesRegex(AnalysisBlocked, "existing material candidate state is inconsistent"):
+            state.reconcile_operations_ledger_from_receipts(current, [entry])
+
+    def test_existing_base_contribution_state_requires_count_date_and_ref_together(self) -> None:
+        material = receipt(
+            disposition="MATERIAL_CHANGE",
+            repository_change="2_FILES",
+            pr_created=649,
+            merge_sha="2" * 40,
+            merged_base_contribution_refs=[{
+                "source": "anthropic",
+                "pr": 649,
+                "merge_sha": "2" * 40,
+            }],
+        )
+        entry = {"receipt_ref": "new-contribution", "actual_source_review_receipt": material}
+        broken_states = (
+            {"last_base_contribution_at": "2026-08-20", "last_base_contribution_ref": None, "base_contribution_count_since_tracking_start": 1},
+            {"last_base_contribution_at": "2026-08-20", "last_base_contribution_ref": "3" * 40, "base_contribution_count_since_tracking_start": 0},
+            {"last_base_contribution_at": None, "last_base_contribution_ref": "3" * 40, "base_contribution_count_since_tracking_start": 1},
+        )
+        for broken in broken_states:
+            with self.subTest(broken=broken):
+                current = ledger()
+                current["sources"][0].update(broken)
+                with self.assertRaisesRegex(AnalysisBlocked, "existing Base contribution state is inconsistent"):
+                    state.reconcile_operations_ledger_from_receipts(current, [entry])
+
+
 if __name__ == "__main__":
     unittest.main()
