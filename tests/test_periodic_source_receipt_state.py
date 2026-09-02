@@ -173,6 +173,14 @@ class PeriodicSourceReceiptStateTests(unittest.TestCase):
         with self.assertRaisesRegex(AnalysisBlocked, "scan_date cannot be after batch_date"):
             reconcile(ledger(), [entry(receipt(scan_date="2026-09-03"))])
 
+    def test_rejects_future_contribution_merge_date(self) -> None:
+        future = material_receipt()
+        future["merged_base_contribution_refs"][0]["merge_date"] = "2026-09-03"
+        with self.assertRaisesRegex(
+            AnalysisBlocked, "contribution merge_date cannot be after batch_date"
+        ):
+            reconcile(ledger(), [entry(future, ref="future-merge")])
+
     def test_rejects_missing_material_and_base_watermark_fields(self) -> None:
         for field, message in (
             ("last_material_candidate_at", "missing material candidate state fields"),
@@ -269,8 +277,31 @@ class PeriodicSourceReceiptStateTests(unittest.TestCase):
         current = ledger()
         current["sources"][0]["last_material_candidate_at"] = "2026-09-01"
         current["sources"][0]["material_candidate_count_since_tracking_start"] = 5
-        with self.assertRaisesRegex(AnalysisBlocked, "ambiguous same-day material"):
+        with self.assertRaisesRegex(AnalysisBlocked, "identity baseline"):
             reconcile(current, [entry(ref="late")])
+
+    def test_empty_bootstrap_does_not_unlock_ambiguous_same_day_material(self) -> None:
+        current = ledger()
+        current["sources"][0]["last_material_candidate_at"] = "2026-09-01"
+        current["sources"][0]["material_candidate_count_since_tracking_start"] = 5
+        bootstrapped = reconcile(current, [])
+        with self.assertRaisesRegex(AnalysisBlocked, "identity baseline"):
+            reconcile(bootstrapped, [entry(ref="late-after-empty-bootstrap")])
+
+    def test_unrelated_bootstrap_does_not_unlock_another_source_baseline(self) -> None:
+        current = ledger()
+        current["sources"][0]["last_material_candidate_at"] = "2026-09-01"
+        current["sources"][0]["material_candidate_count_since_tracking_start"] = 5
+        godot_only = receipt(
+            scanned_source_ids=["godot"],
+            scanned_discovery_seed_ids=[],
+            retained_candidate_source_ids=[],
+            material_candidate_count_by_source={},
+            high_nutrient_sources=[],
+        )
+        bootstrapped = reconcile(current, [entry(godot_only, ref="godot-only")])
+        with self.assertRaisesRegex(AnalysisBlocked, "identity baseline"):
+            reconcile(bootstrapped, [entry(ref="late-anthropic")])
 
     def test_uppercase_existing_contribution_sha_is_not_double_counted(self) -> None:
         current = ledger()
@@ -363,6 +394,20 @@ class PeriodicSourceReceiptStateTests(unittest.TestCase):
             0,
             accepted["sources"][-1]["material_candidate_count_since_tracking_start"],
         )
+
+    def test_rejects_unrelated_receipt_time_classification(self) -> None:
+        with self.assertRaisesRegex(AnalysisBlocked, "unrelated Source IDs"):
+            state.reconcile_operations_ledger_from_receipts(
+                ledger(),
+                [
+                    entry(
+                        ref="unrelated-classification",
+                        source_state_at_scan={"not-in-receipt": "DURABLE_ACTIVE"},
+                    )
+                ],
+                known_discovery_seed_ids=DISCOVERY_SEEDS,
+                batch_date=BATCH_DATE,
+            )
 
     def test_discovery_seed_registry_parser_extracts_seed_ids(self) -> None:
         text = """

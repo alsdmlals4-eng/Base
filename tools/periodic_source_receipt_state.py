@@ -459,6 +459,11 @@ def validate_actual_source_review_receipt(
     )
     if not scanned_sources and not scanned_discovery:
         raise _blocked("receipt must identify an actually reviewed Source")
+    unused_classifications = set(classification) - (
+        set(scanned_sources) | set(scanned_discovery)
+    )
+    if unused_classifications:
+        raise _blocked("source_state_at_scan contains unrelated Source IDs")
     if validate_current_source_state:
         _validate_source_classification(
             scanned_source_ids=scanned_sources,
@@ -518,6 +523,13 @@ def validate_actual_source_review_receipt(
         checked["merge_sha"],
         merge_dates,
     )
+    if batch_date is not None:
+        for contribution in checked["merged_base_contribution_refs"]:
+            merge_date = _parse_iso_date(
+                contribution["merge_date"], "contribution merge_date"
+            )
+            if merge_date > batch_date:
+                raise _blocked("contribution merge_date cannot be after batch_date")
     if checked.get("ledger_write") != _LEDGER_WRITE:
         raise _blocked("ledger_write must defer to the weekly scan-state batch")
 
@@ -557,16 +569,24 @@ def _normalize_existing_reconciliation_state(
     dict[str, str],
     dict[str, dict[str, object]],
     date | None,
+    date | None,
+    dict[str, dict[str, object]],
     dict[str, dict[str, object]],
 ]:
     if value is None:
-        return {}, {}, None, {}
+        return {}, {}, None, None, {}, {}
     if not isinstance(value, Mapping) or value.get("schema_version") != 1:
         raise _blocked("invalid receipt reconciliation state")
     processed = value.get("processed_receipts")
     contributions = value.get("processed_contributions")
+    baselines = value.get("source_baselines")
     last_batch = value.get("last_batch_date")
-    if not isinstance(processed, list) or not isinstance(contributions, list):
+    identity_floor = value.get("identity_floor_date")
+    if (
+        not isinstance(processed, list)
+        or not isinstance(contributions, list)
+        or not isinstance(baselines, list)
+    ):
         raise _blocked("invalid receipt reconciliation identity state")
 
     ref_hashes: dict[str, str] = {}
@@ -615,10 +635,89 @@ def _normalize_existing_reconciliation_state(
             raise _blocked("conflicting processed contribution metadata")
         contribution_by_key[key] = metadata
 
+    baseline_by_source: dict[str, dict[str, object]] = {}
+    for raw in baselines:
+        if not isinstance(raw, Mapping):
+            raise _blocked("invalid Source reconciliation baseline")
+        source_id = _nonempty_string(raw.get("source_id"), "baseline Source")
+        if source_id in baseline_by_source:
+            raise _blocked("duplicate Source reconciliation baseline")
+        material_count = raw.get("material_count")
+        if isinstance(material_count, bool) or not isinstance(material_count, int) or material_count < 0:
+            raise _blocked("invalid baseline material count")
+        raw_material_date = raw.get("material_date")
+        material_date = (
+            None
+            if raw_material_date is None
+            else _parse_iso_date(raw_material_date, "baseline material date").isoformat()
+        )
+        if (material_count == 0) != (material_date is None):
+            raise _blocked("inconsistent baseline material state")
+        base_count = raw.get("base_contribution_count")
+        if isinstance(base_count, bool) or not isinstance(base_count, int) or base_count < 0:
+            raise _blocked("invalid baseline Base contribution count")
+        raw_base_date = raw.get("base_contribution_date")
+        base_date = (
+            None
+            if raw_base_date is None
+            else _parse_iso_date(
+                raw_base_date, "baseline Base contribution date"
+            ).isoformat()
+        )
+        raw_base_ref = raw.get("base_contribution_ref")
+        base_ref = (
+            None
+            if raw_base_ref is None
+            else _require_sha(raw_base_ref, "baseline Base contribution ref")
+        )
+        empty_base = base_count == 0 and base_date is None and base_ref is None
+        populated_base = base_count > 0 and base_date is not None and base_ref is not None
+        if not (empty_base or populated_base):
+            raise _blocked("inconsistent baseline Base contribution state")
+        baseline_by_source[source_id] = {
+            "source_id": source_id,
+            "material_count": material_count,
+            "material_date": material_date,
+            "base_contribution_count": base_count,
+            "base_contribution_date": base_date,
+            "base_contribution_ref": base_ref,
+        }
+
     normalized_last_batch = (
         None if last_batch is None else _parse_iso_date(last_batch, "last_batch_date")
     )
-    return ref_hashes, contribution_by_key, normalized_last_batch, processed_rows
+    normalized_identity_floor = (
+        None
+        if identity_floor is None
+        else _parse_iso_date(identity_floor, "identity_floor_date")
+    )
+    if normalized_last_batch is None or normalized_identity_floor is None:
+        raise _blocked("receipt reconciliation dates are required")
+    if normalized_identity_floor > normalized_last_batch:
+        raise _blocked("identity_floor_date cannot follow last_batch_date")
+    return (
+        ref_hashes,
+        contribution_by_key,
+        normalized_last_batch,
+        normalized_identity_floor,
+        processed_rows,
+        baseline_by_source,
+    )
+
+
+def _capture_source_baseline(
+    source_id: str, row: Mapping[str, object]
+) -> dict[str, object]:
+    material_count, material_date = _existing_material_state(row)
+    base_count, base_date, base_ref = _existing_base_contribution_state(row)
+    return {
+        "source_id": source_id,
+        "material_count": material_count,
+        "material_date": None if material_date is None else material_date.isoformat(),
+        "base_contribution_count": base_count,
+        "base_contribution_date": None if base_date is None else base_date.isoformat(),
+        "base_contribution_ref": base_ref,
+    }
 
 
 def _receipt_entry_envelope(entry: Mapping[str, object]) -> dict[str, object]:
@@ -655,11 +754,24 @@ def reconcile_operations_ledger_from_receipts(
     )
     current_seed_ids = set(known_discovery_seed_ids or set())
     historical_seed_ids = set(historical_discovery_seed_ids or set())
-    ref_hashes, processed_contributions, previous_batch, existing_processed_rows = (
-        _normalize_existing_reconciliation_state(result.get(_RECONCILIATION_FIELD))
-    )
+    (
+        ref_hashes,
+        processed_contributions,
+        previous_batch,
+        identity_floor,
+        existing_processed_rows,
+        source_baselines,
+    ) = _normalize_existing_reconciliation_state(result.get(_RECONCILIATION_FIELD))
     if previous_batch is not None and batch_date < previous_batch:
         raise _blocked("batch_date cannot move backwards")
+    first_identity_batch = previous_batch is None
+    newly_baselined_sources: set[str] = set()
+    for source_id, row in ledger_sources.items():
+        if source_id not in source_baselines:
+            source_baselines[source_id] = _capture_source_baseline(source_id, row)
+            newly_baselined_sources.add(source_id)
+    if identity_floor is None:
+        identity_floor = batch_date
 
     payload_hashes = set(ref_hashes.values())
     new_processed_rows: dict[str, dict[str, object]] = dict(existing_processed_rows)
@@ -751,17 +863,23 @@ def reconcile_operations_ledger_from_receipts(
         if current is None or _parse_iso_date(current, SCAN_DATE_FIELD) < scan_date:
             row[SCAN_DATE_FIELD] = scan_date.isoformat()
 
-    had_identity_state = result.get(_RECONCILIATION_FIELD) is not None
     for source_id, events in material_events.items():
         row = ledger_sources[source_id]
         current_count, current_date = _existing_material_state(row)
+        baseline = source_baselines[source_id]
+        raw_baseline_date = baseline["material_date"]
+        baseline_date = (
+            None
+            if raw_baseline_date is None
+            else _parse_iso_date(raw_baseline_date, "baseline material date")
+        )
+        source_is_bootstrapping = first_identity_batch or source_id in newly_baselined_sources
         ordered = sorted(events, key=lambda item: (item[0], item[2]))
         for event_date, increment, _ in ordered:
-            if not had_identity_state and current_date is not None:
-                if event_date == current_date:
-                    raise _blocked("ambiguous same-day material event without identity state")
-                if event_date < current_date:
+            if baseline_date is not None and event_date <= baseline_date:
+                if source_is_bootstrapping and event_date < baseline_date:
                     continue
+                raise _blocked("ambiguous material event at or before identity baseline")
             current_count += increment
             if current_date is None or event_date > current_date:
                 current_date = event_date
@@ -785,8 +903,17 @@ def reconcile_operations_ledger_from_receipts(
             if merge_sha == current_ref:
                 processed_contributions.setdefault(key, metadata)
                 continue
-            if not had_identity_state and current_date is not None and merge_date <= current_date:
-                raise _blocked("ambiguous historical contribution without identity state")
+            baseline = source_baselines[source_id]
+            raw_baseline_date = baseline["base_contribution_date"]
+            baseline_date = (
+                None
+                if raw_baseline_date is None
+                else _parse_iso_date(
+                    raw_baseline_date, "baseline Base contribution date"
+                )
+            )
+            if baseline_date is not None and merge_date <= baseline_date:
+                raise _blocked("ambiguous contribution at or before identity baseline")
             current_count += 1
             if current_date is None or merge_date >= current_date:
                 current_date = merge_date
@@ -798,12 +925,11 @@ def reconcile_operations_ledger_from_receipts(
 
     result[_RECONCILIATION_FIELD] = {
         "schema_version": _RECONCILIATION_SCHEMA_VERSION,
-        "identity_floor_date": (
-            result.get(_RECONCILIATION_FIELD, {}).get("identity_floor_date")
-            if isinstance(result.get(_RECONCILIATION_FIELD), Mapping)
-            else batch_date.isoformat()
-        ),
+        "identity_floor_date": identity_floor.isoformat(),
         "last_batch_date": batch_date.isoformat(),
+        "source_baselines": [
+            source_baselines[key] for key in sorted(source_baselines)
+        ],
         "processed_receipts": [
             new_processed_rows[key] for key in sorted(new_processed_rows)
         ],
