@@ -3,7 +3,9 @@ from __future__ import annotations
 """Fail closed validation for repository-owned L1+ work-contract receipts."""
 
 import argparse
+import copy
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -15,6 +17,9 @@ else:
 BENCHMARK_STATES = {"PASS", "REUSED_EVIDENCE", "NOT_APPLICABLE", "BLOCKED_UNVERIFIED"}
 DISPOSITIONS = {"ADOPT", "ADAPT", "REJECT"}
 HYGIENE_CLASSIFICATIONS = {"ACTIVE_OWNER", "COMPATIBILITY", "ARCHIVE", "OBSOLETE_CANDIDATE", "UNKNOWN_UNVERIFIED"}
+_EXACT_SHA = re.compile(r"[0-9a-f]{40}\Z")
+_RENDER_MISSING_HEAD = "0" * 40
+_RENDER_UNTRUSTED_RECORDED_HEAD = "1" * 40
 
 
 def _nonempty_string(value: Any) -> bool:
@@ -23,6 +28,28 @@ def _nonempty_string(value: Any) -> bool:
 
 def _nonempty_list(value: Any) -> bool:
     return isinstance(value, list) and bool(value)
+
+
+def _closeout_render_inputs(
+    board: dict[str, Any],
+    *,
+    phase: str,
+    expected_head_sha: str | None,
+) -> tuple[dict[str, Any], str | None]:
+    """Make an untrusted/missing closeout HEAD visibly stale without changing the receipt."""
+    if phase != "closeout" or (
+        isinstance(expected_head_sha, str)
+        and _EXACT_SHA.fullmatch(expected_head_sha) is not None
+    ):
+        return board, expected_head_sha
+
+    rendered = copy.deepcopy(board)
+    work_items = rendered.get("work_items")
+    if isinstance(work_items, list):
+        for task in work_items:
+            if isinstance(task, dict) and task.get("status") == "DONE":
+                task["verified_head_sha"] = _RENDER_UNTRUSTED_RECORDED_HEAD
+    return rendered, _RENDER_MISSING_HEAD
 
 
 def validate_receipt(receipt: object) -> list[str]:
@@ -152,12 +179,22 @@ def main() -> int:
             else ["project_work_kanban is unavailable"]
         )
         if args.render_markdown and isinstance(board, dict) and not shape_errors:
+            render_board, render_head = _closeout_render_inputs(
+                board,
+                phase=args.phase,
+                expected_head_sha=args.expected_head_sha,
+            )
             print("PM VIEW: INFORMATION ONLY; EXECUTION BLOCKED")
-            print(render_tracking(board, expected_head_sha=args.expected_head_sha))
+            print(render_tracking(render_board, expected_head_sha=render_head))
         return 1
     print(f"WORK CONTRACT RECEIPT: PASS (execution phase={args.phase}; recorded evidence only)")
     if args.render_markdown and isinstance(receipt.get("project_work_kanban"), dict):
-        print(render_tracking(receipt["project_work_kanban"], expected_head_sha=args.expected_head_sha))
+        render_board, render_head = _closeout_render_inputs(
+            receipt["project_work_kanban"],
+            phase=args.phase,
+            expected_head_sha=args.expected_head_sha,
+        )
+        print(render_tracking(render_board, expected_head_sha=render_head))
     return 0
 
 
