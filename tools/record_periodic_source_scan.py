@@ -41,9 +41,23 @@ def _atomic_write_json(path: Path, payload: object) -> None:
     temporary.replace(path)
 
 
+def _reject_duplicate_json_pairs(
+    pairs: list[tuple[str, Any]],
+) -> dict[str, Any]:
+    result: dict[str, Any] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"duplicate JSON object key: {key}")
+        result[key] = value
+    return result
+
+
 def _load_json(path: Path, *, label: str) -> Any:
     try:
-        return json.loads(path.read_text(encoding="utf-8"))
+        return json.loads(
+            path.read_text(encoding="utf-8"),
+            object_pairs_hook=_reject_duplicate_json_pairs,
+        )
     except (OSError, json.JSONDecodeError) as exc:
         raise ValueError(f"invalid {label}: {path}") from exc
 
@@ -162,7 +176,11 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     receipt_mode = args.receipt_corpus is not None
-    legacy_mode = args.date is not None or args.sources is not None
+    legacy_mode = (
+        args.date is not None
+        or args.sources is not None
+        or bool(args.material.strip())
+    )
     if receipt_mode and legacy_mode:
         parser.error("receipt-corpus mode and legacy date/source mode are mutually exclusive")
     if receipt_mode:
