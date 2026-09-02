@@ -1,5 +1,8 @@
 # `[프로젝트명]` Work↔Codex 최소 전환 자동 실행 시작 지시문
 
+> `BASE_CURRENT_OPERATIONAL_BOOTSTRAP`: when current scope requires **Base-only maintenance** and future project sessions to fresh-read current Base without project-side preinstallation, read `docs/operations/BASE_CURRENT_PROJECT_WORK_BOOTSTRAP.md`. It is a nonpersistent PM/workflow overlay: target-project `AGENTS.md`, product canon, protected paths and adopted Base release retain authority. Do not copy the detailed playbook into this file.
+
+
 > `[프로젝트명]`만 실제 이름으로 바꿔 Work 채팅에 붙여넣는다.
 
 `[프로젝트명]` 작업을 재개해. 이 메시지는 **현재 승인된 Playable Slice**에 대한 routine 권장안·Git 동기화·프로젝트 범위 로컬 컴퓨터 조작의 명시적 위임이다.
