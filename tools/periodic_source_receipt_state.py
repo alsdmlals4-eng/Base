@@ -191,12 +191,23 @@ def parse_active_discovery_seed_ids(text: str) -> set[str]:
             + ("\n" * text[start:end].count("\n"))
             + loose_text[end:]
         )
-    for match in seed_pattern.finditer(loose_text):
+    loose_seed_matches = list(seed_pattern.finditer(loose_text))
+    for index, match in enumerate(loose_seed_matches):
         seed_id = match.group(1)
         if seed_id in seen:
             raise _blocked("duplicate discovery seed ID")
         seen.add(seed_id)
-        active.add(seed_id)
+        segment_end = (
+            loose_seed_matches[index + 1].start()
+            if index + 1 < len(loose_seed_matches)
+            else len(loose_text)
+        )
+        record = loose_text[match.start() : segment_end]
+        status_matches = status_pattern.findall(record)
+        if len(status_matches) > 1:
+            raise _blocked("discovery seed record contains multiple status values")
+        if not status_matches or status_matches[0] == "ACTIVE_DISCOVERY_SEED":
+            active.add(seed_id)
 
     if not active:
         raise _blocked("discovery seed registry contains no active seed_id entries")
@@ -277,6 +288,10 @@ def _normalize_source_state_at_scan(value: object) -> dict[str, str]:
         state = _nonempty_string(raw_state, "source_state_at_scan value")
         if state not in _SOURCE_CLASSIFICATIONS:
             raise _blocked("invalid source_state_at_scan classification")
+        if source_id in result:
+            raise _blocked(
+                "duplicate normalized source_state_at_scan Source ID"
+            )
         result[source_id] = state
     return dict(sorted(result.items()))
 
@@ -486,6 +501,7 @@ def _normalize_high_nutrient_sources(value: object) -> list[dict[str, object]]:
     if not isinstance(value, list):
         raise _blocked("high_nutrient_sources must be a list")
     result: list[dict[str, object]] = []
+    seen_rows: set[str] = set()
     for raw in value:
         if not isinstance(raw, Mapping):
             raise _blocked("high_nutrient_sources rows must be objects")
@@ -514,6 +530,10 @@ def _normalize_high_nutrient_sources(value: object) -> list[dict[str, object]]:
             source_archetype=archetype,
             reusable_units=reusable_units,
         )
+        canonical_row = _canonical_json(row)
+        if canonical_row in seen_rows:
+            raise _blocked("duplicate high-nutrient source row")
+        seen_rows.add(canonical_row)
         result.append(row)
     return sorted(result, key=_canonical_json)
 
@@ -543,6 +563,9 @@ def validate_actual_source_review_receipt(
         raise _blocked("unsupported receipt fields: " + ", ".join(sorted(unsupported)))
     checked = copy.deepcopy(dict(receipt))
     _, ledger_sources = _known_ledger_sources(ledger)
+    tracking_started = _parse_iso_date(
+        ledger.get("tracking_started_at"), "tracking_started_at"
+    )
     current_discovery = set(known_discovery_seed_ids or set())
     historical_discovery = set(historical_discovery_seed_ids or set())
     classification = _normalize_source_state_at_scan(source_state_at_scan)
@@ -649,6 +672,10 @@ def validate_actual_source_review_receipt(
             )
             if merge_date > batch_date:
                 raise _blocked("contribution merge_date cannot be after batch_date")
+            if merge_date < tracking_started:
+                raise _blocked(
+                    "contribution merge_date predates operations Ledger tracking start"
+                )
     if checked.get("ledger_write") != _LEDGER_WRITE:
         raise _blocked("ledger_write must defer to the weekly scan-state batch")
 
@@ -1122,6 +1149,29 @@ def reconcile_operations_ledger_from_receipts(
     )
     if previous_batch is not None and batch_date < previous_batch:
         raise _blocked("batch_date cannot move backwards")
+    if previous_batch is not None:
+        for persisted_receipt in processed_by_ref.values():
+            persisted_scan_date = _parse_iso_date(
+                persisted_receipt["scan_date"],
+                "processed receipt scan_date",
+            )
+            if persisted_scan_date > previous_batch:
+                raise _blocked(
+                    "processed receipt scan_date cannot follow last_batch_date"
+                )
+        for persisted_contribution in processed_contributions.values():
+            persisted_merge_date = _parse_iso_date(
+                persisted_contribution["merge_date"],
+                "processed contribution merge_date",
+            )
+            if persisted_merge_date > previous_batch:
+                raise _blocked(
+                    "processed contribution merge_date cannot follow last_batch_date"
+                )
+            if persisted_merge_date < tracking_started:
+                raise _blocked(
+                    "processed contribution merge_date predates operations Ledger tracking start"
+                )
 
     missing_baselined_sources = set(source_baselines) - set(ledger_sources)
     if missing_baselined_sources:
@@ -1236,6 +1286,46 @@ def reconcile_operations_ledger_from_receipts(
         )
         payload_to_effects[payload_sha] = effects
 
+    receipt_contribution_keys = {
+        contribution_key
+        for processed_receipt in processed_by_ref.values()
+        for contribution_key in processed_receipt["contribution_keys"]
+    }
+    orphan_contributions = set(processed_contributions) - receipt_contribution_keys
+    if orphan_contributions:
+        raise _blocked(
+            "processed contribution is not linked by a processed receipt: "
+            + ", ".join(sorted(orphan_contributions))
+        )
+    missing_contribution_metadata = (
+        receipt_contribution_keys - set(processed_contributions)
+    )
+    if missing_contribution_metadata:
+        raise _blocked(
+            "processed receipt contribution metadata is missing: "
+            + ", ".join(sorted(missing_contribution_metadata))
+        )
+
+    contributions_by_source_date: dict[tuple[str, str], set[str]] = {}
+    for metadata in processed_contributions.values():
+        grouping_key = (
+            str(metadata["source_id"]),
+            str(metadata["merge_date"]),
+        )
+        contributions_by_source_date.setdefault(grouping_key, set()).add(
+            str(metadata["merge_sha"])
+        )
+    ambiguous_same_day = [
+        f"{source_id}@{merge_date}"
+        for (source_id, merge_date), merge_shas in contributions_by_source_date.items()
+        if len(merge_shas) > 1
+    ]
+    if ambiguous_same_day:
+        raise _blocked(
+            "same-day contributions require chronological evidence: "
+            + ", ".join(sorted(ambiguous_same_day))
+        )
+
     # Rebuild every derived row from its immutable baseline plus each unique payload.
     unique_effects = list(payload_to_effects.values())
     for source_id, row in ledger_sources.items():
@@ -1285,8 +1375,8 @@ def reconcile_operations_ledger_from_receipts(
         expected_base_ref = baseline["base_contribution_ref"]
         source_contributions = [
             metadata
-            for key, metadata in processed_contributions.items()
-            if key.startswith(f"{source_id}:")
+            for metadata in processed_contributions.values()
+            if str(metadata["source_id"]) == source_id
         ]
         for metadata in sorted(
             source_contributions,

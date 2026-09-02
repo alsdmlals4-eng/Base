@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import stat
 import sys
 import tempfile
 from datetime import date
@@ -26,6 +27,9 @@ def _parse_ids(value: str) -> list[str]:
 
 def _atomic_write_json(path: Path, payload: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
+    existing_mode = (
+        stat.S_IMODE(path.stat().st_mode) if path.exists() else None
+    )
     with tempfile.NamedTemporaryFile(
         mode="w",
         encoding="utf-8",
@@ -38,6 +42,8 @@ def _atomic_write_json(path: Path, payload: object) -> None:
         json.dump(payload, handle, ensure_ascii=False, separators=(",", ":"))
         handle.write("\n")
         temporary = Path(handle.name)
+    if existing_mode is not None:
+        temporary.chmod(existing_mode)
     temporary.replace(path)
 
 
