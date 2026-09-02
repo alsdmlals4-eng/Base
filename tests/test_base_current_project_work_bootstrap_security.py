@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 import os
 from pathlib import Path
@@ -185,6 +186,34 @@ class BaseCurrentProjectWorkBootstrapSecurityTests(unittest.TestCase):
                 "operational authority bytes differ", result.stdout
             )
 
+    def test_tracking_policy_bytes_are_bound_to_expected_base_commit(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            base = root / "base"
+            project = root / "project"
+            trusted = self._init_base_snapshot(base)
+            policy = base / "docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md"
+            policy.parent.mkdir(parents=True, exist_ok=True)
+            policy.write_text("# hostile unverified policy\n", encoding="utf-8")
+            source = _init_project(project)
+            receipt = root / "receipt.json"
+            receipt.write_text(
+                json.dumps(_active_receipt(source)), encoding="utf-8"
+            )
+
+            result = _run_gate(
+                base_root=base,
+                project_root=project,
+                project_source_sha=source,
+                receipt=receipt,
+                expected_base_sha=trusted,
+                entrypoint_commit_sha=trusted,
+            )
+
+            self.assertNotEqual(0, result.returncode, result.stdout + result.stderr)
+            self.assertIn("docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md", result.stdout)
+            self.assertIn("operational authority bytes differ", result.stdout)
+
     def test_project_identity_object_itself_must_be_a_commit(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -233,6 +262,33 @@ class BaseCurrentProjectWorkBootstrapSecurityTests(unittest.TestCase):
             self.assertNotEqual(0, result.returncode)
             self.assertIn("must be an ancestor", result.stdout)
 
+    def test_project_graft_file_cannot_rewrite_closeout_ancestry(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            project = root / "project"
+            source = _init_project(project)
+            tree = _git(project, "write-tree")
+            unrelated = _git(project, "commit-tree", tree, "-m", "unrelated subject")
+            grafts = project / ".git/info/grafts"
+            grafts.parent.mkdir(parents=True, exist_ok=True)
+            grafts.write_text(f"{unrelated} {source}\n", encoding="utf-8")
+            receipt = root / "receipt.json"
+            receipt.write_text(
+                json.dumps(_done_receipt(source, unrelated)), encoding="utf-8"
+            )
+
+            result = _run_gate(
+                base_root=ROOT,
+                project_root=project,
+                project_source_sha=source,
+                receipt=receipt,
+                phase="closeout",
+                verified_head_sha=unrelated,
+            )
+
+            self.assertNotEqual(0, result.returncode, result.stdout + result.stderr)
+            self.assertIn("must be an ancestor", result.stdout)
+
     def test_strict_json_rejects_nonfinite_constants_and_duplicate_keys(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -259,6 +315,46 @@ class BaseCurrentProjectWorkBootstrapSecurityTests(unittest.TestCase):
             )
             self.assertNotEqual(0, duplicate.returncode)
             self.assertIn("duplicate key: value", duplicate.stdout)
+
+    def test_receipt_complexity_is_bounded_before_validator(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            project = root / "project"
+            source = _init_project(project)
+            payload = _active_receipt(source)
+            board = payload["project_work_kanban"]
+            template = board["work_items"][0]
+            work_items: list[dict[str, object]] = []
+            refs: list[str] = []
+            for index in range(513):
+                item = copy.deepcopy(template)
+                item_id = f"ITEM-{index:04d}"
+                refs.append(item_id)
+                item["work_item_id"] = item_id
+                item["title"] = f"fixture item {index}"
+                item["status"] = "IN_PROGRESS" if index == 512 else "TODO"
+                item["depends_on"] = [] if index == 0 else [refs[index - 1]]
+                item["progress"] = "0 / 1"
+                item["next_action"] = "Run validation"
+                work_items.append(item)
+            board["work_item_refs"] = refs
+            board["active_work_item_id"] = refs[-1]
+            board["work_items"] = work_items
+            receipt = root / "receipt.json"
+            receipt.write_text(json.dumps(payload), encoding="utf-8")
+
+            result = _run_gate(
+                base_root=ROOT,
+                project_root=project,
+                project_source_sha=source,
+                receipt=receipt,
+            )
+
+            self.assertNotEqual(0, result.returncode, result.stdout + result.stderr)
+            self.assertIn(
+                "project_work_kanban work_items exceeds the 512-item safety limit",
+                result.stdout,
+            )
 
     def test_receipt_identity_output_escapes_control_characters(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
