@@ -1,4 +1,4 @@
-name: Apply Source receipt envelope canonicalization
+name: Prove Source receipt envelope canonicalization RED
 
 on:
   push:
@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 jobs:
-  red-green-commit:
+  prove-red-and-remove:
     if: ${{ github.actor != 'github-actions[bot]' }}
     runs-on: ubuntu-latest
     steps:
@@ -21,165 +21,22 @@ jobs:
         with:
           ref: fix/source-receipt-ledger-integrity-r3-20260902
           fetch-depth: 0
-
-      - name: Prove redundant-envelope cases are RED
+      - name: Prove both redundant-envelope cases fail before implementation
         shell: bash
         run: |
           set +e
-          python -m unittest \
-            tests.test_periodic_source_receipt_review_round4.PeriodicSourceReceiptReviewRound4Tests.test_redundant_explicit_current_classification_does_not_duplicate_event \
-            tests.test_periodic_source_receipt_review_round4.PeriodicSourceReceiptReviewRound4Tests.test_redundant_merge_date_map_does_not_duplicate_material_event \
-            -v > /tmp/source-receipt-envelope-red.log 2>&1
+          python -m unittest tests.test_periodic_source_receipt_review_round4.PeriodicSourceReceiptReviewRound4Tests.test_redundant_explicit_current_classification_does_not_duplicate_event tests.test_periodic_source_receipt_review_round4.PeriodicSourceReceiptReviewRound4Tests.test_redundant_merge_date_map_does_not_duplicate_material_event -v > /tmp/source-receipt-envelope-red.log 2>&1
           red_rc=$?
           set -e
           cat /tmp/source-receipt-envelope-red.log
           test "$red_rc" -ne 0
           grep -q "FAILED" /tmp/source-receipt-envelope-red.log
-
-      - name: Canonicalize semantic receipt identity after validating envelope lanes
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          path = Path("tools/periodic_source_receipt_state.py")
-          text = path.read_text(encoding="utf-8")
-
-          old_signature = '''def _validate_source_classification(
-    *,
-    scanned_source_ids: Sequence[str],
-    scanned_discovery_seed_ids: Sequence[str],
-    ledger_sources: Mapping[str, Mapping[str, object]],
-    known_discovery_seed_ids: set[str],
-    historical_discovery_seed_ids: set[str],
-    source_state_at_scan: Mapping[str, str],
-) -> None:
-'''
-          new_signature = '''def _validate_source_classification(
-    *,
-    scanned_source_ids: Sequence[str],
-    scanned_discovery_seed_ids: Sequence[str],
-    ledger_sources: Mapping[str, Mapping[str, object]],
-    known_discovery_seed_ids: set[str],
-    historical_discovery_seed_ids: set[str],
-    source_state_at_scan: Mapping[str, str],
-    validate_current_source_state: bool,
-) -> None:
-'''
-          if text.count(old_signature) != 1:
-              raise SystemExit("classification signature anchor missing or ambiguous")
-          text = text.replace(old_signature, new_signature)
-
-          old_durable = '''        if stated is not None and stated != "DURABLE_ACTIVE":
-            raise _blocked(
-                "receipt-time classification contradicts durable lane"
-            )
-        row = ledger_sources.get(source_id)
-'''
-          new_durable = '''        if stated is not None and stated != "DURABLE_ACTIVE":
-            raise _blocked(
-                "receipt-time classification contradicts durable lane"
-            )
-        if not validate_current_source_state:
-            continue
-        row = ledger_sources.get(source_id)
-'''
-          if text.count(old_durable) != 1:
-              raise SystemExit("durable classification anchor missing or ambiguous")
-          text = text.replace(old_durable, new_durable)
-
-          old_discovery = '''        if stated is not None and stated != "DISCOVERY_ACTIVE":
-            raise _blocked(
-                "receipt-time classification contradicts discovery lane"
-            )
-        if seed_id in known_discovery_seed_ids and seed_id not in ledger_sources:
-'''
-          new_discovery = '''        if stated is not None and stated != "DISCOVERY_ACTIVE":
-            raise _blocked(
-                "receipt-time classification contradicts discovery lane"
-            )
-        if not validate_current_source_state:
-            continue
-        if seed_id in known_discovery_seed_ids and seed_id not in ledger_sources:
-'''
-          if text.count(old_discovery) != 1:
-              raise SystemExit("discovery classification anchor missing or ambiguous")
-          text = text.replace(old_discovery, new_discovery)
-
-          old_call = '''    if validate_current_source_state:
-        _validate_source_classification(
-            scanned_source_ids=scanned_sources,
-            scanned_discovery_seed_ids=scanned_discovery,
-            ledger_sources=ledger_sources,
-            known_discovery_seed_ids=current_discovery,
-            historical_discovery_seed_ids=historical_discovery,
-            source_state_at_scan=classification,
-        )
-'''
-          new_call = '''    _validate_source_classification(
-        scanned_source_ids=scanned_sources,
-        scanned_discovery_seed_ids=scanned_discovery,
-        ledger_sources=ledger_sources,
-        known_discovery_seed_ids=current_discovery,
-        historical_discovery_seed_ids=historical_discovery,
-        source_state_at_scan=classification,
-        validate_current_source_state=validate_current_source_state,
-    )
-'''
-          if text.count(old_call) != 1:
-              raise SystemExit("classification call anchor missing or ambiguous")
-          text = text.replace(old_call, new_call)
-
-          old_identity = '''        identity_payload = {
-            "actual_source_review_receipt": identity_receipt,
-            "source_state_at_scan": envelope["source_state_at_scan"],
-            "contribution_merge_dates": envelope["contribution_merge_dates"],
-        }
-        payload_sha = _payload_hash(identity_payload)
-'''
-          new_identity = '''        # Envelope fields are validation/provenance inputs. Their effective
-        # values are already folded into the normalized receipt, so redundant
-        # explicit classification or merge-date maps must not mint a second event.
-        payload_sha = _payload_hash(identity_receipt)
-'''
-          if text.count(old_identity) != 1:
-              raise SystemExit("semantic receipt identity anchor missing or ambiguous")
-          text = text.replace(old_identity, new_identity)
-
-          path.write_text(text, encoding="utf-8")
-          PY
-
-      - name: Prove GREEN across focused and adjacent Source suites
-        shell: bash
-        run: |
-          python -m py_compile \
-            tools/periodic_source_receipt_state.py \
-            tools/record_periodic_source_scan.py \
-            tools/periodic_source_operations_state.py \
-            tests/test_periodic_source_receipt_state.py \
-            tests/test_record_periodic_source_scan.py \
-            tests/test_periodic_source_receipt_review_round3.py \
-            tests/test_periodic_source_receipt_review_round4.py
-          python -m unittest \
-            tests.test_periodic_source_receipt_state \
-            tests.test_record_periodic_source_scan \
-            tests.test_periodic_source_receipt_review_round3 \
-            tests.test_periodic_source_receipt_review_round4 \
-            tests.test_periodic_source_analysis_auto_merge \
-            tests.test_periodic_source_analysis_runner \
-            -v
-          git diff --check
-
-      - name: Remove one-shot workflow and commit exact final diff
+      - name: Remove one-shot RED workflow
         shell: bash
         run: |
           rm .github/workflows/apply-source-receipt-envelope-canonicalization.yml
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add \
-            tools/periodic_source_receipt_state.py \
-            tests/test_periodic_source_receipt_review_round4.py
           git add -u -- .github/workflows/apply-source-receipt-envelope-canonicalization.yml
-          git commit -m "fix: canonicalize receipt identity after envelope validation"
-          test "$(git diff --name-only origin/main...HEAD | sort | tr '\n' ' ')" = "tests/test_periodic_source_receipt_review_round3.py tests/test_periodic_source_receipt_review_round4.py tests/test_periodic_source_receipt_state.py tests/test_record_periodic_source_scan.py tools/periodic_source_operations_state.py tools/periodic_source_receipt_state.py tools/record_periodic_source_scan.py "
+          git commit -m "test: preserve receipt-envelope RED evidence"
           git push origin HEAD:fix/source-receipt-ledger-integrity-r3-20260902
