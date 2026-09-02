@@ -11,15 +11,62 @@
 
 `HUMAN_GAME_BLUEPRINT_GDD_LAYERED_PROFILE`을 적용하되 `NO_SEPARATE_BLUEPRINT_ARTIFACT`를 지켜. Blueprint는 이 두 파일의 읽기·구성 layer이며 세 번째 파일, Notion page/view, 보드, 부록이 아니다. Notion용 신규 page/database/view, DOCX, ZIP, 별도 appendix, 별도 이미지 묶음, 별도 benchmark 보고서는 만들지 마. 필요한 flow/system card, state/evidence legend, 표·traceability·benchmark·asset matrix는 두 파일 안에 통합해.
 
-새 이미지 생성·편집은 이 지시문의 범위가 아니다. `NO_AUTOMATIC_IMAGE_GENERATION`과 `CURRENT_IMAGE_CREATION_POLICY_REQUIRED`를 적용하고, 기존 승인 이미지와 실제 build capture만 우선 사용해. 승인된 시각자료가 없으면 임의로 채우지 말고 `현재 승인 Visual 없음`과 필요한 consumer·상태·규격을 기록해. 새 image deliverable이 별도로 필요해져도 자동 생성하거나 세 번째 산출물로 추가하지 말고, 별도 사용자 명시적 요청과 현행 `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`로 넘겨.
+새 이미지 생성·편집은 무소비처·무검수 상태에서 이 지시문만으로 자동 허용되지 않는다. `NO_AUTOMATIC_IMAGE_GENERATION`과 `CURRENT_IMAGE_CREATION_POLICY_REQUIRED`를 적용하고, 기존 승인 이미지와 실제 build capture를 우선 사용해. 다만 1차 구조 Blueprint가 concrete consumer·상태·규격·일관성 경계를 확정하고, 이미 승인된 프로젝트 작업 안에서 현행 `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`의 bounded candidate 조건을 충족하면 필요한 후보를 1차와 2차 Blueprint 사이에 제작·검수할 수 있다. 후보는 세 번째 프로젝트 산출물이 아니며 사용자 lock 전 정본·runtime 자산이 아니다.
 
 이미 저장소·연결 자료에서 확인할 수 있는 사실을 사용자에게 다시 묻지 마. 안전한 범위의 조사·정리·교정·두 문서 생성·검증·GitHub 반영은 중간 승인 없이 연속 수행하고, 정말 위험한 정본 의미 변경이나 복구 불가능한 변경만 보류해. 이 연속 수행 권한은 product implementation 실행 권한이 아니다.
+
+### Base revision fresh-read와 bounded execution
+
+`LATEST_BASE_DISCOVERY_REQUIRED`
+
+`PIN_IS_EVIDENCE_NOT_FRESHNESS_BYPASS`
+
+`PROJECT_ADOPTED_BASE_CONTRACT_PRESERVED`
+
+`BASE_DRIFT_CLASSIFICATION_REQUIRED`
+
+`BASE_EXECUTION_SHA_PINNED_PER_BOUNDED_WORK`
+
+`NO_PERMANENT_STALE_PIN`
+
+`NO_FLOATING_EXECUTION`
+
+`BOUNDARY_FRESH_READ_REQUIRED`
+
+과거에 기록된 Base SHA만 영구 사용하거나 작업 중 이동하는 Base `main`을 계속 추종하지 마. 각 L1+ 작업 시작에서 최신 completed Base `main`을 fresh-read하고, 프로젝트가 채택한 Base 계약·project adapter·프로젝트 정본·실제 구현과 비교해 drift를 분류한 뒤 이번 bounded 작업/Slice가 실제 적용할 execution revision을 고정해.
+
+```yaml
+base_observed_head_sha:
+base_adopted_contract_sha:
+base_execution_sha:
+base_drift_classification: NO_RELEVANT_DRIFT | COMPATIBLE_ADOPTION | MIGRATION_REQUIRED | PROJECT_OVERRIDE | BLOCKED_UNVERIFIED
+```
+
+- 최신 Base가 더 새롭다는 이유만으로 프로젝트 코어·승인 Decision·실제 구현·채택 계약을 자동 교체하지 마.
+- bounded 작업 중 `base_execution_sha`를 floating ref로 바꾸지 마. 관련 Base 변경을 발견하면 impact·migration·affected consumer/test를 먼저 분류해.
+- 구현 인계, pre-merge, post-merge, closeout에서 최신 Base를 다시 fresh-read하고 drift를 재분류해. 무관하면 현재 execution pin을 유지하고, 관련 있으면 reconcile과 영향 범위 재검증 뒤 새 revision을 채택해.
 
 ### Prospective Blueprint 사전 구현 승인 Gate
 
 `BLUEPRINT_PRE_IMPLEMENTATION_REVIEW_GATE`
 
+`PROJECT_WIDE_SYSTEM_COVERAGE_SLICE_DEPTH`
+
+`BLUEPRINT_PASS_1_STRUCTURAL_DRAFT`
+
+`STRUCTURAL_BLUEPRINT_DRAFT_NOT_THIRD_ARTIFACT`
+
+`BLUEPRINT_PASS_1_ACTUAL_CONSUMER_CONTRACT`
+
 `REQUIRED_IMAGE_AND_MATERIAL_PREPARATION`
+
+`REQUIRED_MATERIALS_NOT_ALL_PROJECT_ASSETS`
+
+`BLUEPRINT_PASS_2_FINAL`
+
+`VFX_BRIEF_AND_SOURCE_BEFORE_FINAL_BLUEPRINT`
+
+`ENGINE_NATIVE_VFX_IN_GODOT_PRODUCT_BUILD`
 
 `USER_FINAL_REVIEW_APPROVAL_REQUIRED`
 
@@ -29,17 +76,20 @@
 
 ```text
 PLAN
+→ BLUEPRINT_PASS_1_STRUCTURAL_DRAFT
 → REQUIRED_IMAGE_AND_MATERIAL_PREPARATION
 → BLUEPRINT_REVIEW_PUBLICATION
 → USER_FINAL_REVIEW_APPROVAL
 → IMPLEMENTATION_AUTHORIZED
 ```
 
-- **PLAN**: 이 지시문의 정본 재구성·벤치마킹·ID/상태·PDF/AI 명세 작업을 Game Design Loop의 `FRAME → RESEARCH → DESIGN → SPECIFY`로 묶어. player promise와 결정 target을 frame하고, 질문에 필요한 근거만 research하고, player loop에서 system/content/UX를 design한 뒤 rule/state/acceptance/non-goal을 specify해.
-- **REQUIRED_IMAGE_AND_MATERIAL_PREPARATION**: Blueprint 판단에 실제로 필요한 기존 승인 image, build capture, reference, data, audio/material과 누락 상태를 consumer별로 준비해. 새 image deliverable은 `docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md`와 `docs/knowledge/game-development/IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md`로 넘기고, 이 지시문만으로 생성 authority를 추정하지 마. `STRUCTURED_INFORMATION_ARTIFACTS_REMAIN_TEXT_NATIVE`: Mermaid / Flow / table은 이미지 후보가 아니라 정확한 구조 정보 artifact로 유지해.
-- **BLUEPRINT_REVIEW_PUBLICATION**: layered Blueprint를 정확히 두 산출물 안에 합성하고 `CREATIVE → STRUCTURAL → RULE → CONTINUITY → ADVERSARIAL → POLISH` pass를 모두 실행한 뒤 검토용 exact revision을 사용자에게 제공해.
+- **PLAN**: 이 지시문의 정본 재구성·벤치마킹·ID/상태·PDF/AI 명세 작업을 Game Design Loop의 `FRAME → RESEARCH → DESIGN → SPECIFY`로 묶어. `PROJECT_WIDE_SYSTEM_COVERAGE_SLICE_DEPTH`에 따라 프로젝트 전체 material system의 지도·책임·경계·의존성은 넓게 연결하고, 현재 다음 플레이 의미 Slice만 rule/state/acceptance/consumer 수준으로 깊게 명세해.
+- **BLUEPRINT_PASS_1_STRUCTURAL_DRAFT**: 이미지 제작 전에 같은 두 산출물의 working revision에서 전체 Game Flow, system 관계, state/data 처리 흐름, Screen Inventory, 최소 대표 low-fidelity wireframe, entry/exit/cancel/re-entry, target viewport/input, player question, planned/actual consumer와 필요한 state family를 먼저 정리해. `STRUCTURAL_BLUEPRINT_DRAFT_NOT_THIRD_ARTIFACT`: 이 1차 Blueprint는 세 번째 파일·정본·보드가 아니라 최종 Blueprint로 승격될 동일 owner·ID의 구조 초안이야.
+- **REQUIRED_IMAGE_AND_MATERIAL_PREPARATION**: 1차 Blueprint의 `BLUEPRINT_PASS_1_ACTUAL_CONSUMER_CONTRACT`를 입력으로 기존 승인 image, build capture, reference, data, audio/material을 우선 재사용하고, 현재 Slice의 P0/P1과 반복 일관성에 필요한 일부 P2 gap만 준비해. `REQUIRED_MATERIALS_NOT_ALL_PROJECT_ASSETS`: 미래 전체 프로젝트의 화면·캐릭터·콘텐츠·P3 장식 자산을 일괄 제작하지 마. 새 image deliverable은 `docs/knowledge/game-development/IMAGE_CONVERSATION_APPROVAL_GATE.md`와 `docs/knowledge/game-development/IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md`를 따라 bounded candidate로 다루고, `STRUCTURED_INFORMATION_ARTIFACTS_REMAIN_TEXT_NATIVE`: Mermaid / Flow / table은 이미지 후보가 아니라 정확한 구조 정보 artifact로 유지해.
+- **VFX preparation boundary**: `VFX_BRIEF_AND_SOURCE_BEFORE_FINAL_BLUEPRINT`로 VFX의 목적, trigger, 시작/peak/종료 timing, layer, 화면 점유, storyboard/frame intent, texture/mask/sprite source, reduced-motion 동등 경로, 성능 budget과 fallback을 준비해. `ENGINE_NATIVE_VFX_IN_GODOT_PRODUCT_BUILD`: Particle, Shader, `AnimationPlayer`, Tween, Signal/event wiring, 빠른 입력·중단·재진입, 실제 성능 측정과 runtime tuning은 최종 Blueprint 승인 뒤 Codex의 Godot 제품 구현에 남겨.
+- **BLUEPRINT_REVIEW_PUBLICATION (`BLUEPRINT_PASS_2_FINAL`)**: 검수·재사용·candidate review 결과를 두 산출물의 같은 ID에 통합하고 layered Blueprint를 합성해. `CREATIVE → STRUCTURAL → RULE → CONTINUITY → ADVERSARIAL → POLISH` pass를 모두 실행한 뒤 검토용 exact final revision을 사용자에게 제공해.
 - **USER_FINAL_REVIEW_APPROVAL**: `USER_FINAL_APPROVAL_DECISION_ID`로 `DEC-` ID를 부여하고 AI Markdown의 CONFIRMED DECISIONS에 사용자가 검토한 PDF와 AI Markdown의 branch/SHA, 승인 scope, known risk·N/A·미결정을 기록해. 프로젝트에 별도 repository Decision owner가 있으면 같은 ID로 동기화하되 새 artifact를 만들지 마. `DRAFT | INTERNAL_REVIEW | GENERATED_IMAGE | AUTOMATED_TEST | ASSISTANT_INFERENCE`는 `USER_FINAL_REVIEW_APPROVAL`이 아니야.
-- **IMPLEMENTATION_AUTHORIZED**: 위 exact revision에 대한 명시적 사용자 최종 승인이 기록된 뒤에만 실제 구현 execution이나 Codex implementation package를 시작해. `TASK_BREAKDOWN_READY_IMPLEMENTATION_EXECUTION_BLOCKED`: 구현 task breakdown·dependency·acceptance는 미리 준비할 수 있지만 승인 전에는 실행하지 마.
+- **IMPLEMENTATION_AUTHORIZED**: 위 `BLUEPRINT_PASS_2_FINAL` exact revision에 대한 명시적 사용자 최종 승인이 기록된 뒤에만 실제 구현 execution이나 Codex implementation package를 시작해. `TASK_BREAKDOWN_READY_IMPLEMENTATION_EXECUTION_BLOCKED`: 구현 task breakdown·dependency·acceptance는 미리 준비할 수 있지만 승인 전에는 실행하지 마.
 
 `PROSPECTIVE_ONLY_EXISTING_IMPLEMENTATION_EVIDENCE_PRESERVED`: 이 Gate는 앞으로 시작할 구현에만 적용해. 이미 merge된 code/data/scene/test와 기존 runtime·UX evidence를 무효화하거나 상태를 낮추지 말고, 소급 backfill도 하지 마.
 
@@ -49,16 +99,18 @@ PLAN
 
 과거 채팅이나 memory를 current truth로 가정하지 말고 다음 순서로 fresh-read해.
 
-1. 프로젝트 root부터 적용되는 모든 active `AGENTS.md`
-2. `PROJECT_START_HERE`, `CURRENT_CONFIRMED_DECISIONS`, `ACTIVE_CONTEXT`, 최신 handoff
-3. 프로젝트 GitHub latest completed `main`
-4. 모든 open/draft PR과 각 PR의 정확한 역할·미병합 변경
-5. 현재 코드, 씬, Resource, 데이터, import 설정, 테스트, 빌드 설정
-6. 승인된 이미지·애니메이션·VFX·사운드와 실제 runtime consumer
-7. 프로젝트 안의 GDD, system/content spec, Visual Bible, asset catalog, QA 문서
-8. 프로젝트가 채택한 Base 규칙과 동기화된 project adapter
-9. 기존 Notion에만 남은 고유 미이관 자료가 있는 경우 그 자료
-10. legacy Google Sheets·HTML·Figma·기타 자료는 현재 owner에 없는 `UNIQUE` 정보 확인용으로만 사용
+1. 최신 completed Base `main`의 `AGENTS.md`, `START_HERE.md`, V4 workspace machine contract와 현재 작업 관련 Registry/owner
+2. 프로젝트 root부터 적용되는 모든 active `AGENTS.md`
+3. `PROJECT_START_HERE`, `CURRENT_CONFIRMED_DECISIONS`, `ACTIVE_CONTEXT`, 최신 handoff
+4. 프로젝트 GitHub latest completed `main`
+5. 모든 open/draft PR과 각 PR의 정확한 역할·미병합 변경
+6. 현재 코드, 씬, Resource, 데이터, import 설정, 테스트, 빌드 설정
+7. 승인된 이미지·애니메이션·VFX·사운드와 실제 runtime consumer
+8. 프로젝트 안의 GDD, system/content spec, Visual Bible, asset catalog, QA 문서
+9. 프로젝트가 채택한 Base 규칙과 동기화된 project adapter
+10. 최신 Base와 채택 Base의 drift, 이번 작업의 `base_observed_head_sha` / `base_adopted_contract_sha` / `base_execution_sha`
+11. 기존 Notion에만 남은 고유 미이관 자료가 있는 경우 그 자료
+12. legacy Google Sheets·HTML·Figma·기타 자료는 현재 owner에 없는 `UNIQUE` 정보 확인용으로만 사용
 
 기존 Notion은 고유 미이관 자료가 있을 때 입력 자료로만 읽는다. 이 작업의 결과를 Notion에 신규 출력·갱신·동기화하지 말고, Notion write/readback을 완료 조건으로 두지 마. Notion-only 고유 정보가 사용되면 AI 명세의 Source Registry에 정확한 출처와 migration gap을 기록해.
 
@@ -85,6 +137,7 @@ PLAN
 → latest completed main의 코드·데이터·씬·테스트·runtime evidence
 → open/draft PR의 미병합 후보
 → 프로젝트가 채택한 Base 규칙
+→ 최신 Base remote의 관련 drift와 검증된 migration evidence
 → 기존 Notion·legacy 자료
 → 과거 채팅·memory·추정
 ```
@@ -154,7 +207,7 @@ RELEASE_READY
 
 문서화됨을 구현됨으로, 테스트 통과를 runtime 확인으로, runtime 확인을 UX 확인으로, 이미지 존재를 실제 consumer 연결 완료로 과장하지 마. 각 상태에는 가능한 경우 branch, commit SHA, 파일 경로, test run, screenshot/log/video 등 근거를 연결해.
 
-두 산출물에는 동일한 source branch, 기준 commit SHA, 생성일을 기록해. 작업 중 repository가 변경되면 최종 생성 직전에 source snapshot을 다시 고정하고 두 파일을 같은 시점으로 맞춰.
+두 산출물에는 동일한 source branch, 기준 commit SHA, 생성일을 기록해. 작업 중 repository가 변경되면 최종 생성 직전에 source snapshot을 다시 고정하고 두 파일을 같은 시점으로 맞춰. Source Registry에는 `base_observed_head_sha`, `base_adopted_contract_sha`, `base_execution_sha`, drift classification, `BLUEPRINT_PASS_1_STRUCTURAL_DRAFT` revision과 `BLUEPRINT_PASS_2_FINAL` revision을 함께 기록해.
 
 ## 4. 사용자용 PDF
 
@@ -281,7 +334,7 @@ PDF와 AI Markdown에서 같은 ID와 cross-reference를 사용해 다음 네 la
 - 의존성과 충돌 가능성
 - 구현 순서와 각 단계의 확인 방법
 
-코드 덩어리를 길게 붙이는 대신 scene tree, sequence diagram, state diagram, data table, signal flow와 짧은 pseudo-code를 사용해 구조를 명확히 보여줘.
+코드 덩어리를 길게 붙이는 대신 scene tree, sequence diagram, state diagram, data table, signal flow와 짧은 pseudo-code를 사용해 구조를 명확히 보여줘. 권장 scene tree와 책임·공개 경계는 제시하되, 승인된 WHAT/WHY를 보존하는 더 안전한 내부 Node·함수 토폴로지는 exact repository를 fresh-read한 Codex가 결정할 수 있게 해.
 
 #### 5) 어떻게 완료를 판단하는가
 
@@ -427,17 +480,25 @@ docs/design/PROJECT_AI_PRODUCTION_SPEC.md
 다음 순서를 지켜.
 
 ```text
-current authority fresh-read
+latest completed Base fresh-read
+→ project-adopted Base + project canon comparison
+→ Base drift classification
+→ base execution SHA selection and bounded pin
 → 정본 충돌·gap 교정
 → 벤치마킹·현업 조사
+→ project-wide system coverage + next-Slice depth
+→ BLUEPRINT_PASS_1_STRUCTURAL_DRAFT
+→ required image/material/VFX-source preparation and candidate review
 → 공통 ID registry 확정
 → AI용 Markdown 작성·repository 저장
 → 실제 코드·씬·데이터·테스트와 readback
-→ 사용자용 PDF 작성
+→ BLUEPRINT_REVIEW_PUBLICATION (`BLUEPRINT_PASS_2_FINAL`)
 → 두 파일 branch/SHA/ID 일치 확인
 → PDF 실제 렌더 검사
 → repository test/check
-→ PR·merge·post-merge readback
+→ 사용자 최종 승인
+→ implementation handoff boundary fresh-read
+→ PR·merge·post-merge boundary fresh-read와 readback
 → 최종 제공
 ```
 
@@ -449,6 +510,7 @@ current authority fresh-read
 - 변경이 실제 코드·데이터 의미를 바꾸지 않는 문서 교정인지 확인한다.
 - AI 명세의 path, branch, commit SHA, PR, validation result를 확보한다.
 - AI 명세가 최신 main과 실제 runtime 구조를 과장하지 않는지 검사한다.
+- `base_observed_head_sha`, `base_adopted_contract_sha`, `base_execution_sha`가 이동 ref가 아니라 관찰·채택·실행 의미에 맞는 exact revision인지 확인한다.
 
 ### 6.2 PDF 생성 검증
 
@@ -473,14 +535,16 @@ Game Design Loop review는 다음 여섯 pass를 순서대로 실행하고 findi
 CREATIVE → STRUCTURAL → RULE → CONTINUITY → ADVERSARIAL → POLISH
 ```
 
-1. 최신 정본 누락·open PR 누락·과거 정보 혼입
-2. 핵심 시스템·핵심 콘텐츠·플레이어 경험 누락
-3. Godot 구현 설명의 가상 경로·불명확한 책임·데이터 owner 누락
-4. 시스템↔콘텐츠↔UI↔asset/audio↔code/data/test 추적 누락
-5. DOCUMENTED/IMPLEMENTED/TEST/RUNTIME/UX/RELEASE 상태 과장
-6. PDF와 AI 문서 ID·source SHA drift
-7. Notion 신규 출력, 불필요한 DOCX/ZIP/부록 생성, 자동 이미지 생성
-8. PDF 실제 렌더·가독성·시각자료 목적 오류
+1. 최신 Base·프로젝트 정본 누락, observed/adopted/execution revision 혼동, open PR 누락·과거 정보 혼입
+2. 프로젝트 전체 system coverage와 다음 Slice depth 혼동, 핵심 시스템·핵심 콘텐츠·플레이어 경험 누락
+3. 1차 Blueprint 전 이미지 제작, 1차·2차 Blueprint의 별도 정본화, 실제 consumer·state family 누락
+4. current Slice를 넘어선 전체 asset waterfall, VFX source 준비와 Godot engine-native 구현 혼동
+5. Godot 구현 설명의 가상 경로·불명확한 책임·데이터 owner 누락
+6. 시스템↔콘텐츠↔UI↔asset/audio↔code/data/test 추적 누락
+7. DOCUMENTED/IMPLEMENTED/TEST/RUNTIME/UX/RELEASE 상태 과장
+8. PDF와 AI 문서 ID·source SHA drift
+9. Notion 신규 출력, 불필요한 DOCX/ZIP/부록 생성, 자동 이미지 생성
+10. PDF 실제 렌더·가독성·시각자료 목적 오류
 
 새 MUST_FIX, 회귀, 정본 drift가 나오면 안전한 범위에서 즉시 교정하고 다시 검증해.
 
@@ -488,7 +552,7 @@ CREATIVE → STRUCTURAL → RULE → CONTINUITY → ADVERSARIAL → POLISH
 
 최종 사용자 응답에는 **사용자용 PDF만 다운로드 링크**로 제공해.
 
-이 제공은 `BLUEPRINT_REVIEW_PUBLICATION`이며 구현 승인이 아니다. 응답에 `AWAITING_USER_FINAL_REVIEW_APPROVAL` 상태를 명시하고, 사용자가 현재 PDF와 AI Markdown exact revision을 검토한 뒤 승인·수정 요청·보류 중 하나를 명시하도록 요청해. 명시적 승인 전에는 다음 구현을 시작하거나 기존 포괄 승인에서 구현 authority를 추론하지 마.
+이 제공은 `BLUEPRINT_REVIEW_PUBLICATION`이자 `BLUEPRINT_PASS_2_FINAL`이며 구현 승인이 아니다. 응답에 `AWAITING_USER_FINAL_REVIEW_APPROVAL` 상태를 명시하고, 사용자가 현재 PDF와 AI Markdown exact revision을 검토한 뒤 승인·수정 요청·보류 중 하나를 명시하도록 요청해. 명시적 승인 전에는 다음 구현을 시작하거나 기존 포괄 승인에서 구현 authority를 추론하지 마.
 
 AI용 Markdown은 다운로드 링크를 제공하지 말고 다음만 보고해.
 
@@ -507,12 +571,16 @@ DOCX, ZIP, 별도 appendix, 개별 이미지, AI Markdown 다운로드 링크, N
 → 사용자용 PDF에서 개선된 기능
 → AI용 명세에서 개선된 기능
 → 핵심 시스템·핵심 콘텐츠 정리 결과
+→ 1차 구조 Blueprint에서 확정한 Flow·화면·consumer
+→ 이미지·VFX source·준비물 제작 결과
+→ 2차 최종 Blueprint에서 확정한 구현 계약
 → Godot 구현 방식이 명확해진 부분
 → 실제 사용 예
 → 기대효과
 → 아직 개선되지 않은 범위
 → 사용자 결정 필요 항목
 → 다음 단일 마일스톤
+→ Base observed/adopted/execution SHA와 drift
 → AI 명세 path/branch/SHA/PR/validation
 → 사용자용 PDF 다운로드 링크
 ```
@@ -522,10 +590,19 @@ DOCX, ZIP, 별도 appendix, 개별 이미지, AI Markdown 다운로드 링크, N
 다음을 모두 만족할 때까지 연속 진행해.
 
 - 프로젝트 산출물 정확히 2개
+- Base 최신 completed main fresh-read, project-adopted Base drift 비교, execution SHA 선택 기록 누락 0
+- 과거 SHA 영구 잠금 0, bounded 작업 중 floating latest 0
+- implementation handoff·pre-merge·post-merge·closeout boundary fresh-read 누락 0
 - `BLUEPRINT_PRE_IMPLEMENTATION_REVIEW_GATE` lifecycle 순서 누락 0
+- `PROJECT_WIDE_SYSTEM_COVERAGE_SLICE_DEPTH` 누락 0
+- `BLUEPRINT_PASS_1_STRUCTURAL_DRAFT → REQUIRED_IMAGE_AND_MATERIAL_PREPARATION → BLUEPRINT_PASS_2_FINAL` 의미·순서 누락 0
+- 1차·2차 Blueprint를 별도 세 번째 artifact 또는 parallel canon으로 만든 사례 0
+- 1차 Blueprint의 Flow·Screen Inventory·대표 wireframe·actual/planned consumer·state family 누락 0
 - required image/material 준비 상태·consumer·approval gap 누락 0
+- 현재 Slice를 넘어 모든 미래 project asset을 일괄 제작한 사례 0
+- VFX brief/source 준비와 Godot engine-native VFX 구현 경계 혼합 0
 - creative/structural/rule/continuity/adversarial/polish pass 누락 0
-- exact revision의 명시적 사용자 최종 승인 전 신규 구현 execution 0
+- exact `BLUEPRINT_PASS_2_FINAL` revision의 명시적 사용자 최종 승인 전 신규 구현 execution 0
 - draft·내부 review·생성 이미지·자동 test·assistant inference를 최종 승인으로 대체한 사례 0
 - 기존 구현·runtime evidence의 소급 무효화·하향 재분류 0
 - `HUMAN_GAME_BLUEPRINT_GDD_LAYERED_PROFILE`이 두 산출물 안에만 있고 별도 Blueprint artifact 0

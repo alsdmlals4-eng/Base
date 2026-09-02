@@ -10,6 +10,40 @@
 
 이 profile은 기존 `DOMAIN_SPLIT_CANON` 위에 선택적으로 적용하는 bounded publication profile이다. `GLOBAL_NOTION_DEPRECATION_FORBIDDEN`: 이 문서를 근거로 모든 프로젝트에서 Notion을 폐기하거나 기존 사람용 정본을 자동 삭제하지 않는다.
 
+### 0.1 Base revision fresh-read와 bounded execution
+
+`LATEST_BASE_DISCOVERY_REQUIRED`
+
+`PIN_IS_EVIDENCE_NOT_FRESHNESS_BYPASS`
+
+`PROJECT_ADOPTED_BASE_CONTRACT_PRESERVED`
+
+`BASE_DRIFT_CLASSIFICATION_REQUIRED`
+
+`BASE_EXECUTION_SHA_PINNED_PER_BOUNDED_WORK`
+
+`NO_PERMANENT_STALE_PIN`
+
+`NO_FLOATING_EXECUTION`
+
+`BOUNDARY_FRESH_READ_REQUIRED`
+
+이 profile의 L1+ 작업은 과거에 저장된 Base SHA만 읽고 시작하지 않으며, 작업 도중 이동하는 Base `main`을 매 단계 자동 추종하지도 않는다. 시작 시 최신 completed Base `main`을 fresh-read하고 프로젝트가 채택한 Base 계약·project adapter·프로젝트 정본·실제 구현과 비교해 drift를 분류한 뒤 이번 bounded 작업 또는 플레이 의미 Slice가 실제로 사용할 execution revision을 선택한다.
+
+```yaml
+base_observed_head_sha:
+base_adopted_contract_sha:
+base_execution_sha:
+base_drift_classification: NO_RELEVANT_DRIFT | COMPATIBLE_ADOPTION | MIGRATION_REQUIRED | PROJECT_OVERRIDE | BLOCKED_UNVERIFIED
+```
+
+- `base_observed_head_sha`: 작업 시작 시 관찰한 최신 completed Base `main`.
+- `base_adopted_contract_sha`: 대상 프로젝트가 현재 명시적으로 채택한 Base 계약 revision.
+- `base_execution_sha`: drift 분류와 reconcile 뒤 이번 bounded 작업에 실제 적용하는 revision.
+- 최신 Base가 더 새롭다는 이유만으로 프로젝트 코어·승인 Decision·실제 구현·채택 계약을 조용히 교체하지 않는다.
+- `base_execution_sha`는 한 bounded 작업/Slice 동안 고정한다. 중간에 Base가 바뀌면 관련성·호환성·재검증 범위를 먼저 분류한다.
+- 구현 인계, pre-merge, post-merge, closeout에서는 Base 최신 상태를 다시 읽고 drift를 재분류한다. 무관한 변경이면 기존 execution pin을 유지하고, 관련 변경이면 reconcile 후 영향받은 계약·test·consumer를 재검증한다.
+
 ## 1. 산출물 계약
 
 `EXACTLY_TWO_DELIVERABLES`
@@ -60,6 +94,8 @@ PDF의 목차·요약·cross-reference와 AI Markdown의 registry·상세 sectio
 - `REUSE_OR_ADAPT_EXISTING_BLUEPRINT_BEFORE_NEW_REPRESENTATION`: current authority에 유효한 Blueprint·flow·system representation이 있으면 먼저 재사용하고, 현재 profile과 touched scope에 필요한 부분만 adapt한다.
 - `NO_MASS_BLUEPRINT_BACKFILL`: 이 profile을 선택해도 untouched project/system을 일괄 변환하지 않는다. 현재 GDD 범위의 material flow/system만 두 산출물 안에 필요한 최소 깊이로 구성한다.
 
+`PROJECT_WIDE_SYSTEM_COVERAGE_SLICE_DEPTH`: 전체 프로젝트에는 material system의 지도·책임·경계·의존성·향후 검증 위치를 빠짐없이 연결하되, 구현 가능한 세부 깊이는 현재 다음 `PLAY_MEANINGFUL_WORK_SLICE`에 집중한다. 모든 후반 콘텐츠·수치·화면·자산을 한 번에 확정하는 대형 waterfall로 해석하지 않는다.
+
 #### 1.1.1 Blueprint wireframe 결정 surface
 
 `BLUEPRINT_WIREFRAME_DECISION_SURFACE`
@@ -90,7 +126,21 @@ Blueprint wireframe는 세 번째 설계 파일·이미지 묶음·별도 보드
 
 `BLUEPRINT_PRE_IMPLEMENTATION_REVIEW_GATE`
 
+`BLUEPRINT_PASS_1_STRUCTURAL_DRAFT`
+
+`STRUCTURAL_BLUEPRINT_DRAFT_NOT_THIRD_ARTIFACT`
+
+`BLUEPRINT_PASS_1_ACTUAL_CONSUMER_CONTRACT`
+
 `REQUIRED_IMAGE_AND_MATERIAL_PREPARATION`
+
+`REQUIRED_MATERIALS_NOT_ALL_PROJECT_ASSETS`
+
+`BLUEPRINT_PASS_2_FINAL`
+
+`VFX_BRIEF_AND_SOURCE_BEFORE_FINAL_BLUEPRINT`
+
+`ENGINE_NATIVE_VFX_IN_GODOT_PRODUCT_BUILD`
 
 `USER_FINAL_REVIEW_APPROVAL_REQUIRED`
 
@@ -100,17 +150,20 @@ Blueprint wireframe는 세 번째 설계 파일·이미지 묶음·별도 보드
 
 ```text
 PLAN
+→ BLUEPRINT_PASS_1_STRUCTURAL_DRAFT
 → REQUIRED_IMAGE_AND_MATERIAL_PREPARATION
 → BLUEPRINT_REVIEW_PUBLICATION
 → USER_FINAL_REVIEW_APPROVAL
 → IMPLEMENTATION_AUTHORIZED
 ```
 
-1. **PLAN** — Game Design Loop의 `FRAME → RESEARCH → DESIGN → SPECIFY`로 player promise, 현재 근거, 규칙·flow·상태, 콘텐츠·UX, acceptance, non-goal과 미결정을 구현 전 명세한다.
-2. **REQUIRED_IMAGE_AND_MATERIAL_PREPARATION** — Blueprint 판단에 필요한 기존 승인 image/build capture/reference/data/material과 누락 상태를 실제 consumer별로 준비한다. 새 image deliverable은 `IMAGE_CONVERSATION_APPROVAL_GATE.md`와 `IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md`를 통과해야 하며 이 Gate 자체가 생성 authority가 아니다. `STRUCTURED_INFORMATION_ARTIFACTS_REMAIN_TEXT_NATIVE`: Mermaid / Flow / table은 정확한 구조 정보를 위한 text-native artifact로 유지한다.
-3. **BLUEPRINT_REVIEW_PUBLICATION** — Section 1.1의 layer를 정확히 두 산출물 안에 합성하고 `CREATIVE → STRUCTURAL → RULE → CONTINUITY → ADVERSARIAL → POLISH` pass를 실행한 뒤, 사용자가 검토할 PDF와 exact AI Markdown revision을 발행한다.
-4. **USER_FINAL_REVIEW_APPROVAL** — `USER_FINAL_APPROVAL_DECISION_ID`로 `DEC-` ID를 부여하고, AI Markdown의 Confirmed Decisions에 사용자가 검토한 artifact의 branch/SHA, scope, known risk·N/A·미결정을 기록한다. 프로젝트에 별도 repository Decision owner가 있으면 같은 ID로 동기화하되 세 번째 artifact를 만들지 않는다. `DRAFT | INTERNAL_REVIEW | GENERATED_IMAGE | AUTOMATED_TEST | ASSISTANT_INFERENCE`는 `USER_FINAL_REVIEW_APPROVAL`을 대체하지 않는다.
-5. **IMPLEMENTATION_AUTHORIZED** — 위 exact revision에 대한 명시적 사용자 최종 승인이 기록된 뒤에만 새 구현 실행·Codex implementation package를 시작한다. `TASK_BREAKDOWN_READY_IMPLEMENTATION_EXECUTION_BLOCKED`: 구현 task breakdown, dependency, acceptance 순서는 승인 전에 준비할 수 있지만 실행 상태는 승인 전까지 blocked다.
+1. **PLAN** — Game Design Loop의 `FRAME → RESEARCH → DESIGN → SPECIFY`로 player promise, 현재 근거, 전체 system coverage, 다음 Slice의 규칙·flow·상태, 콘텐츠·UX, acceptance, non-goal과 미결정을 구현 전 명세한다.
+2. **BLUEPRINT_PASS_1_STRUCTURAL_DRAFT** — 이미지 제작보다 먼저 같은 두 산출물의 working revision에 전체 Game Flow, system 관계, state/data 처리 흐름, Screen Inventory, 최소 대표 low-fidelity wireframe, entry/exit/cancel/re-entry, target viewport/input, player question, planned/actual consumer와 필요한 상태군을 기록한다. `STRUCTURAL_BLUEPRINT_DRAFT_NOT_THIRD_ARTIFACT`: 이 1차 Blueprint는 별도 세 번째 파일·정본·보드가 아니라 최종 Blueprint로 승격될 동일 ID·동일 owner의 구조 초안이다.
+3. **REQUIRED_IMAGE_AND_MATERIAL_PREPARATION** — 1차 Blueprint의 `BLUEPRINT_PASS_1_ACTUAL_CONSUMER_CONTRACT`를 입력으로 기존 승인 image/build capture/reference/data/audio/material을 재사용하고, 현재 Slice의 P0/P1과 반복 일관성에 필요한 일부 P2 gap만 준비한다. `REQUIRED_MATERIALS_NOT_ALL_PROJECT_ASSETS`: 모든 미래 화면·캐릭터·콘텐츠·장식 자산을 일괄 완성하지 않는다. 새 image deliverable은 `IMAGE_CONVERSATION_APPROVAL_GATE.md`와 `IMAGE_MODEL_ONLY_VISUAL_CREATION_POLICY.md`를 통과해야 하며 이 Gate 자체가 무제한 생성 authority가 아니다. `STRUCTURED_INFORMATION_ARTIFACTS_REMAIN_TEXT_NATIVE`: Mermaid / Flow / table은 정확한 구조 정보를 위한 text-native artifact로 유지한다.
+4. **VFX preparation boundary** — `VFX_BRIEF_AND_SOURCE_BEFORE_FINAL_BLUEPRINT`로 VFX의 player-feedback 목적, trigger, 시작/peak/종료 timing, layer, 화면 점유, storyboard/frame intent, 필요한 texture/mask/sprite source, reduced-motion 동등 경로, 성능 budget과 fallback을 확정한다. `ENGINE_NATIVE_VFX_IN_GODOT_PRODUCT_BUILD`: Particle, Shader, `AnimationPlayer`, Tween, Signal/event wiring, 빠른 입력·중단·재진입, 실제 성능 측정과 runtime tuning은 최종 승인 뒤 Godot 제품 구현이 소유한다.
+5. **BLUEPRINT_REVIEW_PUBLICATION (`BLUEPRINT_PASS_2_FINAL`)** — 검수·재사용·candidate review 결과를 같은 ID와 두 산출물에 통합하고 Section 1.1의 layer를 합성한다. `CREATIVE → STRUCTURAL → RULE → CONTINUITY → ADVERSARIAL → POLISH` pass 뒤 사용자가 검토할 PDF와 exact AI Markdown final revision을 발행한다.
+6. **USER_FINAL_REVIEW_APPROVAL** — `USER_FINAL_APPROVAL_DECISION_ID`로 `DEC-` ID를 부여하고, AI Markdown의 Confirmed Decisions에 사용자가 검토한 artifact의 branch/SHA, scope, known risk·N/A·미결정을 기록한다. 프로젝트에 별도 repository Decision owner가 있으면 같은 ID로 동기화하되 세 번째 artifact를 만들지 않는다. `DRAFT | INTERNAL_REVIEW | GENERATED_IMAGE | AUTOMATED_TEST | ASSISTANT_INFERENCE`는 `USER_FINAL_REVIEW_APPROVAL`을 대체하지 않는다.
+7. **IMPLEMENTATION_AUTHORIZED** — 위 `BLUEPRINT_PASS_2_FINAL` exact revision에 대한 명시적 사용자 최종 승인이 기록된 뒤에만 새 구현 실행·Codex implementation package를 시작한다. `TASK_BREAKDOWN_READY_IMPLEMENTATION_EXECUTION_BLOCKED`: 구현 task breakdown, dependency, acceptance 순서는 승인 전에 준비할 수 있지만 실행 상태는 승인 전까지 blocked다.
 
 `PROSPECTIVE_ONLY_EXISTING_IMPLEMENTATION_EVIDENCE_PRESERVED`: 이 Gate는 앞으로 시작하는 구현에만 적용한다. 이미 merge된 code/data/scene/test와 기존 runtime·UX evidence의 역사적 상태를 무효화하거나 하향 재분류하지 않으며, 이 profile 채택을 이유로 mass backfill하지 않는다.
 
@@ -288,26 +341,32 @@ Master GDD를 새로 만들거나 대규모 갱신할 때는 현재 장르·플�
 - 기존 승인 이미지와 실제 build capture를 우선 사용한다.
 - 승인 visual이 없으면 `현재 승인 Visual 없음`과 필요한 consumer·상태·규격을 기록한다.
 - flow/state/sequence/system 관계/data처럼 의미가 정확해야 하는 문서 도식은 `Mermaid / Flow / table`의 text-native source로 작성하고 두 산출물 안에 렌더링한다.
-- 새로운 concept/runtime/store image나 별도 image deliverable의 생성·편집은 별도의 사용자 명시적 요청과 현행 `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`를 따라야 하며 자동 생성하거나 이 profile의 세 번째 산출물로 추가하지 않는다.
+- 새로운 concept/runtime/store image나 별도 image deliverable의 생성·편집은 별도의 사용자 명시적 요청 또는 현행 승인 작업 안에서 `docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md`가 허용한 bounded candidate 경로를 따라야 한다. 무소비처·무검수 자동 생성을 하거나 이 profile의 세 번째 산출물로 추가하지 않는다.
 - 이미지 존재를 runtime consumer 연결 또는 UX 검증 완료로 간주하지 않는다.
 
 ## 8. 생성·검증 순서
 
 ```text
-fresh-read current authority
+latest completed Base fresh-read
+→ project-adopted Base + project canon comparison
+→ Base drift classification
+→ base execution SHA selection and bounded pin
 → conflict/gap reconciliation
 → benchmark and field research
-→ shared ID registry
-→ AI production spec update
+→ project-wide system coverage + next-Slice depth
+→ BLUEPRINT_PASS_1_STRUCTURAL_DRAFT
+→ required image/material/VFX-source preparation and candidate review
+→ shared ID registry + AI production spec update
 → implementation/runtime traceability readback
-→ human PDF composition
+→ BLUEPRINT_REVIEW_PUBLICATION (`BLUEPRINT_PASS_2_FINAL`)
 → same branch/SHA check
 → PDF render and page inspection
 → focused regression + repository checks
-→ final delivery
+→ USER_FINAL_REVIEW_APPROVAL
+→ implementation handoff boundary fresh-read
 ```
 
-위 `final delivery`는 `BLUEPRINT_REVIEW_PUBLICATION`으로서 사용자의 최종 검토 입력을 제공한다. 그 delivery, 내부 review, render inspection 또는 test 통과만으로 `IMPLEMENTATION_AUTHORIZED`가 되지 않으며 Section 1.2의 별도 `USER_FINAL_REVIEW_APPROVAL` decision이 필요하다.
+위 `BLUEPRINT_REVIEW_PUBLICATION`은 사용자의 최종 검토 입력인 2차 최종 Blueprint를 제공한다. 그 delivery, 내부 review, render inspection 또는 test 통과만으로 `IMPLEMENTATION_AUTHORIZED`가 되지 않으며 Section 1.2의 별도 `USER_FINAL_REVIEW_APPROVAL` decision이 필요하다.
 
 PDF 검증에는 파일 열기, 페이지 수, 목차·페이지 번호, 한글 font, 표·도식 잘림, 이미지 해상도, caption, 내부 link, 빈 페이지, 기준 SHA, 실제 page render inspection을 포함한다.
 
@@ -332,8 +391,16 @@ AI 명세는 별도 다운로드 링크를 제공하지 않고 다음 정보만 
 ## 10. 완료 조건
 
 - 정확히 두 프로젝트 산출물만 생성됨
-- 사전 구현 lifecycle의 네 stable Gate token과 순서 누락 0
-- exact Blueprint revision에 대한 명시적 사용자 최종 승인 전 신규 구현 실행 0
+- `base_observed_head_sha`, `base_adopted_contract_sha`, `base_execution_sha`와 drift classification 누락 0
+- 영구 stale pin 또는 bounded 작업 중 floating Base latest 사용 0
+- 구현 인계·pre-merge·post-merge·closeout 경계 fresh-read 누락 0
+- `PROJECT_WIDE_SYSTEM_COVERAGE_SLICE_DEPTH` 누락 0
+- `BLUEPRINT_PASS_1_STRUCTURAL_DRAFT → REQUIRED_IMAGE_AND_MATERIAL_PREPARATION → BLUEPRINT_PASS_2_FINAL` 의미·순서 누락 0
+- Blueprint 두 pass를 별도 세 번째 artifact·parallel canon으로 만든 사례 0
+- 1차 Blueprint의 actual/planned consumer·state family·대표 wireframe 누락 0
+- current Slice를 넘어 모든 미래 project asset을 일괄 제작한 사례 0
+- VFX brief/source 준비와 Godot engine-native VFX 구현 경계 혼합 0
+- exact final Blueprint revision에 대한 명시적 사용자 최종 승인 전 신규 구현 실행 0
 - draft·내부 review·생성 이미지·자동 test·assistant inference를 최종 승인으로 대체한 사례 0
 - 기존 구현·runtime evidence의 소급 무효화·하향 재분류 0
 - 최신 정본 누락·미표시 충돌 0

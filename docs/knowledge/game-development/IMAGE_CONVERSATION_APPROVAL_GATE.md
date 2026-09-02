@@ -38,6 +38,10 @@ STOP_REQUIRED_AFTER_GENERATION
 NO_AUTOMATIC_IMAGE_CHAIN
 PRIMARY_USE_GATE_REQUIRED_AFTER_USER_LOCK
 REUSABLE_VISUAL_HARVEST_ONLY_AFTER_PRIMARY_USE_SUCCESS
+BLUEPRINT_PASS_1_STRUCTURAL_DRAFT
+BLUEPRINT_PASS_1_ACTUAL_CONSUMER_CONTRACT
+BLUEPRINT_PASS_2_FINAL
+REQUIRED_MATERIALS_NOT_ALL_PROJECT_ASSETS
 HOST_PLATFORM_PRECEDENCE
 HOST_POLICY_OVERRIDE
 RUNTIME_ENFORCEMENT_NOT_GUARANTEED
@@ -264,16 +268,20 @@ USER_APPROVED / CANON_REGISTERED
 
 ## 10. Blueprint relationship
 
-Blueprint 검수에 필요한 이미지·시각자료 candidate는 최종 Blueprint 승인 전에 만들 수 있다.
+Blueprint 검수에 필요한 이미지·시각자료 candidate는 1차 구조 Blueprint 뒤, 최종 Blueprint 승인 전에 만들 수 있다.
 
 ```text
 PLAN
+→ BLUEPRINT_PASS_1_STRUCTURAL_DRAFT
 → REQUIRED_IMAGE_AND_MATERIAL_PREPARATION
-→ GENERATED_CANDIDATE review
 → BLUEPRINT_REVIEW_PUBLICATION
 → USER_FINAL_REVIEW_APPROVAL
 → IMPLEMENTATION_AUTHORIZED
 ```
+
+- `BLUEPRINT_PASS_1_ACTUAL_CONSUMER_CONTRACT`: 1차 Blueprint가 concrete screen/scene/slot, target ratio·size, state family, input/flow, continuity/no-drift 조건을 먼저 제공해야 한다.
+- `REQUIRED_MATERIALS_NOT_ALL_PROJECT_ASSETS`: candidate preparation은 현재 implementation package에 필요한 consumer-bounded set이며 모든 미래 asset의 일괄 제작이 아니다.
+- `BLUEPRINT_REVIEW_PUBLICATION`은 candidate review 결과를 통합한 `BLUEPRINT_PASS_2_FINAL`이다. 두 pass 모두 기존 PDF+AI Markdown의 revision이며 추가 Blueprint artifact가 아니다.
 
 candidate 선제작은 신규 제품 구현 승인과 다르다. Blueprint 최종 승인을 요구하는 implementation package는 승인 전 runtime 구현으로 넘어가지 않는다.
 

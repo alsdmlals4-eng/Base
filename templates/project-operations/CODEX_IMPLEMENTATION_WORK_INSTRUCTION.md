@@ -13,6 +13,14 @@ repository:
 base_branch:
 target_branch_or_pr:
 exact_source_sha:
+base_observed_head_sha:
+base_adopted_contract_sha:
+base_execution_sha:
+base_drift_classification: NO_RELEVANT_DRIFT | COMPATIBLE_ADOPTION | MIGRATION_REQUIRED | PROJECT_OVERRIDE | BLOCKED_UNVERIFIED
+blueprint_pass_1_revision:
+blueprint_pass_2_final_revision:
+user_final_approval_decision_id:
+implementation_authority_revision:
 work_slice_mode: PLAY_MEANINGFUL_WORK_SLICE
 work_slice_id:
 work_instruction_status: GPT_REVIEWED_GODOT_IMPLEMENTATION_READY
@@ -28,6 +36,26 @@ codex_image_generation: FORBIDDEN
 visual_input_contract: APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST
 missing_visual_action: GPT_VISUAL_REQUEST
 ```
+
+### Base revision contract
+
+```text
+LATEST_BASE_DISCOVERY_REQUIRED
+PIN_IS_EVIDENCE_NOT_FRESHNESS_BYPASS
+PROJECT_ADOPTED_BASE_CONTRACT_PRESERVED
+BASE_DRIFT_CLASSIFICATION_REQUIRED
+BASE_EXECUTION_SHA_PINNED_PER_BOUNDED_WORK
+NO_PERMANENT_STALE_PIN
+NO_FLOATING_EXECUTION
+BOUNDARY_FRESH_READ_REQUIRED
+```
+
+- `base_observed_head_sha`는 이 구현 인계 경계에서 다시 확인한 최신 completed Base `main`이다.
+- `base_adopted_contract_sha`는 프로젝트가 현재 채택한 Base 계약이며 최신 Base가 더 새롭다는 이유만으로 자동 교체하지 않는다.
+- `base_execution_sha`는 drift 분류 뒤 이번 bounded 구현 Slice에 적용할 revision이다. 구현 중 이동하는 Base `main`을 매 단계 추종하지 않는다.
+- 구현 인계, pre-merge, post-merge, closeout에서 최신 Base와 프로젝트 상태를 다시 읽고 `base_drift_classification`을 갱신한다.
+- 관련 Base 변경이면 reconcile·migration·affected test/consumer 재검증 뒤 execution pin을 바꾼다. 무관한 변경이면 기존 pin을 유지하고 영향 없음 근거를 남긴다.
+- `implementation_authority_revision`은 사용자 승인된 `BLUEPRINT_PASS_2_FINAL exact revision`과 동일한 package scope를 가리켜야 한다. 1차 구조 Blueprint, candidate 이미지, 내부 review 또는 자동 test만으로 구현 authority를 만들지 않는다.
 
 ### 사용 조건
 
@@ -66,6 +94,21 @@ expected_feedback_or_reward:
 
 현재 지시문은 `PLAY_MEANINGFUL_WORK_SLICE` 하나를 구현·검증하기 위한 계약이다. 프로젝트 전체 장기 기획이나 아직 소비되지 않을 미래 범위를 끌어오지 않는다.
 
+### Blueprint authority
+
+```yaml
+blueprint_authority:
+  pass_1_structural_revision:
+  pass_2_final_revision:
+  final_approval_decision_id:
+  implementation_authority_revision:
+```
+
+- pass 1은 Flow·Screen Inventory·대표 wireframe·state/data/system flow·actual/planned consumer를 정한 구조 초안이다.
+- pass 2는 필요한 image/material/VFX-source candidate 검수 결과를 통합한 최종 Blueprint다.
+- Codex는 `BLUEPRINT_PASS_2_FINAL exact revision`과 동일 scope의 사용자 최종 승인만 구현 authority로 사용한다.
+- 두 pass는 기존 사용자용 PDF와 AI Production Spec의 revision이며 별도 세 번째 Blueprint 정본이 아니다.
+
 ### 승인된 구현 범위
 
 ```yaml
@@ -87,11 +130,13 @@ changeable_godot_areas: []
 required_data_and_inputs: []
 ui_ux_flow: []
 asset_audio_dependencies: []
+vfx_implementation_contract: []
 ```
 
 - `required_data_and_inputs`: 구현에 필요한 데이터·상태·입력/출력의 **의미**를 적는다. Node/함수 설계를 강제하지 않는다.
 - `ui_ux_flow`: 플레이어가 보고 조작하는 흐름과 필요한 정보·피드백을 적는다.
-- `asset_audio_dependencies`: 실제 게임 소비처가 있는 승인 이미지·UI·VFX·사운드 요구를 적는다.
+- `asset_audio_dependencies`: 실제 게임 소비처가 있는 승인 이미지·UI·VFX-source·사운드 요구를 적는다.
+- `vfx_implementation_contract`: 최종 Blueprint의 VFX 목적·trigger·timing·layer·storyboard·source texture/mask·reduced-motion·budget·fallback을 받아 Particle/Shader/AnimationPlayer/Tween/Signal wiring·중단·재진입·성능과 runtime tuning으로 구현한다.
 
 ### Acceptance Criteria
 
@@ -136,11 +181,17 @@ repository_sources:
   repository:
   base_branch:
   exact_source_sha:
+  base_observed_head_sha:
+  base_adopted_contract_sha:
+  base_execution_sha:
   project_agents:
   start_here:
   active_context:
   confirmed_decisions: []
   ai_production_spec:
+  human_blueprint_pdf:
+  blueprint_pass_2_final_revision:
+  user_final_approval_decision_id:
   current_codex_handoff:
   asset_manifest:
   godot_product_paths: []
@@ -164,6 +215,10 @@ optional_legacy_migration_context:
 GPT-reviewed Godot Work Instruction 수신
 → work_slice_id / approved_scope / explicit_non_scope 확인
 → project/repository identity + exact_source_sha 확인
+→ latest completed Base main fresh-read
+→ adopted Base contract + latest Base drift classification
+→ base_execution_sha bounded pin 확인
+→ BLUEPRINT_PASS_2_FINAL exact revision + user approval 확인
 → latest user decision 확인
 → repository current project canon 재수화
 → Decision / AI production spec / current handoff 대조
@@ -177,7 +232,7 @@ GPT-reviewed Godot Work Instruction 수신
 → READY_FOR_GPT_REVIEW
 ```
 
-지시문과 current truth가 충돌하면 억지 구현하지 않고 drift를 분류한다.
+지시문과 current truth가 충돌하면 억지 구현하지 않고 drift를 분류한다. 관련 최신 Base 변경이 있으면 stale pin을 영구 고집하거나 floating latest로 즉시 전환하지 않고, 영향을 분류해 현재 package의 안전한 reconcile·revalidation 경계를 결정한다.
 
 ## 4. Codex가 자율 결정할 수 있는 기술 구현
 
@@ -206,6 +261,8 @@ GPT가 예상 구현 경로를 적었더라도 더 안전하고 단순한 Godot 
 - Visual direction / Art Bible
 - 저장 호환성을 깨는 제품 결정
 - 추가 유료 서비스/권한 확대
+- 프로젝트가 채택한 Base 계약을 최신이라는 이유만으로 자동 교체
+- 사용자 승인된 `BLUEPRINT_PASS_2_FINAL`의 의미·scope 변경
 
 필요하면 `CHANGE_PROPOSAL`로 GPT에 반환한다.
 
@@ -244,6 +301,8 @@ Library·PDF·Notion preview에 보인다는 사실만으로 구현 입력이 �
 
 - current main과 target branch/head를 시작 시 재확인한다.
 - `exact_source_sha`가 stale이면 구현을 계속하지 않고 reconcile한다.
+- `base_execution_sha`는 bounded Slice 동안 고정하고, 관련 최신 Base change는 `BASE_DRIFT_CLASSIFICATION_REQUIRED` 뒤에만 채택한다.
+- 구현 인계·pre-merge·post-merge·closeout에서 `BOUNDARY_FRESH_READ_REQUIRED`를 수행한다.
 - 다른 open/draft/ready PR은 명시적 authorization 없이는 read-only.
 - force push / destructive reset / unrelated work absorption 금지.
 - 사용자 기존 변경을 보존한다.
@@ -258,6 +317,13 @@ codex_result:
   work_slice_id:
   baseline_main:
   baseline_exact_source_sha:
+  base_observed_head_sha:
+  base_adopted_contract_sha:
+  base_execution_sha:
+  base_drift_classification:
+  blueprint_pass_2_final_revision:
+  user_final_approval_decision_id:
+  implementation_authority_revision:
   final_head:
   implementation_direction_chosen:
   changed_godot_files_and_reasons: []
@@ -282,19 +348,25 @@ Codex는 구현 결과와 evidence를 반환하며 `FIX | TUNE | REDESIGN`의 �
 
 ```text
 GPT
-현재 PLAY_MEANINGFUL_WORK_SLICE repository 정본 복원
-→ 최소 구현 준비 기획
+latest Base + project current authority fresh-read
+→ adopted Base drift comparison + execution SHA pin
+→ 현재 PLAY_MEANINGFUL_WORK_SLICE repository 정본 복원
+→ 전체 system coverage + 다음 Slice 최소 구현 준비 기획
 → Existing Solution First / 필요한 벤치마킹
-→ 적대적 검수·IRG
+→ 1차 구조 Blueprint: Flow / Screen / state / consumer
+→ 필요한 image/material/VFX-source preparation
+→ 2차 최종 Blueprint + 적대적 검수·IRG
 → approved scope / explicit non-scope / Acceptance 확정
 → repository Decision / AI production spec / asset manifest 등 비코딩 작업 완료
-→ 필요 Gate에서 source-SHA-bound 사람용 상세 PDF 점검
+→ source-SHA-bound 사람용 상세 PDF 점검
+→ exact final Blueprint 사용자 승인
 → PRE_HANDOFF_GPT_STOP
-→ 실제 Godot 제품 구현 필요 판정
+→ implementation handoff boundary fresh-read
 → 프로젝트별 Codex Godot Work Instruction
 
 Codex
-exact repository SHA + project entrypoints + asset manifest 재수화
+latest Base drift + pinned base_execution_sha 대조
+→ exact repository SHA + final Blueprint + project entrypoints + asset manifest 재수화
 → 승인 범위 안에서 Godot 구현 방향·기술 방법 결정
 → 구현·코딩·runtime/play test
 → READY_FOR_GPT_REVIEW
@@ -303,9 +375,11 @@ GPT
 구현 일치 → runtime → 실제 play/UX/Visual/Audio 최종 검수
 → FIX / TUNE / REDESIGN 분류
 → 필요한 영향 범위만 재검증
+→ pre-merge boundary fresh-read
 → APPROVED면 merge gate
-→ 검증된 결과만 post-merge repository 정본에 반영
+→ post-merge boundary fresh-read와 repository 정본 반영
 → 필요 시 merged source SHA로 사람용 상세 PDF 재생성
+→ closeout boundary fresh-read와 남은 작업 재계산
 ```
 
-> 현재 역할 한 줄: **GPT는 현재 플레이 의미 Slice의 비코딩·기획·검수·Base·repository canon·Visual을 담당하고, Codex는 승인된 Slice 범위의 실제 게임 프로젝트 Godot 제품 구현·코딩을 담당한다.** Notion은 고유 자료가 남은 기존 프로젝트의 GPT-owned legacy migration source일 뿐 Codex의 기본 구현 입력이 아니다.
+> 현재 역할 한 줄: **GPT는 현재 플레이 의미 Slice의 비코딩·기획·검수·Base·repository canon·Visual과 두 단계 Blueprint를 담당하고, Codex는 최종 승인된 2차 Blueprint exact revision 범위의 실제 게임 프로젝트 Godot 제품 구현·코딩을 담당한다.** Notion은 고유 자료가 남은 기존 프로젝트의 GPT-owned legacy migration source일 뿐 Codex의 기본 구현 입력이 아니다.
