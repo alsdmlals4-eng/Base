@@ -244,11 +244,17 @@ def _plain(value: str) -> str:
     return value
 
 
-def render_tracking(board: dict, *, expected_head_sha: str | None = None) -> str:
-    """Render shape-validated data without turning receipt text into instructions."""
+def render_tracking(
+    board: dict,
+    *,
+    expected_head_sha: str | None = None,
+    execution_authorized: bool = True,
+) -> str:
+    """Render shape-validated data without turning failed-gate text into actions."""
     completed, total = progress(board, expected_head_sha=expected_head_sha)
     lines = [f"## PM 작업 체크리스트 — {completed} / {total}", "", "이 표는 기록 일관성 검사를 통과한 파생 뷰이며 실제 증거 검수를 대신하지 않습니다.", ""]
     effective_statuses: list[str] = []
+    active = board.get("active_work_item_ref")
     for task in board["work_items"]:
         status = _render_status(task, expected_head_sha)
         effective_statuses.append(status)
@@ -256,15 +262,18 @@ def render_tracking(board: dict, *, expected_head_sha: str | None = None) -> str
         passed = sum(c["status"] == "PASS" for c in checks)
         count = f"{passed} / {len(checks)}" if checks else "NO_APPLICABLE_CHECKLIST"
         mark = "x" if status == "DONE" else " "
-        lines.append(f"- [{mark}] {_plain(task['work_item_id'])} · {status} · {_plain(task['title'])} ({count})")
+        active_marker = " · ACTIVE" if task.get("work_item_id") == active else ""
+        lines.append(f"- [{mark}] {_plain(task['work_item_id'])} · {status}{active_marker} · {_plain(task['title'])} ({count})")
         if status == _STALE_HEAD_STATUS:
             lines.append("  다음: trusted expected HEAD에서 evidence와 repository readback을 재검증")
         elif status in BLOCKED:
             lines.append(f"  차단: {_plain(task['blocker'])}; 재개: {_plain(task['resume_condition'])}")
-        elif status != "DONE":
+        elif execution_authorized and status != "DONE" and task.get("work_item_id") == active:
             lines.append(f"  다음: {_plain(task['next_action'])}")
     remaining = [status for status in effective_statuses if status != "DONE"]
-    if _STALE_HEAD_STATUS in remaining:
+    if not execution_authorized:
+        safe_next = "실행 Gate 오류를 해소한 뒤 receipt를 다시 검증"
+    elif _STALE_HEAD_STATUS in remaining:
         safe_next = "trusted expected HEAD에서 stale evidence와 repository readback 재검증"
     elif remaining and all(status in BLOCKED for status in remaining):
         safe_next = "기록된 차단 해제 조건을 검증한 뒤 receipt 재검사"
