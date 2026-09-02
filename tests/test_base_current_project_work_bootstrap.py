@@ -165,7 +165,9 @@ class BaseCurrentProjectWorkBootstrapTests(unittest.TestCase):
             text = path.read_text(encoding="utf-8")
             with self.subTest(path=path.relative_to(ROOT).as_posix()):
                 self.assertIn("BASE_CURRENT_OPERATIONAL_BOOTSTRAP", text)
+                self.assertIn("PROJECT_WORK_FRESH_BASE_ENTRY", text)
                 self.assertIn("BASE_CURRENT_PROJECT_WORK_BOOTSTRAP.md", text)
+                self.assertNotIn("when current scope requires **Base-only maintenance**", text)
 
     def test_project_can_start_without_adapter_or_project_receipt_file(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
