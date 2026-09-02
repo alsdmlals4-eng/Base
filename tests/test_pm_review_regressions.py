@@ -70,6 +70,29 @@ class ReviewRegressions(unittest.TestCase):
         self.assertIn('approval missing', result.stdout)
         self.assertIn('verified approval recorded', result.stdout)
 
+    def test_failed_closeout_view_never_replays_unapproved_actions(self):
+        value = done_receipt(); board = value['project_work_kanban']
+        board['next_action'] = 'Start unrelated next goal'
+        result = run_cli(value, '--phase', 'closeout', '--render-markdown')
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn('closeout.next_action', result.stdout)
+        self.assertIn('PM VIEW: INFORMATION ONLY; EXECUTION BLOCKED', result.stdout)
+        self.assertNotIn('Start unrelated next goal', result.stdout)
+
+    def test_globally_blocked_benchmark_suppresses_all_execution_actions(self):
+        value = tracked_receipt(); board = value['project_work_kanban']
+        value['benchmark_preflight_receipt'] = {
+            'state': 'BLOCKED_UNVERIFIED',
+            'blocked_sources': ['required source unavailable'],
+        }
+        board['next_action'] = 'Deploy the release now'
+        board['work_items'][0]['next_action'] = 'Deploy the release now'
+        result = run_cli(value, '--render-markdown')
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn('BLOCKED_UNVERIFIED benchmark', result.stdout)
+        self.assertIn('PM VIEW: INFORMATION ONLY; EXECUTION BLOCKED', result.stdout)
+        self.assertNotIn('Deploy the release now', result.stdout)
+
     def test_next_task_is_selected_before_resume_gate(self):
         value = done_receipt(); board = value['project_work_kanban']
         second = copy.deepcopy(tracked_receipt()['project_work_kanban']['work_items'][0])
@@ -85,6 +108,27 @@ class ReviewRegressions(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stdout + result.stderr)
         self.assertIn('VERIFY_REVIEW', result.stdout)
 
+    def test_selected_active_work_item_is_unambiguous_in_rendered_view(self):
+        value = tracked_receipt(); board = value['project_work_kanban']
+        second = copy.deepcopy(board['work_items'][0])
+        second.update(
+            work_item_id='PM-02',
+            title='Review completed implementation',
+            status='VERIFY_REVIEW',
+            next_action='Review PM-02 evidence',
+        )
+        board['work_items'].append(second)
+        board['work_item_refs'].append('PM-02')
+        board['next_action'] = 'Run PM-01 implementation'
+        result = run_cli(value, '--phase', 'start', '--render-markdown')
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        pm01 = next(line for line in result.stdout.splitlines() if 'PM-01 ·' in line)
+        pm02 = next(line for line in result.stdout.splitlines() if 'PM-02 ·' in line)
+        self.assertIn('· ACTIVE ·', pm01)
+        self.assertNotIn('· ACTIVE ·', pm02)
+        self.assertIn('Run behavior tests', result.stdout)
+        self.assertNotIn('Review PM-02 evidence', result.stdout)
+
     def test_noncanonical_whitespace_in_identifiers_is_rejected(self):
         value = tracked_receipt(); board = value['project_work_kanban']
         board['work_items'][0]['work_item_id'] = ' PM-01 '
@@ -92,6 +136,23 @@ class ReviewRegressions(unittest.TestCase):
         board['active_work_item_ref'] = ' PM-01 '
         errors = '\n'.join(check(value))
         self.assertIn('canonical', errors)
+
+    def test_expected_head_is_rejected_outside_closeout_without_stale_relabeling(self):
+        value = done_receipt(); board = value['project_work_kanban']
+        second = copy.deepcopy(tracked_receipt()['project_work_kanban']['work_items'][0])
+        second.update(work_item_id='PM-02', depends_on=['PM-01'])
+        board['work_items'].append(second)
+        board['work_item_refs'].append('PM-02')
+        board.update(active_work_item_ref='PM-02', next_action='Execute approved PM-02')
+        result = run_cli(
+            value,
+            '--phase', 'resume',
+            '--expected-head-sha', 'b' * 40,
+            '--render-markdown',
+        )
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn('expected_head_sha is accepted only for closeout', result.stdout)
+        self.assertNotIn('VERIFY_REVIEW_STALE_HEAD', result.stdout)
 
     def test_closeout_binds_done_evidence_to_trusted_current_head(self):
         value = done_receipt()
