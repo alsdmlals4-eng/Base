@@ -175,6 +175,59 @@ class PromptApprovalExecutionGateTests(unittest.TestCase):
                 found = errors(value)
                 self.assertIn("prompt_approval_gate must be an object", found)
 
+    def test_placeholder_sentinel_and_control_text_are_rejected(self) -> None:
+        cases = {
+            "direction placeholder": (
+                lambda gate: gate["contract"].__setitem__("direction_anchor", "<primary action>"),
+                "contract.direction_anchor is required",
+                True,
+            ),
+            "task sentinel": (
+                lambda gate: gate["contract"].__setitem__("task_and_success", "TODO"),
+                "contract.task_and_success is required",
+                True,
+            ),
+            "constraint placeholder": (
+                lambda gate: gate["contract"].__setitem__(
+                    "constraints_and_protected_scope", ["<hard constraint>"]
+                ),
+                "constraints_and_protected_scope must be a nonempty text list",
+                True,
+            ),
+            "source placeholder": (
+                lambda gate: gate["contract"]["context_and_sources"][0].__setitem__(
+                    "source", "<source locator>"
+                ),
+                "context_and_sources[0].source is required",
+                True,
+            ),
+            "question sentinel": (
+                lambda gate: gate["approval"].__setitem__("confirmation_question", "TBD"),
+                "approval.confirmation_question is required",
+                False,
+            ),
+            "summary sentinel": (
+                lambda gate: gate["approval"].__setitem__("approved_contract_summary", "N/A"),
+                "approval.approved_contract_summary is required",
+                False,
+            ),
+            "control character": (
+                lambda gate: gate["approval"].__setitem__(
+                    "approval_reference", "current-user-message:\u0000fixture"
+                ),
+                "approval.approval_reference is required",
+                False,
+            ),
+        }
+        for name, (mutate, expected, bound_field) in cases.items():
+            with self.subTest(name=name):
+                value = approved_receipt()
+                gate = value["prompt_approval_gate"]
+                mutate(gate)
+                if bound_field:
+                    gate["approval"]["approved_contract_sha256"] = _digest(gate)
+                self.assertIn(expected, errors(value))
+
     def test_l0_legacy_mechanical_receipt_may_omit_gate(self) -> None:
         value = tracked_receipt()
         value["work_level"] = "L0"
