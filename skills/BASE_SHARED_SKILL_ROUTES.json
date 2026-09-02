@@ -133,7 +133,13 @@
         "distribution-in-game-build",
         "reference-to-original",
         "reference-only-asset",
-        "asset-rights-evidence"
+        "asset-rights-evidence",
+        "2d-character-animation",
+        "2d-skeletal-animation",
+        "rig-ready-source",
+        "external-rig-runtime",
+        "rig-to-baked",
+        "spine-godot"
       ],
       "skill_modes": [
         "frame-need",
@@ -146,7 +152,7 @@
         "revalidate"
       ],
       "use_when": [
-        "Godot 기능·도구·에셋·addon·MCP·CLI·framework·Skill·Mode·통합을 새로 만들기 전에 현재 사용 환경, Base·프로젝트 구현, 관련 PR, 공식 Store, GitHub와 상용 후보를 조사하고 REUSE·ABSORB·REFACTOR·ARCHIVE·BUILD_NEW를 판정하거나, 승인된 addon·GUT·Hera 같은 검증 도구의 프로젝트별 채택 상태·소비 경로·권위 경계·제거 절차를 검증해야 한다."
+        "Godot 기능·도구·에셋·addon·MCP·CLI·framework·Skill·Mode·통합을 새로 만들기 전에 현재 사용 환경, Base·프로젝트 구현, 관련 PR, 공식 Store, GitHub와 상용 후보를 조사하고 REUSE·ABSORB·REFACTOR·ARCHIVE·BUILD_NEW를 판정하거나, 승인된 addon·GUT·Hera 같은 검증 도구의 프로젝트별 채택 상태·소비 경로·권위 경계·제거 절차를 검증하거나, 2D 캐릭터의 FRAME·Godot native rig·external rig runtime·rig-to-baked 경로를 실제 consumer와 증거로 비교해야 한다."
       ],
       "do_not_use_when": [
         "외부 자산·도구·실행 계층과 무관한 오탈자·단일 수치 수정이거나 이미 승인·검증된 동일 exact pin을 동일 소비 경로에서 단순 재사용한다."
@@ -185,10 +191,12 @@
       ],
       "references": [
         "skills/evaluating-godot-assets-and-plugins-before-creation/references/source-catalog.md",
+        "skills/evaluating-godot-assets-and-plugins-before-creation/references/2d-character-animation-routing-and-rigging.md",
         "docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md",
         "docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md"
       ],
       "templates": [
+        "templates/planning/2D_CHARACTER_ANIMATION_ROUTE_RECORD.md",
         "templates/project-operations/ASSET_RIGHTS_AND_PROVENANCE_RECORD.md",
         "templates/project-operations/GAME_RELEASE_COMPLIANCE_EVIDENCE_PACK.md",
         "templates/project-operations/HIGODOT_ADOPTION_RECORD.json"
