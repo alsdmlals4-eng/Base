@@ -30,17 +30,16 @@ def _nonempty_list(value: Any) -> bool:
     return isinstance(value, list) and bool(value)
 
 
-def _closeout_render_inputs(
+def _render_inputs(
     board: dict[str, Any],
     *,
     phase: str,
     expected_head_sha: str | None,
 ) -> tuple[dict[str, Any], str | None]:
-    """Make an untrusted/missing closeout HEAD visibly stale without changing the receipt."""
-    if phase != "closeout" or (
-        isinstance(expected_head_sha, str)
-        and _EXACT_SHA.fullmatch(expected_head_sha) is not None
-    ):
+    """Apply trusted-head relabeling only to the final closeout phase."""
+    if phase != "closeout":
+        return board, None
+    if isinstance(expected_head_sha, str) and _EXACT_SHA.fullmatch(expected_head_sha) is not None:
         return board, expected_head_sha
 
     rendered = copy.deepcopy(board)
@@ -179,17 +178,23 @@ def main() -> int:
             else ["project_work_kanban is unavailable"]
         )
         if args.render_markdown and isinstance(board, dict) and not shape_errors:
-            render_board, render_head = _closeout_render_inputs(
+            render_board, render_head = _render_inputs(
                 board,
                 phase=args.phase,
                 expected_head_sha=args.expected_head_sha,
             )
             print("PM VIEW: INFORMATION ONLY; EXECUTION BLOCKED")
-            print(render_tracking(render_board, expected_head_sha=render_head))
+            print(
+                render_tracking(
+                    render_board,
+                    expected_head_sha=render_head,
+                    execution_authorized=False,
+                )
+            )
         return 1
     print(f"WORK CONTRACT RECEIPT: PASS (execution phase={args.phase}; recorded evidence only)")
     if args.render_markdown and isinstance(receipt.get("project_work_kanban"), dict):
-        render_board, render_head = _closeout_render_inputs(
+        render_board, render_head = _render_inputs(
             receipt["project_work_kanban"],
             phase=args.phase,
             expected_head_sha=args.expected_head_sha,
