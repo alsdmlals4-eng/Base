@@ -10,6 +10,9 @@ ROOT = Path(__file__).resolve().parents[1]
 POLICY = ROOT / "docs/GITHUB_WORK_ITEM_LIFECYCLE_POLICY.md"
 START_CHECKLIST = ROOT / "templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md"
 CARD = ROOT / "templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md"
+EVIDENCE_LOOP_PLAN = (
+    ROOT / "docs/superpowers/plans/2026-09-02-evidence-loop-operational-projection.md"
+)
 GOAL_FORM = ROOT / ".github/ISSUE_TEMPLATE/01-goal-playable-slice.yml"
 TASK_FORM = ROOT / ".github/ISSUE_TEMPLATE/02-independent-work-item.yml"
 
@@ -123,6 +126,51 @@ class ProjectWorkKanbanChecklistContractTests(unittest.TestCase):
             "- [x] NOT_APPLICABLE —",
         ):
             self.assertNotIn(forbidden, text)
+
+    def test_evidence_loop_projection_reuses_existing_owners_and_gates(self) -> None:
+        policy = self._read(POLICY)
+        card = self._read(CARD)
+        for token in (
+            "EVIDENCE_WORK_LOOP_PROJECTION",
+            "PROJECT_WORK_ITEM_CHECKLIST.md §11",
+        ):
+            with self.subTest(surface="policy", token=token):
+                self.assertIn(token, policy)
+        for token in (
+            "READ → PICK → BUILD → CHECK → COMMIT",
+            "PROMPT / DESIGN / INBOX / STATUS",
+            "PROMPT_DESIGN_INBOX_STATUS_ARE_ROLE_MAPS_NOT_DEFAULT_FILES",
+            "INBOX_IS_NOT_EXECUTION_AUTHORITY",
+            "HISTORICAL_ISSUE_825_NOT_CURRENT_WORK_AUTHORITY",
+            "CURRENT_WORK_RECORD_IS_CURRENT_GOAL_ISSUE_OR_CARD",
+            "Base Issue #825는 기존 PM execution-gate 구현을 마친 CLOSED 역사 증거",
+            "종료된 Issue를 재사용해 triage·WIP·dependency·evidence readback을 건너뛰지 않는다.",
+            "GUIDES_PROGRESSIVELY_LOADED_BY_SELECTED_WORK",
+            "CHECKPOINT_IS_NOT_COMPLETION",
+            "HUMAN_PLAYTEST_EXPLICIT_USER_GATE",
+            "QUALITY_NOT_ASSUMED_TO_INCREASE_PER_LOOP",
+            "NO_UNBOUNDED_REPEAT_WITHOUT_NEW_EVIDENCE",
+        ):
+            with self.subTest(surface="card", token=token):
+                self.assertIn(token, card)
+
+    def test_evidence_loop_plan_uses_the_rebased_base_and_mutable_head(self) -> None:
+        plan = self._read(EVIDENCE_LOOP_PLAN)
+        rebased_base = "9a620220cae371a41af92adbc2cfa9935860c000"
+        retired_base = "a5a1e7eecc4c58a13c11b98b6c225cb1879e7167"
+
+        self.assertIn(f"Base branch: `{rebased_base}`", plan)
+        self.assertIn(
+            f"--trusted-history-commit {rebased_base}",
+            plan,
+        )
+        self.assertIn(
+            f"--base {rebased_base} --head HEAD",
+            plan,
+        )
+        self.assertNotIn(f"Base branch: `{retired_base}`", plan)
+        self.assertNotIn(f"--trusted-history-commit {retired_base}", plan)
+        self.assertNotIn(f"--base {retired_base}", plan)
 
     def test_start_checklist_materializes_remaining_work_into_existing_or_new_cards(self) -> None:
         text = self._read(START_CHECKLIST)

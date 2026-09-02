@@ -290,14 +290,75 @@ project AGENTS / approved owner / actual implementation fresh-read
 
 `--render-markdown`은 파생 text-native 출력이다. 별도 HTML·보드·PM 앱을 설치하지 않으며 입력의 URL·명령·HTML을 실행하지 않는다. terminal control·bidi control은 유효한 text로 받지 않는다. `--expected-source-sha`는 L1+에서 필수이며 신뢰한 caller가 fresh-read한 값을 전달한다. 모듈 자체가 GitHub 최신성을 조회하지 않으므로 receipt 자신의 SHA를 기대값으로 복사하거나 형식 검사만으로 freshness를 주장하지 않는다. `progress_summary.display`가 있으면 자동 계산된 완료/필수 수와 일치해야 한다. 기존 project pin은 정상 adoption PR로 검증하기 전까지 유지하고, Base 병합을 모든 프로젝트 설치 완료로 보고하지 않는다.
 
-## 11. 새 세션용 여섯 절 인계 — 기존 정본 재사용
+## 11. 증거 기반 작업 루프와 새 세션용 여섯 절 인계 — 기존 정본 재사용
 
-새 파일 `DESIGN.md / STATUS.md / INBOX.md`를 일괄 만들지 않는다. 아래 여섯 절은 기존 handoff의 작은 실행 요약으로 사용하고 분야별 사실은 기존 owner를 가리킨다.
+```text
+EVIDENCE_WORK_LOOP_PROJECTION
+PROMPT / DESIGN / INBOX / STATUS
+PROMPT_DESIGN_INBOX_STATUS_ARE_ROLE_MAPS_NOT_DEFAULT_FILES
+INBOX_IS_NOT_EXECUTION_AUTHORITY
+GUIDES_PROGRESSIVELY_LOADED_BY_SELECTED_WORK
+CHECKPOINT_IS_NOT_COMPLETION
+HUMAN_PLAYTEST_EXPLICIT_USER_GATE
+QUALITY_NOT_ASSUMED_TO_INCREASE_PER_LOOP
+NO_UNBOUNDED_REPEAT_WITHOUT_NEW_EVIDENCE
+```
+
+이 절은 `READ → PICK → BUILD → CHECK → COMMIT`을 기존 정본·receipt·queue 위에
+보여 주는 **derived operational projection**이다. 새 파일
+`PROMPT.md / DESIGN.md / INBOX.md / STATUS.md`를 일괄 만들거나, 기존
+Decision·기획·구현·evidence를 네 파일로 복제하지 않는다. 아래 여섯 절과
+기존 owner를 작은 실행 요약으로 사용한다.
+
+### 11.1 화면의 네 문서를 기존 owner로 매핑
+
+| Reference label | 기존 owner와 사용 경계 |
+|---|---|
+| `PROMPT` | 승인된 Goal·work contract·카드의 scope, Acceptance Criteria, 보호 범위와 evidence ceiling이다. 짧은 작업 시작 문구는 이 source locator를 가리킬 수 있지만, 모든 context를 매번 전송하는 영구 파일이 아니다. |
+| `DESIGN` | 현재 등록된 기획·Decision·Blueprint·wireframe·flow map 또는 기능 계약 owner다. 선택한 작업에 실제로 필요할 때만 연다. |
+| `INBOX` | 최신 사용자 요청·Issue backlog·Active Context 안의 아직 분류되지 않은 입력이다. `INBOX_IS_NOT_EXECUTION_AUTHORITY`: `ADOPT / ADAPT / REJECT / DEFER / USER_DECISION_REQUIRED`로 triage하고 승인 범위·dependency·WIP를 확인한 뒤에만 work item으로 선택한다. |
+| `STATUS` | Active Context와 이 카드의 `project_work_kanban` derived view다. exact source/head, 현재 active item, blocker, evidence, next safe action을 현재 owner에서 readback한다. |
+| `guide/*` | 실제 owner·consumer·위험·검증이 필요로 하는 등록된 reference다. `GUIDES_PROGRESSIVELY_LOADED_BY_SELECTED_WORK`: guide는 선택적으로 읽으며 기획·계약·작업 카드의 정본을 대체하지 않는다. |
+
+### 11.2 한 바퀴의 실제 순서
+
+```text
+READ → PICK → BUILD → CHECK → COMMIT
+```
+
+1. **READ** — project `AGENTS.md`, Active Context, 승인 Goal·Decision, 실제 consumer,
+   current source revision, 같은 Goal의 PR, 현재 receipt와 필요한 benchmark/hygiene
+   evidence를 fresh-read한다. 필요한 source·executor·receipt가 없거나 Gate가 실패하면
+   `BLOCKED_UNVERIFIED`로 남기며 추측으로 진행하지 않는다.
+2. **PICK** — 새 Inbox 입력을 먼저 triage하고, remaining work·dependency·blocker·WIP를
+   재계산한다. 그 뒤 승인 범위 안의 기존 또는 필요한 최소 work item 하나만
+   `IN_PROGRESS` 또는 `VERIFY_REVIEW`로 선택한다. 최근 요청이라는 이유만으로
+   구현으로 바로 이동하지 않는다.
+3. **BUILD** — 선택된 work item의 실제 owner·code·data·asset·문서만 최소 범위로
+   변경한다. 필요한 design/guide는 이 단계에서만 progressive load하며, 프로젝트별
+   장르·세계관·화면·수치·벤치마크 결론을 공용 하드코딩으로 바꾸지 않는다.
+4. **CHECK** — 먼저 적용 가능한 계약·정적·자동 검사를 실행한다. 이어서 승인 계약이
+   요구하면 실제 runtime, input/play path, 화면 capture와 agent/machine visual readback을
+   실제 consumer와 exact revision에 연결한다. capture 생성은 `E4_VISUAL` evidence일 수
+   있어도 Human/Player 승인 자체는 아니다. `HUMAN_PLAYTEST_EXPLICIT_USER_GATE`:
+   `E6_HUMAN_PLAYTEST`는 사용자가 그 검수의 실행 또는 선언을 명시했을 때만 수행한다.
+5. **COMMIT** — 정적/자동 검사 뒤 복구 가능한 중간 checkpoint를 남길 수 있다. 그러나
+   `CHECKPOINT_IS_NOT_COMPLETION`: checkpoint는 `IN_PROGRESS` 또는 `VERIFY_REVIEW`와
+   남은 runtime/visual/readback을 보존할 뿐 `DONE`, 품질 승인, 병합을 뜻하지 않는다.
+   교정이 생기면 CHECK로 돌아가 새 evidence를 확인한 뒤 다음 commit을 만든다. 최종
+   completion은 exact PR HEAD의 CI·독립 review·unresolved thread 0·정상 protected
+   merge·merged-main readback·필요한 closeout까지 별도 Gate로 유지한다.
+
+`QUALITY_NOT_ASSUMED_TO_INCREASE_PER_LOOP`: 반복 자체는 품질 상승 증거가 아니다. 각
+loop는 `PASS / PARTIAL / FAIL / BLOCKED_UNVERIFIED` 또는 현재 work-item 상태와 새
+evidence를 남긴다. 같은 acceptance gap이 남거나 같은 검사가 새 evidence를 만들지
+않으면 `NO_UNBOUNDED_REPEAT_WITHOUT_NEW_EVIDENCE`를 적용해 원인 진단, 최소 교정,
+local defer 또는 실제 `USER_DECISION_REQUIRED`로 전환한다.
 
 1. **합격 기준:** 한 문장 목표와 관찰 가능한 AC ID·필수 evidence. 목표 문장만으로 완료 판정하지 않는다.
 2. **먼저 읽기:** project AGENTS·Active Context·승인 Decision·실제 consumer·현재 PM receipt의 exact revision과 필요한 section/읽기 범위. 범위 밖의 숨은 의존성이 발견되면 필요한 만큼 확장한다.
 3. **규칙과 이유:** 기존 Method의 authority·reason·source·adjustment condition·validation을 사용한다. 문구 금지만 늘리지 않는다.
-4. **한 바퀴:** fresh-read → 승인된 의미 있는 작업 하나 → 정적/자동 검사 → 필요 시 격리 checkpoint → 실제 runtime/화면/입력 확인 → 교정 → 정본·PM 상태·증거 갱신 → 다음 승인 작업 또는 정상 종료.
+4. **한 바퀴:** 위 `READ → PICK → BUILD → CHECK → COMMIT` 투영을 사용한다. fresh-read → 승인된 의미 있는 작업 하나 → 정적/자동 검사 → 필요 시 격리 checkpoint → 실제 runtime/화면/입력 확인 → 교정 → 정본·PM 상태·증거 갱신 → 다음 승인 작업 또는 정상 종료다.
 5. **커밋 순서:** 복구용 checkpoint는 `IN_PROGRESS / VERIFY_REVIEW`로 남길 수 있으나 DONE·품질 승인·병합을 뜻하지 않는다. checkpoint에 미완료와 다음 검증을 기록한다. 저장된 미커밋 파일이 세션 종료만으로 삭제된다고 주장하지 않는다. 사용자 변경·다른 workstream은 staging하지 않으며 main 직접 push하지 않는다. 완료용 commit과 exact-head PR 검토는 별도 Gate다.
 6. **QA와 학습:** 실제 화면·상태·consumer·exact build를 캡처하고 이미지를 직접 읽는다. 캡처 생성과 시각 합격을 분리한다. 같은 지적의 원인을 재현한 뒤 프로젝트 전용/공용을 분류하고 가능한 검사를 만든다. 반복 횟수만으로 Base 강제 규칙을 자동 승격하지 않는다.
 
@@ -305,4 +366,4 @@ project AGENTS / approved owner / actual implementation fresh-read
 
 각 실행의 기록·예산·중단·복구는 기존 continuous-work/Loop owner를 재사용한다. 제품별 CLI 옵션을 이름만 바꿔 이식하지 않는다. `codex exec` 새 실행과 `--ephemeral`의 세션 파일 비보존은 다른 개념이며, 새 실행에서도 필요한 evidence는 별도 보존한다. Claude의 `--max-turns`를 Codex 옵션으로 가정하지 않는다. 구독 경로 실패를 유료 API로 우회하거나 OS 서비스·스케줄러를 이 문서만으로 활성화하지 않는다.
 
-원출처 비교: 사용자가 제공한 `kIUhkiAecM8` 댓글 텍스트(영상 전체 시청 증거 아님), OpenAI non-interactive Codex 문서 `https://developers.openai.com/codex/noninteractive`, GitHub sub-issue 문서 `https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/adding-sub-issues`. 새 세션·파일 기억·작은 작업은 ADAPT, 무한 개발·새 정본·자동 정책 승격은 REJECT다. 재사용 교훈은 **문구 존재 검사와 실제 실행 Gate 검사를 반드시 구분한다**는 것이다. 이 개선의 검증 owner는 `tests/test_project_work_tracking.py`이고 실제 현재 작업 적용 기록은 Base Issue #825에 둔다.
+원출처 비교: 사용자가 제공한 `kIUhkiAecM8` 댓글 텍스트(영상 전체 시청 증거 아님), OpenAI non-interactive Codex 문서 `https://developers.openai.com/codex/noninteractive`, GitHub sub-issue 문서 `https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/adding-sub-issues`. 새 세션·파일 기억·작은 작업은 ADAPT, 무한 개발·새 정본·자동 정책 승격은 REJECT다. 재사용 교훈은 **문구 존재 검사와 실제 실행 Gate 검사를 반드시 구분한다**는 것이다. 이 개선의 검증 owner는 `tests/test_project_work_tracking.py`다. `HISTORICAL_ISSUE_825_NOT_CURRENT_WORK_AUTHORITY`: Base Issue #825는 기존 PM execution-gate 구현을 마친 CLOSED 역사 증거이며, 새 Goal·Slice·PR 또는 이 템플릿의 현재 적용 기록이 아니다. `CURRENT_WORK_RECORD_IS_CURRENT_GOAL_ISSUE_OR_CARD`: 실제 현재 적용은 fresh-read 뒤 현재 승인 범위의 Goal/Issue/receipt card를 새로 가리켜야 하며, 종료된 Issue를 재사용해 triage·WIP·dependency·evidence readback을 건너뛰지 않는다.
