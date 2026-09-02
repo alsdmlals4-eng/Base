@@ -1,6 +1,6 @@
 name: Apply Source receipt round-four fixes
 
-# patcher-revision: 2
+# patcher-revision: 3
 on:
   push:
     branches:
@@ -47,12 +47,14 @@ jobs:
             -v
           git diff --check
 
-      - name: Remove temporary transport and commit production diff
+      - name: Remove all temporary transport and commit production diff
         shell: bash
         run: |
-          rm tools/apply_source_receipt_round4_patch.py
-          rm .github/workflows/apply-source-receipt-final-review-fixes.yml
-          rm .github/workflows/apply-source-receipt-round4-patcher.yml
+          rm -rf .tmp/source-receipt-review-fix
+          rm -f tools/apply_source_receipt_round4_patch.py
+          rm -f .github/workflows/apply-source-receipt-review-fixes-r3.yml
+          rm -f .github/workflows/apply-source-receipt-final-review-fixes.yml
+          rm -f .github/workflows/apply-source-receipt-round4-patcher.yml
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add -u
