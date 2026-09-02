@@ -29,6 +29,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install Base validation dependencies
+        run: python -m pip install -r .github/validation-requirements.txt
+
       - name: Assert expected implementation lineage
         shell: bash
         run: |
