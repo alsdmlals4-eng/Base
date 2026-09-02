@@ -1,6 +1,6 @@
 name: Apply Source receipt round-four fixes
 
-# patcher-revision: 3
+# patcher-revision: 4
 on:
   push:
     branches:
@@ -51,6 +51,7 @@ jobs:
         shell: bash
         run: |
           rm -rf .tmp/source-receipt-review-fix
+          rm -f .tmp/apply_source_receipt_final_fixes.py
           rm -f tools/apply_source_receipt_round4_patch.py
           rm -f .github/workflows/apply-source-receipt-review-fixes-r3.yml
           rm -f .github/workflows/apply-source-receipt-final-review-fixes.yml
