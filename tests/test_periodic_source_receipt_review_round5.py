@@ -22,9 +22,9 @@ from tests.test_periodic_source_receipt_state import (
 
 
 class PeriodicSourceReceiptReviewRound5Tests(unittest.TestCase):
-    def test_orphan_processed_contribution_is_rejected(self) -> None:
-        current = reconcile(ledger(), [])
-        current["receipt_reconciliation_state"]["processed_contributions"].append(
+    def test_processed_contribution_links_are_bidirectional(self) -> None:
+        orphan = reconcile(ledger(), [])
+        orphan["receipt_reconciliation_state"]["processed_contributions"].append(
             {
                 "source_id": "anthropic",
                 "pr": 649,
@@ -33,8 +33,19 @@ class PeriodicSourceReceiptReviewRound5Tests(unittest.TestCase):
             }
         )
 
-        with self.assertRaisesRegex(AnalysisBlocked, "orphan processed contribution"):
-            reconcile(current, [])
+        with self.assertRaisesRegex(
+            AnalysisBlocked, "processed contribution.*processed receipt"
+        ):
+            reconcile(orphan, [])
+
+        missing = reconcile(
+            ledger(), [entry(material_receipt(), ref="linked")]
+        )
+        missing["receipt_reconciliation_state"]["processed_contributions"] = []
+        with self.assertRaisesRegex(
+            AnalysisBlocked, "processed receipt.*contribution metadata"
+        ):
+            reconcile(missing, [])
 
     def test_persisted_event_dates_cannot_exceed_previous_batch(self) -> None:
         receipt_state = reconcile(ledger(), [])
@@ -49,7 +60,7 @@ class PeriodicSourceReceiptReviewRound5Tests(unittest.TestCase):
             }
         )
         with self.assertRaisesRegex(
-            AnalysisBlocked, "processed receipt scan_date cannot be after last_batch_date"
+            AnalysisBlocked, "processed receipt scan_date.*last_batch_date"
         ):
             reconcile(receipt_state, [])
 
@@ -77,13 +88,13 @@ class PeriodicSourceReceiptReviewRound5Tests(unittest.TestCase):
         )
         with self.assertRaisesRegex(
             AnalysisBlocked,
-            "processed contribution merge_date cannot be after last_batch_date",
+            "processed contribution merge_date.*last_batch_date",
         ):
             reconcile(contribution_state, [])
 
     def test_normalized_classification_key_collision_is_rejected(self) -> None:
         with self.assertRaisesRegex(
-            AnalysisBlocked, "duplicate normalized source_state_at_scan ID"
+            AnalysisBlocked, "duplicate normalized source_state_at_scan.*ID"
         ):
             state.validate_actual_source_review_receipt(
                 receipt(),
@@ -115,7 +126,7 @@ status: ACTIVE_DISCOVERY_SEED
         second["merged_base_contribution_refs"][0]["pr"] = 650
 
         with self.assertRaisesRegex(
-            AnalysisBlocked, "same-day contribution order is ambiguous"
+            AnalysisBlocked, "same-day contribution.*chronological evidence"
         ):
             reconcile(
                 ledger(),
@@ -187,7 +198,7 @@ status: ACTIVE_DISCOVERY_SEED
         value["merged_base_contribution_refs"][0]["merge_date"] = "2026-08-10"
 
         with self.assertRaisesRegex(
-            AnalysisBlocked, "contribution predates operations Ledger tracking start"
+            AnalysisBlocked, "contribution.*predates operations Ledger tracking start"
         ):
             reconcile(ledger(), [entry(value, ref="pretracking")])
 
