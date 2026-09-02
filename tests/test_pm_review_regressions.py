@@ -137,7 +137,7 @@ class ReviewRegressions(unittest.TestCase):
         errors = '\n'.join(check(value))
         self.assertIn('canonical', errors)
 
-    def test_expected_head_is_rejected_outside_closeout_without_stale_relabeling(self):
+    def test_expected_head_is_ignored_outside_closeout_without_stale_relabeling(self):
         value = done_receipt(); board = value['project_work_kanban']
         second = copy.deepcopy(tracked_receipt()['project_work_kanban']['work_items'][0])
         second.update(work_item_id='PM-02', depends_on=['PM-01'])
@@ -150,8 +150,8 @@ class ReviewRegressions(unittest.TestCase):
             '--expected-head-sha', 'b' * 40,
             '--render-markdown',
         )
-        self.assertNotEqual(0, result.returncode)
-        self.assertIn('expected_head_sha is accepted only for closeout', result.stdout)
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertIn('1 / 2', result.stdout)
         self.assertNotIn('VERIFY_REVIEW_STALE_HEAD', result.stdout)
 
     def test_closeout_binds_done_evidence_to_trusted_current_head(self):
