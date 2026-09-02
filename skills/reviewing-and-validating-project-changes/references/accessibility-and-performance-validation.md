@@ -65,6 +65,7 @@ status:
 target_hardware_and_os:
 build_configuration:
 representative_scenes_and_loads:
+input_device_event_rate_and_accumulation:
 frame_time_budget_ms:
 cpu_gpu_memory_network_budgets:
 loading_and_streaming_targets:
@@ -80,11 +81,14 @@ measurement_repetitions:
 - CPU·GPU·메모리·네트워크·로딩을 분리한다.
 - 에디터·디버거·프로파일러 오버헤드를 기록한다.
 - 재현 가능한 대표 장면과 입력을 고정한다.
+- 입력 처리 비용이 성능에 영향을 줄 수 있으면 장치 polling/event rate, 엔진의 accumulation/coalescing 설정, 대표·최악 입력 패턴을 capture 조건으로 고정한다. 같은 Scene이라도 이벤트 빈도가 다르면 별도 workload로 취급한다.
 - 한 번의 캡처보다 여러 번 측정해 변동을 확인한다.
 - 병목을 측정하기 전에 임의 최적화하지 않는다.
 - 변경 전 baseline과 변경 후 capture를 같은 조건에서 비교한다.
 
 Unreal Engine 공식 문서는 30·60·120 FPS 같은 목표를 frame time과 목표 하드웨어 예산으로 연결하고, Unreal Insights·Stat Commands 등으로 CPU·GPU·메모리·네트워크를 측정하도록 안내한다. 또한 에디터 노이즈를 줄이고 목표 환경과 가까운 재현 사례에서 밀리초 단위로 비교할 것을 권장한다.
+
+Godot의 2026-08-24 Windows high-polling mouse 성능 사례는 같은 장면에서도 입력 event rate와 accumulation 설정이 입력 처리 비용을 크게 바꿀 수 있음을 보여준다. Godot 4.7.2에는 해당 Windows 입력 경로 수정이 포함되지만, 프로젝트의 `_input()`·`_unhandled_input()` 비용은 여전히 실제 이벤트 빈도에 영향을 받을 수 있다. 이 사례의 특정 polling rate·하드웨어·Windows 결과를 다른 OS·장치·Godot 버전의 보편 임계값으로 사용하지 않고, exact engine version·OS·input mode·event rate·accumulation 조건을 함께 기록한다.
 
 ## 6. 성능 검수 절차
 
@@ -124,6 +128,7 @@ Unity Test Framework처럼 엔진이 Edit Mode, Play Mode, target player를 구�
 - 목표 플랫폼·빌드·장면
 - baseline과 변경 후 frame time
 - CPU·GPU·메모리·네트워크 병목
+- input device event rate·accumulation/coalescing 조건
 - profiler 오버헤드와 반복 변동
 - 품질·기능 trade-off
 - 통과·미통과·미검증
@@ -138,6 +143,7 @@ Unity Test Framework처럼 엔진이 Edit Mode, Play Mode, target player를 구�
 - 에디터의 빈 장면만 측정해 실제 빌드 성능으로 주장한다.
 - profiler 없이 추측으로 병목을 최적화한다.
 - baseline·장면·빌드 조건이 다른 수치를 직접 비교한다.
+- 입력 집약 캡처에서 장치 polling/event rate 또는 accumulation/coalescing 설정이 다른데 같은 조건으로 비교한다.
 - 성능 개선으로 게임 규칙·가독성·아트 약속이 훼손됐는데 회귀를 생략한다.
 
 ## 공식 참고 자료
@@ -150,3 +156,4 @@ Unity Test Framework처럼 엔진이 Edit Mode, Play Mode, target player를 구�
 - Epic Games — Performance Profiling and Configuration: https://dev.epicgames.com/documentation/en-us/unreal-engine/introduction-to-performance-profiling-and-configuration-in-unreal-engine
 - Epic Games — Performance and Profiling Overview: https://dev.epicgames.com/documentation/en-us/unreal-engine/performance-and-profiling-overview
 - Unity — Edit Mode vs Play Mode tests: https://docs.unity3d.com/Packages/com.unity.test-framework@2.0/manual/edit-mode-vs-play-mode-tests.html
+- Godot — Fixing high polling rate mice on Windows in Godot: https://godotengine.org/article/fixing-high-polling-rate-mice-on-windows/
