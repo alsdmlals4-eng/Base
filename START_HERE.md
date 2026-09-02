@@ -1,6 +1,6 @@
 # Base 시작 지점
 
-> `BASE_CURRENT_OPERATIONAL_BOOTSTRAP`: when current scope requires **Base-only maintenance** and future project sessions to fresh-read current Base without project-side preinstallation, read `docs/operations/BASE_CURRENT_PROJECT_WORK_BOOTSTRAP.md`. It is a nonpersistent PM/workflow overlay: target-project `AGENTS.md`, product canon, protected paths and adopted Base release retain authority. Do not copy the detailed playbook into this file.
+> `BASE_CURRENT_OPERATIONAL_BOOTSTRAP` / `PROJECT_WORK_FRESH_BASE_ENTRY`: for **ordinary target-project work** and Base maintenance that need current PM/intake/workflow guidance without project-side preinstallation, read `docs/operations/BASE_CURRENT_PROJECT_WORK_BOOTSTRAP.md`. It is a nonpersistent PM/workflow overlay: target-project `AGENTS.md`, product canon, protected paths and adopted Base release retain authority. Do not copy the detailed playbook into this file.
 
 
 > Base v9 RC status and release boundary: `docs/BASE_RULES_VERSION.md`

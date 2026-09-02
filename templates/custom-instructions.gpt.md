@@ -1,6 +1,6 @@
 # GPT Custom Instructions Template
 
-> `BASE_CURRENT_OPERATIONAL_BOOTSTRAP`: when current scope requires **Base-only maintenance** and future project sessions to fresh-read current Base without project-side preinstallation, read `docs/operations/BASE_CURRENT_PROJECT_WORK_BOOTSTRAP.md`. It is a nonpersistent PM/workflow overlay: target-project `AGENTS.md`, product canon, protected paths and adopted Base release retain authority. Do not copy the detailed playbook into this file.
+> `BASE_CURRENT_OPERATIONAL_BOOTSTRAP` / `PROJECT_WORK_FRESH_BASE_ENTRY`: for **ordinary target-project work** and Base maintenance that need current PM/intake/workflow guidance without project-side preinstallation, read `docs/operations/BASE_CURRENT_PROJECT_WORK_BOOTSTRAP.md`. It is a nonpersistent PM/workflow overlay: target-project `AGENTS.md`, product canon, protected paths and adopted Base release retain authority. Do not copy the detailed playbook into this file.
 
 
 이 템플릿은 ChatGPT 맞춤설정을 Base/프로젝트의 두 번째 정본이 아니라 안정적인 bootstrap layer로 사용하기 위한 공용 원본이다.

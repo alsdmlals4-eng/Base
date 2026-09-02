@@ -1,6 +1,6 @@
 # Base 공용 AI 작업 규칙
 
-> `BASE_CURRENT_OPERATIONAL_BOOTSTRAP`: when current scope requires **Base-only maintenance** and future project sessions to fresh-read current Base without project-side preinstallation, read `docs/operations/BASE_CURRENT_PROJECT_WORK_BOOTSTRAP.md`. It is a nonpersistent PM/workflow overlay: target-project `AGENTS.md`, product canon, protected paths and adopted Base release retain authority. Do not copy the detailed playbook into this file.
+> `BASE_CURRENT_OPERATIONAL_BOOTSTRAP` / `PROJECT_WORK_FRESH_BASE_ENTRY`: for **ordinary target-project work** and Base maintenance that need current PM/intake/workflow guidance without project-side preinstallation, read `docs/operations/BASE_CURRENT_PROJECT_WORK_BOOTSTRAP.md`. It is a nonpersistent PM/workflow overlay: target-project `AGENTS.md`, product canon, protected paths and adopted Base release retain authority. Do not copy the detailed playbook into this file.
 
 
 Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skill·Template·Case·Test의 원본이다. 이 파일은 repository-wide **항상 적용되는 불변 규칙**(`ALWAYS_ON_CONTEXT_ONLY`)만 유지한다. 상세 절차·표·예시는 해당 책임 원본을 작업 필요 시 읽는 **`PROGRESSIVE_LOAD_DETAILED_CONTRACTS`** 방식으로 적용한다. root `AGENTS.md`에 세부 playbook을 다시 복제하지 않는다.

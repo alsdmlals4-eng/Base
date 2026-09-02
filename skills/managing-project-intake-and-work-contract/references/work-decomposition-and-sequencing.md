@@ -1,6 +1,6 @@
 # 작업 분해·의존성·실행 순서 모델
 
-> `BASE_CURRENT_OPERATIONAL_BOOTSTRAP`: when current scope requires **Base-only maintenance** and future project sessions to fresh-read current Base without project-side preinstallation, read `docs/operations/BASE_CURRENT_PROJECT_WORK_BOOTSTRAP.md`. It is a nonpersistent PM/workflow overlay: target-project `AGENTS.md`, product canon, protected paths and adopted Base release retain authority. Do not copy the detailed playbook into this file.
+> `BASE_CURRENT_OPERATIONAL_BOOTSTRAP` / `PROJECT_WORK_FRESH_BASE_ENTRY`: for **ordinary target-project work** and Base maintenance that need current PM/intake/workflow guidance without project-side preinstallation, read `docs/operations/BASE_CURRENT_PROJECT_WORK_BOOTSTRAP.md`. It is a nonpersistent PM/workflow overlay: target-project `AGENTS.md`, product canon, protected paths and adopted Base release retain authority. Do not copy the detailed playbook into this file.
 
 
 이 문서는 `managing-project-intake-and-work-contract`의 `decompose-and-sequence` mode가 사용하는 상세 모델이다. 큰 요청을 체크박스 목록으로 잘게 자르는 것이 아니라, **각 단계가 검증 가능한 결과를 만들고 다음 단계를 안전하게 여는 실행 구조**를 만든다.
