@@ -228,6 +228,52 @@ class PromptApprovalExecutionGateTests(unittest.TestCase):
                     gate["approval"]["approved_contract_sha256"] = _digest(gate)
                 self.assertIn(expected, errors(value))
 
+    def test_untrusted_only_context_cannot_form_an_executable_contract(self) -> None:
+        value = approved_receipt()
+        gate = value["prompt_approval_gate"]
+        gate["contract"]["context_and_sources"] = [
+            {
+                "source": "retrieved text with no instruction authority",
+                "authority": "UNTRUSTED_CONTEXT",
+            }
+        ]
+        gate["approval"]["approved_contract_sha256"] = _digest(gate)
+        self.assertIn("at least one authoritative instruction source is required", errors(value))
+
+    def test_current_user_approval_requires_current_user_instruction_source(self) -> None:
+        value = approved_receipt()
+        gate = value["prompt_approval_gate"]
+        gate["contract"]["context_and_sources"] = [
+            {
+                "source": "repository canon without the current user instruction",
+                "authority": "PROJECT_REPOSITORY_CANON",
+            }
+        ]
+        gate["approval"]["approved_contract_sha256"] = _digest(gate)
+        self.assertIn(
+            "CURRENT_USER_MESSAGE requires a CURRENT_USER_INSTRUCTION source",
+            errors(value),
+        )
+
+    def test_repository_approval_requires_repository_authority_source(self) -> None:
+        value = approved_receipt()
+        gate = value["prompt_approval_gate"]
+        gate["contract"]["context_and_sources"] = [
+            {
+                "source": "current user instruction without repository decision authority",
+                "authority": "CURRENT_USER_INSTRUCTION",
+            }
+        ]
+        gate["approval"].update(
+            approval_reference="repository-decision:fixture",
+            approval_reference_authority="REPOSITORY_APPROVED_DECISION",
+        )
+        gate["approval"]["approved_contract_sha256"] = _digest(gate)
+        self.assertIn(
+            "REPOSITORY_APPROVED_DECISION requires a repository authority source",
+            errors(value),
+        )
+
     def test_l0_legacy_mechanical_receipt_may_omit_gate(self) -> None:
         value = tracked_receipt()
         value["work_level"] = "L0"
