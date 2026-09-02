@@ -18,6 +18,7 @@ REFERENCE = (
 )
 REGISTRY = ROOT / "skills" / "SKILL_REGISTRY.json"
 TEMPLATE = ROOT / "templates" / "project-operations" / "PROMPT_APPROVAL_GATE_RECEIPT.json"
+PROMPT_MODULE = ROOT / "tools" / "prompt_approval_gate.py"
 VALIDATOR = ROOT / "tools" / "validate_work_contract_receipt.py"
 
 
@@ -45,10 +46,11 @@ class PromptApprovalRoutingContractTests(unittest.TestCase):
             with self.subTest(required=required):
                 self.assertIn(required, text)
 
-    def test_reference_template_and_validator_share_the_same_contract(self) -> None:
+    def test_reference_template_module_and_validator_share_the_contract(self) -> None:
         reference = REFERENCE.read_text(encoding="utf-8")
         template_text = TEMPLATE.read_text(encoding="utf-8")
         template = json.loads(template_text)
+        prompt_module = PROMPT_MODULE.read_text(encoding="utf-8")
         validator = VALIDATOR.read_text(encoding="utf-8")
 
         for required in (
@@ -66,15 +68,24 @@ class PromptApprovalRoutingContractTests(unittest.TestCase):
             "scope_changed_since_approval",
             "unresolved_material_decisions",
         ):
-            with self.subTest(template_and_validator=required):
+            with self.subTest(template_and_module=required):
                 self.assertIn(required, template_text)
-                self.assertIn(required, validator)
+                self.assertIn(required, prompt_module)
 
         for required in (
             "CURRENT_USER_MESSAGE",
             "REPOSITORY_APPROVED_DECISION",
-            "prepare",
             "REUSED_APPROVAL",
+            "prompt-approval-execution-gate.md",
+        ):
+            with self.subTest(prompt_module=required):
+                self.assertIn(required, prompt_module)
+
+        for required in (
+            "from .prompt_approval_gate import",
+            "from prompt_approval_gate import",
+            "prepare",
+            "validate_prompt_approval_gate",
         ):
             with self.subTest(validator=required):
                 self.assertIn(required, validator)
