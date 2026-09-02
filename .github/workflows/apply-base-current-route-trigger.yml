@@ -49,9 +49,9 @@ jobs:
               "current Base without project-side preinstallation"
           )
           new = (
-              "`BASE_CURRENT_OPERATIONAL_BOOTSTRAP`: for **ordinary target-project work** "
-              "and Base maintenance that need current PM/intake/workflow guidance "
-              "without project-side preinstallation"
+              "`BASE_CURRENT_OPERATIONAL_BOOTSTRAP` / `PROJECT_WORK_FRESH_BASE_ENTRY`: "
+              "for **ordinary target-project work** and Base maintenance that need "
+              "current PM/intake/workflow guidance without project-side preinstallation"
           )
           for path in paths:
               text = path.read_text(encoding="utf-8")
@@ -62,14 +62,15 @@ jobs:
               path.write_text(text.replace(old, new), encoding="utf-8")
           PY
 
-      - name: Commit final route diff without one-shot workflow
+      - name: Commit final route diff without temporary workflows
         shell: bash
         run: |
           rm .github/workflows/apply-base-current-route-trigger.yml
+          rm .github/workflows/diagnose-base-current-bootstrap.yml
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           git add AGENTS.md START_HERE.md templates/custom-instructions.gpt.md docs/BASE_SHARED_SKILL_ADAPTER_CONTRACT.md skills/managing-project-intake-and-work-contract/SKILL.md skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md templates/planning/EXECUTION_SEQUENCE_PLAN.md templates/project-operations/.agents/skills/base-project-router/SKILL.md templates/project-operations/AI_WORKFLOW.md templates/project-operations/PROJECT_START_HERE.md templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_STARTER_PROMPT.md templates/project-operations/WORK_PROJECT_EXECUTION_CURRENT_ROUTER.md templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md
-          git add -u -- .github/workflows/apply-base-current-route-trigger.yml
+          git add -u -- .github/workflows/apply-base-current-route-trigger.yml .github/workflows/diagnose-base-current-bootstrap.yml
           git commit -m "fix: route ordinary project work through current Base"
 
       - name: Verify focused Base-current behavior on committed closure
