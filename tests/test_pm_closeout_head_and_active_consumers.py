@@ -88,6 +88,19 @@ class PMCloseoutHeadAndActiveConsumerTests(unittest.TestCase):
                     f"{path} must use the trusted PM start command",
                 )
 
+    def test_active_router_has_no_history_only_bare_receipt_gate(self) -> None:
+        path = ROOT / "templates/project-operations/WORK_PROJECT_EXECUTION_CURRENT_ROUTER.md"
+        commands = [
+            line
+            for line in path.read_text(encoding="utf-8").splitlines()
+            if "validate_work_contract_receipt.py" in line and "--receipt" in line
+        ]
+        self.assertTrue(commands)
+        self.assertTrue(
+            all("--phase" in line and "--expected-source-sha" in line for line in commands),
+            f"all active router receipt commands must use the execution gate: {commands}",
+        )
+
     def test_closeout_docs_require_the_trusted_verification_target(self) -> None:
         for path in CANONICAL_CLOSEOUT_OWNERS:
             text = (ROOT / path).read_text(encoding="utf-8")
