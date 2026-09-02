@@ -86,3 +86,5 @@ jobs:
           git commit -m "fix: close remaining Source receipt review findings"
           test "$(git diff --name-only origin/main...HEAD | sort | tr '\n' ' ')" = "tests/test_periodic_source_receipt_review_round3.py tests/test_periodic_source_receipt_review_round4.py tests/test_periodic_source_receipt_review_round5.py tests/test_periodic_source_receipt_review_round6.py tests/test_periodic_source_receipt_state.py tests/test_record_periodic_source_scan.py tools/periodic_source_analysis.py tools/periodic_source_operations_state.py tools/periodic_source_receipt_state.py tools/record_periodic_source_scan.py "
           git push origin HEAD:fix/source-receipt-ledger-integrity-r3-20260902
+
+# Retry after correcting the expected historical-source diagnostic.
