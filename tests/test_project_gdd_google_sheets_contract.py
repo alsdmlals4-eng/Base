@@ -87,6 +87,29 @@ class ProjectGDDGoogleSheetsContractTests(unittest.TestCase):
             self.assertIn(term, coverage)
         self.assertIn("NO_AUTOMATIC_IMAGE_GENERATION_FROM_GAPS", skill)
 
+    def test_two_pass_blueprint_material_prep_does_not_restore_sheet_authority(self) -> None:
+        policy = read("docs/GPT_IMAGE_GENERATION_AND_REVIEW_POLICY.md")
+        sequence = (
+            "PLAN\n"
+            "→ BLUEPRINT_PASS_1_STRUCTURAL_DRAFT\n"
+            "→ REQUIRED_IMAGE_AND_MATERIAL_PREPARATION\n"
+            "→ BLUEPRINT_REVIEW_PUBLICATION\n"
+            "→ USER_FINAL_REVIEW_APPROVAL\n"
+            "→ IMPLEMENTATION_AUTHORIZED"
+        )
+
+        self.assertIn(sequence, policy)
+        for term in (
+            "workspace: REPOSITORY_FIRST",
+            "BLUEPRINT_PASS_1_ACTUAL_CONSUMER_CONTRACT",
+            "REQUIRED_MATERIALS_NOT_ALL_PROJECT_ASSETS",
+            "BLUEPRINT_PASS_2_FINAL",
+            "legacy Notion / Google Sheets",
+            "실제 migration scope에서만 discovery input",
+            "신규 이미지 승인·저장·동기화·완료의 기본 작업면이 아님",
+        ):
+            self.assertIn(term, policy)
+
     def test_entrypoints_use_registry_derived_active_skill_view(self) -> None:
         for path in ("README.md", "AGENTS.md", "docs/OPERATING_MODEL.md", "docs/DOCUMENTATION_MAP.md"):
             text = read(path)
