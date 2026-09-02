@@ -12,6 +12,7 @@ from tests.test_periodic_source_receipt_state import (
     DISCOVERY_SEEDS,
     entry,
     ledger,
+    material_receipt,
     receipt,
     reconcile,
 )
@@ -91,6 +92,43 @@ url: https://geminicli.com/docs/
         }
         with self.assertRaisesRegex(AnalysisBlocked, "classification.*durable lane"):
             reconcile(once, [contradictory])
+
+    def test_redundant_explicit_current_classification_does_not_duplicate_event(self) -> None:
+        implicit = entry(receipt(), ref="implicit")
+        explicit = entry(
+            receipt(),
+            ref="explicit",
+            source_state_at_scan={
+                "anthropic": "DURABLE_ACTIVE",
+                "godot": "DURABLE_ACTIVE",
+                "github-copilot": "DURABLE_ACTIVE",
+            },
+        )
+
+        result = reconcile(ledger(), [implicit, explicit])
+        anthropic = result["sources"][0]
+        processed = result["receipt_reconciliation_state"]["processed_receipts"]
+
+        self.assertEqual(1, anthropic["material_candidate_count_since_tracking_start"])
+        self.assertEqual(2, len(processed))
+        self.assertEqual(1, len({row["payload_sha256"] for row in processed}))
+
+    def test_redundant_merge_date_map_does_not_duplicate_material_event(self) -> None:
+        direct = entry(material_receipt(), ref="direct")
+        mapped = entry(
+            material_receipt(),
+            ref="mapped",
+            contribution_merge_dates={"2" * 40: "2026-09-01"},
+        )
+
+        result = reconcile(ledger(), [direct, mapped])
+        anthropic = result["sources"][0]
+        processed = result["receipt_reconciliation_state"]["processed_receipts"]
+
+        self.assertEqual(1, anthropic["material_candidate_count_since_tracking_start"])
+        self.assertEqual(1, anthropic["base_contribution_count_since_tracking_start"])
+        self.assertEqual(2, len(processed))
+        self.assertEqual(1, len({row["payload_sha256"] for row in processed}))
 
     def test_shared_analysis_updater_rejects_identity_enabled_ledger(self) -> None:
         current = reconcile(ledger(), [])
