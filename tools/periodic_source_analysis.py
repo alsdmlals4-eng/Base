@@ -123,6 +123,11 @@ def run_analysis(
         raise AnalysisBlocked("BLOCKED_CONTEXT_SCHEMA", "batch size must be between 1 and 20")
     safe_run_id = _safe_run_id(run_id)
     operations = load_ledger(operations_ledger_path)
+    if "receipt_reconciliation_state" in operations:
+        raise AnalysisBlocked(
+            "BLOCKED_RECEIPT_RECONCILIATION_REQUIRED",
+            "identity-enabled Operations Ledger must use reviewed receipt reconciliation before any model transport",
+        )
     selected = select_due_source_batch(operations, run_date, batch_size)
     if not selected:
         return {"state": "NO_CHANGE", "detail": "No Source family is due."}
