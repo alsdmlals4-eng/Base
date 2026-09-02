@@ -3,7 +3,7 @@ from __future__ import annotations
 import copy
 import unittest
 
-from tools import periodic_source_operations_state as state
+from tools import periodic_source_receipt_state as state
 from tools.periodic_source_analysis_contract import AnalysisBlocked
 
 
@@ -79,6 +79,13 @@ class PeriodicSourceReceiptStateTests(unittest.TestCase):
         )
         self.assertEqual(649, checked["pr_created"])
         self.assertEqual(["anthropic"], checked["retained_candidate_source_ids"])
+
+
+    def test_rejects_scans_for_inactive_ledger_sources(self) -> None:
+        inactive = ledger()
+        inactive["sources"][0]["status"] = "INACTIVE"
+        with self.assertRaisesRegex(AnalysisBlocked, "cannot record inactive Source"):
+            state.validate_actual_source_review_receipt(receipt(), inactive)
 
     def test_rejects_candidate_id_misfiled_as_retained_source_id(self) -> None:
         bad = receipt(
@@ -165,6 +172,22 @@ class PeriodicSourceReceiptStateTests(unittest.TestCase):
             [
                 {"receipt_ref": "comment-a", "actual_source_review_receipt": material_string_pr},
                 {"receipt_ref": "comment-b", "actual_source_review_receipt": material_integer_pr},
+            ],
+        )
+        rows = {row["source_id"]: row for row in reconciled["sources"]}
+        self.assertEqual(1, rows["anthropic"]["material_candidate_count_since_tracking_start"])
+
+
+    def test_legacy_optional_field_omission_dedupes_with_explicit_defaults(self) -> None:
+        explicit = receipt(high_nutrient_sources=[])
+        legacy = copy.deepcopy(explicit)
+        del legacy["high_nutrient_sources"]
+        del legacy["merge_sha"]
+        reconciled = state.reconcile_operations_ledger_from_receipts(
+            ledger(),
+            [
+                {"receipt_ref": "explicit", "actual_source_review_receipt": explicit},
+                {"receipt_ref": "legacy", "actual_source_review_receipt": legacy},
             ],
         )
         rows = {row["source_id"]: row for row in reconciled["sources"]}

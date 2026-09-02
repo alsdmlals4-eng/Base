@@ -7,7 +7,7 @@ import json
 from datetime import date
 from pathlib import Path
 
-from tools.periodic_source_operations_state import reconcile_operations_ledger_from_receipts
+from tools.periodic_source_receipt_state import reconcile_operations_ledger_from_receipts
 
 
 def _parse_ids(value: str) -> list[str]:
