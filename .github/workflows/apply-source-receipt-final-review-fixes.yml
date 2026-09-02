@@ -65,7 +65,8 @@ jobs:
           rm .github/workflows/apply-source-receipt-final-review-fixes.yml
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add tools/periodic_source_receipt_state.py tools/record_periodic_source_scan.py tools/periodic_source_operations_state.py tests/test_periodic_source_receipt_state.py tests/test_record_periodic_source_scan.py tests/test_periodic_source_receipt_review_round3.py .tmp/apply_source_receipt_final_fixes.py .github/workflows/apply-source-receipt-final-review-fixes.yml
+          git add tools/periodic_source_receipt_state.py tools/record_periodic_source_scan.py tools/periodic_source_operations_state.py tests/test_periodic_source_receipt_state.py tests/test_record_periodic_source_scan.py tests/test_periodic_source_receipt_review_round3.py
+          git add -u -- .tmp/apply_source_receipt_final_fixes.py .github/workflows/apply-source-receipt-final-review-fixes.yml
           git commit -m "fix: close Source receipt reconciliation identities"
           test "$(git diff --name-only origin/main...HEAD | sort | tr '\n' ' ')" = "tests/test_periodic_source_receipt_review_round3.py tests/test_periodic_source_receipt_state.py tests/test_record_periodic_source_scan.py tools/periodic_source_operations_state.py tools/periodic_source_receipt_state.py tools/record_periodic_source_scan.py "
           git push origin HEAD:fix/source-receipt-ledger-integrity-r2-20260902
