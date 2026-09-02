@@ -18,40 +18,54 @@ The former Sprite Animation Studio is `RETIRED_HISTORY_ONLY` in current Base. It
 - Define rig-ready source-art, state-family, interruption, domain-authority, version, license, performance, and rollback contracts.
 - Treat Spine as one bounded external candidate, not a default dependency.
 - Add a reusable project record and focused regression tests under existing owners.
+- Make the route discoverable through the existing shared-skill routing record without creating another Skill authority.
 
 ## Non-goals
 
 - No Spine purchase, installer, binary, addon, custom Godot build, project rollout, production asset, or project runtime change.
-- No new Skill, Registry entry, workflow, provider, dashboard, or second asset canon.
+- No new Skill, no new `shared_skills[]` object, no new project-adapter role, and no second asset canon.
+- No new workflow, provider, dashboard, or project-wide mandatory rigging dependency.
 - No modification of retired Sprite Animation Studio files.
 - No claim of Godot import, Windows/Android runtime, performance, Human, or release verification.
 
 ## Selected architecture
 
-The existing `evaluating-godot-assets-and-plugins-before-creation` Skill remains the primary owner. A new subordinate reference owns the route decision and runtime trial boundary. Its existing `source-catalog.md` links to that reference. The active art Skill's existing `sprite-pose-sequence-controls.md` links into the same reference only when source art may need rig-ready parts. A project Template records the decision and evidence without becoming a central registry.
+The existing `evaluating-godot-assets-and-plugins-before-creation` Skill remains the primary owner. A new subordinate reference owns the route decision and runtime trial boundary. The owning `SKILL.md` links the conditional reference directly. Its existing entry in `skills/BASE_SHARED_SKILL_ROUTES.json` is extended with focused trigger tags, the new reference, and the project record Template; no new shared Skill record is created. The existing `source-catalog.md` supplies discovery queries, while the active art Skill's `sprite-pose-sequence-controls.md` links into the same reference only when source art may need rig-ready parts.
 
 ```text
-evaluating-godot-assets-and-plugins-before-creation
-├─ references/source-catalog.md
-└─ references/2d-character-animation-routing-and-rigging.md
-   └─ templates/planning/2D_CHARACTER_ANIMATION_ROUTE_RECORD.md
+skills/evaluating-godot-assets-and-plugins-before-creation/
+├─ SKILL.md
+├─ LEARNING_LOG.md
+└─ references/
+   ├─ source-catalog.md
+   └─ 2d-character-animation-routing-and-rigging.md
 
-designing-art-prompts-and-technique-cards
+skills/BASE_SHARED_SKILL_ROUTES.json
+└─ extend existing evaluating-godot-assets-and-plugins-before-creation record
+
+templates/planning/2D_CHARACTER_ANIMATION_ROUTE_RECORD.md
+
+designing-art-prompts-and-technique-cards/
 └─ references/sprite-pose-sequence-controls.md
    └─ conditional route to the same animation reference
+
+tests/
+├─ test_2d_character_animation_routing_contract.py
+└─ test_base_shared_skill_routes.py
 ```
 
 ## Alternatives considered
 
 1. **Revive Sprite Animation Studio.** Rejected because current Base explicitly retires it and its frame-generation tool does not own runtime-route selection.
-2. **Create a new animation Skill and Registry trigger set.** Rejected because the input, evaluation, adoption, and rollback boundaries already belong to the Godot asset/plugin evaluation Skill.
-3. **Add one subordinate reference and project record under existing owners.** Selected as the smallest non-duplicating architecture.
+2. **Create a new animation Skill and a new shared-skill record.** Rejected because the input, evaluation, adoption, and rollback boundaries already belong to the Godot asset/plugin evaluation Skill.
+3. **Add one subordinate reference and extend the existing Skill route record.** Selected as the smallest discoverable, non-duplicating architecture.
 4. **Adopt Spine as the Base default.** Rejected because projects differ in style, concurrent instances, platforms, cost, and dynamic-runtime need.
 
 ## Data and control flow
 
 ```text
 actual consumer + current project implementation
+→ existing shared-skill trigger routes to current evaluation owner
 → FRAME / GODOT_NATIVE_RIG / EXTERNAL_RIG_RUNTIME / EXTERNAL_RIG_BAKED comparison
 → selected route + rejected-route reasons
 → rig-ready source contract when applicable
@@ -65,12 +79,14 @@ Animation remains a presentation consumer. Domain state commits damage, cost, re
 
 ## Error and rollback handling
 
-Missing sources, binaries, license evidence, target-platform exports, or performance evidence fail closed as `NOT_RUN` or `BLOCKED_UNVERIFIED`. External runtime removal must preserve a frame/static fallback and leave domain state, save schema, approved source art, and unrelated project paths unchanged.
+Missing sources, binaries, license evidence, target-platform exports, or performance evidence fail closed as `NOT_RUN` or `BLOCKED_UNVERIFIED`. External runtime removal must preserve a frame/static fallback and leave domain state, save schema, approved source art, and unrelated project paths unchanged. Removing this Base addition consists of reverting the existing route-record additions, the subordinate reference, Template, owner links, learning receipt, and their focused tests; no project runtime migration is implied.
 
 ## Verification
 
 - Focused unittest begins RED on the current Base contract.
-- GREEN requires the new route owner, Template, two existing-owner links, learning receipt, and evidence-ceiling markers.
-- Negative mutations remove route/default/domain/runtime-boundary markers and must fail.
-- Remote Base CI and exact-head readback are required after PR creation.
+- GREEN requires the new route owner, Template, owner links, learning receipt, section ownership, and evidence-ceiling markers.
+- Shared-route regression requires the existing Skill record to expose focused trigger tags, the reference, and the Template while retaining exactly the existing shared Skill set.
+- Negative mutations relocate route/default/domain/runtime-boundary markers and must fail.
+- Canonical reference freshness, Base package integrity, whitespace, shared-route tests, whole core regression, and publication checks run on the exact PR head.
+- Remote Base CI, independent review, unresolved-thread readback, ruleset reconciliation, and exact-head merge are required before integration.
 - These tests are document-contract evidence only, not Godot runtime evidence.
