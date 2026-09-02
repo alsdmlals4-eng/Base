@@ -10,6 +10,7 @@ from tools.validate_work_contract_receipt import validate_execution_receipt
 
 ROOT = Path(__file__).resolve().parents[1]
 ACTIVE_CONSUMERS = (
+    "docs/BASE_SHARED_SKILL_ADAPTER_CONTRACT.md",
     "skills/managing-project-intake-and-work-contract/SKILL.md",
     "skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md",
     "templates/planning/EXECUTION_SEQUENCE_PLAN.md",
@@ -139,6 +140,28 @@ class PMCloseoutHeadAndActiveConsumerTests(unittest.TestCase):
         self.assertIn("VERIFY_REVIEW", text)
         self.assertIn("각 상태의 WIP는 최대 1개", text)
         self.assertNotIn("시작/재개에는 IN_PROGRESS 1개", text)
+
+    def test_merge_and_postmerge_work_precedes_final_closeout(self) -> None:
+        text = (ROOT / "templates/project-operations/PROJECT_WORK_ITEM_CHECKLIST.md").read_text(
+            encoding="utf-8"
+        )
+        section = text.split("### 실행·재개·마감", 1)[1].split(
+            "`TRUSTED_VERIFICATION_TARGET_HEAD`", 1
+        )[0]
+        for token in (
+            "PREMERGE_CANDIDATE_NOT_CLOSEOUT",
+            "NORMAL_MERGE_AND_POSTMERGE_READBACK",
+            "POSTMERGE_CLOSEOUT_REQUIRED_WHEN_IN_DENOMINATOR",
+        ):
+            self.assertIn(token, section)
+        self.assertLess(
+            section.index("NORMAL_MERGE_AND_POSTMERGE_READBACK"),
+            section.index("POSTMERGE_CLOSEOUT_REQUIRED_WHEN_IN_DENOMINATOR"),
+        )
+        self.assertLess(
+            section.index("POSTMERGE_CLOSEOUT_REQUIRED_WHEN_IN_DENOMINATOR"),
+            section.index("--phase closeout"),
+        )
 
 
 if __name__ == "__main__":
