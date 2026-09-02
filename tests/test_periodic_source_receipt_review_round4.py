@@ -76,6 +76,22 @@ url: https://geminicli.com/docs/
         with self.assertRaisesRegex(AnalysisBlocked, "unsupported receipt entry fields"):
             reconcile(ledger(), [row])
 
+    def test_receipt_identity_includes_receipt_time_classification(self) -> None:
+        first = entry(receipt(), ref="first")
+        first["source_state_at_scan"] = {
+            "anthropic": "DURABLE_ACTIVE",
+            "godot": "DURABLE_ACTIVE",
+            "github-copilot": "DURABLE_ACTIVE",
+        }
+        once = reconcile(ledger(), [first])
+
+        contradictory = entry(receipt(), ref="contradictory")
+        contradictory["source_state_at_scan"] = {
+            "anthropic": "DISCOVERY_ACTIVE"
+        }
+        with self.assertRaisesRegex(AnalysisBlocked, "classification.*durable lane"):
+            reconcile(once, [contradictory])
+
     def test_shared_analysis_updater_rejects_identity_enabled_ledger(self) -> None:
         current = reconcile(ledger(), [])
         with self.assertRaisesRegex(AnalysisBlocked, "receipt reconciler"):
