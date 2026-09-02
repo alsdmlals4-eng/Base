@@ -455,4 +455,3 @@ def reconcile_operations_ledger_from_receipts(
             row[_BASE_COUNT_FIELD] = existing_count + len(new_events)
 
     return result
-
