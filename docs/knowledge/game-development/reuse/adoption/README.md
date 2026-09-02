@@ -74,8 +74,7 @@ python tools/reuse_modules/reuse_adoption.py check docs/base-reuse-adoption.json
 각 프로젝트의 실제 작업을 시작할 때만 다음 순서를 사용한다. Base가 프로젝트 작업 전에 남은 모듈을 일괄 설치하거나 프로젝트 고유 구조를 공용 구조로 강제하지 않는다.
 
 ```text
-fresh project AGENTS / Active Context / confirmed Decisions / approved scope
-→ actual code · data · scene · asset · test · runtime evidence
+PROJECT_WORK_REUSE_HANDOFF.json#current_project_authority_read_order
 → ACTIVE_PROJECT_ADOPTION_MATRIX + project profile
 → PROJECT_WORK_REUSE_HANDOFF project entry
 → existing project implementation and existing Base module first
@@ -84,6 +83,12 @@ fresh project AGENTS / Active Context / confirmed Decisions / approved scope
 → implement only inside the approved project scope
 → project-owned tests and runtime evidence
 ```
+
+`PROJECT_WORK_REUSE_HANDOFF.json#current_project_authority_read_order`가 이 진입 흐름의
+유일한 live-read owner다. 이 순서를 마친 뒤에만 matrix·profile·reuse registry·benchmark를
+참조한다. Base handoff는 안정적인 프로젝트 정체성과 재사용 힌트만 보관한다. 과거 Decision ID,
+Notion state, Issue/PR 번호, phase label은 현재 실행 권한이 아니며, 필요하면 해당 프로젝트의
+fresh-read owner에서만 확인한다.
 
 - `PROJECT_WORK_REUSE_HANDOFF.json`의 `priority_reference_modules`는 **탐색 시작 후보**이지 설치 지시나 구현 정본이 아니다.
 - profile과 matrix는 현재 adoption 상태를 기록하고, 프로젝트 정본이 실제 사용 여부·수치·씬·UI·자산·저장 구조를 결정한다.

@@ -2,6 +2,7 @@
   "schema_version": 1,
   "base_reference_commit": "8553678f70e22f193a2336b591f677dcfa5a8965",
   "project_work_handoff": "docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json",
+  "current_authority_read_order_source": "PROJECT_WORK_REUSE_HANDOFF.json#current_project_authority_read_order",
   "projects": {
     "COC_FICTION": {
       "repository": "alsdmlals4-eng/Coc-Fiction",
@@ -20,7 +21,7 @@
         "runtime_validation": "NOT_APPLICABLE_MANIFEST_ONLY"
       },
       "existing_solution": "project already has fiction-specific content/operating/reverse-outline/scene validators; generic RM-TOOL-001 must prove additional cross-reference value before vendoring",
-      "revisit": "use the installed Adoption Kit manifest to record explicit non-duplication; enable RM-TOOL-001 only when a real cross-file ID gap is found"
+      "revisit": "follow the project handoff current-authority read order before recording explicit non-duplication; enable RM-TOOL-001 only when a real cross-file ID gap is found"
     },
     "GRIMOIRE": {
       "repository": "alsdmlals4-eng/GRIMOIRE-",
@@ -39,7 +40,7 @@
         "runtime_validation": "EXISTING_RUNTIME_REGRESSIONS_SUCCESS_MANIFEST_ONLY"
       },
       "evidence": "planning PR #138 merged as 293cde60ca19bfa6528b90807f7f4622037f2dd0; adoption manifest PR #139 merged as 5b51169130c97807234a0c2b457ed90dc3c04f3a without product-runtime changes",
-      "revisit": "pilot sidecar helpers from current main without changing FIVE_POINT_STAR runtime authority"
+      "revisit": "follow the project handoff current-authority read order before piloting sidecar helpers, without changing FIVE_POINT_STAR runtime authority"
     },
     "SWITCHY": {
       "repository": "alsdmlals4-eng/Switchy-Express-Cargo-Puzzle",
@@ -52,7 +53,7 @@
         "RM-VIS-002": "enabled"
       },
       "blocker": "no current adoption blocker; runtime or product changes still require fresh Switchy authority and the existing acceptance/human-evidence gates",
-      "revisit": "re-read current main before project work and preserve SX-DEC-059 finite-delivery authority; adopt only modules consumed by an approved task"
+      "revisit": "follow the project handoff current-authority read order before project work; adopt only modules consumed by an approved task"
     },
     "TETRIS": {
       "repository": "alsdmlals4-eng/Tetris",
@@ -65,7 +66,7 @@
         "RM-VIS-002": "planned"
       },
       "blocker": "production Shared Player Turn Budget, Line/Chain runtime and Tempo remain NOT_PRESENT; BUILD is deferred until the explicit project build gate",
-      "revisit": "re-read current TETRIS-CORE-024 plus TETRIS-TIME-025 and adopt only modules required by an explicitly approved production task"
+      "revisit": "follow the project handoff current-authority read order and adopt only modules required by an explicitly approved production task"
     },
     "URBAN_LEGEND": {
       "repository": "alsdmlals4-eng/urban-legend",
@@ -86,7 +87,7 @@
       "project_adoption_mode": "ADAPTED_IMPLEMENTATION",
       "evidence": "project PR #208 merged the RM-TOOL-001 concept as a project-adapted implementation at 5c91f4ff8d88b3e00f66252ba6f566795f2e50a3; adoption manifest PR #209 merged as 1e75e5dc871ce1ce4d547b0521f6e9b680c46684 after Base-v9, Project Base Adapter, docs, core, full matrix and ANNUAL-MVP regressions all succeeded; current project validator remains intentionally not byte-identical to the Base vendor source",
       "blocker": "do not overwrite the verified project-adapted validator with the Base vendor source",
-      "revisit": "only standardize to vendored source after an explicit equivalence/migration decision; the existing project implementation remains valid"
+      "revisit": "follow the project handoff current-authority read order before any explicit equivalence or migration decision; the existing project implementation remains valid"
     },
     "NINJA_SURVIVAL": {
       "repository": "alsdmlals4-eng/ninja-survival-godot",
@@ -104,8 +105,8 @@
         "verification": "GUT 32317360022 SUCCESS",
         "runtime_validation": "GODOT_IMPORT_MAIN_SCENE_SMOKE_FULL_GUT_SUCCESS_MANIFEST_ONLY"
       },
-      "evidence": "Phase B Definition of Ready is PHASE_B_PASS and Phase C is authorized on main; PR #20 installed only the adoption manifest and its existing-GUT workflow contract without implementing a Phase-C task or vendoring a runtime reuse module",
-      "revisit": "vendor only the P0 module required by an approved Phase-C task, keeping project-specific gameplay and backpack/combo authority local"
+      "evidence": "The adoption manifest and existing-GUT workflow contract were installed without implementing a product task or vendoring a runtime reuse module.",
+      "revisit": "follow the project handoff current-authority read order, then vendor only the P0 module required by an approved task while keeping project-specific gameplay and backpack/combo authority local"
     },
     "MY_LITTLE_BOAT": {
       "repository": "alsdmlals4-eng/MylittleBoat",
@@ -133,7 +134,7 @@
       },
       "evidence": "project manifest blob SHA a449498ad9bcc53a20690d4e6f53279d6cc78e64 matched the Base MY_LITTLE_BOAT profile blob exactly before merge; runtime helper vendoring remains intentionally unrun",
       "blocker": "runtime helper vendoring and adapter work are intentionally deferred by user until the next My Little Boat project work session",
-      "revisit": "when My Little Boat project work resumes, re-read current main and run a Godot 4.7 verification path before vendoring RM-VIS-001 and RM-VIS-002"
+      "revisit": "follow the project handoff current-authority read order; when My Little Boat project work resumes, run a Godot 4.7 verification path before vendoring RM-VIS-001 and RM-VIS-002"
     },
     "BLACKSMITH": {
       "repository": "alsdmlals4-eng/Blacksmith",
@@ -153,7 +154,7 @@
       },
       "evidence": "PR #170 installed the adoption manifest through the existing Base-v9 regression; Base-v9 adversarial gate, PR validation, Project Base Adapter, Thin Adapter Migration and BCA Adoption all succeeded without product-path changes",
       "blocker": "general product implementation is BLOCKED outside the approved vertical-slice namespace",
-      "revisit": "after the Blacksmith product/Task gate explicitly allows the relevant adapter paths"
+      "revisit": "follow the project handoff current-authority read order; after the Blacksmith product/Task gate explicitly allows the relevant adapter paths, use only the relevant adapter paths"
     },
     "TEN_PACES": {
       "repository": "alsdmlals4-eng/Ten-Paces-Hidden-Moves",
@@ -175,9 +176,9 @@
         ],
         "runtime_validation": "NOT_RUN_NO_MANIFEST_INSTALLED"
       },
-      "evidence": "historical manifest-only attempts #167/#169 were deferred during concurrent planning churn; current Ten Paces later stabilized and the first-five-duel Phase I–VI implementation was authorized and merged, so that churn is historical evidence rather than the current blocker",
-      "blocker": "Base reuse preinstallation remains intentionally unrun; adoption now requires a current approved project task, fresh main + exact Notion + open-PR overlap checks, and an actually consumed module",
-      "revisit": "during the next approved Ten Paces project task, re-read current main, exact Notion state and open PRs, then install or adapt only modules actually consumed by that task while preserving hidden-information and Human/device evidence boundaries"
+      "evidence": "Historical manifest-only attempts were deferred during planning churn; they remain historical evidence rather than the current blocker.",
+      "blocker": "Base reuse preinstallation remains intentionally unrun; adoption requires a current approved project task, the project handoff current-authority read order, and an actually consumed module.",
+      "revisit": "follow the project handoff current-authority read order; during the next approved Ten Paces project task, install or adapt only modules actually consumed by that task while preserving hidden-information and Human/device evidence boundaries"
     },
     "OMENWARD": {
       "repository": "alsdmlals4-eng/omenward",
@@ -196,16 +197,14 @@
         "runtime_validation": "GODOT_4_7_1_IMPORT_ALL_HEADLESS_RUNTIME_SMOKE_SUCCESS_SIDECAR_ONLY"
       },
       "project_adoption_mode": "VENDORED_REFERENCE_WITH_PROJECT_ADAPTER",
-      "evidence": "PR #198 squash-merged the Base RM-SYS-003 reference engine, an Omenward-specific exact-three adapter, project manifest and permanent regression coverage under vendor/base-reuse; stale PR #197 was closed unmerged as superseded",
+      "evidence": "Historical Base RM-SYS-003 reference-adapter reconciliation and permanent regression coverage are preserved; current consumer work must fresh-read its own project authority.",
       "evidence_ceiling": [
         "PRODUCTION_CONSUMER_NOT_CONNECTED",
         "FULL_REPOSITORY_CONTRACT_GREEN_NOT_CLAIMED",
         "CURRENT_HUMAN_PLAYER_EVIDENCE_NOT_RUN"
       ],
-      "followup_issue": 199,
-      "followup_issue_state": "RESOLVED_BY_PR_201",
       "blocker": "production consumer integration remains intentionally unrun; current v4.7 player/Human evidence remains separately gated",
-      "revisit": "connect the adapter to production only inside an approved Omenward product task after reading current canon; treat Issue #199 and merged PR #201 as resolved validator-history evidence"
+      "revisit": "follow the project handoff current-authority read order; connect the adapter to production only inside an approved Omenward product task"
     }
   }
 }

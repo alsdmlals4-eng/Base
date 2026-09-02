@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-08-25",
+  "updated_at": "2026-09-02",
   "state": "CURRENT_PROJECT_WORK_HANDOFF",
   "purpose": "Route each future project work session through current project authority, existing reusable modules, bounded project adaptation, truthful verification, and project-to-Base learning handoff.",
   "install_policy": "ONLY_DURING_APPROVED_PROJECT_WORK",
@@ -13,6 +13,14 @@
     "PROJECT_ADOPTED_BASE_PROFILE",
     "BASE_CURRENT_REUSE_REGISTRY_AND_PIPELINE"
   ],
+  "current_project_authority_read_order": [
+    "PROJECT_AGENTS_MD",
+    "CURRENT_PROJECT_MAIN",
+    "CURRENT_DECISIONS_AND_ACTIVE_CONTEXT",
+    "ACTUAL_IMPLEMENTATION_AND_CONSUMERS",
+    "OPEN_PR_OVERLAP"
+  ],
+  "base_handoff_authority_boundary": "STABLE_IDENTITY_AND_REUSE_HINTS_ONLY",
   "state_sources": {
     "fleet_matrix": "docs/knowledge/game-development/reuse/adoption/ACTIVE_PROJECT_ADOPTION_MATRIX.json",
     "project_profiles": "docs/knowledge/game-development/reuse/adoption/profiles/*.json",
@@ -144,7 +152,7 @@
         "RM-WORK-002"
       ],
       "project_owned_identity": "Canon, source provenance, continuity, scene revision, and fiction publication authority remain Coc-Fiction-owned.",
-      "next_project_work_action": "Read current fiction canon and existing validators first; use the listed modules only when a concrete continuity, content assembly, visual-material, or workflow bottleneck remains.",
+      "next_project_work_action": "Follow CURRENT_PROJECT_AUTHORITY_READ_ORDER, then use the listed modules only when a concrete continuity, content assembly, visual-material, or workflow bottleneck remains.",
       "do_not_flatten_project_identity": true
     },
     "GRIMOIRE": {
@@ -167,7 +175,7 @@
         "RM-VIS-005"
       ],
       "project_owned_identity": "FIVE_POINT_STAR, character-to-circuit-to-spell composition, explicit commit rules, lesson pacing, and field-practice experience remain GRIMOIRE-owned.",
-      "next_project_work_action": "Map the approved lesson or field-practice task to existing composition, phase, event, card, narrative, and visual modules before extracting any new bounded helper.",
+      "next_project_work_action": "Follow CURRENT_PROJECT_AUTHORITY_READ_ORDER, then map the approved lesson or field-practice task to existing composition, event, card, narrative, and visual modules before extracting any new bounded helper.",
       "do_not_flatten_project_identity": true
     },
     "SWITCHY": {
@@ -183,7 +191,7 @@
         "RM-VIS-002"
       ],
       "project_owned_identity": "LIFO cargo routing, switch semantics, sealed layout, BUILD/RUN transition, and logistics puzzle readability remain Switchy-owned.",
-      "next_project_work_action": "Re-read current main and the SX-DEC-059 acceptance/human-evidence gates; reuse grid, route-stack, phase, explainability, replay, UI, and symbol contracts only through an approved finite-delivery task.",
+      "next_project_work_action": "Follow CURRENT_PROJECT_AUTHORITY_READ_ORDER, then read the current approved task's acceptance and evidence owners; reuse grid, route-stack, phase, explainability, replay, UI, and symbol contracts only through that approved task.",
       "do_not_flatten_project_identity": true
     },
     "TETRIS": {
@@ -201,7 +209,7 @@
         "RM-VIS-002"
       ],
       "project_owned_identity": "Enemy Telegraph -> one Shared Player Turn Budget across Line/Tetris -> Swap-Match Chain -> Action -> Enemy Resolve, READY carryover within the turn, Energy/Chain Stock/Tier plus Tempo semantics, and original presentation remain Tetris-owned; Tetris trade dress is excluded.",
-      "next_project_work_action": "Re-read current TETRIS-CORE-024, TETRIS-TIME-025 and the explicit BUILD gate; keep reuse modules deferred until an approved Shared Player Turn Budget/Line/Chain production task actually consumes them, without copying protected names, visuals, audio, or trade dress.",
+      "next_project_work_action": "Follow CURRENT_PROJECT_AUTHORITY_READ_ORDER, then read the current approved build gate; keep reuse modules deferred until an approved production task actually consumes them, without copying protected names, visuals, audio, or trade dress.",
       "do_not_flatten_project_identity": true
     },
     "URBAN_LEGEND": {
@@ -223,7 +231,7 @@
         "RM-VIS-005"
       ],
       "project_owned_identity": "Schedule, anomaly investigation, delayed consequences, companion response, evidence causality, and modern occult tone remain Urban Legend-owned.",
-      "next_project_work_action": "Preserve the verified project-adapted validator, then compare each approved event, schedule, research, companion, collection, narrative, background, or portrait task with the listed modules before extending locally.",
+      "next_project_work_action": "Follow CURRENT_PROJECT_AUTHORITY_READ_ORDER, preserve the verified project-adapted validator, then compare each approved event, schedule, research, companion, collection, narrative, background, or portrait task with the listed modules before extending locally.",
       "do_not_flatten_project_identity": true
     },
     "NINJA_SURVIVAL": {
@@ -244,7 +252,7 @@
         "RM-VIS-004"
       ],
       "project_owned_identity": "Backpack placement, recipe combination, survivor auto-combat, REST workbench, reward cadence, and ninja fantasy remain Ninja Survival-owned.",
-      "next_project_work_action": "For each approved Phase-C task, select only the grid, survivor, phase, draft, explainability, wave, card, replay, balance, UI, symbol, or telegraph contract actually consumed by that task.",
+      "next_project_work_action": "Follow CURRENT_PROJECT_AUTHORITY_READ_ORDER, then select only the grid, survivor, phase, draft, explainability, wave, card, replay, balance, UI, symbol, or telegraph contract actually consumed by the approved task.",
       "do_not_flatten_project_identity": true
     },
     "MY_LITTLE_BOAT": {
@@ -262,7 +270,7 @@
         "RM-VIS-003"
       ],
       "project_owned_identity": "Calm short-session discovery, photos, bottle letters, collection memory, companion reactions, and noncompetitive emotional tone remain My Little Boat-owned.",
-      "next_project_work_action": "Keep runtime helpers deferred until My Little Boat work resumes; then re-read main and use only the calm-session, phase, event, companion, collection, narrative, UI, symbol, or background module needed by the approved task.",
+      "next_project_work_action": "Follow CURRENT_PROJECT_AUTHORITY_READ_ORDER, keep runtime helpers deferred until work resumes, then use only the calm-session, phase, event, companion, collection, narrative, UI, symbol, or background module needed by the approved task.",
       "do_not_flatten_project_identity": true
     },
     "BLACKSMITH": {
@@ -279,7 +287,7 @@
         "RM-VIS-002"
       ],
       "project_owned_identity": "Enhancement tension, durability and destruction, push-or-stop judgment, item lifecycle, DDD structure, precision crafting, and customer lifecycle remain Blacksmith-owned.",
-      "next_project_work_action": "Only inside an approved Blacksmith product namespace, compare enhancement, explainability, delayed consequence, collection history, replay, balance, UI, and symbol modules before building or adapting a bounded implementation.",
+      "next_project_work_action": "Follow CURRENT_PROJECT_AUTHORITY_READ_ORDER; only inside an approved Blacksmith product namespace, compare enhancement, explainability, delayed consequence, collection history, replay, balance, UI, and symbol modules before building or adapting a bounded implementation.",
       "do_not_flatten_project_identity": true
     },
     "TEN_PACES": {
@@ -294,7 +302,7 @@
         "RM-VIS-004"
       ],
       "project_owned_identity": "Hidden simultaneous planning, ten-pace resolution, public-information AI, information boundaries, and explainable replay remain Ten Paces-owned.",
-      "next_project_work_action": "Read current main + exact Notion state + open PRs first; the first-five-duel Phase I–VI is already implemented, so reuse hidden-plan, explainability, deterministic replay, UI, symbol, and telegraph contracts only when a current approved project task actually consumes them, without exposing protected hidden information or promoting Human/device evidence.",
+      "next_project_work_action": "Follow CURRENT_PROJECT_AUTHORITY_READ_ORDER; reuse hidden-plan, explainability, deterministic replay, UI, symbol, and telegraph contracts only when a current approved project task actually consumes them, without exposing protected hidden information or promoting Human/device evidence.",
       "do_not_flatten_project_identity": true
     },
     "OMENWARD": {
@@ -313,7 +321,7 @@
         "RM-VIS-004"
       ],
       "project_owned_identity": "Player-constructed probability, TokenSource semantics, three omen wheels, irreversible lane commitment, pressure language, and causal review remain Omenward-owned.",
-      "next_project_work_action": "Keep the verified RM-SYS-003 sidecar isolated until an approved product task connects a consumer; then read current canon plus the resolved validator history (Issue #199 -> merged PR #201) before using roulette, phase, draft, explainability, wave, replay, balance, UI, symbol, or telegraph contracts.",
+      "next_project_work_action": "Follow CURRENT_PROJECT_AUTHORITY_READ_ORDER; keep the verified RM-SYS-003 sidecar isolated until an approved product task connects a consumer, then read the current validator and consumer owners before using roulette, phase, draft, explainability, wave, replay, balance, UI, symbol, or telegraph contracts.",
       "do_not_flatten_project_identity": true
     }
   },
