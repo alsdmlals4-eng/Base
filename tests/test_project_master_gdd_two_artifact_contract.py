@@ -109,7 +109,15 @@ class ProjectMasterGddTwoArtifactContractTests(unittest.TestCase):
         text = POLICY.read_text(encoding="utf-8")
         for required in (
             "BLUEPRINT_PRE_IMPLEMENTATION_REVIEW_GATE",
+            "PROJECT_WIDE_SYSTEM_COVERAGE_SLICE_DEPTH",
+            "BLUEPRINT_PASS_1_STRUCTURAL_DRAFT",
+            "STRUCTURAL_BLUEPRINT_DRAFT_NOT_THIRD_ARTIFACT",
+            "BLUEPRINT_PASS_1_ACTUAL_CONSUMER_CONTRACT",
             "REQUIRED_IMAGE_AND_MATERIAL_PREPARATION",
+            "REQUIRED_MATERIALS_NOT_ALL_PROJECT_ASSETS",
+            "BLUEPRINT_PASS_2_FINAL",
+            "VFX_BRIEF_AND_SOURCE_BEFORE_FINAL_BLUEPRINT",
+            "ENGINE_NATIVE_VFX_IN_GODOT_PRODUCT_BUILD",
             "USER_FINAL_REVIEW_APPROVAL_REQUIRED",
             "NO_IMPLEMENTATION_BEFORE_USER_FINAL_APPROVAL",
             "FRAME → RESEARCH → DESIGN → SPECIFY",
@@ -125,6 +133,7 @@ class ProjectMasterGddTwoArtifactContractTests(unittest.TestCase):
             self.assertIn(required, text)
         self.assertIn(
             "PLAN\n"
+            "→ BLUEPRINT_PASS_1_STRUCTURAL_DRAFT\n"
             "→ REQUIRED_IMAGE_AND_MATERIAL_PREPARATION\n"
             "→ BLUEPRINT_REVIEW_PUBLICATION\n"
             "→ USER_FINAL_REVIEW_APPROVAL\n"
@@ -319,7 +328,15 @@ class ProjectMasterGddTwoArtifactContractTests(unittest.TestCase):
         text = INSTRUCTION.read_text(encoding="utf-8")
         for required in (
             "BLUEPRINT_PRE_IMPLEMENTATION_REVIEW_GATE",
+            "PROJECT_WIDE_SYSTEM_COVERAGE_SLICE_DEPTH",
+            "BLUEPRINT_PASS_1_STRUCTURAL_DRAFT",
+            "STRUCTURAL_BLUEPRINT_DRAFT_NOT_THIRD_ARTIFACT",
+            "BLUEPRINT_PASS_1_ACTUAL_CONSUMER_CONTRACT",
             "REQUIRED_IMAGE_AND_MATERIAL_PREPARATION",
+            "REQUIRED_MATERIALS_NOT_ALL_PROJECT_ASSETS",
+            "BLUEPRINT_PASS_2_FINAL",
+            "VFX_BRIEF_AND_SOURCE_BEFORE_FINAL_BLUEPRINT",
+            "ENGINE_NATIVE_VFX_IN_GODOT_PRODUCT_BUILD",
             "USER_FINAL_REVIEW_APPROVAL_REQUIRED",
             "NO_IMPLEMENTATION_BEFORE_USER_FINAL_APPROVAL",
             "FRAME → RESEARCH → DESIGN → SPECIFY",
@@ -335,6 +352,7 @@ class ProjectMasterGddTwoArtifactContractTests(unittest.TestCase):
             self.assertIn(required, text)
         self.assertIn(
             "PLAN\n"
+            "→ BLUEPRINT_PASS_1_STRUCTURAL_DRAFT\n"
             "→ REQUIRED_IMAGE_AND_MATERIAL_PREPARATION\n"
             "→ BLUEPRINT_REVIEW_PUBLICATION\n"
             "→ USER_FINAL_REVIEW_APPROVAL\n"
