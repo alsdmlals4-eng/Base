@@ -742,6 +742,10 @@ def _normalize_processed_receipt_row(
             raise _blocked(
                 "processed receipt material Source must be in durable scanned Sources"
             )
+        if normalized_id in counts:
+            raise _blocked(
+                "duplicate normalized processed material Source"
+            )
         counts[normalized_id] = raw_count
     contribution_keys = _string_list(
         row.get("contribution_keys"),
@@ -897,6 +901,27 @@ def _normalize_existing_reconciliation_state(
         normalized_identity_floor,
         baseline_by_source,
     )
+
+
+def _validate_source_baseline_window(
+    baseline: Mapping[str, object],
+    *,
+    tracking_started: date,
+    upper_bound: date,
+) -> None:
+    for field, label in (
+        ("scan_date", "baseline scan date"),
+        ("material_date", "baseline material date"),
+        ("base_contribution_date", "baseline Base contribution date"),
+    ):
+        raw_value = baseline.get(field)
+        if raw_value is None:
+            continue
+        value = _parse_iso_date(raw_value, label)
+        if value < tracking_started or value > upper_bound:
+            raise _blocked(
+                f"{label} must stay within operations Ledger tracking and batch dates"
+            )
 
 
 def _capture_source_baseline(
@@ -1126,8 +1151,11 @@ def reconcile_operations_ledger_from_receipts(
     tracking_started = _parse_iso_date(
         result.get("tracking_started_at"), "tracking_started_at"
     )
+    reconciliation_state_present = _RECONCILIATION_FIELD in result
     raw_reconciliation_state = result.get(_RECONCILIATION_FIELD)
-    if raw_reconciliation_state is not None:
+    if reconciliation_state_present:
+        if raw_reconciliation_state is None:
+            raise _blocked("receipt reconciliation state cannot be null")
         if not isinstance(raw_reconciliation_state, Mapping):
             raise _blocked("invalid receipt reconciliation state")
         persisted_tracking_start = _parse_iso_date(
@@ -1173,6 +1201,14 @@ def reconcile_operations_ledger_from_receipts(
                     "processed contribution merge_date predates operations Ledger tracking start"
                 )
 
+    if previous_batch is not None:
+        for baseline in source_baselines.values():
+            _validate_source_baseline_window(
+                baseline,
+                tracking_started=tracking_started,
+                upper_bound=previous_batch,
+            )
+
     missing_baselined_sources = set(source_baselines) - set(ledger_sources)
     if missing_baselined_sources:
         raise _blocked(
@@ -1181,7 +1217,13 @@ def reconcile_operations_ledger_from_receipts(
         )
     for source_id, row in ledger_sources.items():
         if source_id not in source_baselines:
-            source_baselines[source_id] = _capture_source_baseline(source_id, row)
+            captured_baseline = _capture_source_baseline(source_id, row)
+            _validate_source_baseline_window(
+                captured_baseline,
+                tracking_started=tracking_started,
+                upper_bound=batch_date,
+            )
+            source_baselines[source_id] = captured_baseline
         else:
             _validate_current_row_against_baseline(
                 source_id, row, source_baselines[source_id]
@@ -1247,6 +1289,15 @@ def reconcile_operations_ledger_from_receipts(
             if _canonical_json(persisted_effects) != _canonical_json(identity_effects):
                 raise _blocked("processed receipt effects do not match payload")
             continue
+        normalized = validate_actual_source_review_receipt(
+            raw_receipt,
+            result,
+            known_discovery_seed_ids=current_seed_ids,
+            historical_discovery_seed_ids=historical_seed_ids,
+            source_state_at_scan=envelope["source_state_at_scan"],
+            contribution_merge_dates=envelope["contribution_merge_dates"],
+            batch_date=batch_date,
+        )
         if payload_sha in payload_to_effects:
             if _canonical_json(payload_to_effects[payload_sha]) != _canonical_json(
                 identity_effects
@@ -1257,15 +1308,6 @@ def reconcile_operations_ledger_from_receipts(
             )
             continue
 
-        normalized = validate_actual_source_review_receipt(
-            raw_receipt,
-            result,
-            known_discovery_seed_ids=current_seed_ids,
-            historical_discovery_seed_ids=historical_seed_ids,
-            source_state_at_scan=envelope["source_state_at_scan"],
-            contribution_merge_dates=envelope["contribution_merge_dates"],
-            batch_date=batch_date,
-        )
         event_date = _parse_iso_date(normalized["scan_date"], "scan_date")
         if event_date < tracking_started:
             raise _blocked("receipt predates operations Ledger tracking start")
