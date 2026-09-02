@@ -12,8 +12,13 @@ PARENT_GOAL_PROGRESS_USES_REQUIRED_CHILD_DONE_COUNT
 DO_NOT_AVERAGE_CHILD_PERCENTAGES
 TRUSTED_VERIFICATION_TARGET_HEAD
 VERIFIED_SUBJECT_HEAD
-RECEIPT_ONLY_TAIL_COMMIT
+PREMERGE_CANDIDATE_NOT_CLOSEOUT
 FINAL_PR_HEAD_CI_REVIEW_REQUIRED
+NORMAL_PROTECTED_MERGE
+MERGED_MAIN_POSTMERGE_READBACK
+POSTMERGE_READBACK_REQUIRED
+POSTMERGE_CLOSEOUT
+RECEIPT_ONLY_TAIL_COMMIT
 NO_HTML_DASHBOARD
 NO_NEW_PAID_PM_TOOL
 NO_FLEET_WIDE_EMPTY_ARTIFACT_ROLLOUT
@@ -253,23 +258,35 @@ project AGENTS / approved owner / actual implementation fresh-read
 → 같은 receipt와 기존 Issue/card 갱신
 → 다음 승인 작업을 먼저 선택해 IN_PROGRESS와 active_work_item_ref에 기록
 → 그 작업을 실행하기 전 --phase resume으로 재검사
-→ 모든 필수 작업을 같은 VERIFIED_SUBJECT_HEAD에서 재검증
-→ validate_work_contract_receipt.py --receipt <receipt> --phase closeout --expected-source-sha <fresh-read-source-sha> --expected-head-sha <fresh-read-verified-subject-head-sha> --render-markdown
-→ receipt/status metadata만 기록하는 RECEIPT_ONLY_TAIL_COMMIT
+→ branch에서 검증 가능한 구현·정본·consumer 작업 완료
+→ PREMERGE_CANDIDATE_NOT_CLOSEOUT
+→ 필요 시 receipt/status metadata만 기록하는 RECEIPT_ONLY_TAIL_COMMIT
 → FINAL_PR_HEAD_CI_REVIEW_REQUIRED
+→ NORMAL_PROTECTED_MERGE
+→ NORMAL_MERGE_AND_POSTMERGE_READBACK
+→ MERGED_MAIN_POSTMERGE_READBACK
+→ POSTMERGE_READBACK_REQUIRED
+→ 같은 승인 Goal의 merge·postmerge 필수 항목과 모든 evidence를 merged main에서 재검증
+→ POSTMERGE_CLOSEOUT_REQUIRED_WHEN_IN_DENOMINATOR
+→ POSTMERGE_CLOSEOUT
+→ validate_work_contract_receipt.py --receipt <receipt> --phase closeout --expected-source-sha <fresh-read-source-sha> --expected-head-sha <fresh-read-merged-main-sha> --render-markdown
 ```
 
-`TRUSTED_VERIFICATION_TARGET_HEAD` · `VERIFIED_SUBJECT_HEAD`: closeout의 `--expected-head-sha`는 receipt 내부 값이 아니라 신뢰한 caller가 별도로 fresh-read한 **검증 대상 HEAD**다. 이 HEAD에는 현재 승인 범위의 모든 제품·정본·consumer·검증 evidence 영향 변경이 이미 들어 있어야 한다. receipt 안의 `verified_head_sha`를 기대값으로 다시 복사하면 자기주장 확인에 불과하므로 허용하지 않는다. 모든 필수 DONE 작업의 evidence와 readback은 이 동일한 `VERIFIED_SUBJECT_HEAD`를 대상으로 확인한다.
+`PREMERGE_CANDIDATE_NOT_CLOSEOUT`: branch에서 구현·테스트·정본 readback이 끝났더라도 병합·postmerge가 승인 범위의 필수 항목이면 integration work item은 `VERIFY_REVIEW`로 남기고 최종 `DONE`이나 closeout을 주장하지 않는다. exact PR HEAD의 required checks, 독립 검토와 unresolved thread 0을 확인한 뒤에만 정상 보호 병합한다.
 
-`RECEIPT_ONLY_TAIL_COMMIT`: repository receipt는 자신의 최종 commit SHA를 미리 기록할 수 없으므로 closeout을 통과한 뒤에는 **receipt·상태 metadata만** 기록하는 tail commit을 허용한다. 이 tail은 제품·정본·consumer·검증 evidence를 바꾸지 않아야 한다. 그런 영향 변경이 하나라도 생기면 새 HEAD를 `VERIFIED_SUBJECT_HEAD`로 삼아 evidence와 closeout을 다시 실행한다. `FINAL_PR_HEAD_CI_REVIEW_REQUIRED`: receipt-only tail을 포함한 최종 PR HEAD는 별도로 exact-head CI·독립 review·changed-path readback을 통과해야 하며, 예상하지 않은 tail 경로가 있으면 closeout 완료를 주장하지 않는다. start/resume은 역사적으로 완료된 작업의 이전 HEAD 기록을 보존한다.
+`TRUSTED_VERIFICATION_TARGET_HEAD` · `VERIFIED_SUBJECT_HEAD`: final closeout의 `--expected-head-sha`는 receipt 내부 값이 아니라 신뢰한 caller가 별도로 fresh-read한 **merged main 검증 대상 HEAD**다. 이 HEAD에는 현재 승인 범위의 모든 제품·정본·consumer·검증 evidence 영향 변경과 required merge 결과가 실제로 들어 있어야 한다. receipt 안의 `verified_head_sha`를 기대값으로 다시 복사하면 자기주장 확인에 불과하므로 허용하지 않는다. 모든 필수 DONE 작업의 evidence와 readback은 이 동일한 `VERIFIED_SUBJECT_HEAD`를 대상으로 재확인한다.
+
+`POSTMERGE_READBACK_REQUIRED`: merge commit 또는 squash commit, merged `main`의 exact SHA, changed-path/owner/consumer readback, required check 결과, rollback을 기존 Goal Issue·PR·repository receipt projection에 기록한다. merge·postmerge가 필수 작업이면 closeout 전에 DONE으로 표시하지 않는다. repository 파일에 final receipt metadata를 남겨야 하면 제품·정본·consumer를 바꾸지 않는 bounded receipt-only follow-up을 사용하며, 그 metadata 변경을 이전 제품 검증의 대체 증거로 취급하지 않는다.
+
+`RECEIPT_ONLY_TAIL_COMMIT`: premerge receipt는 자신의 최종 commit SHA를 미리 기록할 수 없으므로 **receipt·상태 metadata만** 기록하는 tail commit을 허용한다. 이 tail은 제품·정본·consumer·검증 evidence를 바꾸지 않아야 한다. 그런 영향 변경이 하나라도 생기면 새 HEAD에서 evidence와 premerge 검토를 다시 실행한다. `FINAL_PR_HEAD_CI_REVIEW_REQUIRED`: receipt-only tail을 포함한 최종 PR HEAD는 exact-head CI·독립 review·changed-path readback을 통과해야 하며 예상하지 않은 tail 경로가 있으면 premerge candidate를 주장하지 않는다. start/resume은 역사적으로 완료된 작업의 이전 HEAD 기록을 보존한다.
 
 기존 CLI의 기본 phase가 `start`이므로 PM을 활성화하는 opt-in flag가 없다. L1+에서 trusted expected source 누락, PM 필드 누락, 잘못된 진행률, 미완료 dependency, WIP 초과, evidence 없는 PASS/DONE은 nonzero exit다. `BLOCKED_UNVERIFIED` benchmark는 올바른 실패 기록일 수 있지만 실행 허가는 아니다. `validate_receipt()` Python API는 **과거 구조 검사 호환용**이고 실행 승인에 사용하지 않는다. 실행 consumer는 CLI 또는 `validate_execution_receipt()`를 쓴다.
 
-오래된 receipt에 PM 필드가 없으면 `PM_RECONCILIATION_REQUIRED`로 현재 승인 작업을 복원하고 receipt bookkeeping만 교정한 뒤 재실행한다. 이 교정은 새로운 제품 기능을 시작하는 권한이 아니다. 완전히 차단된 상태도 Issue와 receipt에 보존한다. `--render-markdown`은 형식이 유효한 차단 목록·진행 수·실제 blocker·재개 조건을 `INFORMATION ONLY; EXECUTION BLOCKED`로 표시하지만 nonzero exit를 유지한다. 독립 작업이 준비됐으면 그 작업을 active로 먼저 선택한 뒤 재검사한다.
+오래된 receipt에 PM 필드가 없으면 `PM_RECONCILIATION_REQUIRED`로 현재 승인 작업을 복원하고 receipt bookkeeping만 교정한 뒤 재실행한다. 이 교정은 새로운 제품 기능을 시작하는 권한이 아니다. 완전히 차단된 상태도 Issue와 receipt에 보존한다. `--render-markdown`은 형식이 유효한 차단 목록·진행 수·실제 blocker·재개 조건을 `INFORMATION ONLY; EXECUTION BLOCKED`로 표시하지만 nonzero exit를 유지한다. failed Gate에서는 receipt의 task/board `next_action`을 실행 지시로 재출력하지 않는다. 독립 작업이 준비됐으면 그 작업을 active로 먼저 선택한 뒤 재검사한다.
 
-시작/재개에서는 `active_work_item_ref`가 `IN_PROGRESS` 또는 `VERIFY_REVIEW` 작업 하나를 가리켜야 하며, 각 상태의 WIP는 최대 1개다. 프로젝트의 명시적 다른 WIP 계약은 별도 adapter 변경·검증 없이 이 기본 모듈에 조용히 주입하지 않는다. 현재 모듈로 표현되지 않는 project exception은 `BLOCKED_UNVERIFIED`로 기록하고 기존 승인 계약에 맞춰 bounded adaptation한다.
+시작/재개에서는 `active_work_item_ref`가 `IN_PROGRESS` 또는 `VERIFY_REVIEW` 작업 하나를 가리켜야 하며, renderer는 선택된 항목만 `ACTIVE`로 표시한다. 각 상태의 WIP는 최대 1개다. 프로젝트의 명시적 다른 WIP 계약은 별도 adapter 변경·검증 없이 이 기본 모듈에 조용히 주입하지 않는다. 현재 모듈로 표현되지 않는 project exception은 `BLOCKED_UNVERIFIED`로 기록하고 기존 승인 계약에 맞춰 bounded adaptation한다. `--expected-head-sha`는 closeout 판정에만 사용하며 start/resume 화면에서 과거 DONE 항목을 stale로 재분류하지 않는다.
 
-마감은 모든 필수 작업 DONE, active null, `next_action: STOP_APPROVED_SCOPE_COMPLETE`일 때만 가능하다. 승인 범위가 끝났으면 종료하며 다음 Goal을 자동 발명하지 않는다. 완료 항목의 오래된 next_action은 renderer가 지시문으로 출력하지 않는다. 아직 병합·postmerge가 필수 작업이면 분모에 남겨 완료로 표시하지 않는다. 중단 시 `finished / remaining / blocker / resume_condition / why`를 보존하고 같은 지시를 지우지 말고 완료 표시와 근거를 남긴다.
+최종 마감은 모든 필수 작업 DONE, active null, `next_action: STOP_APPROVED_SCOPE_COMPLETE`이며 merged-main postmerge 증거가 확인된 뒤에만 가능하다. 승인 범위가 끝났으면 종료하며 다음 Goal을 자동 발명하지 않는다. 완료 항목의 오래된 next_action은 renderer가 지시문으로 출력하지 않는다. 중단 시 `finished / remaining / blocker / resume_condition / why`를 보존하고 같은 지시를 지우지 말고 완료 표시와 근거를 남긴다.
 
 `--render-markdown`은 파생 text-native 출력이다. 별도 HTML·보드·PM 앱을 설치하지 않으며 입력의 URL·명령·HTML을 실행하지 않는다. terminal control·bidi control은 유효한 text로 받지 않는다. `--expected-source-sha`는 L1+에서 필수이며 신뢰한 caller가 fresh-read한 값을 전달한다. 모듈 자체가 GitHub 최신성을 조회하지 않으므로 receipt 자신의 SHA를 기대값으로 복사하거나 형식 검사만으로 freshness를 주장하지 않는다. `progress_summary.display`가 있으면 자동 계산된 완료/필수 수와 일치해야 한다. 기존 project pin은 정상 adoption PR로 검증하기 전까지 유지하고, Base 병합을 모든 프로젝트 설치 완료로 보고하지 않는다.
 
