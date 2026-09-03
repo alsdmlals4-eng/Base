@@ -318,4 +318,3 @@ def validate_projection(
                 errors.append(f"{work_id} ↔ {case_ref} traceability is not bidirectional")
 
     return errors
-
