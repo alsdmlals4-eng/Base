@@ -1,8 +1,8 @@
 # Blueprint Progress Projection and Incremental Revision Implementation Plan
 
-> Issue: #846  
-> Pull request: #847  
-> Base revision: `850204b3e5de81a4045111b4a050c46c5a292b59`  
+> Issue: #846
+> Pull request: #847
+> Base revision: `850204b3e5de81a4045111b4a050c46c5a292b59`
 > Working branch: `work/846-blueprint-progress-incremental-revision`
 
 ## Goal
