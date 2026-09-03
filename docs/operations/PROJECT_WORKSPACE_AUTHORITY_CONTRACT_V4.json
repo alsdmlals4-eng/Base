@@ -35,7 +35,12 @@
     "SOURCE_SHA_MATCH_REQUIRED",
     "STALE_SNAPSHOT_VISIBLE",
     "NO_SEPARATE_PM_PDF",
-    "NO_HTML_DASHBOARD"
+    "NO_HTML_DASHBOARD",
+    "PROJECT_WORK_KANBAN_DIRECT_SOURCE_NO_STATUS_COPY",
+    "GOAL_AND_SYSTEM_EVIDENCE_BACKED_CHECKLISTS",
+    "EVIDENCE_CEILING_ENFORCED",
+    "NO_VACUOUS_APPLICABLE_CASE_COMPLETION",
+    "NO_ZERO_OVER_ZERO_PROGRESS"
   ],
   "ai_design_spec": "AI_PRODUCTION_SPEC_MARKDOWN",
   "work_surface": "CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON",
@@ -143,6 +148,8 @@
     "ChatGPT Work is an execution surface and ChatGPT Library is reference storage; neither replaces repository paths, diffs, commits, or exact SHA authority.",
     "The human-facing GDD PDF is a derived snapshot and must identify the exact source commit and evidence ceiling; editing the PDF alone does not change canon.",
     "The existing human Blueprint PDF is the single human PM presentation surface: goal, system, case, work-item, blocker, next-action, and evidence status are projected into it without creating a separate PM PDF, HTML dashboard, or second status canon.",
+    "The existing project_work_kanban is the direct work-status source for the human Blueprint projection; projection data may add only goal-system-case relationship links and must not copy title, status, blocker, active work, or next action into a second status owner.",
+    "Goal and system checklist PASS requires evidence, applicable cases require at least one required evidence level, evidence cannot exceed the declared ceiling, and an empty applicable set is displayed as NO_APPLICABLE_CHECKLIST rather than 100 percent or 0/0.",
     "Human Blueprint progress is assembled from repository owners plus the existing project_work_kanban at one source commit; source mismatch or stale status must be visible and cannot be reported as current.",
     "Maturity, work-flow, and evidence results remain separate axes. Only evidence-backed completion counts, reasoned NOT_APPLICABLE items are excluded from denominators, and child percentages are never averaged into parent completion.",
     "AI and Codex continuity is carried by repository Markdown, JSON, manifests, implementation files, tests, and handoffs rather than chat history or memory.",
@@ -160,5 +167,6 @@
     "The selected Base execution SHA remains fixed for one bounded task or play-meaningful Slice; a later relevant Base change requires impact classification, reconciliation, and affected revalidation before the execution pin changes.",
     "Implementation handoff, pre-merge, post-merge, and closeout each require a new Base freshness read and drift classification without converting execution into a floating latest reference.",
     "The two-artifact Blueprint profile uses a structural first-pass revision before required image and material preparation and a final second-pass revision after candidate review; both passes remain revisions inside the same PDF and AI Markdown artifact boundary rather than additional canon."
-  ]
+  ],
+  "human_blueprint_project_work_kanban_direct_source": true
 }
