@@ -118,6 +118,29 @@ class P08AiOperationsContractTests(unittest.TestCase):
         ):
             self.assertIn(term, intake)
 
+    def test_base_current_zero_install_bootstrap_is_integrated_with_scoped_learning(self) -> None:
+        owner = (ROOT / "docs/operations/BASE_CURRENT_PROJECT_WORK_BOOTSTRAP.md").read_text(encoding="utf-8")
+        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        learning_path = (
+            ROOT
+            / "skills/managing-project-intake-and-work-contract/references/base-current-project-work-bootstrap/LEARNING_LOG.md"
+        )
+        self.assertTrue(learning_path.is_file())
+        learning = learning_path.read_text(encoding="utf-8")
+
+        for term in (
+            "BASE_CURRENT_OPERATIONAL_BOOTSTRAP",
+            "NO_PROJECT_PREINSTALL_REQUIRED",
+            "PROJECT_CANON_PRECEDENCE",
+            "ADOPTED_BASE_RELEASE_UNCHANGED",
+            "EPHEMERAL_RECEIPT_ALLOWED",
+        ):
+            self.assertIn(term, owner)
+        self.assertIn("BASE_CURRENT_PROJECT_WORK_BOOTSTRAP.md", intake)
+        self.assertIn("Base-current zero-install PM bootstrap", learning)
+        self.assertIn("tests/test_base_current_project_work_bootstrap.py", learning)
+        self.assertIn("tests/test_p08_ai_operations_contract.py", learning)
+
 
 if __name__ == "__main__":
     unittest.main()
