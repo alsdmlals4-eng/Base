@@ -232,9 +232,41 @@ Android: Play-served download / installed / first-launch / first-session / typic
 
 품질 정책은 공유하되 Windows와 Android의 texture format·max delivered resolution·asset partition을 동일하게 강제하지 않는다. 폰트는 family/역할과 Theme 사용을 통일하되 CJK·emoji·다국어 fallback을 손상시키는 단일 파일 강제 규칙을 두지 않는다.
 
-검증은 평균 FPS뿐 아니라 hitch, 95/99 percentile, peak memory, Scene 전환, 장시간 발열과 thermal throttling을 포함한다. Android 공식 도구인 Perfetto·AGI·APT·Memory Advice·ADPF 등은 필요와 엔진 호환성에 따라 사용한다.
+검증은 평균 FPS뿐 아니라 hitch, 95/99 percentile, peak memory, Scene 전환, 장시간 발열과 thermal throttling을 포함한다. Android 공식 측정 경로는 current 문서와 프로젝트 build에 맞춰 Perfetto·AGI·APT·Android vitals·ADPF 등을 선택한다. `Memory Advice API`는 2026-08-11 현재 공식 문서에서 beta 종료 및 deprecated로 표시되므로 새 프로젝트의 기본 메모리 관리 경로로 채택하지 않는다. 기존 consumer가 있다면 현재 대체 경로를 검증한 뒤 제거한다.
 
-에디터나 에뮬레이터 성공은 실제 Android 기기 통과가 아니다.
+에디터나 에뮬레이터 성공은 실제 Android 기기 통과가 아니다. 로컬 profiler나 한 대의 기기에서 memory budget을 지킨 것도 Google Play의 production Android vitals 통과를 자동 증명하지 않는다.
+
+### 8.1 Google Play Android vitals Gate
+
+정책 확인일: **2026-09-03**. 이 절은 Google Play의 production 품질 관측과 가시성 위험을 프로젝트의 로컬 성능 예산과 분리하기 위한 **가변 운영 Evidence**다.
+
+- Android vitals의 core vitals에는 `Memory usage (Anonymous RSS + Swap)`와 bitmap memory usage가 포함되고, DEX code optimization도 주의가 필요한 품질 신호로 제공된다.
+- 현재 공식 문서는 **2027년 2월부터** memory usage, bitmap memory usage 또는 code optimization의 bad-behavior threshold 초과가 Google Play store visibility에 영향을 줄 수 있다고 안내한다.
+- memory threshold는 device RAM tier와 app state에 따라 달라지고 app/game 표도 구분된다. 따라서 현재 표의 숫자를 Base 영구 상수로 복제하지 않는다.
+- release candidate 전에는 로컬 peak memory·장시간 세션·background/foreground를 측정한다. Play 배포 뒤에는 실제 Play Console의 Android vitals 또는 공식 reporting surface로 production 상태를 다시 확인한다.
+- production field data가 없거나 아직 충분하지 않은 단계는 `NOT_ENOUGH_FIELD_DATA`다. 로컬 PASS를 production-vitals PASS로 승격하지 않는다.
+
+`Google Play Games Level Up`은 일반 Play submission/visibility 규칙과 같은 Gate가 아니다. 현재 공식 페이지는 Level Up 참여가 voluntary라고 명시하며, 프로그램별 UX·stability·performance·memory 자격을 별도로 둔다. 특히 프로그램의 stability threshold와 Play Store visibility bad-behavior threshold가 다름을 공식 문서 자체가 구분한다. Level Up을 사용하지 않는 프로젝트에는 그 프로그램 전용 요구를 release blocker로 강제하지 않는다.
+
+프로젝트 기록:
+
+```yaml
+google_play_android_vitals:
+  checked_at: 2026-09-03
+  current_threshold_source: https://developer.android.com/games/optimize/vitals
+  visibility_effective_window: 2027-02
+  play_console_data_state: NOT_AVAILABLE_PRE_RELEASE | NOT_ENOUGH_FIELD_DATA | AVAILABLE | NOT_APPLICABLE
+  production_observation_window:
+  memory_usage_anonymous_rss_plus_swap_status: NOT_RUN | NOT_ENOUGH_FIELD_DATA | WITHIN_CURRENT_THRESHOLD | EXCEEDS_CURRENT_THRESHOLD | BLOCKED_UNVERIFIED
+  bitmap_memory_usage_status: NOT_RUN | NOT_ENOUGH_FIELD_DATA | WITHIN_CURRENT_THRESHOLD | EXCEEDS_CURRENT_THRESHOLD | BLOCKED_UNVERIFIED
+  dex_code_optimization_status: NOT_RUN | NOT_ENOUGH_FIELD_DATA | WITHIN_CURRENT_THRESHOLD | EXCEEDS_CURRENT_THRESHOLD | NOT_APPLICABLE | BLOCKED_UNVERIFIED
+  store_visibility_risk_status: NOT_RUN | NOT_ENOUGH_FIELD_DATA | NO_CURRENT_BAD_BEHAVIOR | CURRENT_BAD_BEHAVIOR | BLOCKED_UNVERIFIED
+  level_up_program_scope: NOT_PARTICIPATING | CANDIDATE | ENROLLED | UNKNOWN
+  level_up_eligibility_status: NOT_APPLICABLE | NOT_RUN | ELIGIBLE | INELIGIBLE | BLOCKED_UNVERIFIED
+  evidence_or_console_ref:
+```
+
+이 Gate의 목적은 Base 숫자를 플랫폼 정책으로 굳히는 것이 아니라 `local/device budget → current official threshold → production telemetry → program-specific eligibility`를 분리하는 것이다. 숫자·효력 범위·프로그램 조건은 Play 제출/운영 시점의 공식 문서와 Play Console에서 재검증한다.
 
 ## 9. 최소 테스트 Matrix
 
@@ -258,6 +290,7 @@ Android: Play-served download / installed / first-launch / first-session / typic
 - 설치·업데이트·저장 마이그레이션·오프라인
 - 메모리·로딩·발열·배터리·긴 세션
 - 용량 최적화가 범위이면 실제 served/install/first-session size와 optional delivery 실패·재시도 경로
+- Google Play 공개 후에는 Android vitals의 current memory/bitmap/code-optimization 상태를 production evidence로 추적하되 field data가 없으면 PASS로 쓰지 않음
 
 출시 후보에서는 한 대 성공을 전체 Android 지원으로 일반화하지 않는다. 기기 범위는 실제 타깃과 지원 비용에 맞게 선언한다.
 
@@ -321,6 +354,7 @@ STOVE + Google Play를 첫 공개 wave로 묶으려면:
 - 각 플랫폼의 빌드·저장·입력·레이아웃·성능 Gate가 통과됨
 - Google Play 계정 유형과 closed test requirement가 확인됨
 - Google Play target SDK가 제출 시점의 current requirement를 충족하거나 승인된 extension 경로가 확인됨
+- Google Play 공개 전 current Android vitals 기준과 post-launch production monitoring 계획이 기록됨; 아직 production field data가 없으면 그 상태를 `NOT_ENOUGH_FIELD_DATA`로 유지함
 - tester_capacity가 현재 요구치를 충족함
 - STOVE 계약·심사·SDK·정산 조건이 확인됨
 - 두 플랫폼의 지원·패치·개인정보·결제 책임자가 정해짐
@@ -363,6 +397,10 @@ Steam의 100달러 비용보다 Google Play의 테스터·계정 운영 위험�
 - Steam 비용이 있으므로 Google Play가 항상 먼저다.
 - 현재 비용·테스터 요건·SDK 정책이 앞으로도 그대로다.
 - 2026-08-11에 확인한 Google Play target API 숫자를 출시·업데이트 제출 직전 재검증 없이 영구 규칙으로 사용한다.
+- 로컬 profiler·실기기 memory budget PASS만으로 Play production Android vitals도 PASS라고 간주한다.
+- 현재 Android vitals threshold 숫자를 Base 영구 상수로 복제한다.
+- voluntary인 Google Play Games Level Up 전용 요구를 모든 Google Play 출시의 submission blocker로 강제한다.
+- deprecated된 `Memory Advice API`를 새 Android 프로젝트의 기본 메모리 관리 dependency로 추가한다.
 - 한 대의 고사양 휴대폰 성공으로 Android 전체를 지원할 수 있다.
 - 한 개의 package/download 숫자만 줄이면 용량 최적화가 끝난다.
 - 폰트·텍스처·오디오를 플랫폼 구분 없이 하나의 설정으로 강제하면 항상 최적이다.
@@ -378,13 +416,14 @@ physical_device_status:
 build_size_and_asset_optimization_status:
 google_play_account_and_test_status:
 google_play_target_api_status:
+google_play_android_vitals_status:
 stove_contract_and_sdk_status:
 steam_budget_and_readiness_status:
 release_wave_decision:
 rollback:
 ```
 
-`DUAL_TARGET_APPROVED`는 문서 작성만으로 부여하지 않는다. 최소한 공용 코어 경계, 양 플랫폼 export/run, 실제 Android 기기, 모바일 UI·입력·복귀, 대표 성능 예산의 증거가 필요하다. 용량 최적화를 완료 상태로 주장하려면 별도로 실제 build/served/patch와 품질 회귀 증거가 필요하다.
+`DUAL_TARGET_APPROVED`는 문서 작성만으로 부여하지 않는다. 최소한 공용 코어 경계, 양 플랫폼 export/run, 실제 Android 기기, 모바일 UI·입력·복귀, 대표 성능 예산의 증거가 필요하다. 용량 최적화를 완료 상태로 주장하려면 별도로 실제 build/served/patch와 품질 회귀 증거가 필요하다. Google Play production Android vitals는 실제 field telemetry가 생기기 전까지 별도 상태로 유지하며 pre-release local/device PASS와 합치지 않는다.
 
 ## 14. Evidence 상태
 
@@ -392,11 +431,13 @@ Base 공용 Guide 작성 시점:
 
 ```yaml
 research_and_official_source_review: COMPLETE_AS_OF_2026_08_11
+android_vitals_policy_review: COMPLETE_AS_OF_2026_09_03
 base_contract: ACTIVE_IN_MAIN
 actual_project_pilot: NOT_RUN
 physical_android_device: DEVICE_NOT_RUN
 human_usability: HUMAN_NOT_RUN
 build_size_project_measurement: NOT_RUN
+google_play_android_vitals_field_data: NOT_ENOUGH_FIELD_DATA
 stove_submission: NOT_RUN
 google_play_submission: NOT_RUN
 steam_submission: NOT_RUN
@@ -416,6 +457,7 @@ steam_submission: NOT_RUN
 ## background·foreground·process recreation·중복 지급 방지
 ## Windows·실제 Android 기기 QA Matrix
 ## 성능·메모리·로딩·발열·배터리 예산
+## Google Play Android vitals·production field data·store visibility risk·Level Up scope
 ## download/install/runtime/patch 용량·자산 breakdown·품질 회귀
 ## STOVE·Google Play·Steam 계정·비용·테스트·target API·출시 wave
 ## 공식 정책 확인일·미확인·재검증 조건
@@ -431,6 +473,10 @@ steam_submission: NOT_RUN
 - Android Activity Lifecycle: https://developer.android.com/guide/components/activities/activity-lifecycle.html
 - Android Saving UI States: https://developer.android.com/topic/libraries/architecture/saving-states
 - Android Game Optimization: https://developer.android.com/games/optimize/overview
+- Android vitals for games: https://developer.android.com/games/optimize/vitals
+- Android Memory Guide: https://developer.android.com/topic/performance/memory
+- Memory Advice API deprecation notice: https://developer.android.com/games/sdk/memory-advice/start
+- Google Play Games Level Up guidelines: https://developer.android.com/games/guidelines
 - Google Play Target API Requirements: https://developer.android.com/google/play/requirements/target-sdk
 - Google Play Target API Console Help / Extension: https://support.google.com/googleplay/android-developer/answer/11926878
 - Steamworks Partner Program / Direct Fee: https://partner.steamgames.com/steamdirect/
