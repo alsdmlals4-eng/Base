@@ -1,0 +1,56 @@
+name: One-shot repair dual canon follow-up runner
+
+on:
+  push:
+    branches:
+      - work/846-blueprint-progress-incremental-revision
+    paths:
+      - .github/workflows/one-shot-repair-dual-canon-followup.yml
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact branch
+        uses: actions/checkout@v4
+        with:
+          ref: work/846-blueprint-progress-incremental-revision
+          fetch-depth: 0
+
+      - name: Repair route-note handling only
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('.github/workflows/one-shot-federated-dual-canon-followup.yml')
+          content = path.read_text(encoding='utf-8')
+          old = '''          for path in ACTIVE_ROUTING_SURFACES:
+              replace_required(path, OLD_ROUTE, NEW_ROUTE)
+'''
+          new = '''          for path in ACTIVE_ROUTING_SURFACES:
+              content = load(path)
+              if OLD_ROUTE in content:
+                  content = content.replace(OLD_ROUTE, NEW_ROUTE)
+              elif NEW_ROUTE not in content:
+                  content = content.rstrip() + "\\n\\n" + NEW_ROUTE + "\\n"
+              save(path, content)
+'''
+          if content.count(old) != 1:
+              raise SystemExit('expected exactly one strict route loop')
+          path.write_text(content.replace(old, new), encoding='utf-8', newline='\n')
+
+      - name: Commit repair and remove this runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/one-shot-repair-dual-canon-followup.yml
+          git diff --check
+          git config user.name "alsdmlals4-eng"
+          git config user.email "alsdmlals4@gmail.com"
+          git add -A
+          git commit -m "fix: tolerate existing dual canon route notes"
+          git push origin HEAD:work/846-blueprint-progress-incremental-revision
