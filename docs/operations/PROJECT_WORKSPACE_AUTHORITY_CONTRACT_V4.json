@@ -54,6 +54,38 @@
     "pass_2": "BLUEPRINT_PASS_2_FINAL",
     "artifact_boundary": "NO_SEPARATE_BLUEPRINT_ARTIFACT"
   },
+  "blueprint_revision_contract": {
+    "mode": "INCREMENTAL_WHEN_VALID_PREDECESSOR_EXISTS",
+    "forbidden_modes": [
+      "NO_BLANK_REBUILD_WHEN_VALID_PREDECESSOR_EXISTS"
+    ],
+    "required_receipts": [
+      "predecessor_blueprint_ref",
+      "predecessor_source_commit",
+      "predecessor_inventory",
+      "successor_inventory",
+      "semantic_delta_summary",
+      "removal_or_downgrade_justifications"
+    ]
+  },
+  "human_blueprint_progress_projection": {
+    "source": "PROJECT_WORK_KANBAN_AND_REPOSITORY_EVIDENCE",
+    "required_views": [
+      "PROJECT_GOAL_STATUS_SUMMARY",
+      "GOAL_LEVEL_CHECKLIST",
+      "SYSTEM_LEVEL_CHECKLIST",
+      "CASE_LEVEL_STATUS_MATRIX",
+      "BLOCKERS_DECISIONS_AND_NEXT_SAFE_ACTION"
+    ],
+    "evidence_dimensions": [
+      "DOCUMENTED",
+      "IMPLEMENTED",
+      "AUTOMATED_TEST_PASS",
+      "RUNTIME_VERIFIED",
+      "UX_VERIFIED",
+      "USER_APPROVED"
+    ]
+  },
   "required_project_entrypoints": [
     "AGENTS.md",
     "docs/START_HERE.md",
@@ -80,7 +112,12 @@
     "generated_at",
     "included_scope",
     "implementation_evidence_ceiling",
-    "approval_status"
+    "approval_status",
+    "predecessor_blueprint_ref",
+    "predecessor_source_commit",
+    "revision_mode",
+    "semantic_delta_summary",
+    "work_status_snapshot_at"
   ],
   "publication_profile": "DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD",
   "publication_policy": "docs/PROJECT_MASTER_GDD_TWO_ARTIFACT_POLICY.md",
@@ -122,6 +159,11 @@
     "The latest completed Base main does not silently replace project canon, approved decisions, actual implementation, or the project's adopted Base contract.",
     "The selected Base execution SHA remains fixed for one bounded task or play-meaningful Slice; a later relevant Base change requires impact classification, reconciliation, and affected revalidation before the execution pin changes.",
     "Implementation handoff, pre-merge, post-merge, and closeout each require a new Base freshness read and drift classification without converting execution into a floating latest reference.",
-    "The two-artifact Blueprint profile uses a structural first-pass revision before required image and material preparation and a final second-pass revision after candidate review; both passes remain revisions inside the same PDF and AI Markdown artifact boundary rather than additional canon."
+    "The two-artifact Blueprint profile uses a structural first-pass revision before required image and material preparation and a final second-pass revision after candidate review; both passes remain revisions inside the same PDF and AI Markdown artifact boundary rather than additional canon.",
+    "The human Blueprint progress views are read-only projections of project work receipts and repository evidence; they never become a parallel status canon.",
+    "When a valid predecessor Blueprint exists, the successor is produced by incremental revision and may not silently omit stable IDs, approved decisions, explanatory sections, diagrams, approved assets, consumer links, or evidence.",
+    "Every removal, replacement, rename, or evidence-status downgrade between predecessor and successor requires an explicit semantic-delta reason, replacement or supersession reference when applicable, and verification-impact record.",
+    "If the predecessor Blueprint or its source cannot be read reliably, the task fails closed as BLOCKED_UNVERIFIED instead of rebuilding missing facts from chat history, memory, or inference.",
+    "Project, goal, system, and case completion counts include only evidence-backed PASS or DONE states and preserve separate documented, implemented, automated-test, runtime, UX, and user-approval dimensions."
   ]
 }
