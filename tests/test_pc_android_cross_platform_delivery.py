@@ -159,6 +159,43 @@ class PcAndroidCrossPlatformDeliveryTests(unittest.TestCase):
         ):
             self.assertIn(term, profile)
 
+    def test_android_vitals_memory_gate_is_policy_bound_and_separate_from_local_pass(self) -> None:
+        guide = read(GUIDE)
+        profile = read(PROFILE)
+        for term in (
+            "Google Play Android vitals Gate",
+            "2026-09-03",
+            "2027년 2월",
+            "Memory usage (Anonymous RSS + Swap)",
+            "bitmap memory usage",
+            "DEX code optimization",
+            "store visibility",
+            "NOT_ENOUGH_FIELD_DATA",
+            "Level Up",
+            "voluntary",
+            "Memory Advice API",
+            "deprecated",
+            "developer.android.com/games/optimize/vitals",
+            "developer.android.com/games/guidelines",
+            "Base 영구 상수로 복제하지 않는다",
+        ):
+            self.assertIn(term, guide)
+
+        for term in (
+            "google_play_android_vitals:",
+            "current_threshold_source:",
+            "play_console_data_state:",
+            "memory_usage_anonymous_rss_plus_swap_status:",
+            "bitmap_memory_usage_status:",
+            "dex_code_optimization_status:",
+            "store_visibility_risk_status:",
+            "level_up_program_scope:",
+            "level_up_eligibility_status:",
+            "NOT_AVAILABLE_PRE_RELEASE | NOT_ENOUGH_FIELD_DATA | AVAILABLE | NOT_APPLICABLE",
+            "post_release_android_vitals_when_field_data_exists",
+        ):
+            self.assertIn(term, profile)
+
     def test_benchmark_and_evidence_limits_are_explicit(self) -> None:
         guide = read(GUIDE)
         for term in (
