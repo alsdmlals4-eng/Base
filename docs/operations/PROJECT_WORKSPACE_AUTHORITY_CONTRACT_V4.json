@@ -42,6 +42,31 @@
     "NO_VACUOUS_APPLICABLE_CASE_COMPLETION",
     "NO_ZERO_OVER_ZERO_PROGRESS"
   ],
+  "human_blueprint_incremental_revision_contract": "docs/operations/project-workspace/HUMAN_BLUEPRINT_INCREMENTAL_REVISION_CONTRACT.md",
+  "human_blueprint_incremental_revision_template": "templates/project-operations/HUMAN_BLUEPRINT_INCREMENTAL_REVISION_TEMPLATE.md",
+  "human_blueprint_incremental_publication_validator": "tools/human_blueprint_incremental_publication.py",
+  "blueprint_revision_contract": {
+    "mode": "INCREMENTAL_WHEN_VALID_PREDECESSOR_EXISTS",
+    "first_creation_mode": "INITIAL_CREATION_NO_VALID_PREDECESSOR",
+    "blocked_mode": "PREDECESSOR_UNAVAILABLE_BLOCKED_UNVERIFIED",
+    "forbidden_modes": [
+      "NO_BLANK_REBUILD_WHEN_VALID_PREDECESSOR_EXISTS"
+    ],
+    "required_receipts": [
+      "predecessor_blueprint_ref",
+      "predecessor_source_commit",
+      "predecessor_inventory",
+      "successor_inventory",
+      "semantic_delta_summary",
+      "removal_or_downgrade_justifications"
+    ],
+    "preservation_rules": [
+      "STABLE_ID_SECTION_AND_EVIDENCE_PRESERVATION",
+      "SEMANTIC_DELTA_AND_CARRY_FORWARD_REQUIRED",
+      "UNEXPLAINED_REMOVAL_OR_STATUS_DOWNGRADE_FORBIDDEN",
+      "BLUEPRINT_LOSS_REGRESSION_GATE"
+    ]
+  },
   "ai_design_spec": "AI_PRODUCTION_SPEC_MARKDOWN",
   "work_surface": "CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON",
   "library_surface": "CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON",
@@ -119,7 +144,13 @@
     "work_status_snapshot_source",
     "work_status_snapshot_generated_at",
     "work_status_snapshot_staleness",
-    "progress_calculation_basis"
+    "progress_calculation_basis",
+    "predecessor_blueprint_ref",
+    "predecessor_source_commit",
+    "revision_mode",
+    "semantic_delta_summary",
+    "removal_or_downgrade_justifications",
+    "blueprint_loss_regression_gate"
   ],
   "publication_profile": "DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD",
   "publication_policy": "docs/PROJECT_MASTER_GDD_TWO_ARTIFACT_POLICY.md",
@@ -152,6 +183,12 @@
     "Goal and system checklist PASS requires evidence, applicable cases require at least one required evidence level, evidence cannot exceed the declared ceiling, and an empty applicable set is displayed as NO_APPLICABLE_CHECKLIST rather than 100 percent or 0/0.",
     "Human Blueprint progress is assembled from repository owners plus the existing project_work_kanban at one source commit; source mismatch or stale status must be visible and cannot be reported as current.",
     "Maturity, work-flow, and evidence results remain separate axes. Only evidence-backed completion counts, reasoned NOT_APPLICABLE items are excluded from denominators, and child percentages are never averaged into parent completion.",
+    "When a valid predecessor Blueprint exists, the successor is produced by incremental revision of that predecessor and its source rather than by rebuilding a blank document from chat, memory, summaries, or partial snippets.",
+    "Stable IDs, confirmed decisions, detailed sections, text-native diagrams, approved visuals, captions, provenance, actual consumers, repository paths, and verification evidence are carried forward unless an explicit semantic delta records a justified replacement, removal, rename, or downgrade.",
+    "Every detected predecessor loss or evidence-status downgrade requires a matching reason, affected consumers, verification impact, replacement or supersession references when applicable, and evidence; unexplained loss blocks publication.",
+    "A known but unreadable predecessor produces PREDECESSOR_UNAVAILABLE_BLOCKED_UNVERIFIED and does not authorize inferred reconstruction or successor publication.",
+    "Initial Blueprint creation is permitted only after repository, exported-PDF, Library, and applicable legacy searches provide evidence that no valid predecessor exists.",
+    "The BLUEPRINT_LOSS_REGRESSION_GATE requires both declared inventory validation and physical PDF text/page/image/caption readback; a successful render alone is not sufficient.",
     "AI and Codex continuity is carried by repository Markdown, JSON, manifests, implementation files, tests, and handoffs rather than chat history or memory.",
     "New Notion writes are not required by default. Existing Notion content may be read only to discover and migrate unique project information.",
     "A project remains in LEGACY_READ_ONLY migration state until all three migration exit counters are zero and readback evidence is recorded.",
