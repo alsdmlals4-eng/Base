@@ -292,4 +292,3 @@ def _board_tasks(
         "projection.project_work_kanban.work_items",
         errors,
     )
-
