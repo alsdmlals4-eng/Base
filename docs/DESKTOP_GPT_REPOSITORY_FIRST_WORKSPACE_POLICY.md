@@ -15,7 +15,7 @@
 
 ```text
 REPOSITORY_PRIMARY_CANON
-HUMAN_GDD_PDF_DERIVED_VIEW
+APPROVED_HUMAN_BLUEPRINT_PDF_CANON
 AI_PRODUCTION_SPEC_MARKDOWN
 CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON
 CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON
@@ -36,7 +36,7 @@ NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
 | Surface | 현재 역할 | 정본 여부 | 필수 사용 |
 |---|---|---:|---:|
 | 프로젝트 GitHub repository | 기획·결정·데이터·승인 runtime asset·코드·Scene·Resource·Test·Evidence | **Primary canon** | 예 |
-| 사용자용 상세 기획서 PDF | 사람이 전체 기획·핵심 시스템·콘텐츠·구현 원리를 검토하는 시각 snapshot | 파생뷰 | 의미 있는 Gate에서 |
+| 사용자용 상세 기획서 PDF | 사람이 전체 기획·핵심 시스템·콘텐츠·구현 원리를 검토하고 승인한 시각 baseline | **승인·등록 후 사람용 시각 정본** | 의미 있는 Gate에서 |
 | AI용 상세 기획·구현 명세 Markdown | GPT/Codex가 이어받는 구조화 production spec | repository canon | 예 |
 | Desktop GPT Work | 기획·조사·검수·문서·시각자료 제작 실행면 | 아님 | 기본 실행면 |
 | ChatGPT Library | 시안·참고자료·원본 템플릿·PDF 보관 | 아님 | 선택 |
@@ -58,7 +58,7 @@ repository가 소유하는 범위:
 - automated test, runtime/play evidence, QA receipt
 - Codex handoff와 구현 결과 readback
 
-채팅, memory, Library, PDF, Notion preview에만 존재하는 정보는 current project canon으로 승격하지 않는다.
+채팅, memory, Library-only candidate PDF, 미등록 PDF와 Notion preview에만 존재하는 정보는 current project canon으로 승격하지 않는다. 사용자 승인과 repository manifest 등록을 마친 PDF는 사람용 시각·검수 영역의 정본이다.
 
 ### 1.2 `CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON`
 
@@ -176,11 +176,11 @@ project-root/
 
 코드·Scene·Resource·JSON·asset·test·evidence는 프로젝트 구현 정본이며 “사용자에게 전달하는 별도 기획 산출물” 수에 포함하지 않는다.
 
-### 3.1 `HUMAN_GDD_PDF_DERIVED_VIEW`
+### 3.1 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`
 
-사용자용 PDF는 프로젝트 전체를 사람이 이해하고 중간점검하는 시각 중심 상세 기획서다. 그러나 정본은 아니다.
+사용자용 PDF는 프로젝트 전체를 사람이 이해하고 중간점검하는 시각 중심 상세 기획서다. 사용자 승인과 manifest 등록을 마치면 사람용 시각·검수 영역의 불변 정본이다.
 
-`PDF_IS_DERIVED_SNAPSHOT_NOT_CANON`
+`APPROVED_PDF_IS_HUMAN_VISUAL_CANON`
 
 PDF 필수 metadata:
 
@@ -199,7 +199,7 @@ approval_status:
 
 - PDF는 exact `source_commit`의 repository 정본에서 생성한다.
 - PDF에서 발견한 수정사항은 repository owner 문서·데이터에 반영한 뒤 다시 생성한다.
-- PDF 주석이나 오래된 다운로드 파일을 current Decision으로 직접 해석하지 않는다.
+- PDF 주석은 `PDF_ANNOTATION_IS_CHANGE_REQUEST_NOT_CANON_MUTATION`이며 repository owner에 반영하고 새 PDF를 승인·등록하기 전에는 current Decision을 변경하지 않는다. superseded 다운로드 파일은 current PDF canon으로 해석하지 않는다.
 - 문서 생성 성공은 runtime·UX·player·release PASS가 아니다.
 - 시각자료는 이해에 필요한 위치에 통합하며 별도 이미지 번들·부록을 기본 생성하지 않는다.
 
@@ -473,3 +473,63 @@ Base 정책 교정 완료와 프로젝트별 이관 완료를 분리한다.
 새 기본 경로에 blocking 문제가 확인되면 V4 active route를 단일 변경 단위로 revert한다. V3와 기존 Notion workspace를 삭제하지 않았으므로 rollback은 자료 손실 없이 가능해야 한다.
 
 정책을 되돌리더라도 이미 repository에 이관한 정본·binary·hash·evidence를 삭제하거나 Notion-only 구조로 역이관하지 않는다.
+
+
+<!-- FEDERATED_DUAL_CANON_CORE_CONTRACT -->
+
+## Federated repository + approved PDF dual canon
+
+```text
+FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER
+
+REPOSITORY_EXECUTION_DATA_CANON
+APPROVED_HUMAN_BLUEPRINT_PDF_CANON
+ONE_EDITABLE_OWNER_PER_ATOMIC_FACT
+```
+
+`REPOSITORY_EXECUTION_DATA_CANON`는 코드·Scene·Resource·asset·구조화 데이터·ID·수치·공식·조건·상태 전이·Decision source·작업 상태·test·runtime·release evidence의 **편집 가능한 정본**이다. `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`은 사용자가 실제로 검토·승인한 프로젝트/플레이어 경험 지도, 읽기 순서, Flow 구성, 정보 우선순위, 시스템 카드 표현, milestone 범위와 시각적 baseline의 **불변 정본**이다.
+
+PDF는 두 번째 editable database가 아니다.
+
+```text
+PDF_STRUCTURED_CONTENT_IS_REPOSITORY_PROJECTION
+PDF_PROGRESS_STATUS_IS_REPOSITORY_PROJECTION
+PDF_ANNOTATION_IS_CHANGE_REQUEST_NOT_CANON_MUTATION
+NO_PARALLEL_BLUEPRINT_STATUS_CANON
+```
+
+PDF에 표시되는 ID·수치·규칙·완료 상태·evidence locator는 repository owner에서 생성한다. PDF에서 직접 체크하거나 수치를 고친 것은 변경 요청이며, repository owner 반영 → 새 exact-SHA candidate 생성 → predecessor 비교 → 사용자 승인 → manifest 등록을 거쳐야 정본 변경이 완료된다.
+
+### PDF 정본 승격
+
+```text
+GENERATED_CANDIDATE
+→ USER_APPROVED_PENDING_REGISTRATION
+→ USER_APPROVED_AND_MANIFEST_REGISTERED
+→ CANON_ALIGNED
+```
+
+`CANDIDATE_PDF_NOT_CANON`. 승인 PDF는 최소 `source_commit`, `pdf_sha256`, `approval_ref`, `approved_at`, `canonical_status`, `supersedes_pdf_ref`, `pdf_canon_manifest_ref`, included scope와 evidence ceiling을 가진다. 프로젝트별 실제 locator는 `AGENTS.md` 또는 publication owner가 지정하며, 기본 예시는 `docs/blueprint/BLUEPRINT_CANON_MANIFEST.json`과 versioned `exports/*_APPROVED.pdf`다.
+
+```text
+APPROVED_PDF_IMMUTABLE_NEW_VERSION_REQUIRED
+NEW_VERSION_NEW_HASH_KEEP_HISTORY
+```
+
+승인 PDF를 덮어쓰지 않는다. 새 승인본은 새 version·filename·SHA-256으로 등록하고 이전 승인본을 `SUPERSEDED`로 남긴다. 반복 candidate와 임시 render를 모두 Git에 보존할 의무는 없지만, current/superseded 승인 baseline의 locator와 hash history는 보존한다.
+
+### 정본 정렬과 충돌
+
+```text
+CANON_ALIGNED
+REPOSITORY_ADVANCED_PDF_REVIEW_REQUIRED
+PDF_FEEDBACK_PENDING_REPOSITORY_REFLECTION
+CANON_CONFLICT
+SUPERSEDED
+```
+
+- 구조화 값이 다르면 repository owner가 해당 값을 소유하고 PDF를 current로 취급하지 않으며 재생성한다.
+- 승인된 Flow·화면 hierarchy·정보 우선순위·사람용 표현과 구현이 다르면 구현을 자동 정본으로 승격하지 않는다. 구현을 교정하거나 새 PDF candidate의 delta를 사용자에게 보여 재승인한다.
+- 동시에 해결되지 않은 차이는 `CANON_CONFLICT`다.
+- `CANON_CONFLICT_BLOCKS_COMPLETION_AND_RELEASE`.
+- 문서 생성, static test, machine test, runtime, UX/Human, PDF 사용자 승인과 release 승인은 서로 다른 evidence다.

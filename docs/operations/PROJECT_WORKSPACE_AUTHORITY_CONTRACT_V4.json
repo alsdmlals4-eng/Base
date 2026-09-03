@@ -2,11 +2,11 @@
   "schema_version": 4,
   "status": "ACTIVE_DEFAULT",
   "effective_date": "2026-08-28",
-  "authority_model": "REPOSITORY_PRIMARY_CANON_WITH_DERIVED_HUMAN_PDF",
+  "authority_model": "FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER",
   "project_workspace": "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE",
-  "project_canon": "REPOSITORY_PRIMARY_CANON",
-  "human_facing_view": "HUMAN_GDD_PDF_DERIVED_VIEW",
-  "pdf_policy": "PDF_IS_DERIVED_SNAPSHOT_NOT_CANON",
+  "project_canon": "FEDERATED_REPOSITORY_AND_APPROVED_PDF_CANON",
+  "human_facing_view": "APPROVED_HUMAN_BLUEPRINT_PDF_CANON",
+  "pdf_policy": "APPROVED_PDF_IS_HUMAN_VISUAL_CANON",
   "ai_design_spec": "AI_PRODUCTION_SPEC_MARKDOWN",
   "work_surface": "CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON",
   "library_surface": "CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON",
@@ -117,7 +117,13 @@
     "predecessor_source_commit",
     "revision_mode",
     "semantic_delta_summary",
-    "work_status_snapshot_at"
+    "work_status_snapshot_at",
+    "pdf_sha256",
+    "approval_ref",
+    "approved_at",
+    "canonical_status",
+    "supersedes_pdf_ref",
+    "pdf_canon_manifest_ref"
   ],
   "publication_profile": "DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD",
   "publication_policy": "docs/PROJECT_MASTER_GDD_TWO_ARTIFACT_POLICY.md",
@@ -144,7 +150,6 @@
   "invariants": [
     "The project repository owns current planning, design, structured data, approved runtime assets, code, scenes, resources, tests, and validation evidence for its domains.",
     "ChatGPT Work is an execution surface and ChatGPT Library is reference storage; neither replaces repository paths, diffs, commits, or exact SHA authority.",
-    "The human-facing GDD PDF is a derived snapshot and must identify the exact source commit and evidence ceiling; editing the PDF alone does not change canon.",
     "AI and Codex continuity is carried by repository Markdown, JSON, manifests, implementation files, tests, and handoffs rather than chat history or memory.",
     "New Notion writes are not required by default. Existing Notion content may be read only to discover and migrate unique project information.",
     "A project remains in LEGACY_READ_ONLY migration state until all three migration exit counters are zero and readback evidence is recorded.",
@@ -160,10 +165,67 @@
     "The selected Base execution SHA remains fixed for one bounded task or play-meaningful Slice; a later relevant Base change requires impact classification, reconciliation, and affected revalidation before the execution pin changes.",
     "Implementation handoff, pre-merge, post-merge, and closeout each require a new Base freshness read and drift classification without converting execution into a floating latest reference.",
     "The two-artifact Blueprint profile uses a structural first-pass revision before required image and material preparation and a final second-pass revision after candidate review; both passes remain revisions inside the same PDF and AI Markdown artifact boundary rather than additional canon.",
-    "The human Blueprint progress views are read-only projections of project work receipts and repository evidence; they never become a parallel status canon.",
     "When a valid predecessor Blueprint exists, the successor is produced by incremental revision and may not silently omit stable IDs, approved decisions, explanatory sections, diagrams, approved assets, consumer links, or evidence.",
     "Every removal, replacement, rename, or evidence-status downgrade between predecessor and successor requires an explicit semantic-delta reason, replacement or supersession reference when applicable, and verification-impact record.",
     "If the predecessor Blueprint or its source cannot be read reliably, the task fails closed as BLOCKED_UNVERIFIED instead of rebuilding missing facts from chat history, memory, or inference.",
-    "Project, goal, system, and case completion counts include only evidence-backed PASS or DONE states and preserve separate documented, implemented, automated-test, runtime, UX, and user-approval dimensions."
-  ]
+    "Project, goal, system, and case completion counts include only evidence-backed PASS or DONE states and preserve separate documented, implemented, automated-test, runtime, UX, and user-approval dimensions.",
+    "Project authority is federated: the repository execution/data canon and a user-approved, manifest-registered human Blueprint PDF canon own separate domains under one editable owner per atomic fact.",
+    "The repository canon owns editable code, scenes, resources, assets, structured data, identifiers, rules, values, state transitions, decisions, work status, tests, runtime facts, and evidence.",
+    "The approved human Blueprint PDF canon owns the immutable user-reviewed visual hierarchy, project/player experience map, flow composition, information priority, milestone scope presentation, and human review baseline.",
+    "A generated candidate, preview, Library-only PDF, or PDF annotation is not canon and cannot mutate repository-owned structured facts.",
+    "PDF structured content and progress status are repository projections; project_work_kanban remains the single mutable progress source.",
+    "PDF canon activation requires user approval, exact source commit, PDF SHA-256, approval reference, approval time, canonical status, supersession reference, and repository-controlled manifest reference.",
+    "An approved PDF is immutable; a correction creates a new version and hash while preserving superseded approval history.",
+    "A structured mismatch requires repository-owner reconciliation and PDF regeneration; an approved visual-baseline mismatch requires implementation correction or a newly approved PDF.",
+    "CANON_CONFLICT blocks completion and release until repository and approved-PDF domains are reconciled."
+  ],
+  "repository_canon": "REPOSITORY_EXECUTION_DATA_CANON",
+  "human_pdf_canon": "APPROVED_HUMAN_BLUEPRINT_PDF_CANON",
+  "single_fact_owner": "ONE_EDITABLE_OWNER_PER_ATOMIC_FACT",
+  "candidate_pdf_policy": "CANDIDATE_PDF_NOT_CANON",
+  "human_pdf_canon_contract": {
+    "activation": "USER_APPROVED_AND_MANIFEST_REGISTERED",
+    "structured_content": "PDF_STRUCTURED_CONTENT_IS_REPOSITORY_PROJECTION",
+    "progress_status": "PDF_PROGRESS_STATUS_IS_REPOSITORY_PROJECTION",
+    "annotation_policy": "PDF_ANNOTATION_IS_CHANGE_REQUEST_NOT_CANON_MUTATION",
+    "immutable_after_approval": true,
+    "immutability_policy": "APPROVED_PDF_IMMUTABLE_NEW_VERSION_REQUIRED",
+    "supersession_policy": "NEW_VERSION_NEW_HASH_KEEP_HISTORY",
+    "required_registration_fields": [
+      "source_commit",
+      "pdf_sha256",
+      "approval_ref",
+      "approved_at",
+      "canonical_status",
+      "supersedes_pdf_ref",
+      "pdf_canon_manifest_ref"
+    ],
+    "owned_domains": [
+      "HUMAN_REVIEW_BASELINE",
+      "PROJECT_AND_PLAYER_EXPERIENCE_MAP",
+      "USER_APPROVED_VISUAL_HIERARCHY",
+      "FLOW_COMPOSITION_AND_INFORMATION_PRIORITY",
+      "APPROVED_MILESTONE_SCOPE_PRESENTATION"
+    ],
+    "repository_owned_domains": [
+      "CODE_AND_RUNTIME",
+      "STRUCTURED_DATA_AND_IDS",
+      "RULES_VALUES_AND_STATE_TRANSITIONS",
+      "EDITABLE_DECISION_SOURCES",
+      "WORK_STATUS_AND_EVIDENCE"
+    ],
+    "alignment_states": [
+      "CANON_ALIGNED",
+      "REPOSITORY_ADVANCED_PDF_REVIEW_REQUIRED",
+      "PDF_FEEDBACK_PENDING_REPOSITORY_REFLECTION",
+      "CANON_CONFLICT",
+      "SUPERSEDED"
+    ],
+    "conflict_resolution": {
+      "structured_mismatch": "REPOSITORY_OWNER_VALUE_CONTROLS_AND_PDF_REGEN_REQUIRED",
+      "approved_visual_baseline_mismatch": "CORRECT_IMPLEMENTATION_OR_NEW_PDF_USER_REAPPROVAL",
+      "simultaneous_unresolved_difference": "CANON_CONFLICT"
+    },
+    "conflict_gate": "CANON_CONFLICT_BLOCKS_COMPLETION_AND_RELEASE"
+  }
 }

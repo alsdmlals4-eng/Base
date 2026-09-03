@@ -756,3 +756,7 @@ predecessor discovery and exact source pin
 ```
 
 최종 보고에는 predecessor ref/source SHA, revision mode, semantic delta, 삭제·상태 하향 정당화, carry-forward 범위, PM snapshot 시각과 loss-regression 결과를 추가해. 이 규칙은 `NO_SEPARATE_BLUEPRINT_ARTIFACT`, `NO_MASS_BLUEPRINT_BACKFILL`, `RUNTIME_TRUTH_SEPARATE`, 이미지 승인 경계와 사용자 최종 승인 Gate를 그대로 유지해.
+
+<!-- FEDERATED_DUAL_CANON_ROUTE -->
+
+> V4 authority route: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON` owns editable structured, execution, runtime, work-status, and evidence facts. Only a `USER_APPROVED_AND_MANIFEST_REGISTERED` `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` owns the immutable human visual/review baseline. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON` and PDF annotations do not mutate repository-owned facts. See `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` and `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`.

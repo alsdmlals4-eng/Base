@@ -77,7 +77,7 @@ Base/repository 기획/Notion legacy migration/문서/정본 작업을 요청받
 stable bootstrap
 DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE
 REPOSITORY_PRIMARY_CANON
-HUMAN_GDD_PDF_DERIVED_VIEW
+APPROVED_HUMAN_BLUEPRINT_PDF_CANON
 AGENTS.md
 START_HERE.md
 Active Context
@@ -101,3 +101,7 @@ Notion Project Home = legacy migration source only
 ```
 
 이 compatibility vocabulary는 cold-start consumer가 문자열 의미를 잃지 않도록 남긴 것이며 Notion을 active project workspace로 복원하거나 Codex 범위를 Base maintenance로 넓히는 의미가 아니다.
+
+<!-- FEDERATED_DUAL_CANON_ROUTE -->
+
+> V4 authority route: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON` owns editable structured, execution, runtime, work-status, and evidence facts. Only a `USER_APPROVED_AND_MANIFEST_REGISTERED` `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` owns the immutable human visual/review baseline. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON` and PDF annotations do not mutate repository-owned facts. See `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` and `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`.

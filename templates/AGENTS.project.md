@@ -41,7 +41,7 @@ REPOSITORY_PRIMARY_CANON
 REPOSITORY_RUNTIME_TRUTH
 → 실제 build / runtime / automated test / log / screenshot-video evidence
 
-HUMAN_GDD_PDF_DERIVED_VIEW
+APPROVED_HUMAN_BLUEPRINT_PDF_CANON
 → exact source SHA와 evidence ceiling을 가진 사람이 보는 milestone snapshot
 
 NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
@@ -271,3 +271,7 @@ REMAINING_WORK_RECALCULATION_REQUIRED
 ## 프로젝트 전용 최신화
 ## Base 공용 학습 데이터·제안 상태
 ```
+
+<!-- FEDERATED_DUAL_CANON_ROUTE -->
+
+> V4 authority route: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON` owns editable structured, execution, runtime, work-status, and evidence facts. Only a `USER_APPROVED_AND_MANIFEST_REGISTERED` `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` owns the immutable human visual/review baseline. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON` and PDF annotations do not mutate repository-owned facts. See `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` and `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`.

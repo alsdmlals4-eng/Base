@@ -26,7 +26,7 @@ REPOSITORY_PRIMARY_CANON
 REPOSITORY_RUNTIME_TRUTH
 → 실제 구현·build·runtime·QA evidence
 
-HUMAN_GDD_PDF_DERIVED_VIEW
+APPROVED_HUMAN_BLUEPRINT_PDF_CANON
 → exact source SHA와 evidence ceiling을 명시한 사람용 milestone snapshot
 ```
 
@@ -44,7 +44,7 @@ Google Sheets는 `COMPATIBILITY_ONLY` migration source다. 기존 unique materia
 | GitHub Issue·PR 댓글 | 질문, 사용자 답변, 승인 시점, 검토 대화의 추적 증거 | 최종 정본 아님 |
 | `CURRENT_CONFIRMED_DECISIONS.md` | 현재 승인 결정의 요약, 대체 관계, 반영 위치, 동기화 상태 | 승인 결정 복원 정본 |
 | 등록된 repository 분야 문서·JSON·asset catalog | 시스템·서사·아트·UI·Flow/Wireframe 등 현행 상세 규칙과 예외 | `REPOSITORY_PRIMARY_CANON` |
-| exact-SHA PDF | 사람이 읽는 milestone snapshot | `HUMAN_GDD_PDF_DERIVED_VIEW` |
+| exact-SHA PDF | 사람이 읽는 milestone snapshot | `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` |
 | 프로젝트 Notion | 실제 V4 exception/legacy migration의 보조 source | 정본 아님 |
 | `ACTIVE_CONTEXT.md` | 현재 단계·작업·위험·다음 행동 | 현재 상태 원본 |
 | GitHub `main` | 반영된 structured 문서·코드·데이터·자산의 저장소 상태 | 통합 structured/runtime 상태 |
@@ -469,3 +469,7 @@ BLOCKED_UNVERIFIED
 - 병합된/닫힌 PR 기록을 삭제 대상으로 오인함
 - 병합 뒤 정본·최근 승인·derived view/exception·회귀 비교를 생략함
 - 실행하지 않은 CI·runtime·derived view/exception readback을 통과로 보고함
+
+<!-- FEDERATED_DUAL_CANON_ROUTE -->
+
+> V4 authority route: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON` owns editable structured, execution, runtime, work-status, and evidence facts. Only a `USER_APPROVED_AND_MANIFEST_REGISTERED` `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` owns the immutable human visual/review baseline. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON` and PDF annotations do not mutate repository-owned facts. See `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` and `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`.

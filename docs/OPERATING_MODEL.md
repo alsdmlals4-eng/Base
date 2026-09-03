@@ -18,7 +18,7 @@ Base는 게임·연재소설 등 등록된 창작·개발 프로젝트가 공용
 → 반복 가능한 스킬 학습
 ```
 
-Base에는 여러 프로젝트에서 재사용 가능한 판단·절차·검증만 둔다. 프로젝트 고유 세계관·원고·수치·경로·자산·구현 상태는 대상 프로젝트가 책임진다. 현재 프로젝트 정본은 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`의 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`다. `REPOSITORY_PRIMARY_CANON`이 현재 기획·결정·구조화 데이터·코드·Scene·Resource·Test·검증 evidence를 소유하고, 사람이 보는 `HUMAN_GDD_PDF_DERIVED_VIEW`는 exact source SHA와 evidence ceiling이 있는 파생 snapshot이다. 실제 build/test/runtime 상태는 `REPOSITORY_RUNTIME_TRUTH`가 책임진다. 기존 Notion과 Google Sheets는 고유 자료 이관이 필요할 때만 읽는 `LEGACY_READ_ONLY` / `COMPATIBILITY_ONLY` source이며 신규 기본 작업면이나 active decision sync 정본이 아니다. 상세 V4 정책은 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`가 책임진다.
+Base에는 여러 프로젝트에서 재사용 가능한 판단·절차·검증만 둔다. 프로젝트 고유 세계관·원고·수치·경로·자산·구현 상태는 대상 프로젝트가 책임진다. 현재 프로젝트 정본은 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`의 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`다. `REPOSITORY_PRIMARY_CANON`이 현재 기획·결정·구조화 데이터·코드·Scene·Resource·Test·검증 evidence를 소유하고, 사람이 보는 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`는 exact source SHA와 evidence ceiling이 있는 파생 snapshot이다. 실제 build/test/runtime 상태는 `REPOSITORY_RUNTIME_TRUTH`가 책임진다. 기존 Notion과 Google Sheets는 고유 자료 이관이 필요할 때만 읽는 `LEGACY_READ_ONLY` / `COMPATIBILITY_ONLY` source이며 신규 기본 작업면이나 active decision sync 정본이 아니다. 상세 V4 정책은 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`가 책임진다.
 
 `DOMAIN_SPLIT_CANON`은 이 역할 분리를 설명하기 위한 호환성 표지다. V4에서 현행 구조화 정본은 `REPOSITORY_STRUCTURED_CANON`의 후속인 `REPOSITORY_PRIMARY_CANON` 하나이며, 과거의 `NOTION_HUMAN_FACING_CANON`은 이관이 끝나지 않은 프로젝트에서만 `COMPATIBILITY_ONLY`로 읽을 수 있다. 이 표지는 Notion이나 Sheets를 새 작업의 active owner로 되돌리지 않는다.
 
@@ -535,7 +535,7 @@ Skill 실행 증거 → 사용 이유·수행 내용·결과·미검증 보고
 발행 최신성 → Publication Manifest
 실제 상태 → 코드·데이터·자산·테스트·캡처·프로파일
 현재 기획·시각·구조화 정본 → repository(`REPOSITORY_PRIMARY_CANON`)
-사람용 milestone 검토 → exact-SHA PDF(`HUMAN_GDD_PDF_DERIVED_VIEW`)
+사람용 milestone 검토 → exact-SHA PDF(`APPROVED_HUMAN_BLUEPRINT_PDF_CANON`)
 기존 Notion / Google Sheets → V4 exception 또는 `LEGACY_READ_ONLY` / `COMPATIBILITY_ONLY` migration source
 과거 상태 → Git 이력
 ```
@@ -672,3 +672,7 @@ material claim 원자화
 `BLOCKED_UNVERIFIED`를 유지한다.
 
 Reference: `skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md`
+
+<!-- FEDERATED_DUAL_CANON_ROUTE -->
+
+> V4 authority route: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON` owns editable structured, execution, runtime, work-status, and evidence facts. Only a `USER_APPROVED_AND_MANIFEST_REGISTERED` `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` owns the immutable human visual/review baseline. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON` and PDF annotations do not mutate repository-owned facts. See `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` and `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`.

@@ -29,7 +29,7 @@ latest user instruction
 
 - `REPOSITORY_PRIMARY_CANON`: 사람이 읽고 비교·수정하는 프로젝트 개요·기획·Visual/Asset·표·Flow/Wireframe/Storyboard, Markdown·JSON·게임 데이터·코드·씬·리소스·config·tests.
 - `REPOSITORY_RUNTIME_TRUTH`: 실제 build/runtime/test evidence.
-- `HUMAN_GDD_PDF_DERIVED_VIEW`: exact source SHA와 evidence ceiling을 가진 사람용 milestone snapshot.
+- `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`: exact source SHA와 evidence ceiling을 가진 사람용 milestone snapshot.
 - Notion은 UNIQUE legacy material의 migration source 또는 프로젝트 AGENTS가 명시한 좁은 V4 exception이다. 새 기본 workspace나 active decision sync 정본으로 사용하지 않는다.
 - Google Sheets는 unique unmigrated material이 남은 경우의 `MIGRATION_ONLY_UNTIL_REMOVAL` compatibility source다.
 
@@ -49,3 +49,7 @@ latest user instruction
 - Manual check:
 - Runtime evidence:
 - Destination readback:
+
+<!-- FEDERATED_DUAL_CANON_ROUTE -->
+
+> V4 authority route: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON` owns editable structured, execution, runtime, work-status, and evidence facts. Only a `USER_APPROVED_AND_MANIFEST_REGISTERED` `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` owns the immutable human visual/review baseline. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON` and PDF annotations do not mutate repository-owned facts. See `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` and `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`.

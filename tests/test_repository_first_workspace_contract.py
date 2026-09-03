@@ -54,15 +54,15 @@ class RepositoryFirstWorkspaceContractTests(unittest.TestCase):
         self.assertEqual(4, contract["schema_version"])
         self.assertEqual("ACTIVE_DEFAULT", contract["status"])
         self.assertEqual(
-            "REPOSITORY_PRIMARY_CANON_WITH_DERIVED_HUMAN_PDF",
+            "FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER",
             contract["authority_model"],
         )
         self.assertEqual(
             "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE",
             contract["project_workspace"],
         )
-        self.assertEqual("REPOSITORY_PRIMARY_CANON", contract["project_canon"])
-        self.assertEqual("HUMAN_GDD_PDF_DERIVED_VIEW", contract["human_facing_view"])
+        self.assertEqual("FEDERATED_REPOSITORY_AND_APPROVED_PDF_CANON", contract["project_canon"])
+        self.assertEqual("APPROVED_HUMAN_BLUEPRINT_PDF_CANON", contract["human_facing_view"])
         self.assertEqual(
             "CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON",
             contract["work_surface"],
@@ -167,7 +167,7 @@ class RepositoryFirstWorkspaceContractTests(unittest.TestCase):
         for token in (
             "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE",
             "REPOSITORY_PRIMARY_CANON",
-            "HUMAN_GDD_PDF_DERIVED_VIEW",
+            "APPROVED_HUMAN_BLUEPRINT_PDF_CANON",
             "NO_NEW_NOTION_WRITE_BY_DEFAULT",
             "NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE",
             "PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json",
@@ -188,7 +188,7 @@ class RepositoryFirstWorkspaceContractTests(unittest.TestCase):
             "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json",
             "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE",
             "REPOSITORY_PRIMARY_CANON",
-            "HUMAN_GDD_PDF_DERIVED_VIEW",
+            "APPROVED_HUMAN_BLUEPRINT_PDF_CANON",
             "CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA",
             "APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST",
             "NO_NEW_NOTION_WRITE_BY_DEFAULT",
@@ -211,7 +211,7 @@ class RepositoryFirstWorkspaceContractTests(unittest.TestCase):
             "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json",
             "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE",
             "REPOSITORY_PRIMARY_CANON",
-            "HUMAN_GDD_PDF_DERIVED_VIEW",
+            "APPROVED_HUMAN_BLUEPRINT_PDF_CANON",
             "NO_NEW_NOTION_WRITE_BY_DEFAULT",
             "NOTION_DEFAULT_PROJECT_WORKSPACE_RETIRED",
             "ASSET_MANIFEST.json",
@@ -259,7 +259,7 @@ class RepositoryFirstWorkspaceContractTests(unittest.TestCase):
 
         for token in (
             "REPOSITORY_PRIMARY_CANON",
-            "HUMAN_GDD_PDF_DERIVED_VIEW",
+            "APPROVED_HUMAN_BLUEPRINT_PDF_CANON",
             "AI_PRODUCTION_SPEC_MARKDOWN",
             "CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON",
             "CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON",
@@ -267,7 +267,7 @@ class RepositoryFirstWorkspaceContractTests(unittest.TestCase):
             "APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST",
             "NO_NEW_NOTION_WRITE_BY_DEFAULT",
             "NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE",
-            "PDF_IS_DERIVED_SNAPSHOT_NOT_CANON",
+            "APPROVED_PDF_IS_HUMAN_VISUAL_CANON",
         ):
             with self.subTest(token=token):
                 self.assertIn(token, policy)

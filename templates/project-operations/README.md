@@ -11,7 +11,7 @@ REPOSITORY_PRIMARY_CANON
 ├─ 현재 기획·결정·Flow/Wireframe·구조화 상태·Commit
 └─ 실제 코드/데이터/씬/자산·runtime truth·검증 증거
 
-HUMAN_GDD_PDF_DERIVED_VIEW
+APPROVED_HUMAN_BLUEPRINT_PDF_CANON
 └─ exact repository SHA와 evidence ceiling이 연결된 사람용 milestone snapshot
 
 NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
@@ -155,7 +155,7 @@ Base 저장소 자체를 콜드 스타트할 때 이 디렉터리의 예시/빈 
 ## Definition of Done
 
 - 정확한 프로젝트 Repository와 V4 `REPOSITORY_PRIMARY_CANON` owner를 확인했다.
-- 사람이 보는 PDF가 필요한 경우 exact-SHA `HUMAN_GDD_PDF_DERIVED_VIEW`로 생성했으며 repository를 대체하지 않는다.
+- 사람이 보는 PDF가 필요한 경우 exact-SHA `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`로 생성했으며 repository를 대체하지 않는다.
 - 저장소 루트의 `[기획서]` design root가 유지된다.
 - 승인 Decision은 Branch/Commit과 repository 분야 owner에 추적된다.
 - 실제 V4 exception/migration Notion write가 있었다면 정확한 scope, Project relation, destination readback을 가진다.
@@ -165,3 +165,7 @@ Base 저장소 자체를 콜드 스타트할 때 이 디렉터리의 예시/빈 
 - legacy `UNIQUE` material은 현행 owner 이관·readback/Test·consumer 확인 없이 삭제하지 않는다.
 - 실제로 수행하지 않은 runtime/사용자 검증은 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`로 남긴다.
 - 선택형 `DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD`를 사용한 경우 두 파일·동일 ID/SHA·PDF-only download·Notion input-only 경계를 검증했다.
+
+<!-- FEDERATED_DUAL_CANON_ROUTE -->
+
+> V4 authority route: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON` owns editable structured, execution, runtime, work-status, and evidence facts. Only a `USER_APPROVED_AND_MANIFEST_REGISTERED` `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` owns the immutable human visual/review baseline. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON` and PDF annotations do not mutate repository-owned facts. See `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` and `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`.

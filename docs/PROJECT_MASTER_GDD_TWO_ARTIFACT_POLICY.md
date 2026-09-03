@@ -420,7 +420,7 @@ AI 명세는 별도 다운로드 링크를 제공하지 않고 다음 정보만 
 
 `BLUEPRINT_GOAL_SYSTEM_CASE_PROGRESS_PROJECTION`
 
-`PM_STATUS_IS_READ_ONLY_DERIVED_VIEW`
+`PDF_PROGRESS_STATUS_IS_REPOSITORY_PROJECTION`
 
 `NO_SEPARATE_PM_PDF_OR_HTML`
 
@@ -518,3 +518,51 @@ Gate 실패 시 기존 predecessor를 보존하고 successor를 최종본으로 
 정말 유효한 predecessor가 없는 최초 Blueprint만 `INITIAL_CREATION_NO_VALID_PREDECESSOR`로 생성할 수 있다. 이 판정에는 기존 PDF·repository design docs·Library/legacy migration source 검색 결과를 남기며, 최초 생성 뒤부터는 같은 두 artifact와 stable ID를 predecessor로 사용한다.
 
 이 Gate는 `EXACTLY_TWO_DELIVERABLES`, `NO_SEPARATE_BLUEPRINT_ARTIFACT`, `NO_MASS_BLUEPRINT_BACKFILL`, `RUNTIME_TRUTH_SEPARATE`, 이미지 승인·consumer 경계를 변경하지 않는다.
+
+
+<!-- FEDERATED_DUAL_CANON_PUBLICATION_CONTRACT -->
+
+## 12. GitHub·승인 PDF 연합 정본 Gate
+
+```text
+FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER
+REPOSITORY_EXECUTION_DATA_CANON
+APPROVED_HUMAN_BLUEPRINT_PDF_CANON
+ONE_EDITABLE_OWNER_PER_ATOMIC_FACT
+```
+
+`HUMAN_MASTER_GDD_PDF`는 생성만으로 정본이 되지 않는다. `CANDIDATE_PDF_NOT_CANON`이며 다음을 모두 만족한 version만 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`으로 승격한다.
+
+```yaml
+source_commit:
+pdf_sha256:
+approval_ref:
+approved_at:
+canonical_status: CANON_ALIGNED
+supersedes_pdf_ref:
+pdf_canon_manifest_ref:
+included_scope:
+implementation_evidence_ceiling:
+```
+
+승격 token은 `USER_APPROVED_AND_MANIFEST_REGISTERED`다. 승인본은 `APPROVED_PDF_IMMUTABLE_NEW_VERSION_REQUIRED`; 수정은 새 version·hash를 만들고 `NEW_VERSION_NEW_HASH_KEEP_HISTORY`로 predecessor를 보존한다.
+
+### 12.1 단일 편집 owner
+
+- repository owner: 코드·데이터·ID·규칙·수치·상태·Decision source·작업현황·실제 implementation/test/runtime evidence.
+- 승인 PDF: 사용자가 승인한 읽기 구조, 프로젝트/플레이어 경험 지도, Flow·화면·정보 hierarchy, 시스템 카드 시각 표현, milestone 범위와 사람용 검수 baseline.
+- `PDF_STRUCTURED_CONTENT_IS_REPOSITORY_PROJECTION`.
+- `PDF_ANNOTATION_IS_CHANGE_REQUEST_NOT_CANON_MUTATION`.
+- `PROJECT_WORK_KANBAN_IS_PROGRESS_SOURCE`.
+- `PDF_PROGRESS_STATUS_IS_REPOSITORY_PROJECTION`.
+- `NO_PARALLEL_BLUEPRINT_STATUS_CANON`.
+
+### 12.2 충돌 처리
+
+- repository 구조화 값과 PDF 표시값이 다르면 repository 값을 유지하고 PDF를 `REPOSITORY_ADVANCED_PDF_REVIEW_REQUIRED`로 내려 새 candidate를 만든다.
+- 승인 PDF의 material visual flow/hierarchy와 구현이 다르면 구현을 교정하거나 새 candidate delta를 사용자에게 보여 다시 승인한다.
+- 반영되지 않은 PDF feedback은 `PDF_FEEDBACK_PENDING_REPOSITORY_REFLECTION`이다.
+- 해결되지 않은 동시 차이는 `CANON_CONFLICT`.
+- `CANON_CONFLICT_BLOCKS_COMPLETION_AND_RELEASE`.
+
+predecessor inventory, stable-ID carry-forward, semantic delta와 `BLUEPRINT_LOSS_REGRESSION_GATE`는 새 candidate를 승인 정본으로 승격하기 전 필수다. 기존 승인 PDF는 successor가 `USER_APPROVED_AND_MANIFEST_REGISTERED`가 되기 전까지 사람용 검수 baseline으로 유지한다.

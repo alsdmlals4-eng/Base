@@ -28,7 +28,7 @@ class BlueprintProgressIncrementalRevisionContractTests(unittest.TestCase):
             "SYSTEM_LEVEL_CHECKLIST",
             "CASE_LEVEL_STATUS_MATRIX",
             "BLOCKERS_DECISIONS_AND_NEXT_SAFE_ACTION",
-            "PM_STATUS_IS_READ_ONLY_DERIVED_VIEW",
+            "PDF_PROGRESS_STATUS_IS_REPOSITORY_PROJECTION",
             "NO_SEPARATE_PM_PDF_OR_HTML",
             "PASS_ONLY_COUNTS_COMPLETE",
         ):

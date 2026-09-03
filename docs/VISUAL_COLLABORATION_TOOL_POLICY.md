@@ -4,7 +4,7 @@
 
 The default project operating surface is `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE` from `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`.
 
-`REPOSITORY_PRIMARY_CANON` owns current planning, structured data, approved assets, code and evidence; `HUMAN_GDD_PDF_DERIVED_VIEW` is the exact-SHA person-facing snapshot. `V4_NOTION_EXCEPTION_ONLY` / `NO_NEW_NOTION_WRITE_BY_DEFAULT`: Notion can be a bounded exception or read-only migration source, never the default Project Home, visual owner or active decision-sync route.
+`REPOSITORY_PRIMARY_CANON` owns current planning, structured data, approved assets, code and evidence; `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` is the exact-SHA person-facing snapshot. `V4_NOTION_EXCEPTION_ONLY` / `NO_NEW_NOTION_WRITE_BY_DEFAULT`: Notion can be a bounded exception or read-only migration source, never the default Project Home, visual owner or active decision-sync route.
 
 ```text
 repository-native Markdown / JSON / game data / code / scenes / resources / tests
@@ -12,7 +12,7 @@ repository-native Markdown / JSON / game data / code / scenes / resources / test
 → REPOSITORY_RUNTIME_TRUTH for implemented/runtime facts
 
 exact-source-SHA PDF and repository-native visual/flow artifacts
-→ HUMAN_GDD_PDF_DERIVED_VIEW
+→ APPROVED_HUMAN_BLUEPRINT_PDF_CANON
 → person-facing review without a second editable canon
 
 approved Notion exception or legacy source only
@@ -220,3 +220,7 @@ Reject or revise a change if it:
 - leaves an approved Notion visual/table materially inconsistent with the repository domain it is meant to summarize;
 - reintroduces Figma, Tool Hub, QA Studio, external HTML or another deprecated visual/management surface without current evidence and new approval;
 - reports repository-native static/test evidence as human fun/usability proof.
+
+<!-- FEDERATED_DUAL_CANON_ROUTE -->
+
+> V4 authority route: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON` owns editable structured, execution, runtime, work-status, and evidence facts. Only a `USER_APPROVED_AND_MANIFEST_REGISTERED` `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` owns the immutable human visual/review baseline. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON` and PDF annotations do not mutate repository-owned facts. See `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` and `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`.
