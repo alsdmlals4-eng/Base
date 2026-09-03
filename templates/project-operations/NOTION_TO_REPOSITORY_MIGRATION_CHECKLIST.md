@@ -45,6 +45,19 @@ status: INVENTORY | MIGRATING | VERIFYING | LEGACY_READ_ONLY | RETIRED
 - [ ] URL만 남은 외부 자료는 접근 가능성과 provenance를 확인했다.
 - [ ] 중복·후보·폐기 자료를 current canon과 분리했다.
 
+### 2.1 Export 범위·권한 대조
+
+공식 export 문서: https://www.notion.com/help/export-your-content (확인: 2026-08-31). 당시 안내는 workspace 전체 PDF export를 2026-08-31까지 단계적으로 제거하되 **개별 페이지 PDF**는 유지한다는 내용이다. 프로젝트의 실제 export 옵션은 별도로 확인하며 이 날짜만으로 해당 workspace의 rollout 완료를 주장하지 않는다.
+
+- [ ] `checked_at`, `export_format`, `exporter_access_scope`, 포함 subpage/파일 옵션, 선택한 DB view를 export receipt에 기록했다.
+- [ ] workspace 전체 PDF를 필수 백업 경로로 요구하지 않고 목적에 맞는 HTML 또는 Markdown & CSV와 첨부 원본 binary를 확보했다. 사람용 repository GDD PDF는 이관 원본을 대체하지 않는다.
+- [ ] exporter가 접근하지 못하는 private page와 teamspace 설정의 누락 가능성을 inventory에 표시했다. export 불가 시 `BLOCKED_UNVERIFIED`이며 권한을 자동 확대하지 않는다.
+- [ ] DB의 current/default view 선택·필터 범위를 기록했다. 모든 view가 한 번에 export된다고 가정하지 않고 Form view는 필요한 table/source record로 대조했다.
+- [ ] source의 page/record/attachment ID 목록과 export sitemap/파일 목록을 비교하고, relation/rollup/formula의 정의·대상·계산 의미는 4절에서 별도로 보존했다.
+- [ ] export와 repository 대상의 원문·표·첨부 원본을 readback했다. 요약·thumbnail·빈 ZIP·성공 메시지만으로 이관을 완료하지 않았다.
+
+`EXPORT_IS_NOT_RESTORE_PROOF`: export 파일을 다시 올려 workspace가 완전 복원된다고 보지 않는다. 누락·접근 불가 항목과 검증 범위는 10절 카운터 및 12절 receipt에 남긴다. 원본 Notion은 삭제하지 않는다.
+
 ## 3. 정본 대상 매핑
 
 | 기존 Notion 역할 | 기본 이관 대상 | 확인 항목 |
@@ -152,7 +165,9 @@ status: INVENTORY | MIGRATING | VERIFYING | LEGACY_READ_ONLY | RETIRED
 
 ## 10. 이관 잔여 카운터
 
-아래 값을 실제 inventory에서 계산한다.
+아래 값은 완료 목표이며 실제 inventory에서 계산한다.
+
+`UNKNOWN_IS_NOT_ZERO`: `inventory_scope_status`가 `COMPLETE`이고 source/export/repository 대조가 끝난 범위에서만 0을 확정한다. 접근 불가·미확인 page/record/attachment가 있거나 범위가 `INCOMPLETE` / `UNKNOWN`이면 미확정 카운터는 `null`과 사유로 남긴다. 확인한 항목의 수는 별도로 기록하되 `LEGACY_READ_ONLY`를 유지하고 전체 이관/퇴역 완료를 주장하지 않는다.
 
 ```text
 NOTION_UNIQUE_CANON_COUNT = 0
@@ -169,12 +184,12 @@ ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT = 0
 판정:
 
 ```text
-하나라도 1 이상
+하나라도 1 이상 / 미확정(null) / inventory_scope_status != COMPLETE
 → LEGACY_READ_ONLY
 → active workflow에서는 신규 쓰기 금지
 → 고유 항목 이관을 계속 추적
 
-모두 0
+모두 0 + inventory_scope_status=COMPLETE + source/export/repository readback 완료
 → NOTION_RETIRED_FROM_ACTIVE_FLOW
 → NO_DELETE_REQUIRED_FOR_RETIREMENT
 ```
@@ -183,32 +198,34 @@ ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT = 0
 
 ## 11. 적대적 검토 5회
 
-### Loop 1 — 정본 충돌
+`skills/running-adversarial-review-and-refinement/SKILL.md`를 따른다. 아래 항목은 서로 다른 검토 **관점**이며 회차가 아니다. 매 회차 아래 다섯 관점을 모두 포함한 전체 승인 범위를 `attack → validate-critique → 승인된 최소 교정 → regression-recheck → 대안/장기 적합성 재검사`하고, 그 전체 루프를 최소 5회 수행한다. 관점별 1회 점검을 5회의 전체 루프로 계산하지 않는다.
+
+### 검토 관점 1 — 정본 충돌
 
 - [ ] 같은 Decision·수치·asset이 repository와 Notion에서 다를 때 current authority가 명확한가.
 - [ ] 오래된 Notion 값을 조용히 덮어쓰거나 승격하지 않았는가.
 
-### Loop 2 — 자료 손실
+### 검토 관점 2 — 자료 손실
 
 - [ ] 숨은 page·relation·attachment·원본 binary가 누락되지 않았는가.
 - [ ] 미리보기나 요약으로 원문 의미를 잃지 않았는가.
 
-### Loop 3 — 구현 인계
+### 검토 관점 3 — 구현 인계
 
 - [ ] 새 채팅/Codex가 exact repository SHA만으로 재수화 가능한가.
 - [ ] runtime asset의 path/hash/consumer가 실제로 회수되는가.
 
-### Loop 4 — 사람용 이해
+### 검토 관점 4 — 사람용 이해
 
 - [ ] PDF가 핵심 시스템·콘텐츠·구현 원리를 충분히 설명하는가.
 - [ ] PDF snapshot과 current repository의 시점 차이를 알 수 있는가.
 
-### Loop 5 — 완료 과장·rollback
+### 검토 관점 5 — 완료 과장·rollback
 
 - [ ] 문서·test PASS를 runtime/player PASS로 확대하지 않았는가.
 - [ ] 기존 Notion을 삭제하지 않고도 안전하게 rollback·재감사 가능한가.
 
-새 blocking finding이 있으면 수정 후 전체 다섯 관점을 다시 확인한다.
+회차별 입력 상태·검증된 finding·실제 교정·회귀 결과·미검증을 receipt에 남긴다. 새 blocking finding이 있으면 수정 결과를 다음 전체 루프에서 다시 검토한다. 자체 검토는 독립 review나 미실행 CI/runtime 검증을 대신하지 않는다.
 
 ## 12. 완료 receipt
 
@@ -228,6 +245,8 @@ asset_manifest:
   path:
   verified_asset_count:
 notion_state: LEGACY_READ_ONLY | NOTION_RETIRED_FROM_ACTIVE_FLOW
+inventory_scope_status: COMPLETE | INCOMPLETE | UNKNOWN
+export_receipt: # checked_at / export_format / exporter_access_scope / view / omissions / readback
 counters:
   NOTION_UNIQUE_CANON_COUNT:
   CODEX_NOTION_DEPENDENCY_COUNT:
