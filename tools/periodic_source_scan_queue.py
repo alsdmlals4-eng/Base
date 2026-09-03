@@ -10,6 +10,7 @@ from datetime import date, timedelta
 from itertools import groupby
 from pathlib import Path
 from typing import Any, Sequence
+from urllib.parse import urlsplit
 
 CADENCE_DAYS = {
     "daily-or-weekly": 1,
@@ -20,7 +21,80 @@ CADENCE_DAYS = {
 CADENCE_ORDER = {name: index for index, name in enumerate(CADENCE_DAYS)}
 ISSUE_TITLE = "[Periodic Source Scan Queue]"
 ISSUE_MARKER = "<!-- periodic-source-scan-queue -->"
+BASE_REPOSITORY = "alsdmlals4-eng/Base"
+BASE_REPOSITORY_ID = 1295870270
+BASE_REPOSITORY_URL = f"https://github.com/{BASE_REPOSITORY}"
+QUEUE_REVIEW_OWNER = "docs/knowledge/game-development/PERIODIC_SOURCE_SCAN_QUEUE.md"
 _DATE = re.compile(r"\d{4}-\d{2}-\d{2}\Z")
+
+
+def normalize_base_repository(value: str) -> str:
+    """Normalize equivalent Base addresses; never guess another owner or repository."""
+    if not isinstance(value, str):
+        raise ValueError("BASE_REPOSITORY_MISMATCH: expected the canonical Base repository")
+    candidate = value.strip()
+    if "://" in candidate:
+        parsed = urlsplit(candidate)
+        if (parsed.scheme != "https" or parsed.netloc.lower() != "github.com"
+                or parsed.query or parsed.fragment):
+            raise ValueError("BASE_REPOSITORY_MISMATCH: only the canonical HTTPS root URL is accepted")
+        candidate = parsed.path.removeprefix("/")
+    candidate = candidate.rstrip("/").removesuffix(".git")
+    if candidate.lower() != BASE_REPOSITORY.lower():
+        raise ValueError("BASE_REPOSITORY_MISMATCH: expected " + BASE_REPOSITORY_URL)
+    return BASE_REPOSITORY
+
+
+def resolve_queue_issue(rows: object) -> int | None:
+    """Select one open queue by title AND marker from a complete bounded listing."""
+    if not isinstance(rows, list) or len(rows) >= 100:
+        raise ValueError("QUEUE_LIST_INCOMPLETE: require a complete listing with fewer than 100 issues")
+    matches: list[int] = []
+    for row in rows:
+        if not isinstance(row, dict) or row.get("state") not in {"OPEN", "CLOSED"}:
+            raise ValueError("QUEUE_LIST_INVALID: malformed issue snapshot")
+        if row["state"] != "OPEN":
+            continue
+        title = row.get("title")
+        body = row.get("body") or ""
+        if not isinstance(title, str) or not isinstance(body, str):
+            raise ValueError("QUEUE_LIST_INVALID: malformed title or body")
+        marked = body.lstrip().startswith(ISSUE_MARKER)
+        named = title == ISSUE_TITLE
+        if named != marked:
+            raise ValueError("QUEUE_IDENTITY_MISMATCH: title and stable marker must agree")
+        if not named:
+            continue
+        number = row.get("number")
+        if isinstance(number, bool) or not isinstance(number, int) or number < 1:
+            raise ValueError("QUEUE_LIST_INVALID: invalid queue issue number")
+        matches.append(number)
+    if len(matches) > 1:
+        raise ValueError("QUEUE_IDENTITY_AMBIGUOUS: multiple open queues; do not edit an arbitrary first item")
+    return matches[0] if matches else None
+
+
+def render_full_cycle_handoff() -> str:
+    """Route every Source to the existing review owner, without claiming execution."""
+    return f"""## 0. 승인된 Source review 실행 진입점
+
+```yaml
+repository: {BASE_REPOSITORY_URL}
+repository_id: {BASE_REPOSITORY_ID}
+review_contract: SOURCE_REVIEW_FULL_CYCLE
+review_owner: {QUEUE_REVIEW_OWNER}
+review_execution: NOT_RUN
+merge_execution: NOT_RUN
+```
+
+- 연결된 GitHub에서 위 repository identity와 최신 `AGENTS.md`·completed main·관련 열린 PR을 fresh-read한다. 잘못된 주소를 추정 교체하지 않는다.
+- 오늘/주간/일반 기사·영상·공식 업데이트의 실제 원문을 확인하고 `SOURCE_CONTEXT_PACKET`으로 조건·반례·날짜·버전·현재 consumer를 보존한다.
+- `docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md`로 역공학·모듈화를 수행하고 기존 owner에 최소 흡수한다.
+- `FULL_LOOP_COUNT_MINIMUM: 5`, `FULL_LOOP_IS_NOT_A_REVIEW_LENS`: 각 회차에 전체 결과를 공격·비판 검증·승인 finding 교정·회귀검증하고 clean까지 반복한다.
+- material change가 있으면 current-task branch/PR에서 검증하고 `SOURCE_SCAN_AUTO_MERGE_GATE`의 exact HEAD·required checks·독립 검토·동시성·권한을 통과한 경우에만 병합한다. 검증된 `NO_CHANGE`에는 억지 PR을 만들지 않는다.
+- `POSTMERGE_READBACK`으로 새 main·consumer·남은 작업을 확인하고 `ACTUAL_SOURCE_REVIEW_RECEIPT`에 각 실행 단계의 증거와 blocker를 남긴다.
+- Queue 준비는 위 review를 실행한 것이 아니다. 외부 예약 작업은 실제 설정·실행 이력을 읽기 전 연결됐다고 주장하지 않는다.
+"""
 
 
 def parse_iso_date(value: object) -> date | None:
@@ -206,6 +280,8 @@ def render_issue_body(payload: dict[str, object], today: date, partition_manifes
         "queue_writes_project_canon: false",
         "```",
         "",
+        render_full_cycle_handoff(),
+        "",
         "## 1. Due Source",
         "",
     ]
@@ -283,19 +359,38 @@ def render_issue_body(payload: dict[str, object], today: date, partition_manifes
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Render a periodic source review queue from the Base ledger.")
-    parser.add_argument("--ledger", type=Path, required=True)
-    parser.add_argument("--date", dest="queue_date", required=True)
-    parser.add_argument("--output", type=Path, required=True)
+    helpers = parser.add_mutually_exclusive_group()
+    helpers.add_argument("--normalize-repository")
+    helpers.add_argument("--resolve-queue-issues", type=Path)
+    parser.add_argument("--ledger", type=Path)
+    parser.add_argument("--date", dest="queue_date")
+    parser.add_argument("--output", type=Path)
     parser.add_argument("--partition-manifest", type=Path)
     args = parser.parse_args(argv)
-    queue_date = parse_iso_date(args.queue_date)
-    if queue_date is None:
-        parser.error("--date cannot be null")
-    args.output.parent.mkdir(parents=True, exist_ok=True)
-    partition_manifest = load_partition_manifest(args.partition_manifest) if args.partition_manifest else None
-    args.output.write_text(render_issue_body(load_ledger(args.ledger), queue_date, partition_manifest), encoding="utf-8", newline="\n")
-    print(args.output)
-    return 0
+    try:
+        if args.normalize_repository is not None or args.resolve_queue_issues is not None:
+            if any((args.ledger, args.queue_date, args.output, args.partition_manifest)):
+                parser.error("repository/issue helpers cannot be combined with queue rendering")
+            if args.normalize_repository is not None:
+                print(normalize_base_repository(args.normalize_repository))
+            else:
+                number = resolve_queue_issue(json.loads(args.resolve_queue_issues.read_text(encoding="utf-8")))
+                print(number if number is not None else "")
+            return 0
+        if not all((args.ledger, args.queue_date, args.output)):
+            parser.error("queue rendering requires --ledger, --date and --output")
+        queue_date = parse_iso_date(args.queue_date)
+        if queue_date is None:
+            parser.error("--date cannot be null")
+        partition_manifest = load_partition_manifest(args.partition_manifest) if args.partition_manifest else None
+        body = render_issue_body(load_ledger(args.ledger), queue_date, partition_manifest)
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(body, encoding="utf-8", newline="\n")
+        print(args.output)
+        return 0
+    except (OSError, ValueError) as error:
+        parser.error(str(error))
+    return 2
 
 
 if __name__ == "__main__":
