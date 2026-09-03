@@ -1,0 +1,396 @@
+name: One-shot dual canon semantic follow-up
+
+on:
+  push:
+    branches:
+      - work/846-blueprint-progress-incremental-revision
+    paths:
+      - .github/workflows/one-shot-federated-dual-canon-followup.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out exact work branch
+        uses: actions/checkout@v4
+        with:
+          ref: work/846-blueprint-progress-incremental-revision
+          fetch-depth: 0
+
+      - name: Verify bounded follow-up
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = "work/846-blueprint-progress-incremental-revision"
+          git merge-base --is-ancestor e926c67ba102b9556f4342ea21f0dbaaa1122aa5 HEAD
+          changed="$(git diff --name-only e926c67ba102b9556f4342ea21f0dbaaa1122aa5..HEAD)"
+          test "$changed" = ".github/workflows/one-shot-federated-dual-canon-followup.yml"
+
+      - name: Apply semantic and consumer corrections
+        shell: python
+        run: |
+          from __future__ import annotations
+
+          import json
+          import re
+          from pathlib import Path
+
+          ROOT = Path.cwd()
+          MODEL = "FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER"
+          REPOSITORY = "REPOSITORY_EXECUTION_DATA_CANON"
+          HUMAN = "APPROVED_HUMAN_BLUEPRINT_PDF_CANON"
+          ACTIVATION = "USER_APPROVED_AND_MANIFEST_REGISTERED"
+          SINGLE = "ONE_EDITABLE_OWNER_PER_ATOMIC_FACT"
+          MANIFEST_READBACK = "APPROVED_PDF_CANON_MANIFEST_AND_HASH_READBACK"
+
+          ACTIVE_ROUTING_SURFACES = [
+              "AGENTS.md",
+              "README.md",
+              "START_HERE.md",
+              "docs/OPERATING_MODEL.md",
+              "docs/DOCUMENTATION_MAP.md",
+              "docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md",
+              "docs/VISUAL_COLLABORATION_TOOL_POLICY.md",
+              "docs/CONFIRMED_DECISION_SYNC_POLICY.md",
+              "skills/managing-design-documents/SKILL.md",
+              "templates/AGENTS.project.md",
+              "templates/copilot-instructions.md",
+              "templates/custom-instructions.codex.md",
+              "templates/custom-instructions.gpt.md",
+              "templates/project-operations/CURRENT_CONFIRMED_DECISIONS.md",
+              "templates/project-operations/README.md",
+              "templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md",
+              "templates/project-operations/GPT_WORK_PROJECT_MASTER_GDD_TWO_ARTIFACT_INSTRUCTION.md",
+          ]
+
+          OLD_ROUTE = (
+              "> V4 authority route: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. "
+              "`REPOSITORY_EXECUTION_DATA_CANON` owns editable structured, execution, "
+              "runtime, work-status, and evidence facts. Only a "
+              "`USER_APPROVED_AND_MANIFEST_REGISTERED` "
+              "`APPROVED_HUMAN_BLUEPRINT_PDF_CANON` owns the immutable human "
+              "visual/review baseline. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; "
+              "`CANDIDATE_PDF_NOT_CANON` and PDF annotations do not mutate "
+              "repository-owned facts. See "
+              "`docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` and "
+              "`docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`."
+          )
+          NEW_ROUTE = (
+              "> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. "
+              "`REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·"
+              "작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 "
+              "충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 "
+              "정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; "
+              "`CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 "
+              "바꾸지 않는다. 상세 owner는 "
+              "`docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 "
+              "`docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다."
+          )
+
+          def load(path: str) -> str:
+              target = ROOT / path
+              if not target.is_file():
+                  raise SystemExit(f"missing required path: {path}")
+              return target.read_text(encoding="utf-8")
+
+          def save(path: str, content: str) -> None:
+              (ROOT / path).write_text(
+                  content.rstrip() + "\n",
+                  encoding="utf-8",
+                  newline="\n",
+              )
+
+          def replace_required(
+              path: str,
+              old: str,
+              new: str,
+              *,
+              expected_count: int = 1,
+          ) -> None:
+              content = load(path)
+              found = content.count(old)
+              if found != expected_count:
+                  raise SystemExit(
+                      f"{path}: expected {expected_count} occurrences, found {found}: {old[:120]}"
+                  )
+              save(path, content.replace(old, new, expected_count))
+
+          def replace_optional(path: str, old: str, new: str) -> None:
+              content = load(path)
+              if old in content:
+                  save(path, content.replace(old, new))
+
+          def append_once(path: str, marker: str, section: str) -> None:
+              content = load(path)
+              if marker not in content:
+                  save(path, content.rstrip() + "\n\n" + section.strip() + "\n")
+
+          for path in ACTIVE_ROUTING_SURFACES:
+              replace_required(path, OLD_ROUTE, NEW_ROUTE)
+
+          replace_required(
+              "AGENTS.md",
+              "- 새 프로젝트·새 기획·시각 작업의 기본 계약은 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`다. 프로젝트 repository가 기획·결정·구조화 데이터·승인 runtime asset·코드·Scene·Resource·Test·Evidence를 소유하는 `REPOSITORY_PRIMARY_CANON`이며, 사람용 상세 기획서 PDF는 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`다.",
+              "- 새 프로젝트·새 기획·시각 작업의 기본 계약은 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`의 `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`다. `REPOSITORY_EXECUTION_DATA_CANON`이 편집 가능한 기획 source·결정·구조화 데이터·승인 runtime asset·코드·Scene·Resource·Test·Evidence를 소유한다. 사람용 상세 기획서 PDF는 생성만으로 정본이 아니며 `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 version만 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`이다.",
+          )
+
+          replace_required(
+              "README.md",
+              "사람용 상세 기획서 PDF는 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`이며 exact `source_commit`을 가진 파생 snapshot입니다. AI용 상세 기획·구현 명세 Markdown은 repository에 저장합니다. ChatGPT Work와 Library는 실행·참조 surface이며 정본이 아닙니다.",
+              "현재 권한 모델은 `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`입니다. `REPOSITORY_EXECUTION_DATA_CANON`이 편집 가능한 구조화·실행 정본이고, exact `source_commit`에서 생성되어 `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 사용자용 상세 PDF만 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` 불변 시각·검수 정본입니다. AI용 상세 기획·구현 명세 Markdown은 repository에 저장합니다. ChatGPT Work와 Library는 실행·참조 surface이며 정본이 아닙니다.",
+          )
+
+          replace_required(
+              "START_HERE.md",
+              "기본 프로젝트 작업 계약은 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`다. repository가 `REPOSITORY_PRIMARY_CANON`, 사람용 상세 기획서 PDF가 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`, AI용 상세 기획·구현 명세 Markdown이 repository canon이다.",
+              "기본 프로젝트 작업 계약은 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`의 `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`다. `REPOSITORY_EXECUTION_DATA_CANON`이 편집 가능한 구조화·실행 정본이며, exact source에서 생성되어 `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 사람용 상세 기획서 PDF만 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`이다. AI용 상세 기획·구현 명세 Markdown은 repository execution/data canon에 저장한다.",
+          )
+          replace_required(
+              "START_HERE.md",
+              "| 프로젝트 상태·사람용 시각화 | `building-project-visual-dashboards` — repository 정본에서 생성한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`가 기본이며 외부 HTML/Notion workspace를 새 정본으로 만들지 않음 |",
+              "| 프로젝트 상태·사람용 시각화 | `building-project-visual-dashboards` — repository 정본에서 생성한 candidate를 사용자 승인·manifest 등록한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`이 기본이며 외부 HTML/Notion workspace를 새 정본으로 만들지 않음 |",
+          )
+
+          replace_required(
+              "docs/OPERATING_MODEL.md",
+              "Base에는 여러 프로젝트에서 재사용 가능한 판단·절차·검증만 둔다. 프로젝트 고유 세계관·원고·수치·경로·자산·구현 상태는 대상 프로젝트가 책임진다. 현재 프로젝트 정본은 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`의 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`다. `REPOSITORY_PRIMARY_CANON`이 현재 기획·결정·구조화 데이터·코드·Scene·Resource·Test·검증 evidence를 소유하고, 사람이 보는 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`는 exact source SHA와 evidence ceiling이 있는 파생 snapshot이다. 실제 build/test/runtime 상태는 `REPOSITORY_RUNTIME_TRUTH`가 책임진다. 기존 Notion과 Google Sheets는 고유 자료 이관이 필요할 때만 읽는 `LEGACY_READ_ONLY` / `COMPATIBILITY_ONLY` source이며 신규 기본 작업면이나 active decision sync 정본이 아니다. 상세 V4 정책은 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`가 책임진다.",
+              "Base에는 여러 프로젝트에서 재사용 가능한 판단·절차·검증만 둔다. 프로젝트 고유 세계관·원고·수치·경로·자산·구현 상태는 대상 프로젝트가 책임진다. 현재 프로젝트 권한 모델은 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`의 `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`다. `REPOSITORY_EXECUTION_DATA_CANON`이 편집 가능한 기획 source·결정·구조화 데이터·코드·Scene·Resource·Test·검증 evidence와 실제 build/test/runtime 상태를 소유한다. 사람이 보는 PDF는 exact source SHA와 evidence ceiling에서 생성되고 `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 version만 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` 불변 시각·검수 정본이다. PDF 안의 구조화 값과 작업 상태는 repository projection이다. 기존 Notion과 Google Sheets는 고유 자료 이관이 필요할 때만 읽는 `LEGACY_READ_ONLY` / `COMPATIBILITY_ONLY` source이며 신규 기본 작업면이나 active decision sync 정본이 아니다. 상세 V4 정책은 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`가 책임진다.",
+          )
+          replace_required(
+              "docs/OPERATING_MODEL.md",
+              "현재 기획·시각·구조화 정본 → repository(`REPOSITORY_PRIMARY_CANON`)\n사람용 milestone 검토 → exact-SHA PDF(`APPROVED_HUMAN_BLUEPRINT_PDF_CANON`)",
+              "현재 편집 가능한 기획 source·구조화·실행 정본 → repository(`REPOSITORY_EXECUTION_DATA_CANON`)\n사용자 승인 시각·검수 정본 → 승인·manifest 등록된 exact-SHA PDF(`APPROVED_HUMAN_BLUEPRINT_PDF_CANON`)",
+          )
+
+          replace_required(
+              "docs/DOCUMENTATION_MAP.md",
+              "→ exact repository SHA와 evidence ceiling이 연결된 사람이 보는 milestone snapshot",
+              "→ exact repository SHA와 evidence ceiling이 연결되고 사용자 승인·manifest 등록을 마친 불변 사람용 시각·검수 정본",
+          )
+          replace_required(
+              "docs/DOCUMENTATION_MAP.md",
+              "→ APPROVED_HUMAN_BLUEPRINT_PDF_CANON (exact source SHA)",
+              "→ APPROVED_HUMAN_BLUEPRINT_PDF_CANON (exact source SHA + user approval + manifest/hash readback)",
+          )
+
+          replace_required(
+              "docs/CONFIRMED_DECISION_SYNC_POLICY.md",
+              "→ exact source SHA와 evidence ceiling을 명시한 사람용 milestone snapshot",
+              "→ exact source SHA와 evidence ceiling을 명시하고 사용자 승인·manifest 등록을 마친 불변 사람용 시각·검수 정본",
+          )
+          replace_required(
+              "docs/CONFIRMED_DECISION_SYNC_POLICY.md",
+              "| exact-SHA PDF | 사람이 읽는 milestone snapshot | `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` |",
+              "| exact-SHA PDF | 사용자가 승인한 milestone 시각·검수 baseline | 승인·manifest 등록 후 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` |",
+          )
+          replace_optional(
+              "docs/CONFIRMED_DECISION_SYNC_POLICY.md",
+              "derived view/exception",
+              "approved PDF canon/exception",
+          )
+
+          replace_required(
+              "docs/VISUAL_COLLABORATION_TOOL_POLICY.md",
+              "`REPOSITORY_PRIMARY_CANON` owns current planning, structured data, approved assets, code and evidence; `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` is the exact-SHA person-facing snapshot.",
+              "`REPOSITORY_EXECUTION_DATA_CANON` owns editable planning sources, structured data, approved runtime assets, code and evidence; only a `USER_APPROVED_AND_MANIFEST_REGISTERED` `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` is the immutable exact-SHA person-facing visual/review baseline.",
+          )
+          replace_required(
+              "docs/VISUAL_COLLABORATION_TOOL_POLICY.md",
+              "→ person-facing review without a second editable canon",
+              "→ user-approved, manifest-registered visual/review canon without a second editable structured canon",
+          )
+
+          replace_required(
+              "skills/managing-design-documents/SKILL.md",
+              "→ 사람이 milestone에서 읽고 교정하는 exact-SHA PDF snapshot",
+              "→ 사람이 milestone에서 검토하고 승인한 뒤 manifest/hash readback한 exact-SHA 불변 PDF 정본",
+          )
+          replace_required(
+              "templates/AGENTS.project.md",
+              "→ exact source SHA와 evidence ceiling을 가진 사람이 보는 milestone snapshot",
+              "→ exact source SHA와 evidence ceiling을 가지고 사용자 승인·manifest 등록을 마친 불변 milestone 시각·검수 정본",
+          )
+          replace_required(
+              "templates/copilot-instructions.md",
+              "- `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`: exact source SHA와 evidence ceiling을 가진 사람용 milestone snapshot.",
+              "- `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`: exact source SHA와 evidence ceiling에서 생성되어 사용자 승인·manifest/hash 등록을 마친 불변 사람용 milestone 시각·검수 정본.",
+          )
+
+          replace_required(
+              "templates/custom-instructions.gpt.md",
+              "기본 workspace는 repository-first다. `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`의 `REPOSITORY_PRIMARY_CANON`이 사람용 GDD·Flow·Wireframe·Visual·결정, AI용 구조화 명세, 승인 asset, 코드·데이터·테스트·runtime evidence의 활성 owner다. 사용자용 상세 PDF는 exact commit에서 생성한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` 파생 검토본이다. Notion과 Google Sheets는 고유 미이관 자료가 실제로 남은 migration compatibility 범위에서만 읽으며 신규 기본 작업공간·동기화 대상·완료 조건이 아니다. 프로젝트 최신 AGENTS.md가 명시한 좁은 예외만 따른다.",
+              "기본 workspace는 repository-first 실행면 위의 `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`다. `REPOSITORY_EXECUTION_DATA_CANON`이 편집 가능한 GDD source·결정·AI 구조화 명세·승인 runtime asset·코드·데이터·테스트·runtime evidence를 소유한다. 사용자용 상세 PDF는 exact commit에서 생성한 candidate를 사용자가 승인하고 manifest/hash 등록한 version만 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` 불변 시각·검수 정본이다. PDF의 구조화 값과 작업상태는 repository projection이며 PDF 주석은 변경 요청이다. Notion과 Google Sheets는 고유 미이관 자료가 실제로 남은 migration compatibility 범위에서만 읽으며 신규 기본 작업공간·동기화 대상·완료 조건이 아니다. 프로젝트 최신 AGENTS.md가 명시한 좁은 예외만 따른다.",
+          )
+
+          replace_required(
+              "templates/project-operations/README.md",
+              "└─ exact repository SHA와 evidence ceiling이 연결된 사람용 milestone snapshot",
+              "└─ exact repository SHA와 evidence ceiling에서 생성되어 사용자 승인·manifest/hash 등록을 마친 불변 사람용 milestone 시각·검수 정본",
+          )
+          replace_required(
+              "templates/project-operations/README.md",
+              "- 사람이 보는 PDF가 필요한 경우 exact-SHA `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`로 생성했으며 repository를 대체하지 않는다.",
+              "- 사람이 보는 PDF가 필요한 경우 exact-SHA candidate를 생성하고 `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 version만 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`으로 등록했다. `pdf_sha256`, `pdf_canon_manifest_ref`, approval과 supersession을 readback했으며 repository-owned 구조화 사실을 중복 편집하지 않는다.",
+          )
+
+          decisions_path = "templates/project-operations/CURRENT_CONFIRMED_DECISIONS.md"
+          replace_required(
+              decisions_path,
+              "> 이 문서는 **현재 승인된 결정만 빠르게 복원**하기 위한 프로젝트 운영 템플릿이다. 현재 승인 결정·설명·Flow/Wireframe·구조화 상태·Commit·실행 진실은 V4 `REPOSITORY_PRIMARY_CANON`을 따른다. 사람용 PDF는 exact-SHA `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`이며, Notion과 Google Sheets는 legacy migration 또는 명시된 V4 exception에서만 사용하고 신규 입력이나 active sync 정본이 아니다.",
+              "> 이 문서는 **현재 승인된 결정만 빠르게 복원**하기 위한 프로젝트 운영 템플릿이다. 현재 승인 결정·구조화 상태·Commit·실행 진실은 V4 `REPOSITORY_EXECUTION_DATA_CANON`을 따른다. exact-SHA 사람용 PDF는 `USER_APPROVED_AND_MANIFEST_REGISTERED` 뒤에만 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` 시각·검수 정본이며, Notion과 Google Sheets는 legacy migration 또는 명시된 V4 exception에서만 사용하고 신규 입력이나 active sync 정본이 아니다.",
+          )
+          replace_required(
+              decisions_path,
+              "approved_human_blueprint_pdf_canon:\nnotion_exception_or_legacy_source:",
+              "approved_human_blueprint_pdf_canon:\npdf_source_commit:\npdf_sha256:\npdf_approval_ref:\npdf_approved_at:\npdf_canonical_status: CANDIDATE | USER_APPROVED_PENDING_REGISTRATION | CANON_ALIGNED | SUPERSEDED\nsupersedes_pdf_ref:\npdf_canon_manifest_ref:\nnotion_exception_or_legacy_source:",
+          )
+          replace_required(
+              decisions_path,
+              "approved_human_blueprint_pdf_canon:\nlast_branch_commit:",
+              "approved_human_blueprint_pdf_canon:\npdf_source_commit:\npdf_sha256:\npdf_approval_ref:\npdf_approved_at:\npdf_canonical_status: CANDIDATE | USER_APPROVED_PENDING_REGISTRATION | CANON_ALIGNED | SUPERSEDED\nsupersedes_pdf_ref:\npdf_canon_manifest_ref:\nlast_branch_commit:",
+          )
+          replace_required(
+              decisions_path,
+              "- `REPOSITORY_EXECUTION_DATA_CANON`와 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`의 역할이 섞이지 않고 `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`를 지킨다.",
+              "- `REPOSITORY_EXECUTION_DATA_CANON`과 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`의 역할이 섞이지 않고 `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`를 지킨다.",
+          )
+          replace_required(
+              decisions_path,
+              "- 적용 가능한 사람용 변경은 repository owner와 exact-SHA derived view readback을 가지며, 실제 exception/migration write만 destination readback을 가진다.",
+              "- 적용 가능한 사람용 변경은 repository owner와 exact-SHA 승인 PDF의 approval·manifest·hash readback을 가지며, 실제 exception/migration write만 destination readback을 가진다.",
+          )
+
+          chatgpt_instruction = "templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md"
+          replace_required(
+              chatgpt_instruction,
+              "HUMAN_MASTER_GDD_PDF\nstatus: APPROVED_HUMAN_BLUEPRINT_PDF_CANON\nrequired_identity:",
+              "HUMAN_MASTER_GDD_PDF\ncandidate_status: GENERATED_CANDIDATE | USER_APPROVED_PENDING_REGISTRATION | CANON_ALIGNED | SUPERSEDED\ncanon_role_after_activation: APPROVED_HUMAN_BLUEPRINT_PDF_CANON\nactivation: USER_APPROVED_AND_MANIFEST_REGISTERED\nrequired_identity:",
+          )
+          append_once(
+              chatgpt_instruction,
+              "<!-- APPROVED_PDF_CANON_CONSUMER_READBACK -->",
+              """
+              <!-- APPROVED_PDF_CANON_CONSUMER_READBACK -->
+
+              ## 승인 PDF 정본 consumer readback
+
+              `APPROVED_PDF_CANON_MANIFEST_AND_HASH_READBACK`
+
+              GPT Work와 Codex는 구현·검수 시작 전에 repository owner와 함께 `pdf_canon_manifest_ref`를 읽고, manifest가 가리키는 PDF locator의 `pdf_sha256`, `source_commit`, `approval_ref`, `approved_at`, `canonical_status`, `supersedes_pdf_ref`를 readback한다. `USER_APPROVED_AND_MANIFEST_REGISTERED`가 아니거나 hash/locator/source가 맞지 않으면 `CANDIDATE_PDF_NOT_CANON` 또는 `CANON_CONFLICT`로 두고 승인 시각 baseline이라고 주장하지 않는다.
+
+              Codex는 PDF의 구조화 값이나 체크박스를 editable source로 사용하지 않는다. `PDF_STRUCTURED_CONTENT_IS_REPOSITORY_PROJECTION`을 지키면서 승인된 Flow·화면 hierarchy·정보 우선순위·milestone 표현을 implementation review baseline으로 소비한다. implementation이 material하게 다르면 교정하거나 새 candidate를 사용자에게 재승인받는다.
+              """,
+          )
+
+          append_once(
+              "templates/custom-instructions.codex.md",
+              "<!-- APPROVED_PDF_CANON_CODEX_READBACK -->",
+              """
+              <!-- APPROVED_PDF_CANON_CODEX_READBACK -->
+
+              ## 승인 PDF 정본 재수화
+
+              `APPROVED_PDF_CANON_MANIFEST_AND_HASH_READBACK`
+
+              제품 수정 전에 프로젝트 `AGENTS.md`가 지정한 `pdf_canon_manifest_ref`를 읽고 `source_commit`, `pdf_sha256`, `approval_ref`, `approved_at`, `canonical_status`, `supersedes_pdf_ref`를 확인한다. `USER_APPROVED_AND_MANIFEST_REGISTERED`인 PDF만 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` 시각·검수 baseline으로 소비한다. PDF의 수치·ID·작업상태는 `PDF_STRUCTURED_CONTENT_IS_REPOSITORY_PROJECTION`이므로 repository owner를 수정하고, PDF 주석만으로 구현 의미를 바꾸지 않는다.
+              """,
+          )
+
+          master_instruction = "templates/project-operations/GPT_WORK_PROJECT_MASTER_GDD_TWO_ARTIFACT_INSTRUCTION.md"
+          replace_required(
+              master_instruction,
+              "→ exact-head repository validation\n→ user final review\n```",
+              "→ exact-head repository validation\n→ user final review\n→ PDF_CANON_MANIFEST_REGISTRATION\n→ USER_APPROVED_AND_MANIFEST_REGISTERED\n→ CANON_ALIGNED\n```",
+          )
+          append_once(
+              master_instruction,
+              "<!-- PDF_CANON_MANIFEST_REGISTRATION -->",
+              """
+              <!-- PDF_CANON_MANIFEST_REGISTRATION -->
+
+              ### 9.6 사용자 승인 뒤 PDF 정본을 등록해
+
+              `PDF_CANON_MANIFEST_REGISTRATION`
+
+              user final review가 승인된 뒤에만 `source_commit`, `pdf_sha256`, `approval_ref`, `approved_at`, `canonical_status`, `supersedes_pdf_ref`, `pdf_canon_manifest_ref`를 repository-controlled manifest에 기록하고 readback해. 생성 성공이나 다운로드 가능만으로 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`이라고 하지 마. 승인본은 immutable이며 다음 수정은 새 version·hash로 만들고 이전 승인본을 `SUPERSEDED`로 보존해.
+              """,
+          )
+
+          workspace_path = "docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md"
+          workspace = load(workspace_path)
+          metadata_old = "included_scope:\nimplementation_evidence_ceiling:\napproval_status:\n```"
+          metadata_new = "included_scope:\nimplementation_evidence_ceiling:\napproval_status:\npdf_sha256:\napproval_ref:\napproved_at:\ncanonical_status:\nsupersedes_pdf_ref:\npdf_canon_manifest_ref:\n```"
+          if workspace.count(metadata_old) != 1:
+              raise SystemExit(f"{workspace_path}: expected one legacy metadata block, found {workspace.count(metadata_old)}")
+          workspace = workspace.replace(metadata_old, metadata_new, 1)
+          workspace = workspace.replace("`REPOSITORY_EXECUTION_DATA_CANON`는", "`REPOSITORY_EXECUTION_DATA_CANON`은")
+          save(workspace_path, workspace)
+
+          v4_path = "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json"
+          contract = json.loads(load(v4_path))
+          contract["authority_model_effective_date"] = "2026-09-04"
+          contract["authority_model_approval_ref"] = "current-user-message:2026-09-04:앞으로-둘-다-정본"
+          contract["repository_primary_canon_compatibility_alias"] = REPOSITORY
+          contract["codex_blueprint_rehydration"] = MANIFEST_READBACK
+          contract["dual_canon_adoption_policy"] = "NO_MASS_BACKFILL_PROJECT_ADOPTS_ON_EXPLICIT_SYNC_OR_NEXT_BLUEPRINT_REVISION"
+          pdf = contract["human_pdf_canon_contract"]
+          pdf["storage_policy"] = "PROJECT_CONTROLLED_REPOSITORY_OR_GITHUB_RELEASE_LOCATOR_WITH_HASH"
+          pdf["consumer_readback"] = MANIFEST_READBACK
+          pdf["manifest_owner"] = "PROJECT_AGENTS_OR_BLUEPRINT_PUBLICATION_OWNER"
+          extra_invariants = [
+              "The original V4 effective date is preserved; the federated dual-canon authority amendment is effective 2026-09-04 under the recorded user approval reference.",
+              "Codex and GPT Work read the approved PDF canon manifest, locator, source commit, approval reference, canonical status, and PDF SHA-256 before using its visual/review baseline.",
+              "Canonical PDF storage uses a project-controlled repository path or governed GitHub Release locator whose hash and supersession history are registered in the repository manifest.",
+              "The dual-canon contract does not trigger mass project backfill; a project adopts it through explicit synchronization or its next Blueprint revision while preserving its currently adopted contract until then.",
+          ]
+          invariants = contract.setdefault("invariants", [])
+          for item in extra_invariants:
+              if item not in invariants:
+                  invariants.append(item)
+          save(v4_path, json.dumps(contract, ensure_ascii=False, indent=2))
+
+          derived_same_line = re.compile(r"APPROVED_HUMAN_BLUEPRINT_PDF_CANON[^\n]{0,180}(?:derived|파생)", re.IGNORECASE)
+          for path in ACTIVE_ROUTING_SURFACES:
+              source = load(path)
+              if derived_same_line.search(source):
+                  raise SystemExit(f"{path}: approved PDF canon still described as derived")
+              if NEW_ROUTE not in source:
+                  raise SystemExit(f"{path}: Korean V4 route note missing")
+
+          for path in (chatgpt_instruction, "templates/custom-instructions.codex.md"):
+              source = load(path)
+              for token in (MANIFEST_READBACK, "pdf_canon_manifest_ref", "pdf_sha256"):
+                  if token not in source:
+                      raise SystemExit(f"{path}: missing {token}")
+
+      - name: Run focused semantic regressions
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m unittest \
+            tests.test_federated_dual_canon_contract \
+            tests.test_repository_first_workspace_contract \
+            tests.test_notion_project_workspace_contract \
+            tests.test_blueprint_progress_incremental_revision_contract -v
+          python -m py_compile \
+            tests/test_federated_dual_canon_contract.py \
+            tests/test_repository_first_workspace_contract.py \
+            tests/test_notion_project_workspace_contract.py \
+            tests/test_blueprint_progress_incremental_revision_contract.py
+          git diff --check
+
+      - name: Commit bounded follow-up and remove workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm .github/workflows/one-shot-federated-dual-canon-followup.yml
+          git diff --check
+          git config user.name "alsdmlals4-eng"
+          git config user.email "alsdmlals4@gmail.com"
+          git add -A
+          git commit -m "fix: align dual canon semantics and consumers"
+          git push origin HEAD:work/846-blueprint-progress-incremental-revision
