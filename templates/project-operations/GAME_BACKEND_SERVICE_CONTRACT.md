@@ -70,6 +70,16 @@ filesystem_policy: EPHEMERAL_ONLY
 operation_id:
 actor_identity:
 authorization_scope:
+requested_action:
+target_resource:
+target_property:
+target_owner_or_tenant:
+authorization_context:
+authorization_decision:
+authorization_failure_semantics:
+allowed_read_properties:
+allowed_write_properties:
+unknown_or_sensitive_property_policy: REJECT
 request_schema:
 request_version:
 resource_version_or_precondition:
@@ -96,12 +106,149 @@ service_account:
 end_user_identity:
 identity_provider:
 domain_authorization:
+authentication_authorization_boundary: AUTHENTICATION_IS_NOT_AUTHORIZATION
+default_authorization_decision: DENY_BY_DEFAULT
+authorization_enforcement: SERVER_SIDE_AUTHORIZATION_EVERY_REQUEST
+authorization_policy_model: OBJECT_ACTION_PROPERTY_CONTEXT_POLICY
+function_level_authorization:
+object_level_authorization:
+property_level_authorization:
+client_identifier_policy: UNTRUSTED_SELECTOR
+ui_visibility_policy: NOT_ENFORCEMENT
 public_client_endpoints:
 private_service_endpoints:
 administrator_routes:
 least_privilege_review:
 environment_separation:
 ```
+
+## Authorization, session, and denial-path evidence
+
+Use this section only when the project has an actual protected online operation.
+An offline-only project may record `ONLINE_IDENTITY_NOT_REQUIRED` and remain
+`SERVER_NOT_REQUIRED` rather than inventing authentication or a backend.
+
+```yaml
+online_identity_requirement: ONLINE_IDENTITY_NOT_REQUIRED | ONLINE_IDENTITY_REQUIRED
+identity_management_policy: MANAGED_IDP_PREFERRED | SELF_MANAGED_JUSTIFIED
+transport_policy: TLS_REQUIRED_FOR_ENTIRE_PROTECTED_SESSION
+privileged_credential_policy: DEFAULT_OR_SHARED_PRIVILEGED_CREDENTIALS_FORBIDDEN
+common_or_breached_password_policy: COMMON_OR_BREACHED_PASSWORD_BLOCKING
+generic_authentication_failure: generic authentication failure
+login_abuse_control: login abuse control
+privileged_authentication: privileged MFA or reauthentication
+account_recovery_assurance: account recovery
+password_storage_policy: MANAGED_BY_IDP | ARGON2ID_PREFERRED | SCRYPT_FALLBACK | PBKDF2_FIPS_REQUIRED | LEGACY_BCRYPT_ONLY
+session_secret_storage_threat_model: SESSION_SECRET_STORAGE_THREAT_MODEL_REQUIRED
+session_secret_storage:
+browser_cookie_policy_if_applicable: SECURE_HTTPONLY_SAMESITE
+browser_web_storage_policy: FORBID_BEARER_SESSION_SECRETS
+browser_csrf_and_origin_controls:
+native_secure_storage_if_applicable:
+token_url_policy: FORBIDDEN
+token_log_policy: REDACT
+access_token_lifetime:
+refresh_or_session_rotation:
+revocation_strategy:
+session_storage_and_transport:
+idle_timeout: idle timeout
+absolute_timeout: absolute timeout
+server_side_logout_invalidation: server-side invalidation
+explicit_revocation_invalidation: server-side invalidation
+privilege_change_invalidation: privilege change
+session_rotation_or_reauthentication: session rotation
+websocket_session_revalidation: WebSocket session revalidation
+websocket_message_authorization: per-message authorization
+websocket_origin_policy: EXPLICIT_ALLOWLIST_FOR_BROWSER_CLIENTS
+authorization_negative_matrix: AUTHORIZATION_NEGATIVE_MATRIX_REQUIRED
+matrix:
+  - case_id:
+    actor_identity:
+    requested_action:
+    target_resource:
+    target_property:
+    target_owner_or_tenant:
+    authorization_context:
+    expected_decision: DENY
+    expected_error_class:
+    expected_state_delta: NONE
+    expected_external_side_effects: NONE
+    expected_audit_event:
+cross_user_object_id_test: NOT_RUN
+cross_tenant_or_relationship_test: NOT_RUN
+ordinary_user_admin_function_test: NOT_RUN
+method_path_operation_substitution_test: NOT_RUN
+sensitive_property_injection_test: NOT_RUN
+bulk_list_export_test: NOT_RUN
+property_allowlist_test: NOT_RUN
+expired_or_revoked_session_test: NOT_RUN
+logout_invalidation_test: NOT_RUN
+privilege_change_invalidation_test: NOT_RUN
+websocket_session_revalidation_test: NOT_RUN
+websocket_message_authorization_test: NOT_RUN
+websocket_origin_validation_test: NOT_RUN
+browser_session_secret_storage_test: NOT_RUN
+browser_csrf_origin_test: NOT_RUN
+native_session_secret_storage_review: NOT_RUN
+token_url_and_log_scan: NOT_RUN
+revocation_strategy_test: NOT_RUN
+default_or_shared_privileged_credential_scan: NOT_RUN
+common_or_breached_password_test: NOT_RUN
+protected_session_tls_test: NOT_RUN
+denied_response_policy: DENIED_RESPONSE_IS_STABLE_AND_NON_DISCLOSING
+denial_side_effect_policy: DENIAL_HAS_NO_PROTECTED_SIDE_EFFECT
+denial_state_readback: NOT_RUN
+denial_side_effect_readback: NOT_RUN
+denial_private_data_readback: NOT_RUN
+denial_privilege_readback: NOT_RUN
+redacted_audit_readback: NOT_RUN
+authorization_negative_tests: NOT_RUN
+security_runtime_evidence: NOT_RUN
+```
+
+Required boundaries:
+
+- `AUTHENTICATION_IS_NOT_AUTHORIZATION`, `DENY_BY_DEFAULT`,
+  `SERVER_SIDE_AUTHORIZATION_EVERY_REQUEST`, and
+  `OBJECT_ACTION_PROPERTY_CONTEXT_POLICY` apply at the trusted enforcement point.
+- Client identifiers are selectors, not grants; use
+  `client_identifier_policy: UNTRUSTED_SELECTOR`. Hidden UI is not enforcement;
+  use `ui_visibility_policy: NOT_ENFORCEMENT`.
+- A denial passes only with `DENIED_RESPONSE_IS_STABLE_AND_NON_DISCLOSING` and
+  `DENIAL_HAS_NO_PROTECTED_SIDE_EFFECT`, supported by state, external-effect,
+  private-data, privilege, and redacted-audit readback.
+- Idle and absolute timeouts are server-enforced.
+  `CLIENT_ONLY_TIMEOUT_IS_NOT_ENFORCEMENT`; logout, revocation, expiry,
+  disablement, and privilege change require server-side invalidation.
+- Long-lived connections require WebSocket session revalidation and per-message
+  authorization, then close when the identity or session becomes invalid. Browser
+  handshakes validate `Origin` against an explicit allowlist of trusted origins and
+  apply the selected
+  CSWSH or CSRF handshake control when cookies carry identity.
+- `SESSION_SECRET_STORAGE_THREAT_MODEL_REQUIRED` records browser and native risks.
+  Do not use persistent JavaScript-readable browser storage for bearer session
+  secrets in `localStorage` or `sessionStorage`. Cookie sessions require Secure,
+  HttpOnly, and SameSite attributes when
+  applicable; native clients use platform-protected storage where supported. Never
+  place session secrets in URLs or logs. Record access-token lifetime, refresh or
+  session rotation, and a server-verifiable revocation or invalidation strategy.
+- Protect the complete authenticated path with
+  `TLS_REQUIRED_FOR_ENTIRE_PROTECTED_SESSION`, not only the login request. Do not
+  deploy default, test, or shared privileged credentials;
+  `DEFAULT_OR_SHARED_PRIVILEGED_CREDENTIALS_FORBIDDEN` applies to administrator
+  and service identities.
+- Self-managed password registration and change apply
+  `COMMON_OR_BREACHED_PASSWORD_BLOCKING` using a current blocklist of common,
+  expected, context-specific, and compromised complete values. This does not add
+  arbitrary composition or periodic-rotation requirements.
+- For self-managed passwords, current guidance prefers Argon2id, uses scrypt
+  when Argon2id is unavailable, uses PBKDF2 when FIPS validation is required,
+  and states that bcrypt is legacy-only. Plain SHA-256 or another fast general hash
+  violates `FAST_GENERAL_HASH_IS_NOT_PASSWORD_STORAGE`.
+- Positive-only tests, client UI, unpredictable IDs, and identity-provider login
+  are not domain-authorization evidence.
+- `STATIC_CONTRACT_IS_NOT_RUNTIME_SECURITY_EVIDENCE`. Keep execution fields
+  `NOT_RUN` until the project performs and reads back the corresponding test.
 
 ## Data model and migration
 

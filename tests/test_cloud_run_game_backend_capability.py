@@ -19,6 +19,7 @@ CONTRACT = (
     / "project-operations"
     / "GAME_BACKEND_SERVICE_CONTRACT.md"
 )
+EVIDENCE_PACK = ROOT / "templates" / "research" / "GAME_DEVELOPMENT_EVIDENCE_PACK.md"
 REGISTRY = ROOT / "skills" / "SKILL_REGISTRY.json"
 SHARED_ROUTES = ROOT / "skills" / "BASE_SHARED_SKILL_ROUTES.json"
 
@@ -75,6 +76,13 @@ class CloudRunGameBackendCapabilityTests(unittest.TestCase):
             "operation_id:",
             "actor_identity:",
             "authorization_scope:",
+            "requested_action:",
+            "target_resource:",
+            "target_property:",
+            "target_owner_or_tenant:",
+            "authorization_context:",
+            "authorization_decision:",
+            "authorization_failure_semantics:",
             "request_schema:",
             "request_version:",
             "resource_version_or_precondition:",
@@ -156,6 +164,41 @@ class CloudRunGameBackendCapabilityTests(unittest.TestCase):
         ):
             self.assertIn(term, guide)
 
+    def test_authorization_denial_path_is_project_consumable_and_evidence_bounded(self) -> None:
+        guide = read(GUIDE)
+        contract = read(CONTRACT)
+        evidence = read(EVIDENCE_PACK)
+        shared_terms = (
+            "AUTHENTICATION_IS_NOT_AUTHORIZATION",
+            "DENY_BY_DEFAULT",
+            "SERVER_SIDE_AUTHORIZATION_EVERY_REQUEST",
+            "AUTHORIZATION_NEGATIVE_MATRIX_REQUIRED",
+            "DENIAL_HAS_NO_PROTECTED_SIDE_EFFECT",
+            "STATIC_CONTRACT_IS_NOT_RUNTIME_SECURITY_EVIDENCE",
+        )
+        for term in shared_terms:
+            self.assertIn(term, guide, term)
+            self.assertIn(term, contract, term)
+        for term in (
+            "ONLINE_IDENTITY_NOT_REQUIRED",
+            "cross_user_object_id_test: NOT_RUN",
+            "ordinary_user_admin_function_test: NOT_RUN",
+            "sensitive_property_injection_test: NOT_RUN",
+            "denial_state_readback: NOT_RUN",
+            "denial_side_effect_readback: NOT_RUN",
+            "authorization_negative_tests: NOT_RUN",
+            "security_runtime_evidence: NOT_RUN",
+        ):
+            self.assertIn(term, contract, term)
+        for term in (
+            "AUTHENTICATION_IS_NOT_AUTHORIZATION",
+            "AUTHORIZATION_NEGATIVE_MATRIX_REQUIRED",
+            "DENIAL_HAS_NO_PROTECTED_SIDE_EFFECT",
+            "STATIC_CONTRACT_IS_NOT_RUNTIME_SECURITY_EVIDENCE",
+            "ONLINE_IDENTITY_NOT_REQUIRED",
+        ):
+            self.assertIn(term, evidence, term)
+
     def test_websocket_contract_requires_recovery_and_cost_evidence(self) -> None:
         guide = read(GUIDE)
         for term in (
@@ -210,6 +253,7 @@ class CloudRunGameBackendCapabilityTests(unittest.TestCase):
             "## Authority and persistent state",
             "## API and request lifecycle",
             "## Identity and authorization",
+            "## Authorization, session, and denial-path evidence",
             "## Data model and migration",
             "## Idempotency, replay, transaction, and retry",
             "## Realtime and connection model",
@@ -242,6 +286,9 @@ class CloudRunGameBackendCapabilityTests(unittest.TestCase):
         for domain in (
             "cloud.google.com/run/docs",
             "docs.cloud.google.com/run/docs",
+            "cheatsheetseries.owasp.org",
+            "owasp.org/API-Security",
+            "pages.nist.gov/800-63-4",
         ):
             self.assertIn(domain, guide)
         for term in (
@@ -298,8 +345,14 @@ class CloudRunGameBackendCapabilityTests(unittest.TestCase):
             for term in terms:
                 self.assertIn(term, text, path)
 
-        evidence = read("templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md")
+        evidence = read(EVIDENCE_PACK)
         self.assertIn(contract_path, evidence)
+        for term in (
+            "AUTHORIZATION_NEGATIVE_MATRIX_REQUIRED",
+            "DENIAL_HAS_NO_PROTECTED_SIDE_EFFECT",
+            "STATIC_CONTRACT_IS_NOT_RUNTIME_SECURITY_EVIDENCE",
+        ):
+            self.assertIn(term, evidence)
         governance = json.loads(
             read("templates/project-operations/github/documentation-governance.json")
         )
@@ -336,6 +389,12 @@ class CloudRunGameBackendCapabilityTests(unittest.TestCase):
             "unlimited AI proxy without quota/cost": "BLOCKED_UNVERIFIED",
             "instance-local durable save": "BLOCKED_UNVERIFIED",
             "static documents presented as runtime/load/cost proof": "BLOCKED_UNVERIFIED",
+            "authenticated user reads another user's save by changing an object ID": "BLOCKED_UNVERIFIED",
+            "hidden admin button but direct admin operation succeeds": "BLOCKED_UNVERIFIED",
+            "denied mutation still changes balance or emits a reward": "BLOCKED_UNVERIFIED",
+            "positive-only authorization tests presented as security proof": "BLOCKED_UNVERIFIED",
+            "logout clears only the client token while the server session remains valid": "BLOCKED_UNVERIFIED",
+            "bearer session secret stored in browser localStorage or sessionStorage or written to a URL or raw log": "BLOCKED_UNVERIFIED",
         }
         for scenario, decision in fixtures.items():
             self.assertIn(f"{scenario} -> {decision}", guide)
