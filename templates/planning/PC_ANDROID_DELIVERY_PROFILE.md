@@ -271,6 +271,28 @@ build_size_and_asset_optimization:
 
 각 실측 기록에는 최소 `source_build`, `platform`, `device_or_store_configuration`, `measured_at`, `tool`, `measured_value`, `state: ESTIMATE | LOCAL_BUILD_MEASURED | DEVICE_MEASURED | STORE_SERVED_MEASURED`를 남긴다.
 
+### 8.2 Google Play Android vitals
+
+로컬 profiler·실기기 memory budget과 Google Play production telemetry를 분리한다. 현재 Android vitals threshold 숫자는 Base에서 상속하지 않고, 공개·운영 시점의 공식 문서와 Play Console을 다시 확인한다.
+
+```yaml
+google_play_android_vitals:
+  checked_at:
+  current_threshold_source: https://developer.android.com/games/optimize/vitals
+  visibility_effective_window:
+  play_console_data_state: NOT_AVAILABLE_PRE_RELEASE | NOT_ENOUGH_FIELD_DATA | AVAILABLE | NOT_APPLICABLE
+  production_observation_window:
+  memory_usage_anonymous_rss_plus_swap_status: NOT_RUN | NOT_ENOUGH_FIELD_DATA | WITHIN_CURRENT_THRESHOLD | EXCEEDS_CURRENT_THRESHOLD | BLOCKED_UNVERIFIED
+  bitmap_memory_usage_status: NOT_RUN | NOT_ENOUGH_FIELD_DATA | WITHIN_CURRENT_THRESHOLD | EXCEEDS_CURRENT_THRESHOLD | BLOCKED_UNVERIFIED
+  dex_code_optimization_status: NOT_RUN | NOT_ENOUGH_FIELD_DATA | WITHIN_CURRENT_THRESHOLD | EXCEEDS_CURRENT_THRESHOLD | NOT_APPLICABLE | BLOCKED_UNVERIFIED
+  store_visibility_risk_status: NOT_RUN | NOT_ENOUGH_FIELD_DATA | NO_CURRENT_BAD_BEHAVIOR | CURRENT_BAD_BEHAVIOR | BLOCKED_UNVERIFIED
+  level_up_program_scope: NOT_PARTICIPATING | CANDIDATE | ENROLLED | UNKNOWN
+  level_up_eligibility_status: NOT_APPLICABLE | NOT_RUN | ELIGIBLE | INELIGIBLE | BLOCKED_UNVERIFIED
+  evidence_or_console_ref:
+```
+
+`Level Up`은 별도 voluntary program scope다. `NOT_PARTICIPATING`이면 프로그램 전용 요구를 Google Play submission PASS/FAIL로 사용하지 않는다. production field data가 없으면 Android vitals 상태도 PASS로 만들지 않는다.
+
 ## 9. Test Matrix
 
 ```yaml
@@ -290,6 +312,7 @@ test_matrix:
     - background_foreground_process_recreation
     - install_update_save_migration_offline
     - memory_loading_thermal_battery_long_session
+    - post_release_android_vitals_when_field_data_exists
 ```
 
 ```yaml
@@ -362,6 +385,8 @@ steam:
 
 `google_play_target_api`는 프로젝트의 실제 `target SDK`와 현재 Google Play 정책을 대조하는 가변 Gate다. Base의 기록값을 영구 상수로 간주하지 않고 출시·업데이트 제출 직전에 공식 원문과 Play Console에서 다시 확인한다.
 
+`google_play_android_vitals`는 제출 전 local/device performance와 제출 후 production quality evidence를 합치지 않기 위한 별도 Gate다. current threshold, 효력 시점, Play Console field data를 확인하지 않은 상태를 `WITHIN_CURRENT_THRESHOLD` 또는 `NO_CURRENT_BAD_BEHAVIOR`로 승격하지 않는다.
+
 ## 11. Release Waves
 
 ```yaml
@@ -425,6 +450,7 @@ physical_android_device:
 mobile_ui_and_input:
 background_foreground_recovery:
 performance_budget:
+google_play_android_vitals:
 build_size_and_asset_optimization:
 stove_readiness:
 google_play_readiness:
@@ -433,4 +459,4 @@ human_usability:
 final_profile_status:
 ```
 
-문서 작성만으로 `DUAL_TARGET_APPROVED`를 부여하지 않는다. 실행하지 않은 build·device·human·store 검증은 각각 `NOT_RUN`, `DEVICE_NOT_RUN`, `HUMAN_NOT_RUN`, `BLOCKED_UNVERIFIED`로 유지한다.
+문서 작성만으로 `DUAL_TARGET_APPROVED`를 부여하지 않는다. 실행하지 않은 build·device·human·store 검증은 각각 `NOT_RUN`, `DEVICE_NOT_RUN`, `HUMAN_NOT_RUN`, `BLOCKED_UNVERIFIED`로 유지한다. Google Play production field data가 없으면 `google_play_android_vitals`도 `NOT_ENOUGH_FIELD_DATA` 또는 해당 pre-release 상태로 유지한다.
