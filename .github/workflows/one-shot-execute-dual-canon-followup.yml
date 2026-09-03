@@ -32,6 +32,7 @@ jobs:
             .github/workflows/one-shot-execute-dual-canon-followup.yml \
             .github/workflows/one-shot-federated-dual-canon-followup.yml \
             .github/workflows/one-shot-repair-dual-canon-followup.yml \
+            docs/reviews/DUAL_CANON_FOLLOWUP_ERROR.txt \
             | sort > /tmp/expected_paths.txt
           diff -u /tmp/expected_paths.txt /tmp/actual_paths.txt
 
@@ -87,6 +88,23 @@ jobs:
               raise
           else:
               diagnostic.unlink(missing_ok=True)
+
+      - name: Preserve repository-domain compatibility alias
+        shell: python
+        run: |
+          from pathlib import Path
+
+          note = (
+              '> 호환성: `REPOSITORY_PRIMARY_CANON`은 '
+              '`REPOSITORY_EXECUTION_DATA_CANON`의 repository-domain 별칭이며, '
+              '승인 PDF의 사람용 시각·검수 정본 권한을 포함하거나 대체하지 않는다.'
+          )
+          for name in ('AGENTS.md', 'START_HERE.md'):
+              path = Path(name)
+              content = path.read_text(encoding='utf-8')
+              if note not in content:
+                  content = content.rstrip() + '\n\n' + note + '\n'
+                  path.write_text(content, encoding='utf-8', newline='\n')
 
       - name: Run focused semantic regressions
         shell: bash
