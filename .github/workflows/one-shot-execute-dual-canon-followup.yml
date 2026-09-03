@@ -91,18 +91,30 @@ jobs:
       - name: Run focused semantic regressions
         shell: bash
         run: |
-          set -euo pipefail
-          python -m unittest \
-            tests.test_federated_dual_canon_contract \
-            tests.test_repository_first_workspace_contract \
-            tests.test_notion_project_workspace_contract \
-            tests.test_blueprint_progress_incremental_revision_contract -v
-          python -m py_compile \
-            tests/test_federated_dual_canon_contract.py \
-            tests/test_repository_first_workspace_contract.py \
-            tests/test_notion_project_workspace_contract.py \
-            tests/test_blueprint_progress_incremental_revision_contract.py
-          git diff --check
+          set -uo pipefail
+          set +e
+          (
+            set -e
+            python -m unittest \
+              tests.test_federated_dual_canon_contract \
+              tests.test_repository_first_workspace_contract \
+              tests.test_notion_project_workspace_contract \
+              tests.test_blueprint_progress_incremental_revision_contract -v
+            python -m py_compile \
+              tests/test_federated_dual_canon_contract.py \
+              tests/test_repository_first_workspace_contract.py \
+              tests/test_notion_project_workspace_contract.py \
+              tests/test_blueprint_progress_incremental_revision_contract.py
+            git diff --check
+          ) 2>&1 | tee /tmp/dual-canon-focused-test-output.txt
+          status=${PIPESTATUS[0]}
+          set -e
+          if test "$status" -ne 0; then
+            git reset --hard HEAD
+            mkdir -p docs/reviews
+            cp /tmp/dual-canon-focused-test-output.txt docs/reviews/DUAL_CANON_FOLLOWUP_ERROR.txt
+            exit "$status"
+          fi
 
       - name: Commit correction and remove temporary workflows
         shell: bash
