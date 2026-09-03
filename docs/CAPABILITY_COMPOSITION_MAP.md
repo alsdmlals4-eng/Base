@@ -4,9 +4,8 @@ Capabilities are selected by the problem, not artificially restricted to one too
 
 | Capability | Allowed contexts | Composition path | Prohibited boundary | Required evidence |
 | --- | --- | --- | --- | --- |
-| Visual structure (Whimsical/Mermaid) | GDD, external, both | concept → flow → decision → optional UI handoff | cannot own rules, values, or final pixel UI | responsible source + Decision ID or `DRAFT_VISUAL` |
-| Visual UI (Figma) | GDD, external, both | UX contract → frame/state → pinned handoff → Godot comparison | cannot own game state or declare runtime complete | frame/node, snapshot, target input/resolution |
-| Sheets GDD | GDD | canonical summary → user edit/proposal → GitHub comparison | cannot silently overwrite canon | source link, main SHA, reread status |
+| Human-facing visual/flow (Notion + source-derived flow) | Project human-facing planning | canon → flow/system/asset state → Notion Home projection → optional implementation comparison | cannot claim final asset, runtime, or human validation | owner source + Decision ID + asset state / `DRAFT_VISUAL` + destination readback |
+| Historical visual/Sheet source | migration / user-supplied reference only | unique material → classify `UNIQUE / DUPLICATE / OBSOLETE` → correct current owner → destination readback | cannot become a new default workspace, write target, or second canon | provenance + classification + destination readback; `COMPATIBILITY_ONLY` |
 | GitHub contract | GDD, external, both | decision → document/schema → implementation handoff | cannot claim unrun runtime/human validation | commit/PR and validation record |
 | Godot evidence | external, linked from GDD | pinned contract → render/input test → validation | cannot be inferred from a design tool | capture/test/log and explicit `NOT_RUN` gaps |
 | Tool interface surface (`TOOL_INTERFACE_SURFACE_SELECTION`) | BUILD, REVIEW, internal tools | reusable domain core → stable CLI/programmatic contract → optional TUI or thin GUI | surface cannot own canon/state or force GUI-only automation | selection trade study + target-platform/workflow evidence |

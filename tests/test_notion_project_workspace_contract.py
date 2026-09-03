@@ -110,6 +110,45 @@ class NotionProjectWorkspaceContractTests(unittest.TestCase):
         self.assertIn("V4_NOTION_EXCEPTION_ONLY", policy)
         self.assertNotIn("FIGMA_DEFAULT_VISUAL_WORKSPACE", policy)
 
+    def test_active_grill_me_consumers_sync_to_notion_and_keep_sheets_legacy_only(self) -> None:
+        protocol = text(
+            "skills/managing-project-intake-and-work-contract/references/grill-me-protocol.md"
+        )
+        checkpoint = text("templates/project-operations/GRILL_ME_BATCH_CHECKPOINT.md")
+
+        for source in (protocol, checkpoint):
+            self.assertIn("Notion", source)
+            self.assertIn("COMPATIBILITY_ONLY", source)
+
+        for forbidden in (
+            "→ 프로젝트 Google Sheets 최신 Decision 행",
+            "프로젝트 Google Sheets의 확정 결정 행을 추가·수정한다.",
+            "Google Sheets 재조회 결과가 GitHub 정본과 일치한다.",
+        ):
+            self.assertNotIn(forbidden, protocol)
+
+        for required in ("notion_sync_status", "notion_readback", "legacy_sheet_migration_status"):
+            self.assertIn(required, checkpoint)
+        for forbidden in (
+            "sheet_status:",
+            "sheet_readback:",
+            "구성된 Sheet를 `APPROVED_PENDING_MERGE`로 갱신하고 재조회했다.",
+            "Sheet의 `APPROVED_PENDING_MERGE` 행을 merge Commit으로 갱신했다.",
+        ):
+            self.assertNotIn(forbidden, checkpoint)
+
+    def test_capability_map_uses_current_notion_visual_flow_and_historical_surface_boundary(self) -> None:
+        capability_map = text("docs/CAPABILITY_COMPOSITION_MAP.md")
+        for token in (
+            "Human-facing visual/flow (Notion + source-derived flow)",
+            "Historical visual/Sheet source",
+            "COMPATIBILITY_ONLY",
+            "UNIQUE / DUPLICATE / OBSOLETE",
+        ):
+            self.assertIn(token, capability_map)
+        self.assertNotIn("| Visual UI (Figma) |", capability_map)
+        self.assertNotIn("| Sheets GDD |", capability_map)
+
     def test_active_paid_plan_does_not_require_figma(self) -> None:
         agents = text("AGENTS.md")
         self.assertIn("CURRENT_PAID_PLANS: GPT_PRO", agents)
