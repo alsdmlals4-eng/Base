@@ -29,6 +29,17 @@ status: INVENTORY | MIGRATING | VERIFYING | LEGACY_READ_ONLY | RETIRED
 - [ ] 오래된 Notion 값은 current Decision으로 자동 승격하지 않는다.
 - [ ] 프로젝트별 고유 용어·수치·승인 에셋을 임의 교정하지 않는다.
 
+### Export·백업의 증거 한계
+
+이 절은 **실제 Notion 고유 자료 이관 범위**에만 적용한다. 일반 프로젝트 작업의 Notion 조회·export 의무를 다시 만들지 않는다. 파일 export 또는 연결 도구의 원문 회수 중 가능한 경로를 사용하고, 어느 경로든 아래 완전성·readback 기준은 동일하다.
+
+- [ ] [Notion 공식 백업 안내](https://www.notion.com/help/back-up-your-data)를 현재 시점에 재확인했다. 2026-08-31 확인 문서는 workspace 전체 PDF export를 이날까지 단계적으로 종료한다고 안내한다. 특정 workspace에서의 실제 기능 상태를 확인한 것으로 과장하지 않는다.
+- [ ] workspace 백업은 HTML·Markdown·CSV와 첨부 원본을 기준으로 검토했다. **개별 페이지 PDF** 기능이나 repository에서 만드는 사람용 GDD PDF와 workspace 전체 PDF export를 혼동하지 않았다.
+- [ ] `EXPORT_SUCCESS_IS_NOT_MIGRATION_COMPLETE`: export/API 요청 성공이나 ZIP 생성만으로 전체 자료 회수·의미 보존·이관 완료를 판정하지 않았다.
+- [ ] 대상 프로젝트 scope, 실제 접근 권한, 페이지·DB·record 목록, 확인 시점과 export/조회 receipt를 기록했다. 다른 사용자의 private page, teamspace 제한, 불완전한 pagination, 접근 불가 링크·첨부는 미확인 범위로 남겼다. 보이지 않는 자료를 없는 자료로 계산하지 않았다.
+- [ ] export 결과를 다시 올려도 workspace의 **원상 복원**이 보장되지 않음을 확인했다. relation/rollup/formula 의미는 4절, 원본 binary·SHA-256·manifest는 5절, 대상 owner readback은 9절 기준으로 별도 검증했다.
+- [ ] export가 실패하거나 일부 범위만 회수되었다면 알려진 고유 항목을 보존하고 미확인 범위를 표시했다. 10절의 inventory 완료 증거 없이 카운터 0이나 퇴역 완료를 선언하지 않았다. 기존 Notion은 삭제하지 않았다.
+
 ## 2. Notion 자료 전수 inventory
 
 각 페이지·DB·record·attachment를 다음 중 하나로 분류한다.
@@ -152,7 +163,7 @@ status: INVENTORY | MIGRATING | VERIFYING | LEGACY_READ_ONLY | RETIRED
 
 ## 10. 이관 잔여 카운터
 
-아래 값을 실제 inventory에서 계산한다.
+아래 0은 **완료 목표값**이지 초기값이나 미확인 자료의 대체값이 아니다. 각 카운터는 대상 프로젝트 scope의 실제 inventory에서 계산한다. 권한 부족·불완전한 목록·원문/첨부 미회수로 전체 값을 알 수 없으면 해당 카운터를 `UNKNOWN`, inventory를 `INVENTORY_INCOMPLETE`로 기록한다. 확인된 항목과 미확인 범위를 분리하며 UNKNOWN을 0으로 바꾸지 않는다.
 
 ```text
 NOTION_UNIQUE_CANON_COUNT = 0
@@ -169,12 +180,17 @@ ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT = 0
 판정:
 
 ```text
+inventory 미완료 또는 카운터 UNKNOWN
+→ INVENTORY_INCOMPLETE
+→ LEGACY_READ_ONLY
+→ 미확인 scope·권한·누락을 남기고 퇴역 완료 판정을 보류
+
 하나라도 1 이상
 → LEGACY_READ_ONLY
 → active workflow에서는 신규 쓰기 금지
 → 고유 항목 이관을 계속 추적
 
-모두 0
+inventory COMPLETE + 모두 0 + 대상 owner readback 완료
 → NOTION_RETIRED_FROM_ACTIVE_FLOW
 → NO_DELETE_REQUIRED_FOR_RETIREMENT
 ```
@@ -212,6 +228,8 @@ ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT = 0
 
 ## 12. 완료 receipt
 
+`inventory.destination_owner_readback_receipt`는 2절 inventory의 각 이관 대상 ID → destination owner 경로/locator → 검증한 exact ref(SHA 등) → 확인 결과·증거를 연결하는 기록이다. AI spec·asset manifest뿐 아니라 Decision·구조화 데이터·Active Context·handoff·evidence 등 실제 이관 대상 전체를 포함한다. 미확인·불일치·누락이 남으면 10절의 퇴역 완료 조건을 충족하지 못한다.
+
 ```yaml
 project:
 repository:
@@ -228,6 +246,12 @@ asset_manifest:
   path:
   verified_asset_count:
 notion_state: LEGACY_READ_ONLY | NOTION_RETIRED_FROM_ACTIVE_FLOW
+inventory:
+  status: NOT_CHECKED | INCOMPLETE | COMPLETE
+  scope_and_access_receipt:
+  excluded_or_unreadable:
+  export_or_read_receipt:
+  destination_owner_readback_receipt:
 counters:
   NOTION_UNIQUE_CANON_COUNT:
   CODEX_NOTION_DEPENDENCY_COUNT:
