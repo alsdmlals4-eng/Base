@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import unittest
 from pathlib import Path
 
@@ -75,6 +76,23 @@ class FederatedDualCanonContractTests(unittest.TestCase):
             contract["candidate_pdf_policy"],
         )
 
+    def test_current_authority_amendment_and_consumer_route_are_explicit(self) -> None:
+        contract = json.loads(text(V4))
+
+        self.assertEqual("2026-09-04", contract["authority_model_effective_date"])
+        self.assertEqual(
+            "current-user-message:2026-09-04:앞으로-둘-다-정본",
+            contract["authority_model_approval_ref"],
+        )
+        self.assertEqual(
+            "APPROVED_PDF_CANON_MANIFEST_AND_HASH_READBACK",
+            contract["codex_blueprint_rehydration"],
+        )
+        self.assertEqual(
+            "NO_MASS_BACKFILL_PROJECT_ADOPTS_ON_EXPLICIT_SYNC_OR_NEXT_BLUEPRINT_REVISION",
+            contract["dual_canon_adoption_policy"],
+        )
+
     def test_pdf_canon_requires_approval_registration_and_immutable_supersession(self) -> None:
         contract = json.loads(text(V4))
         pdf = contract["human_pdf_canon_contract"]
@@ -99,6 +117,10 @@ class FederatedDualCanonContractTests(unittest.TestCase):
         self.assertEqual(
             "NEW_VERSION_NEW_HASH_KEEP_HISTORY",
             pdf["supersession_policy"],
+        )
+        self.assertEqual(
+            "PROJECT_CONTROLLED_REPOSITORY_OR_GITHUB_RELEASE_LOCATOR_WITH_HASH",
+            pdf["storage_policy"],
         )
         self.assertEqual(
             "CANON_CONFLICT_BLOCKS_COMPLETION_AND_RELEASE",
@@ -169,14 +191,67 @@ class FederatedDualCanonContractTests(unittest.TestCase):
             text(MASTER_GDD_POLICY),
         )
 
-    def test_active_routes_use_new_model_and_do_not_reactivate_retired_wording(self) -> None:
+    def test_active_routes_use_new_model_without_derived_pdf_semantics(self) -> None:
+        derived_same_line = re.compile(
+            r"APPROVED_HUMAN_BLUEPRINT_PDF_CANON[^\n]{0,180}(?:derived|파생)",
+            re.IGNORECASE,
+        )
+
         for path in ACTIVE_ROUTING_SURFACES:
             with self.subTest(path=path):
                 source = text(path)
                 self.assertIn("FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER", source)
                 self.assertIn("APPROVED_HUMAN_BLUEPRINT_PDF_CANON", source)
+                self.assertIsNone(
+                    derived_same_line.search(source),
+                    f"{path} still describes the approved PDF canon as derived",
+                )
                 for retired in RETIRED_ACTIVE_TOKENS:
                     self.assertNotIn(retired, source)
+
+    def test_codex_and_gpt_consumers_read_back_the_approved_pdf_manifest(self) -> None:
+        for path in (
+            "templates/custom-instructions.codex.md",
+            "templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md",
+        ):
+            with self.subTest(path=path):
+                source = text(path)
+                self.assertIn(
+                    "APPROVED_PDF_CANON_MANIFEST_AND_HASH_READBACK",
+                    source,
+                )
+                self.assertIn("pdf_canon_manifest_ref", source)
+                self.assertIn("pdf_sha256", source)
+
+        master_instruction = text(
+            "templates/project-operations/GPT_WORK_PROJECT_MASTER_GDD_TWO_ARTIFACT_INSTRUCTION.md"
+        )
+        self.assertIn("PDF_CANON_MANIFEST_REGISTRATION", master_instruction)
+        self.assertIn(
+            "USER_APPROVED_AND_MANIFEST_REGISTERED",
+            master_instruction,
+        )
+
+    def test_project_templates_track_pdf_canon_identity_and_approval(self) -> None:
+        decisions = text(
+            "templates/project-operations/CURRENT_CONFIRMED_DECISIONS.md"
+        )
+        for field in (
+            "pdf_source_commit:",
+            "pdf_sha256:",
+            "pdf_approval_ref:",
+            "pdf_approved_at:",
+            "pdf_canonical_status:",
+            "supersedes_pdf_ref:",
+            "pdf_canon_manifest_ref:",
+        ):
+            with self.subTest(field=field):
+                self.assertIn(field, decisions)
+
+        project_readme = text("templates/project-operations/README.md")
+        self.assertIn("USER_APPROVED_AND_MANIFEST_REGISTERED", project_readme)
+        self.assertIn("pdf_sha256", project_readme)
+        self.assertIn("pdf_canon_manifest_ref", project_readme)
 
     def test_historical_v3_contract_remains_compatibility_only(self) -> None:
         legacy = json.loads(
