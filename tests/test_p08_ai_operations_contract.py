@@ -118,6 +118,21 @@ class P08AiOperationsContractTests(unittest.TestCase):
         ):
             self.assertIn(term, intake)
 
+    def test_intake_prompt_approval_gate_blocks_unconfirmed_l1_execution(self) -> None:
+        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        for term in (
+            "PROMPT_APPROVAL_EXECUTION_GATE_REQUIRED",
+            "references/prompt-approval-execution-gate.md",
+            "prompt_approval_gate:",
+            "--phase prepare",
+            "CONFIRMED",
+            "REUSED_APPROVAL",
+            "start / resume / closeout",
+            "read-only 조사",
+            "exact approved continuation",
+        ):
+            self.assertIn(term, intake)
+
 
 if __name__ == "__main__":
     unittest.main()

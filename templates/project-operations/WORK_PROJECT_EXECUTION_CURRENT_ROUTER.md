@@ -163,3 +163,7 @@ PM closeout의 모든 필수 항목 DONE과 `STOP_APPROVED_SCOPE_COMPLETE`를 �
 Phase 4까지 `HUMAN_USABILITY_EVIDENCE: NOT_RUN`, `PLAYER_EXPERIENCE_EVIDENCE: NOT_RUN`이다. 사용자 검증 전 다음 Slice로 자동 진입하지 않는다.
 
 프로젝트별 값은 exact Project repository에서 fresh-read하며 이 router에 고정하지 않는다.
+
+## Prompt approval execution gate
+
+`PROMPT_APPROVAL_EXECUTION_GATE_REQUIRED`: 새롭거나 의미가 바뀐 L1+ 작업은 기존 root receipt에 `templates/project-operations/PROMPT_APPROVAL_GATE_RECEIPT.json`의 `prompt_approval_gate` sibling을 구성하고, mutation·Codex handoff·외부 agent 위임 전에 `--phase prepare --expected-source-sha <fresh-read-source-sha> --render-markdown`을 실행한다. `prepare`는 exact contract와 digest를 보여 주지만 `EXECUTION AUTHORIZED: NO`다. 사용자가 그 exact contract를 확인한 뒤 `CONFIRMED` 또는 동일 digest의 `REUSED_APPROVAL`을 기록하고 기존 `--phase start` 또는 `--phase resume` 명령을 실행한다. read-only 조사, L0 기계 작업, 동일 validation 재실행, exact approved continuation은 중복 질문하지 않는다. 필드·권위·digest·material drift의 단일 owner는 `skills/managing-project-intake-and-work-contract/references/prompt-approval-execution-gate.md`다.

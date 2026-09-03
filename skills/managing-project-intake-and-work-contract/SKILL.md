@@ -143,13 +143,15 @@ legacy Google Sheets 해석·이관이 필요한 경우에만 `docs/PROJECT_GDD_
 ## Skill Modes
 
 - `route`: 요청 의도·현재 단계·위험을 파악하고 Work Mode, 작업 수준, 변경 유형, 주 책임 분야와 최소 Skill 집합을 자동 판정한다. `[연속작업] 진행해`, `진행해`, `계속해`, `남은 작업 진행` 같은 계속 실행 의도와 기존 approval reference를 함께 감지한다.
-- `first-prompt`: 핵심 방향 문장을 지시문 가장 앞에 배치하고 Task·Context·Source·Constraints·Output·Validation을 순서화한 뒤 전체 계약과 충돌하지 않는지 검사한다. 상세 절차는 `references/first-prompt-direction-anchoring.md`를 사용한다.
+- `first-prompt`: 핵심 방향 문장을 지시문 가장 앞에 배치하고 Task·Context·Source·Constraints·Output·Validation을 순서화한 뒤 전체 계약과 충돌하지 않는지 검사한다. 상세 절차는 `references/first-prompt-direction-anchoring.md`를 사용하고, 실행 승인 상태·receipt·digest 검사는 `references/prompt-approval-execution-gate.md`를 사용한다.
 - `contract`: 확정된 요구를 범위·제외·보호·완료·검증이 있는 실행 계약으로 변환하고, opt-in이 있으면 현재 승인 범위에 `continuous_work_state`를 결합한다.
 - `clarify`: 저장소에서 확인할 사실을 먼저 조사하고 사용자만 결정할 수 있는 모호성을 닫는다. 모든 L1 이상 지시문은 실행 전 `Grill Me alignment gate`를 거치며, 프로젝트 방향을 바꾸는 핵심 결정은 `references/grill-me-protocol.md`를 사용한다.
 - `decompose-and-sequence`: 승인된 계약을 검증 가능한 결과 단위로 나누고 의존성·병렬화·게이트·롤백 순서를 정한다.
 - `execution-report`: 실제 실행한 Work Mode·Skill·Skill Mode, 선택 이유, 수행 내용, 결과·증거·미검증을 보고한다.
 
 하나의 호출에서 필요한 Skill Mode만 순서대로 실행한다. L1 이상 지시문 작성의 기본 순서는 `route → first-prompt → contract → clarify`다. 이미 exact contract already approved 상태이고 유효한 approval reference가 있으면 `clarify`는 승인 재사용을 기록하고 중복 질문하지 않는다. `CONTINUATION_INTENT_ALIASES`는 미승인 계약을 임의 승인하지 않으며, `CONFIRMED` 또는 `REUSED_APPROVAL` 이후 현재 승인 범위에 연속 실행 상태를 적용한다. `decompose-and-sequence`는 `CONFIRMED` 이후에만 실행한다. L1 이상 작업 종료 시 `execution-report`를 실행하되 짧은 작업에서는 최종 답변의 한 섹션으로 압축할 수 있다.
+
+`PROMPT_APPROVAL_EXECUTION_GATE_REQUIRED`: 새롭거나 의미가 바뀐 L1+ 계약은 같은 repository-owned root receipt의 `prompt_approval_gate`를 `--phase prepare`로 검사하고 exact contract를 사용자에게 한 번 확인받는다. `CONFIRMED` 또는 동일 digest의 `REUSED_APPROVAL` 전에는 BUILD·Codex handoff·외부 agent 위임과 `start / resume / closeout` 실행을 허용하지 않는다. read-only 조사, L0 기계 작업, 동일 validation 재실행, exact approved continuation은 중복 질문하지 않는다. 상세 필드·권위·digest·material drift·실패 계약은 `references/prompt-approval-execution-gate.md`가 소유한다.
 
 ## Work Mode selection
 
@@ -245,6 +247,7 @@ existing_solution_inventory:
   existing_solution_disposition:
   existing_solution_evidence:
     existing_solution_user_approval:
+prompt_approval_gate:
 benchmark_preflight_receipt:
 context_configuration_hygiene:
 project_work_kanban:
@@ -708,6 +711,7 @@ remaining_unknowns: []
 - 새 기능 또는 의미 있는 기능 계약 변경은 크기와 무관하게 정본 owner·공개/통합 경계·실제 consumer/의존 방향·검증·롤백이 `execution_sequence_path`의 기능별 코드·계약 경계에 연결됐다.
 - 큰 작업은 독립 검증 가능한 결과·의존성·병렬 묶음·게이트로 분해됐다.
 - 실제 사용한 Work Mode·Skill·Skill Mode의 이유와 결과·증거를 보고했다.
+- 새롭거나 의미가 바뀐 L1+ root receipt가 `prompt_approval_gate`를 포함하고, `prepare`는 비실행 상태이며 `start / resume / closeout`은 `CONFIRMED | REUSED_APPROVAL`과 current digest를 요구한다.
 - 새 작업자가 같은 입력에서 동등한 계약·라우팅·실행 보고를 복원할 수 있다.
 
 ## Failure conditions
@@ -741,6 +745,7 @@ remaining_unknowns: []
 - 상세 요청을 무시하고 포괄 질문을 반복함
 - exact contract already approved인데 approval reference를 무시하고 중복 질문함
 - Grill Me alignment gate 또는 유효 승인 없이 실행 계약·BUILD·위임으로 이동함
+- 새롭거나 의미가 바뀐 L1+ 작업에서 `prompt_approval_gate`를 누락하거나, `AWAITING_USER_CONFIRMATION`·stale digest·untrusted approval authority·material scope drift 상태로 `start / resume / closeout`을 실행함
 - 유효한 승인 계약이나 명확한 계속 실행 의도 없이 일반 요청을 연속작업 자동 승인으로 처리함
 - 연속작업을 이유로 진짜 `USER_DECISION_REQUIRED`, 범위 확대 또는 고위험 외부 행위를 자동 승인함
 - recoverable verification·현재 세션 tool 부재·국소 blocker를 recovery/defer/independent-task scan 없이 전역 종료함

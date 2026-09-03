@@ -562,3 +562,7 @@ GPT는 현재 승인 범위에서 다음을 연속 수행한다.
 `TRUSTED_VERIFICATION_TARGET_HEAD` · `VERIFIED_SUBJECT_HEAD`: closeout의 expected head는 receipt 내부가 아니라 신뢰한 caller가 별도로 fresh-read한 검증 대상 HEAD다. 모든 DONE 항목의 `verified_head_sha`와 적용 evidence가 그 동일한 HEAD에 묶여야 하며, 해당 HEAD에는 승인 범위의 모든 제품·정본·consumer·검증 evidence 영향 변경이 들어 있어야 한다.
 
 `RECEIPT_ONLY_TAIL_COMMIT`: closeout 뒤에는 receipt·상태 metadata만 기록하는 tail commit만 허용한다. 제품·정본·consumer·검증 evidence 영향 변경이 추가되면 새 `VERIFIED_SUBJECT_HEAD`에서 evidence와 closeout을 다시 실행한다. `FINAL_PR_HEAD_CI_REVIEW_REQUIRED`: receipt-only tail을 포함한 최종 PR HEAD는 exact-head CI·독립 review·changed-path readback을 별도로 통과해야 하며 예상하지 않은 tail 경로가 있으면 완료가 아니다. start/resume은 이전 완료 기록을 보존한다.
+
+## Prompt approval execution gate
+
+`PROMPT_APPROVAL_EXECUTION_GATE_REQUIRED`: 새롭거나 의미가 바뀐 L1+ 작업은 기존 root receipt에 `templates/project-operations/PROMPT_APPROVAL_GATE_RECEIPT.json`의 `prompt_approval_gate` sibling을 구성하고, mutation·Codex handoff·외부 agent 위임 전에 `--phase prepare --expected-source-sha <fresh-read-source-sha> --render-markdown`을 실행한다. `prepare`는 exact contract와 digest를 보여 주지만 `EXECUTION AUTHORIZED: NO`다. 사용자가 그 exact contract를 확인한 뒤 `CONFIRMED` 또는 동일 digest의 `REUSED_APPROVAL`을 기록하고 기존 `--phase start` 또는 `--phase resume` 명령을 실행한다. read-only 조사, L0 기계 작업, 동일 validation 재실행, exact approved continuation은 중복 질문하지 않는다. 필드·권위·digest·material drift의 단일 owner는 `skills/managing-project-intake-and-work-contract/references/prompt-approval-execution-gate.md`다.

@@ -1,0 +1,506 @@
+review_contract:
+  policy: docs/AUTONOMOUS_RESEARCH_IMPLEMENTATION_AND_LEARNING_POLICY.md
+  specialist_skill: skills/running-adversarial-review-and-refinement/SKILL.md
+  minimum_full_loops_before_clean_exit: 5
+  claim_only_review_is_invalid: true
+
+work_item:
+  repository: alsdmlals4-eng/Base
+  branch_or_workspace: work/prompt-approval-gate-20260903
+  base_exact_sha_or_state: 850204b3e5de81a4045111b4a050c46c5a292b59
+  approval_reference: current-user-message:2026-09-03:권장-통합안승인
+  approved_contract_sha256: 15666e321612abd323ca08833b4066ce31b1a3433c447933ef252d233df7048e
+  scope:
+    - existing intake owner and prompt contract
+    - prompt approval validator and CLI phases
+    - canonical receipt fragment and direct active consumers
+    - deterministic and negative regression tests
+    - PR, CI, review, merge and main readback
+  protected_out_of_scope:
+    - skills/SKILL_REGISTRY.json changes or a new broad Prompt Engineering Skill
+    - project repositories, Base adapter pins, runtime code, scenes, resources, assets or saves
+    - unrelated open or draft PR workstreams
+    - paid tools, external approval services, permissions or secrets
+  acceptance_criteria:
+    - unapproved or drifted L1+ start, resume and closeout fail closed
+    - prepare renders an exact contract digest without authorizing execution
+    - confirmed and exact reused approval pass without repeated questions
+    - L0 and read-only exceptions remain available
+    - existing owner, active routing, PM validation and closeout evidence do not regress
+    - minimum five complete adversarial loops and exact-head CI/review reach clean exit
+  evidence_ceiling:
+    - repository contract, static, unit, mutation, CI and exact-head readback only
+    - no claim of cryptographic chat authorship, reduced user fatigue, cross-model quality, project adoption, Godot runtime, UX or release readiness
+
+loops:
+  - loop_index: 1
+    input_exact_head_or_state: 3a1301289f291b6cb2b7e54fc9fd84bf84a7a54d intentional RED
+    full_scope_re_read_completed: true
+    actual_reads:
+      - path_or_resource: AGENTS.md and current intake owner
+        exact_revision_or_state: Base main 850204b3e5de81a4045111b4a050c46c5a292b59
+        finding_relevance: confirmed documented first-prompt and Grill Me approval existed without executable enforcement
+      - path_or_resource: tools/validate_work_contract_receipt.py and tests/test_project_work_tracking.py
+        exact_revision_or_state: Base main 850204b3e5de81a4045111b4a050c46c5a292b59
+        finding_relevance: observed normal L1 fixtures passed without any prompt approval data
+      - path_or_resource: PR 844 whole changed scope and approved design
+        exact_revision_or_state: 3a1301289f291b6cb2b7e54fc9fd84bf84a7a54d
+        finding_relevance: checked the proposed boundary against the user-approved contract
+    actual_commands_or_checks:
+      - command_or_check: Validate Game Project Operating System
+        exact_target: run 33660677860 at 3a1301289f291b6cb2b7e54fc9fd84bf84a7a54d
+        result: FAIL
+        evidence_locator: core regression exposed the intentionally missing prompt approval behavior
+      - command_or_check: focused missing/awaiting/digest/authority/conflict tests
+        exact_target: tests/test_prompt_approval_execution_gate.py at 3a1301289f291b6cb2b7e54fc9fd84bf84a7a54d
+        result: FAIL
+        evidence_locator: expected RED before validator implementation
+    attack_coverage:
+      user_intent_and_value: PASS
+      authority_canon_and_supersession: PASS
+      actual_diff_and_untouched_consumers: PASS
+      implementation_data_asset_boundaries: PASS
+      failure_recovery_security_cost: PASS
+      research_and_better_alternative: PASS
+      long_term_maintainability: PASS
+      evidence_ceiling_and_completion: PASS
+    findings:
+      - PAEG-F01 documented approval could be bypassed by the actual L1+ execution validator
+      - PAEG-F02 a new broad Skill would duplicate the current intake owner and increase routing drift
+      - PAEG-F03 per-tool confirmation would conflict with read-only research and approved continuous work
+    validated_findings:
+      - id: PAEG-F01
+        severity: MUST_FIX
+        validation_evidence:
+          - normal L1 fixture lacked approval data and the current validator accepted its shape
+          - intentional RED run 33660677860
+      - id: PAEG-F02
+        severity: REJECTED_CRITIQUE
+        validation_evidence:
+          - existing owner already owns first-prompt, contract, clarify and approval state
+          - selected design keeps one owner and adds no Registry record
+      - id: PAEG-F03
+        severity: SHOULD_FIX
+        validation_evidence:
+          - approved contract explicitly preserves read-only, L0, identical rerun and exact continuation exceptions
+    corrections_applied:
+      - finding_id: PAEG-F01
+        files_or_state_changed:
+          - tools/validate_work_contract_receipt.py
+          - tests/test_prompt_approval_execution_gate.py
+          - tests/test_project_work_tracking.py
+        exact_change_revision: 5b00b86ef593bfdaff3238c07154cedf46ade785
+      - finding_id: PAEG-F03
+        files_or_state_changed:
+          - approval state and phase contract in validator and tests
+        exact_change_revision: 5b00b86ef593bfdaff3238c07154cedf46ade785
+    explicit_blockers: []
+    verification_results:
+      - target: prompt approval normal and failure fixtures
+        result: PASS
+        evidence_locator: later exact-head CI before subsequent refinements
+    untouched_consumers_rechecked:
+      - benchmark and hygiene validation remain in the original validator
+      - PM board execution and closeout remain in tools/project_work_tracking.py
+      - L0 benchmark exemption preserved
+    better_alternative_search:
+      candidates_checked:
+        - documentation-only reinforcement
+        - new Prompt Engineering Skill
+        - existing-owner root receipt machine gate
+        - external approval broker
+      result: existing-owner machine gate remained the smallest sufficient and most reversible option
+      adopted_change: extend the current receipt and validator
+    long_term_fit_recheck:
+      total_lifecycle_cost: one root receipt and one existing execution gate avoid a second state system
+      maintainability: acceptable but validator size required another review
+      rollback: revert isolated prompt gate module, reference, template and tests together
+      overengineering_risk: external service and global per-tool confirmation rejected
+      result: PASS_WITH_FOLLOWUP
+    unresolved:
+      - validator size and consumer propagation required re-attack
+    output_exact_head_or_state: 5b00b86ef593bfdaff3238c07154cedf46ade785
+    clean_exit_candidate: false
+
+  - loop_index: 2
+    input_exact_head_or_state: 5b00b86ef593bfdaff3238c07154cedf46ade785
+    full_scope_re_read_completed: true
+    actual_reads:
+      - path_or_resource: tools/validate_work_contract_receipt.py
+        exact_revision_or_state: 5b00b86ef593bfdaff3238c07154cedf46ade785
+        finding_relevance: attacked malformed public inputs and phase routing
+      - path_or_resource: templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md and tests/test_pm_cold_start_contract.py
+        exact_revision_or_state: 5b00b86ef593bfdaff3238c07154cedf46ade785
+        finding_relevance: checked whether a real cold-start consumer could satisfy the new prerequisite
+      - path_or_resource: core-regression diagnostics
+        exact_revision_or_state: Game OS run 33661639339
+        finding_relevance: isolated traceback and cold-start integration failures
+    actual_commands_or_checks:
+      - command_or_check: full core regression
+        exact_target: Game OS run 33661639339
+        result: FAIL
+        evidence_locator: malformed phase and missing cold-start prompt gate integration
+      - command_or_check: prepare to confirm to start transition fixture
+        exact_target: tests/test_pm_cold_start_contract.py at e941b415a7d6db7dafcb944cc342e092dfba5d1a
+        result: PASS
+        evidence_locator: later exact-head CI after correction
+    attack_coverage:
+      user_intent_and_value: PASS
+      authority_canon_and_supersession: PASS
+      actual_diff_and_untouched_consumers: PASS
+      implementation_data_asset_boundaries: PASS
+      failure_recovery_security_cost: PASS
+      research_and_better_alternative: PASS
+      long_term_maintainability: PASS
+      evidence_ceiling_and_completion: PASS
+    findings:
+      - PAEG-F04 invalid list or mapping phase input could reach unhashable membership checks and raise a traceback
+      - PAEG-F05 current cold-start receipt example had no prompt gate and therefore could not demonstrate the new execution path
+      - PAEG-F06 the canonical prompt gate needed one reusable fragment rather than schema copies in each consumer
+    validated_findings:
+      - id: PAEG-F04
+        severity: MUST_FIX
+        validation_evidence:
+          - exact traceback in core regression diagnostics from run 33661639339
+      - id: PAEG-F05
+        severity: MUST_FIX
+        validation_evidence:
+          - cold-start test failed when validating the current example
+      - id: PAEG-F06
+        severity: SHOULD_FIX
+        validation_evidence:
+          - multiple active start surfaces consume the same root receipt contract
+    corrections_applied:
+      - finding_id: PAEG-F04
+        files_or_state_changed:
+          - tools/validate_work_contract_receipt.py
+          - malformed input regression fixtures
+        exact_change_revision: e941b415a7d6db7dafcb944cc342e092dfba5d1a
+      - finding_id: PAEG-F05
+        files_or_state_changed:
+          - tests/test_pm_cold_start_contract.py
+        exact_change_revision: e941b415a7d6db7dafcb944cc342e092dfba5d1a
+      - finding_id: PAEG-F06
+        files_or_state_changed:
+          - skills/managing-project-intake-and-work-contract/references/prompt-approval-execution-gate.md
+          - templates/project-operations/PROMPT_APPROVAL_GATE_RECEIPT.json
+        exact_change_revision: c7b786ce8108d3f97b16bd4e919e15ae6effff9f
+    explicit_blockers: []
+    verification_results:
+      - target: malformed phase inputs
+        result: PASS
+        evidence_locator: error list returned without traceback in subsequent core regression
+      - target: cold-start state transition
+        result: PASS
+        evidence_locator: prepare passes, awaiting start fails, confirmed digest start passes
+    untouched_consumers_rechecked:
+      - trusted source SHA remains required
+      - closeout trusted final HEAD remains required
+      - blocked benchmark remains non-authorizing
+    better_alternative_search:
+      candidates_checked:
+        - add only defensive isinstance in the CLI
+        - make public Python API robust and keep CLI argparse choices
+        - duplicate prompt gate JSON in the large startup template
+        - maintain one reusable receipt fragment
+      result: robust public API plus one canonical fragment was smaller and testable
+      adopted_change: public API hardening and canonical fragment
+    long_term_fit_recheck:
+      total_lifecycle_cost: shared fragment reduces future consumer edits
+      maintainability: improved, but main validator still mixed two policy modules
+      rollback: remove fragment and new prerequisite together
+      overengineering_risk: no new schema framework or external dependency
+      result: PASS_WITH_FOLLOWUP
+    unresolved:
+      - prompt validation responsibility still made the main validator large
+    output_exact_head_or_state: e941b415a7d6db7dafcb944cc342e092dfba5d1a
+    clean_exit_candidate: false
+
+  - loop_index: 3
+    input_exact_head_or_state: e941b415a7d6db7dafcb944cc342e092dfba5d1a
+    full_scope_re_read_completed: true
+    actual_reads:
+      - path_or_resource: full prompt approval validator diff
+        exact_revision_or_state: e941b415a7d6db7dafcb944cc342e092dfba5d1a
+        finding_relevance: checked responsibility boundaries and independent testability
+      - path_or_resource: skills/managing-project-intake-and-work-contract/agents/openai.yaml
+        exact_revision_or_state: Base main and branch comparison
+        finding_relevance: checked the actual installed Skill entrypoint for discoverability
+      - path_or_resource: tests/test_prompt_approval_routing_contract.py
+        exact_revision_or_state: 9dc599c4be74e7cf70b0b81ee6bfb4b11edd54eb
+        finding_relevance: attacked owner and implementation coupling
+    actual_commands_or_checks:
+      - command_or_check: Validate Base v9 Operating Contracts
+        exact_target: exact branch revisions through b6c47537cb1708918096c107bdf20e1bcdc0a3dc
+        result: PASS
+        evidence_locator: Base v9 workflow success before later fixes
+      - command_or_check: Validate Skill Routing Precision
+        exact_target: exact branch revisions through b6c47537cb1708918096c107bdf20e1bcdc0a3dc
+        result: PASS
+        evidence_locator: routing workflow success before later fixes
+    attack_coverage:
+      user_intent_and_value: PASS
+      authority_canon_and_supersession: PASS
+      actual_diff_and_untouched_consumers: PASS
+      implementation_data_asset_boundaries: PASS
+      failure_recovery_security_cost: PASS
+      research_and_better_alternative: PASS
+      long_term_maintainability: PASS
+      evidence_ceiling_and_completion: PASS
+    findings:
+      - PAEG-F07 prompt approval policy and benchmark, hygiene, PM, CLI orchestration in one validator increased change coupling
+      - PAEG-F08 the OpenAI Skill entrypoint did not explicitly route new L1+ work through preparation and the no-repeat exceptions
+      - PAEG-F09 routing tests initially inspected only validator text and would break on a valid modular refactor
+    validated_findings:
+      - id: PAEG-F07
+        severity: SHOULD_FIX
+        validation_evidence:
+          - prompt approval validation had an independent public contract and no dependency on PM internals
+      - id: PAEG-F08
+        severity: SHOULD_FIX
+        validation_evidence:
+          - default_prompt is the actual Skill entrypoint metadata
+      - id: PAEG-F09
+        severity: SHOULD_FIX
+        validation_evidence:
+          - first routing test failed after moving the same behavior to a dedicated module
+    corrections_applied:
+      - finding_id: PAEG-F07
+        files_or_state_changed:
+          - tools/prompt_approval_gate.py
+          - tools/validate_work_contract_receipt.py
+        exact_change_revision: 9cadba3e63631d1c5148e7961d2b152f1591f533
+      - finding_id: PAEG-F08
+        files_or_state_changed:
+          - skills/managing-project-intake-and-work-contract/agents/openai.yaml
+        exact_change_revision: 1408fc447943f47e34ea3e84de916ef9a1500f10
+      - finding_id: PAEG-F09
+        files_or_state_changed:
+          - tests/test_prompt_approval_routing_contract.py
+        exact_change_revision: b6c47537cb1708918096c107bdf20e1bcdc0a3dc
+    explicit_blockers: []
+    verification_results:
+      - target: old validator public imports and CLI behavior
+        result: PASS
+        evidence_locator: existing PM and prompt tests import through tools.validate_work_contract_receipt
+      - target: modular owner routing
+        result: PASS
+        evidence_locator: tests/test_prompt_approval_routing_contract.py
+    untouched_consumers_rechecked:
+      - existing imports of compute_prompt_contract_sha256 remain compatible
+      - PM rendering remains owned by tools/project_work_tracking.py
+      - no Skill Registry change introduced
+    better_alternative_search:
+      candidates_checked:
+        - keep one large validator file
+        - create an external package
+        - extract one standard-library-only prompt gate module
+      result: one local module matched the existing PM module boundary without a new runtime dependency
+      adopted_change: tools/prompt_approval_gate.py
+    long_term_fit_recheck:
+      total_lifecycle_cost: focused module supports independent tests and smaller future diffs
+      maintainability: improved while preserving public API compatibility
+      rollback: delete module and restore validator implementation in one revert
+      overengineering_risk: low; only one responsibility module added
+      result: PASS
+    unresolved:
+      - packaged-reference discoverability still required exact repository validation
+    output_exact_head_or_state: b6c47537cb1708918096c107bdf20e1bcdc0a3dc
+    clean_exit_candidate: false
+
+  - loop_index: 4
+    input_exact_head_or_state: b6c47537cb1708918096c107bdf20e1bcdc0a3dc
+    full_scope_re_read_completed: true
+    actual_reads:
+      - path_or_resource: core-regression and ubuntu-contract diagnostic artifacts
+        exact_revision_or_state: Game OS run 33663685024
+        finding_relevance: isolated one packaged-reference link failure and two stale diagnostic assertions
+      - path_or_resource: skills/managing-project-intake-and-work-contract/SKILL.md
+        exact_revision_or_state: b6c47537cb1708918096c107bdf20e1bcdc0a3dc
+        finding_relevance: confirmed the new reference was not directly reachable from the existing owner
+      - path_or_resource: PR 844 whole changed scope
+        exact_revision_or_state: a1f6a13d0d6f786f6a78056c4052cc2f281181c2 lineage
+        finding_relevance: checked that the correction did not add an unrelated owner or permanent workflow
+    actual_commands_or_checks:
+      - command_or_check: full core regression
+        exact_target: run 33663685024
+        result: FAIL
+        evidence_locator: 2603 tests with only three failures, all isolated to reference discovery and changed diagnostic text
+      - command_or_check: one-shot exact branch patch workflow
+        exact_target: run 33664150395
+        result: PASS
+        evidence_locator: patched the current Skill blob and removed its own temporary workflow
+    attack_coverage:
+      user_intent_and_value: PASS
+      authority_canon_and_supersession: PASS
+      actual_diff_and_untouched_consumers: PASS
+      implementation_data_asset_boundaries: PASS
+      failure_recovery_security_cost: PASS
+      research_and_better_alternative: PASS
+      long_term_maintainability: PASS
+      evidence_ceiling_and_completion: PASS
+    findings:
+      - PAEG-F10 packaged reference was not directly linked from its owning Skill
+      - PAEG-F11 two regression tests asserted an obsolete shorter diagnostic string
+      - PAEG-F12 a temporary patch workflow must not remain in the retained PR tree
+    validated_findings:
+      - id: PAEG-F10
+        severity: MUST_FIX
+        validation_evidence:
+          - package-integrity test failure and direct Skill readback
+      - id: PAEG-F11
+        severity: MUST_FIX
+        validation_evidence:
+          - exact two failures in core-regression artifact
+      - id: PAEG-F12
+        severity: MUST_FIX
+        validation_evidence:
+          - permanent one-off workflow would be an unrelated retained execution surface
+    corrections_applied:
+      - finding_id: PAEG-F10
+        files_or_state_changed:
+          - skills/managing-project-intake-and-work-contract/SKILL.md
+        exact_change_revision: 64043b2ac1b1fd6d40b9095fbc25a848dda4d943
+      - finding_id: PAEG-F11
+        files_or_state_changed:
+          - tests/test_prompt_approval_execution_gate.py
+        exact_change_revision: a1f6a13d0d6f786f6a78056c4052cc2f281181c2
+      - finding_id: PAEG-F12
+        files_or_state_changed:
+          - temporary patch workflow deleted in the same bounded bot commit
+        exact_change_revision: 64043b2ac1b1fd6d40b9095fbc25a848dda4d943
+    explicit_blockers: []
+    verification_results:
+      - target: direct Skill to reference linkage
+        result: PASS
+        evidence_locator: Skill readback at blob 2e0252dc5c5c3c0bddb17cc07abb8ebc5e542649
+      - target: retained branch workflow inventory
+        result: PASS
+        evidence_locator: temporary workflow absent from final branch tree
+    untouched_consumers_rechecked:
+      - first-prompt legacy reference still directly linked
+      - no Registry or released-lock changes
+      - bot commit changed only the intended Skill and removed the one-shot workflow
+    better_alternative_search:
+      candidates_checked:
+        - weaken package-integrity test
+        - copy the new reference into another document
+        - link the new reference from the existing owner
+      result: direct owner linkage was the only authority-correct fix
+      adopted_change: direct reference and fail-closed invariant in the intake Skill
+    long_term_fit_recheck:
+      total_lifecycle_cost: direct discoverability prevents orphaned packaged policy
+      maintainability: one canonical reference and one owner link
+      rollback: revert owner link with the module/reference/template/test bundle
+      overengineering_risk: one-shot workflow removed; no retained automation added
+      result: PASS
+    unresolved:
+      - exact final-head full CI and retained work-receipt self-validation remained
+    output_exact_head_or_state: a1f6a13d0d6f786f6a78056c4052cc2f281181c2
+    clean_exit_candidate: false
+
+  - loop_index: 5
+    input_exact_head_or_state: a1f6a13d0d6f786f6a78056c4052cc2f281181c2
+    full_scope_re_read_completed: true
+    actual_reads:
+      - path_or_resource: docs/reviews/2026-09-03-prompt-approval-execution-gate-work-receipt.json
+        exact_revision_or_state: retained approved receipt at blob ead51c2aa3b0c37dc7a104bb5b67f83a02dfffc2
+        finding_relevance: checked whether the task's own approval locator and digest were executable evidence
+      - path_or_resource: entire PR 844 file list and current branch tree
+        exact_revision_or_state: 664135cec107ff0dd6d97421e652cc69ab0a5d14 lineage
+        finding_relevance: rechecked scope, temporary workflow absence and owner boundaries
+      - path_or_resource: current main and same-goal PR inventory
+        exact_revision_or_state: main 850204b3e5de81a4045111b4a050c46c5a292b59; no same-goal prompt PR
+        finding_relevance: rechecked supersession and concurrency
+    actual_commands_or_checks:
+      - command_or_check: retained work receipt self-validation
+        exact_target: tests/test_prompt_approval_work_receipt.py
+        result: NOT_RUN
+        evidence_locator: pending exact-head CI after test addition
+      - command_or_check: exact-head Base v9 and Skill routing workflows
+        exact_target: head 664135cec107ff0dd6d97421e652cc69ab0a5d14
+        result: NOT_RUN
+        evidence_locator: queued or in progress at review-file creation time
+      - command_or_check: exact-head Game Project Operating System full regression
+        exact_target: head 664135cec107ff0dd6d97421e652cc69ab0a5d14
+        result: NOT_RUN
+        evidence_locator: queued or in progress at review-file creation time
+    attack_coverage:
+      user_intent_and_value: PASS
+      authority_canon_and_supersession: PASS
+      actual_diff_and_untouched_consumers: PASS
+      implementation_data_asset_boundaries: PASS
+      failure_recovery_security_cost: PASS
+      research_and_better_alternative: PASS
+      long_term_maintainability: PASS
+      evidence_ceiling_and_completion: PASS
+    findings:
+      - PAEG-F13 the retained work receipt itself was not yet a test consumer
+      - PAEG-F14 final clean-exit evidence must bind current-head CI and independent review rather than a prior successful head
+    validated_findings:
+      - id: PAEG-F13
+        severity: SHOULD_FIX
+        validation_evidence:
+          - receipt contained a user approval digest but no test loaded it
+      - id: PAEG-F14
+        severity: MUST_FIX
+        validation_evidence:
+          - every correction changes the exact branch HEAD and invalidates prior completion claims
+    corrections_applied:
+      - finding_id: PAEG-F13
+        files_or_state_changed:
+          - tests/test_prompt_approval_work_receipt.py
+        exact_change_revision: 664135cec107ff0dd6d97421e652cc69ab0a5d14
+    explicit_blockers:
+      - finding_id: PAEG-F14
+        blocker: exact final-head CI and independent review not yet complete
+        unblock_condition: all required exact-head workflows pass, current-head review completes, valid findings are corrected and rerun
+    verification_results:
+      - target: retained receipt approval locator and digest
+        result: NOT_RUN
+        evidence_locator: pending exact-head workflow
+      - target: current whole-scope regression
+        result: NOT_RUN
+        evidence_locator: pending exact-head workflow
+    untouched_consumers_rechecked:
+      - L0 test removes prompt gate and still exercises reasoned exemption
+      - exact reused approval has a dedicated resume test
+      - trusted source and trusted closeout head remain independent caller inputs
+      - no project adoption or runtime claim introduced
+    better_alternative_search:
+      candidates_checked:
+        - trust the retained receipt because it was manually generated
+        - validate the retained receipt in the same deterministic test suite
+        - introduce signed external approval infrastructure
+      result: repository self-validation was sufficient for the approved scope; external signing remained overbuilt
+      adopted_change: retained receipt test
+    long_term_fit_recheck:
+      total_lifecycle_cost: one small self-test prevents stale approval receipts from becoming decorative records
+      maintainability: direct path and public validator API keep the test readable
+      rollback: remove self-test only with the retained receipt and gate
+      overengineering_risk: no external identity or signing system
+      result: PASS_PENDING_EXACT_HEAD_EVIDENCE
+    unresolved:
+      - exact final-head CI
+      - independent current-head review
+      - work receipt closeout and post-merge readback
+    output_exact_head_or_state: 664135cec107ff0dd6d97421e652cc69ab0a5d14
+    clean_exit_candidate: false
+
+final_exit:
+  completed_full_loop_count: 5
+  new_valid_must_fix_count: 1
+  regression_count: 0
+  canon_or_consumer_drift_count: 0
+  acceptance_blocker_count: 1
+  exact_head_checks: []
+  independent_review: NOT_RUN
+  unresolved_review_threads: NOT_RUN
+  post_merge_main_readback: NOT_RUN
+  clean_review_exit: false
+  remaining_work_recalculated: true
+  required_work_remaining:
+    - exact-head full CI
+    - independent review and correction
+    - closeout receipt
+    - normal squash merge and post-merge main readback

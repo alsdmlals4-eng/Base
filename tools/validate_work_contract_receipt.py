@@ -11,8 +11,16 @@ from typing import Any
 
 if __package__:
     from .project_work_tracking import choice, render_tracking, validate_tracking
+    from .prompt_approval_gate import (
+        compute_prompt_contract_sha256,
+        validate_prompt_approval_gate,
+    )
 else:
     from project_work_tracking import choice, render_tracking, validate_tracking
+    from prompt_approval_gate import (
+        compute_prompt_contract_sha256,
+        validate_prompt_approval_gate,
+    )
 
 BENCHMARK_STATES = {"PASS", "REUSED_EVIDENCE", "NOT_APPLICABLE", "BLOCKED_UNVERIFIED"}
 DISPOSITIONS = {"ADOPT", "ADAPT", "REJECT"}
@@ -117,26 +125,40 @@ def validate_receipt(receipt: object) -> list[str]:
 def validate_execution_receipt(
     receipt: object,
     *,
-    phase: str = "start",
+    phase: object = "start",
     expected_source_sha: str | None = None,
     expected_head_sha: str | None = None,
 ) -> list[str]:
-    """Execution readiness requires trusted caller source and verified-subject HEAD values."""
+    """Execution readiness requires prompt approval plus trusted source and verified-subject HEAD values."""
     errors = validate_receipt(receipt)
     if not isinstance(receipt, dict):
         return errors
-    if not choice(phase, {"start", "resume", "closeout"}):
-        errors.append("phase must be start, resume or closeout")
+    valid_phase = choice(phase, {"prepare", "start", "resume", "closeout"})
+    if not valid_phase:
+        errors.append("phase must be prepare, start, resume or closeout")
+
+    work_level = receipt.get("work_level")
+    if isinstance(work_level, str):
+        errors.extend(
+            validate_prompt_approval_gate(
+                receipt.get("prompt_approval_gate"),
+                work_level=work_level,
+                phase=phase,
+            )
+        )
+
     benchmark = receipt.get("benchmark_preflight_receipt")
     if isinstance(benchmark, dict) and benchmark.get("state") == "BLOCKED_UNVERIFIED":
         errors.append("BLOCKED_UNVERIFIED benchmark is a record, not execution authorization")
+
     if receipt.get("work_level") != "L0" or "project_work_kanban" in receipt:
         if expected_source_sha is None:
             errors.append("expected_source_sha from the trusted fresh-read caller is required for execution")
+        tracking_phase = "inspect" if phase == "prepare" else phase
         errors.extend(
             validate_tracking(
                 receipt.get("project_work_kanban"),
-                phase=phase,
+                phase=tracking_phase,
                 expected_source_sha=expected_source_sha,
                 expected_head_sha=expected_head_sha,
             )
@@ -147,22 +169,26 @@ def validate_execution_receipt(
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--receipt", required=True, type=Path)
-    parser.add_argument("--phase", choices=("start", "resume", "closeout"), default="start")
+    parser.add_argument("--phase", choices=("prepare", "start", "resume", "closeout"), default="start")
     parser.add_argument("--expected-source-sha", help="Exact source SHA supplied by the trusted caller; required for L1+")
     parser.add_argument("--expected-head-sha", help="Exact verified-subject HEAD supplied independently by the trusted caller; required for closeout")
-    parser.add_argument("--render-markdown", action="store_true", help="Print a shape-validated derived PM view; blocked execution remains nonzero")
+    parser.add_argument("--render-markdown", action="store_true", help="Print shape-validated derived prompt and PM views; preparation or blocked execution remains non-authorizing")
     args = parser.parse_args()
     try:
         receipt = json.loads(args.receipt.read_text(encoding="utf-8"))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
         print(f"WORK CONTRACT RECEIPT: FAIL\n- cannot read JSON receipt: {exc}")
         return 2
+
     errors = validate_execution_receipt(
         receipt,
         phase=args.phase,
         expected_source_sha=args.expected_source_sha,
         expected_head_sha=args.expected_head_sha,
     )
+    gate = receipt.get("prompt_approval_gate") if isinstance(receipt, dict) else None
+    digest = compute_prompt_contract_sha256(gate)
+
     if errors:
         print("WORK CONTRACT RECEIPT: FAIL")
         for error in errors:
@@ -177,6 +203,10 @@ def main() -> int:
             if isinstance(board, dict)
             else ["project_work_kanban is unavailable"]
         )
+        if args.render_markdown:
+            print("EXECUTION AUTHORIZED: NO")
+            if digest is not None:
+                print(f"PROMPT CONTRACT SHA256: {digest}")
         if args.render_markdown and isinstance(board, dict) and not shape_errors:
             render_board, render_head = _render_inputs(
                 board,
@@ -192,14 +222,29 @@ def main() -> int:
                 )
             )
         return 1
-    print(f"WORK CONTRACT RECEIPT: PASS (execution phase={args.phase}; recorded evidence only)")
+
+    if args.phase == "prepare":
+        print("WORK CONTRACT RECEIPT: PASS (preparation only; recorded evidence)")
+        print("EXECUTION AUTHORIZED: NO")
+        if digest is not None:
+            print(f"PROMPT CONTRACT SHA256: {digest}")
+    else:
+        print(f"WORK CONTRACT RECEIPT: PASS (execution phase={args.phase}; recorded evidence only)")
+        print("EXECUTION AUTHORIZED: YES")
+
     if args.render_markdown and isinstance(receipt.get("project_work_kanban"), dict):
         render_board, render_head = _render_inputs(
             receipt["project_work_kanban"],
             phase=args.phase,
             expected_head_sha=args.expected_head_sha,
         )
-        print(render_tracking(render_board, expected_head_sha=render_head))
+        print(
+            render_tracking(
+                render_board,
+                expected_head_sha=render_head,
+                execution_authorized=args.phase != "prepare",
+            )
+        )
     return 0
 
 
