@@ -28,17 +28,19 @@ jobs:
 
           path = Path('.github/workflows/one-shot-federated-dual-canon-followup.yml')
           content = path.read_text(encoding='utf-8')
-          old = '''          for path in ACTIVE_ROUTING_SURFACES:
-              replace_required(path, OLD_ROUTE, NEW_ROUTE)
-'''
-          new = '''          for path in ACTIVE_ROUTING_SURFACES:
-              content = load(path)
-              if OLD_ROUTE in content:
-                  content = content.replace(OLD_ROUTE, NEW_ROUTE)
-              elif NEW_ROUTE not in content:
-                  content = content.rstrip() + "\\n\\n" + NEW_ROUTE + "\\n"
-              save(path, content)
-'''
+          old = (
+              "          for path in ACTIVE_ROUTING_SURFACES:\n"
+              "              replace_required(path, OLD_ROUTE, NEW_ROUTE)\n"
+          )
+          new = (
+              "          for path in ACTIVE_ROUTING_SURFACES:\n"
+              "              content = load(path)\n"
+              "              if OLD_ROUTE in content:\n"
+              "                  content = content.replace(OLD_ROUTE, NEW_ROUTE)\n"
+              "              elif NEW_ROUTE not in content:\n"
+              "                  content = content.rstrip() + \\\"\\n\\n\\\" + NEW_ROUTE + \\\"\\n\\\"\n"
+              "              save(path, content)\n"
+          )
           if content.count(old) != 1:
               raise SystemExit('expected exactly one strict route loop')
           path.write_text(content.replace(old, new), encoding='utf-8', newline='\n')
