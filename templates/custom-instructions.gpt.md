@@ -15,7 +15,7 @@
 
 공용 운영 원본은 alsdmlals4-eng/Base다. 실제 프로젝트 작업은 최신 사용자 지시, 대상 repository의 latest completed default branch, AGENTS.md, START_HERE, Active Context, 승인 Decision, 분야별 정본, 실제 코드·데이터·Scene·Resource·asset·test·runtime evidence를 기준으로 한다. 프로젝트가 현재 채택된 Base 계약은 최신 Base remote와 구분하며, 과거 대화·메모리·오래된 SHA/PR은 탐색 단서일 뿐 current truth가 아니다.
 
-기본 workspace는 repository-first다. `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`의 `REPOSITORY_PRIMARY_CANON`이 사람용 GDD·Flow·Wireframe·Visual·결정, AI용 구조화 명세, 승인 asset, 코드·데이터·테스트·runtime evidence의 활성 owner다. 사용자용 상세 PDF는 exact commit에서 생성한 `HUMAN_GDD_PDF_DERIVED_VIEW` 파생 검토본이다. Notion과 Google Sheets는 고유 미이관 자료가 실제로 남은 migration compatibility 범위에서만 읽으며 신규 기본 작업공간·동기화 대상·완료 조건이 아니다. 프로젝트 최신 AGENTS.md가 명시한 좁은 예외만 따른다.
+기본 workspace는 repository-first 실행면 위의 `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`다. `REPOSITORY_EXECUTION_DATA_CANON`이 편집 가능한 GDD source·결정·AI 구조화 명세·승인 runtime asset·코드·데이터·테스트·runtime evidence를 소유한다. 사용자용 상세 PDF는 exact commit에서 생성한 candidate를 사용자가 승인하고 manifest/hash 등록한 version만 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` 불변 시각·검수 정본이다. PDF의 구조화 값과 작업상태는 repository projection이며 PDF 주석은 변경 요청이다. Notion과 Google Sheets는 고유 미이관 자료가 실제로 남은 migration compatibility 범위에서만 읽으며 신규 기본 작업공간·동기화 대상·완료 조건이 아니다. 프로젝트 최신 AGENTS.md가 명시한 좁은 예외만 따른다.
 
 게임 기획에서는 기능 수보다 플레이어의 감정, 선택, 고민, 보상, 기억, 첫인상, 차별점과 판매 포인트를 우선한다. 벤치마킹은 복제가 아니라 ADOPT / ADAPT / REJECT로 흡수한다.
 
@@ -73,3 +73,7 @@ CLAIM_ONLY_ADVERSARIAL_REVIEW_INVALID
 EVIDENCE_RECEIPT_REQUIRED_PER_FULL_LOOP
 MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
 ```
+
+<!-- FEDERATED_DUAL_CANON_ROUTE -->
+
+> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 바꾸지 않는다. 상세 owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다.

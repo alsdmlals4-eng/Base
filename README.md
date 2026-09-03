@@ -76,7 +76,7 @@ tests / build / runtime and play evidence
 Codex handoff and implementation readback
 ```
 
-사람용 상세 기획서 PDF는 `HUMAN_GDD_PDF_DERIVED_VIEW`이며 exact `source_commit`을 가진 파생 snapshot입니다. AI용 상세 기획·구현 명세 Markdown은 repository에 저장합니다. ChatGPT Work와 Library는 실행·참조 surface이며 정본이 아닙니다.
+현재 권한 모델은 `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`입니다. `REPOSITORY_EXECUTION_DATA_CANON`이 편집 가능한 구조화·실행 정본이고, exact `source_commit`에서 생성되어 `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 사용자용 상세 PDF만 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` 불변 시각·검수 정본입니다. AI용 상세 기획·구현 명세 Markdown은 repository에 저장합니다. ChatGPT Work와 Library는 실행·참조 surface이며 정본이 아닙니다.
 
 `NO_NEW_NOTION_WRITE_BY_DEFAULT`: 신규 기획·결정·이미지 승인·Codex handoff를 완료하기 위해 Notion에 중간 복제하지 않습니다. 기존 `NOTION_DEFAULT_PROJECT_WORKSPACE`는 `NOTION_DEFAULT_PROJECT_WORKSPACE_RETIRED`입니다. Notion에만 고유 자료가 남은 프로젝트에서는 `NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE`로 읽고 다음 세 카운터를 0으로 만듭니다.
 
@@ -241,3 +241,7 @@ python tools/run_local_validation.py --trusted-history-commit <trusted-main-comm
 ## 라이선스와 보안
 
 Base 자체는 [MIT License](LICENSE)로 배포됩니다. 제3자 코드·문서·자산은 각 원출처 라이선스를 따릅니다. 민감한 취약점·계약서·개인정보는 공개 저장소에 넣지 않고 [Security Policy](SECURITY.md)를 따릅니다.
+
+<!-- FEDERATED_DUAL_CANON_ROUTE -->
+
+> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 바꾸지 않는다. 상세 owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다.

@@ -629,3 +629,145 @@ DOCX, ZIP, 별도 appendix, 개별 이미지, AI Markdown 다운로드 링크, N
 - 신규 MUST_FIX 0
 - 정본 drift 0
 - 검증 가능한 이 문서 생성 작업의 남은 작업 0
+
+## 9. 기존 Blueprint 증분 수정과 통합 작업 현황 실행
+
+`EXISTING_BLUEPRINT_INCREMENTAL_REVISION_REQUIRED`
+
+`NO_BLANK_REBUILD_WHEN_VALID_PREDECESSOR_EXISTS`
+
+`PREDECESSOR_BLUEPRINT_AND_SOURCE_INVENTORY`
+
+`STABLE_ID_SECTION_AND_EVIDENCE_PRESERVATION`
+
+`SEMANTIC_DELTA_AND_CARRY_FORWARD_REQUIRED`
+
+`UNEXPLAINED_REMOVAL_OR_STATUS_DOWNGRADE_FORBIDDEN`
+
+`BLUEPRINT_LOSS_REGRESSION_GATE`
+
+`PREDECESSOR_UNAVAILABLE_BLOCKED_UNVERIFIED`
+
+### 9.1 시작 전에 predecessor를 고정해
+
+기존 Blueprint가 있으면 새 문서를 빈 상태에서 다시 만들지 마. 다음을 predecessor set으로 fresh-read하고 exact locator를 기록해.
+
+1. latest valid 사람용 Blueprint PDF
+2. 해당 PDF를 만든 source branch/SHA와 source document
+3. 현재 `docs/design/PROJECT_AI_PRODUCTION_SPEC.md`
+4. 승인 Decision·Active Context·handoff
+5. 실제 code/data/scene/resource/asset/test/runtime evidence
+6. Library·legacy source에만 남은 고유 자료가 있을 때 그 자료
+
+최소 receipt:
+
+```yaml
+predecessor_blueprint_ref:
+predecessor_source_commit:
+revision_mode: INCREMENTAL_WHEN_VALID_PREDECESSOR_EXISTS
+work_status_snapshot_at:
+```
+
+PDF와 source를 실제로 읽어 project/goal/system/content/UI/UX/asset/audio/data/QA/decision ID, section anchor, flow/system/content card, diagram source, 승인 visual, consumer, evidence, blocker와 known risk를 inventory해. 파일명이 같거나 오래됐다는 이유로 predecessor를 추정하지 마.
+
+### 9.2 기존 Blueprint를 직접 수정해
+
+기존 source가 있으면 그 source와 stable ID를 기준으로 touched section만 수정하고 untouched content는 carry-forward해. 다음을 기본 보존해.
+
+- 기존 확정 내용과 사용자 승인 결정
+- 시스템·콘텐츠·화면·에셋·QA ID와 cross-reference
+- 상세 설명, 수치, 예외, 용어집과 N/A 이유
+- flow/state/sequence/system diagram의 text-native source
+- 승인 이미지, caption, provenance, actual consumer와 상태군
+- Godot scene/node/script/data owner와 공개 경계
+- test/runtime/UX/user approval evidence와 evidence ceiling
+- blocker, resume condition, 다음 안전 작업과 변경 이력
+
+새 레이아웃이나 더 짧은 문장을 만들기 위해 의미 있는 기존 내용을 버리지 마. ID rename·split·merge는 predecessor↔successor mapping과 migration 영향이 있을 때만 허용해.
+
+정말 valid predecessor가 없을 때만 `INITIAL_CREATION_NO_VALID_PREDECESSOR`를 사용하고, 기존 PDF·repository design docs·Library/legacy source 검색 결과를 근거로 남겨. 최초 발행 뒤 모든 갱신은 증분 수정으로 전환해.
+
+### 9.3 Blueprint 안에 PM 현황을 통합해
+
+별도 HTML, PM PDF, board snapshot 또는 세 번째 상태 문서를 만들지 마. 현재 repository owner와 `project_work_kanban`에서 다음 View를 같은 사람용 Blueprint PDF에 투영해.
+
+- `PROJECT_GOAL_STATUS_SUMMARY`: 프로젝트 목표, 현재 Slice, 완료/적용 목표, 진행 중, 검증 대기, blocker, 사용자 결정, 다음 안전 작업
+- `GOAL_LEVEL_CHECKLIST`: 목표별 player value, Acceptance, 관련 system/work item, 상태·evidence·blocker·next action
+- `SYSTEM_LEVEL_CHECKLIST`: 시스템별 목적, 입력·출력, owner·consumer·dependency, 기획·데이터·자산·구현·검증 상태
+- `CASE_LEVEL_STATUS_MATRIX`: 필요한 정상·경계·실패·충돌·중단·복구·저장·UI·접근성·성능 case별 현황
+- `BLOCKERS_DECISIONS_AND_NEXT_SAFE_ACTION`: 실제 blocker, decision packet, resume condition, 현재 작업과 다음 단일 작업
+
+목표→시스템→케이스→work item→evidence를 stable ID로 양방향 추적해. 프로젝트가 이미 같은 의미의 ID/field를 사용하면 그것을 재사용하고 Base 명칭을 중복 생성하지 마.
+
+완료 수에는 evidence-backed PASS/DONE만 포함하고 `NOT_APPLICABLE`은 이유와 함께 분모에서 제외해. 다음 상태를 한 퍼센트나 하나의 완료 표시로 합치지 마.
+
+```text
+DOCUMENTED
+IMPLEMENTED
+AUTOMATED_TEST_PASS
+RUNTIME_VERIFIED
+UX_VERIFIED
+USER_APPROVED
+```
+
+### 9.4 semantic delta와 loss-regression 검사를 실행해
+
+successor 발행 전에 predecessor와 successor inventory를 비교해.
+
+```yaml
+predecessor_inventory:
+successor_inventory:
+semantic_delta_summary:
+removal_or_downgrade_justifications:
+```
+
+각 추가·변경·삭제·대체·rename·상태 하향에 source, 이유, 영향받는 ID/consumer/evidence, replacement 또는 rollback을 기록해. 그대로 유지한 묶음은 `CARRIED_FORWARD_UNCHANGED`와 source locator로 요약할 수 있어.
+
+다음 중 하나라도 설명 없이 발생하면 `BLUEPRINT_LOSS_REGRESSION_GATE`를 FAIL로 처리하고 predecessor를 보존한 채 successor 승격을 중단해.
+
+- stable ID 또는 section/card가 사라짐
+- 확정 규칙·상세 설명·예외·용어가 사라짐
+- diagram source·승인 이미지·caption·provenance가 사라짐
+- actual consumer·repository path·test/runtime/UX evidence가 사라짐
+- 구현·검증·사용자 승인 상태가 낮아짐
+- 목표→시스템→케이스→evidence 연결이 끊김
+- PDF와 AI Markdown의 source SHA·ID·semantic delta가 다름
+- page render 또는 text extraction에서 잘림·누락·빈 페이지·깨진 glyph가 생김
+
+기존 predecessor나 source를 신뢰성 있게 읽을 수 없으면 채팅 기억으로 복원하지 마. 누락 locator, 영향받는 범위, 복구 경로를 기록하고 `BLOCKED_UNVERIFIED`로 둬. 읽을 수 있는 부분만 안전하게 수정할 수 있다면 touched scope와 evidence ceiling을 제한해서 명시해.
+
+### 9.5 생성 순서에 증분 Gate를 삽입해
+
+기존 Section 6 순서에 다음 단계를 결합해.
+
+```text
+predecessor discovery and exact source pin
+→ predecessor Blueprint/source/ID/evidence inventory
+→ repository canon and current work-status reconciliation
+→ touched-scope incremental source revision
+→ project goal/system/case progress projection
+→ required image/material preparation and final Blueprint composition
+→ successor inventory and semantic delta
+→ BLUEPRINT_LOSS_REGRESSION_GATE
+→ PDF render/page inspection/text readback
+→ AI Markdown/source SHA/ID/delta cross-check
+→ exact-head repository validation
+→ user final review
+→ PDF_CANON_MANIFEST_REGISTRATION
+→ USER_APPROVED_AND_MANIFEST_REGISTERED
+→ CANON_ALIGNED
+```
+
+최종 보고에는 predecessor ref/source SHA, revision mode, semantic delta, 삭제·상태 하향 정당화, carry-forward 범위, PM snapshot 시각과 loss-regression 결과를 추가해. 이 규칙은 `NO_SEPARATE_BLUEPRINT_ARTIFACT`, `NO_MASS_BLUEPRINT_BACKFILL`, `RUNTIME_TRUTH_SEPARATE`, 이미지 승인 경계와 사용자 최종 승인 Gate를 그대로 유지해.
+
+<!-- FEDERATED_DUAL_CANON_ROUTE -->
+
+> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 바꾸지 않는다. 상세 owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다.
+
+<!-- PDF_CANON_MANIFEST_REGISTRATION -->
+
+    ### 9.6 사용자 승인 뒤 PDF 정본을 등록해
+
+    `PDF_CANON_MANIFEST_REGISTRATION`
+
+    user final review가 승인된 뒤에만 `source_commit`, `pdf_sha256`, `approval_ref`, `approved_at`, `canonical_status`, `supersedes_pdf_ref`, `pdf_canon_manifest_ref`를 repository-controlled manifest에 기록하고 readback해. 생성 성공이나 다운로드 가능만으로 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`이라고 하지 마. 승인본은 immutable이며 다음 수정은 새 version·hash로 만들고 이전 승인본을 `SUPERSEDED`로 보존해.

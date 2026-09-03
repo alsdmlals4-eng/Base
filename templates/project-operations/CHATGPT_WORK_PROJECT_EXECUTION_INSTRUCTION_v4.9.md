@@ -7,7 +7,7 @@ baseline: PROJECT_TOTAL_PLANNING_IMPLEMENTATION_AND_DELIVERY_INSTRUCTION_v4.8-r5
 base_repository: https://github.com/alsdmlals4-eng/Base
 base_policy: ALWAYS_REFETCH_CURRENT_COMPLETED_MAIN
 execution_surface: CHATGPT_WORK
-canon_policy: REPOSITORY_PRIMARY_CANON_WITH_DERIVED_HUMAN_PDF
+canon_policy: FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER
 machine_contract: docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json
 human_policy: docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md
 ---
@@ -35,9 +35,9 @@ MEMORY_CONFLICT_CURRENT_PROJECT_CANON_WINS
 
 DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE
 REPOSITORY_PRIMARY_CANON
-HUMAN_GDD_PDF_DERIVED_VIEW
+APPROVED_HUMAN_BLUEPRINT_PDF_CANON
 AI_PRODUCTION_SPEC_MARKDOWN
-PDF_IS_DERIVED_SNAPSHOT_NOT_CANON
+APPROVED_PDF_IS_HUMAN_VISUAL_CANON
 CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON
 CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON
 NO_NEW_NOTION_WRITE_BY_DEFAULT
@@ -139,7 +139,9 @@ repository가 `REPOSITORY_PRIMARY_CANON`이다. 같은 사실을 Notion·채팅�
 
 ```text
 HUMAN_MASTER_GDD_PDF
-status: HUMAN_GDD_PDF_DERIVED_VIEW
+candidate_status: GENERATED_CANDIDATE | USER_APPROVED_PENDING_REGISTRATION | CANON_ALIGNED | SUPERSEDED
+canon_role_after_activation: APPROVED_HUMAN_BLUEPRINT_PDF_CANON
+activation: USER_APPROVED_AND_MANIFEST_REGISTERED
 required_identity:
   project:
   source_commit:
@@ -555,7 +557,7 @@ Codex 입력은 `APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST`다. Library·PDF�
 
 `NOTION_IMAGE_UPLOAD_ROUTING`은 retired compatibility token이다. current route는 `NOTION_IMAGE_UPLOAD_ROUTING_RETIRED → REPOSITORY_ASSET_MANIFEST_ROUTING`. Notion upload/attach/readback은 신규 이미지 전달 완료 조건이 아니다.
 
-`DOMAIN_SPLIT_CANON`도 retired compatibility token이다. current route는 `DOMAIN_SPLIT_CANON_RETIRED → REPOSITORY_PRIMARY_CANON_WITH_DERIVED_HUMAN_PDF`다.
+`DOMAIN_SPLIT_CANON`도 retired compatibility token이다. current route는 `DOMAIN_SPLIT_CANON_RETIRED → FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`다.
 
 ---
 
@@ -1062,7 +1064,7 @@ active successor:
 
 ```text
 REPOSITORY_PRIMARY_CANON
-HUMAN_GDD_PDF_DERIVED_VIEW
+APPROVED_HUMAN_BLUEPRINT_PDF_CANON
 AI_PRODUCTION_SPEC_MARKDOWN
 REPOSITORY_ASSET_MANIFEST_ROUTING
 CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA
@@ -1070,3 +1072,15 @@ POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP
 ```
 
 이 appendix·호환 token이 Notion을 active default로 복원하는 권한은 없다.
+
+> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 바꾸지 않는다. 상세 owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다.
+
+<!-- APPROVED_PDF_CANON_CONSUMER_READBACK -->
+
+    ## 승인 PDF 정본 consumer readback
+
+    `APPROVED_PDF_CANON_MANIFEST_AND_HASH_READBACK`
+
+    GPT Work와 Codex는 구현·검수 시작 전에 repository owner와 함께 `pdf_canon_manifest_ref`를 읽고, manifest가 가리키는 PDF locator의 `pdf_sha256`, `source_commit`, `approval_ref`, `approved_at`, `canonical_status`, `supersedes_pdf_ref`를 readback한다. `USER_APPROVED_AND_MANIFEST_REGISTERED`가 아니거나 hash/locator/source가 맞지 않으면 `CANDIDATE_PDF_NOT_CANON` 또는 `CANON_CONFLICT`로 두고 승인 시각 baseline이라고 주장하지 않는다.
+
+    Codex는 PDF의 구조화 값이나 체크박스를 editable source로 사용하지 않는다. `PDF_STRUCTURED_CONTENT_IS_REPOSITORY_PROJECTION`을 지키면서 승인된 Flow·화면 hierarchy·정보 우선순위·milestone 표현을 implementation review baseline으로 소비한다. implementation이 material하게 다르면 교정하거나 새 candidate를 사용자에게 재승인받는다.

@@ -15,8 +15,8 @@ description: Use when authoring, restructuring, publishing, or validating regist
 REPOSITORY_PRIMARY_CANON
 → current Project Home content / decisions / Visual or Story Bible source / Flow or Storyboard source / Markdown / JSON / game data / code / scene / resource / test / runtime evidence
 
-HUMAN_GDD_PDF_DERIVED_VIEW
-→ 사람이 milestone에서 읽고 교정하는 exact-SHA PDF snapshot
+APPROVED_HUMAN_BLUEPRINT_PDF_CANON
+→ 사람이 milestone에서 검토하고 승인한 뒤 manifest/hash readback한 exact-SHA 불변 PDF 정본
 
 NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
 → existing unique material의 migration input 또는 명시적 V4 exception
@@ -75,7 +75,7 @@ subsystem_checkpoint: null-or-name
 AI·자동 검사 → DESIGN_DOCUMENT_REGISTRY.json·등록된 Markdown 또는 JSON 원본
 승인 결정 복원 → CURRENT_CONFIRMED_DECISIONS.md
 현재 전체 그림·시각·예산·Tier·비교표 source → REPOSITORY_PRIMARY_CANON
-사람용 milestone view → HUMAN_GDD_PDF_DERIVED_VIEW
+사람용 milestone view → APPROVED_HUMAN_BLUEPRINT_PDF_CANON
 실제 구현·runtime 상태 → REPOSITORY_RUNTIME_TRUTH
 사람 기본 발행 열람 → Registry 정책이 요구하는 PDF
 Word 검토 → 선언한 경우의 선택 DOCX
@@ -309,7 +309,7 @@ PR 또는 직접 `main` Decision Commit 뒤에는 `running-adversarial-review-an
 ## 기획서 생명주기 결과
 - 실행 mode:
 - 문서 ID·책임 범위:
-- authority domain: REPOSITORY_PRIMARY_CANON | HUMAN_GDD_PDF_DERIVED_VIEW | LEGACY_NOTION_MIGRATION | V4_NOTION_EXCEPTION
+- authority domain: REPOSITORY_PRIMARY_CANON | APPROVED_HUMAN_BLUEPRINT_PDF_CANON | LEGACY_NOTION_MIGRATION | V4_NOTION_EXCEPTION
 - 책임 원본·형식·경로:
 - CURRENT_CONFIRMED_DECISIONS 반영:
 - PDF milestone view / V4 exception·legacy migration surface:
@@ -396,3 +396,7 @@ Tools:
 - Packet의 `coverage_status=CONVERGED`는 문서가 많다는 뜻이 아니라 모든 승인 Requirement가 실제 경로와 검증 증거에 연결됐다는 뜻이다.
 - 상세 정본과 Packet이 충돌하면 상세 정본을 기준으로 Packet을 `GAP` 또는 `BLOCKED_UNVERIFIED`로 낮춘다.
 - 작은 L0·L1 문서 수정에는 Packet을 만들지 않는다.
+
+<!-- FEDERATED_DUAL_CANON_ROUTE -->
+
+> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 바꾸지 않는다. 상세 owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다.

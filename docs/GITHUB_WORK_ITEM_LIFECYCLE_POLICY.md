@@ -491,3 +491,78 @@ Projects API·connector나 account 권한으로 실제 생성·field 설정·rea
 ```
 
 모든 기존 프로젝트에 빈 Issue·카드·board를 일괄 생성하지 않는다. 새 material 작업, 재개, Goal 변경, major closeout 또는 다음 Playable Slice 진입에서 현재 프로젝트 규칙에 맞게 적용한다. 첫 pilot의 실제 사용 evidence 전에는 PM 효율·개발 속도·품질 향상을 측정 완료로 주장하지 않는다.
+
+## 15. 사람용 Blueprint PDF 작업 현황 투영
+
+`BLUEPRINT_PDF_PROGRESS_PROJECTION`
+
+`PROJECT_WORK_KANBAN_IS_PROGRESS_SOURCE`
+
+`GOAL_SYSTEM_CASE_TRACEABILITY`
+
+`NO_PARALLEL_BLUEPRINT_STATUS_CANON`
+
+사람용 `HUMAN_MASTER_GDD_PDF`는 별도 PM 문서나 상태 원본을 만들지 않고, 기존 Goal/Playable Slice Issue, 프로젝트 Active Context, `project_work_kanban`, AI production specification, 실제 코드·데이터·씬·에셋·테스트·runtime evidence를 읽어 현재 작업 현황을 시각적으로 투영한다. PDF의 체크 표시·수치·상태를 직접 편집해 repository 상태를 바꾸지 않으며, 충돌 시 PDF가 아니라 위 owner와 evidence를 교정한 뒤 PDF를 다시 발행한다.
+
+### 15.1 선택형 Blueprint routing reference
+
+Work item receipt는 필요할 때 다음 optional reference를 추가할 수 있다.
+
+```json
+{
+  "blueprint_refs": {
+    "goal_ids": ["GOAL-..."],
+    "system_ids": ["SYS-..."],
+    "case_ids": ["CASE-..."]
+  }
+}
+```
+
+- 이 reference는 같은 사실을 다시 서술하는 정본이 아니라 기존 ID 사이의 projection route다.
+- 프로젝트가 이미 동일 역할의 stable ID 또는 traceability field를 사용하면 그것을 재사용하며 Base field를 중복 생성하지 않는다.
+- `goal_ids → system_ids → case_ids → work item → evidence`가 양방향으로 추적되어야 한다.
+- ID가 없는 추정 연결은 완료 수에 포함하지 않고 `BLOCKED_UNVERIFIED` 또는 `NOT_APPLICABLE_WITH_REASON`으로 남긴다.
+
+### 15.2 Blueprint 필수 현황 View
+
+| View token | PDF에서 답할 질문 | 최소 source |
+|---|---|---|
+| `PROJECT_GOAL_STATUS_SUMMARY` | 이번 프로젝트와 Slice의 목표가 어디까지 왔는가? | Goal/Slice Issue, Active Context, work receipt |
+| `GOAL_LEVEL_CHECKLIST` | 각 목표의 플레이어 가치·완료 조건·연결 시스템·차단·다음 행동은 무엇인가? | Goal owner, system IDs, Acceptance evidence |
+| `SYSTEM_LEVEL_CHECKLIST` | 각 시스템의 기획·데이터·자산·구현·검증이 어느 단계인가? | AI spec, actual consumers, work items, evidence |
+| `CASE_LEVEL_STATUS_MATRIX` | 정상·경계·실패·충돌·복구·저장·UI 등 실제 케이스별 상태는 무엇인가? | case IDs, tests, runtime/UX evidence |
+| `BLOCKERS_DECISIONS_AND_NEXT_SAFE_ACTION` | 무엇이 막혀 있고 사용자 결정과 다음 단일 안전 작업은 무엇인가? | deferred queue, decision packet, active work item |
+
+필요한 case만 현재 시스템 위험과 consumer에서 역산한다. 모든 시스템에 동일한 빈 case 표를 일괄 생성하지 않는다.
+
+### 15.3 완료 수와 evidence 분리
+
+`PASS_ONLY_COUNTS_COMPLETE`를 Blueprint에도 동일하게 적용한다. 목표·시스템·케이스의 표시 상태는 최소 다음 차원을 합치지 않는다.
+
+```text
+DOCUMENTED
+IMPLEMENTED
+AUTOMATED_TEST_PASS
+RUNTIME_VERIFIED
+UX_VERIFIED
+USER_APPROVED
+```
+
+- 완료 수에는 해당 View가 요구하는 Acceptance와 evidence가 `PASS` 또는 work item `DONE`인 항목만 포함한다.
+- `PARTIAL`, `NOT_RUN`, `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, `DEFERRED`, `FAIL`은 완료가 아니다.
+- 다른 evidence 차원을 평균내 하나의 불투명한 퍼센트로 만들지 않는다. 상단 요약은 `완료/적용 대상`, 진행 중, 검증 대기, 차단, 사용자 결정, 다음 안전 작업을 함께 보여 준다.
+- 자동 테스트 PASS는 runtime·화면·UX·사용자 승인 PASS로 승격하지 않는다.
+- work receipt의 `updated_at`과 PDF의 `work_status_snapshot_at`을 함께 표시해 snapshot의 시간 경계를 명확히 한다.
+
+### 15.4 갱신과 퇴행 방지
+
+Blueprint 작업 현황은 의미 있는 Goal·system·case 상태가 바뀔 때 기존 Blueprint revision에 다시 투영한다. `docs/PROJECT_MASTER_GDD_TWO_ARTIFACT_POLICY.md`의 predecessor inventory와 loss-regression Gate를 통과하지 않은 PDF 재발행은 허용하지 않는다.
+
+기존 Goal·system·case ID, 완료 evidence, blocker, 사용자 결정, 다음 행동이 successor PDF에서 사라지거나 낮아졌다면 다음 중 하나가 반드시 있어야 한다.
+
+- repository owner에서 실제 삭제·대체·해결된 근거
+- supersession 또는 replacement ID
+- 상태 하향 사유와 영향받은 검증
+- 사용자 결정 또는 exact diff·test·runtime readback
+
+설명 없는 누락은 레이아웃 정리나 요약으로 간주하지 않고 `BLUEPRINT_LOSS_REGRESSION_GATE` 실패로 처리한다.

@@ -30,7 +30,7 @@ Base START_HERE.md·AGENTS.md
 
 `REUSE_FIRST_PREFLIGHT_REQUIRED`: 신규 또는 의미 있게 개정하는 시스템·UI/UX·시각/Asset·데이터/콘텐츠 구조·도구·workflow·Skill/Eval·QA/Test는 새 설계·제작 전에 `managing-project-intake-and-work-contract`를 통해 현재 프로젝트 구현/자산 → Project Asset/Reference/Benchmark → Base reuse handoff/profile/Registry와 축적 knowledge/case/reference → 직접 관련된 targeted cross-project evidence → 결정에 필요한 외부 benchmark 순으로 확인한다. 모든 프로젝트를 무작정 전수 검색하거나 Base reference를 프로젝트 정본보다 우선하지 않는다. 상세 계약은 `skills/managing-project-intake-and-work-contract/SKILL.md`와 `docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json`이 소유한다.
 
-기본 프로젝트 작업 계약은 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`다. repository가 `REPOSITORY_PRIMARY_CANON`, 사람용 상세 기획서 PDF가 `HUMAN_GDD_PDF_DERIVED_VIEW`, AI용 상세 기획·구현 명세 Markdown이 repository canon이다. `NO_NEW_NOTION_WRITE_BY_DEFAULT`이며 기존 `NOTION_DEFAULT_PROJECT_WORKSPACE`는 `NOTION_DEFAULT_PROJECT_WORKSPACE_RETIRED`다. legacy Notion과 Google Sheets는 **현재 작업이 실제 migration scope일 때만** `templates/project-operations/NOTION_TO_REPOSITORY_MIGRATION_CHECKLIST.md`, `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`, `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`를 읽어 고유 자료를 repository 또는 명시적 non-canon 보관소로 이관한다. 통합 Vertical Slice 실행이 승인된 경우에만 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 사용한다. 이 Prompt와 과거 v6~v8 자료는 최신 사용자 결정·프로젝트 정본보다 높은 권한을 갖지 않는다.
+기본 프로젝트 작업 계약은 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`의 `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`다. `REPOSITORY_EXECUTION_DATA_CANON`이 편집 가능한 구조화·실행 정본이며, exact source에서 생성되어 `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 사람용 상세 기획서 PDF만 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`이다. AI용 상세 기획·구현 명세 Markdown은 repository execution/data canon에 저장한다. `NO_NEW_NOTION_WRITE_BY_DEFAULT`이며 기존 `NOTION_DEFAULT_PROJECT_WORKSPACE`는 `NOTION_DEFAULT_PROJECT_WORKSPACE_RETIRED`다. legacy Notion과 Google Sheets는 **현재 작업이 실제 migration scope일 때만** `templates/project-operations/NOTION_TO_REPOSITORY_MIGRATION_CHECKLIST.md`, `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`, `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`를 읽어 고유 자료를 repository 또는 명시적 non-canon 보관소로 이관한다. 통합 Vertical Slice 실행이 승인된 경우에만 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 사용한다. 이 Prompt와 과거 v6~v8 자료는 최신 사용자 결정·프로젝트 정본보다 높은 권한을 갖지 않는다.
 
 신규 MCP·addon·CLI·framework·Skill·Mode 또는 유사 실행 계층 제작 요청은 설계보다 먼저 `evaluating-godot-assets-and-plugins-before-creation: inventory-current-environment / disposition`으로 라우팅하고 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`의 Existing Solution First Gate를 통과한다. 이미 사용 중인 도구·연결된 MCP·enabled addon·dependency·관련 PR·외부 대안을 확인하지 않은 `BUILD_NEW`는 시작하지 않는다.
 
@@ -110,7 +110,7 @@ PC·Android Delivery Guide도 새 광역 Skill이 아니다. `analyzing-and-refi
 | 불필요 자료 판정 | `pruning-stale-and-nonfunctional-material` |
 | 게임 사용자 연구 11영역 | `governing-game-user-research-coverage` |
 | 사용자 학습 자료 | `creating-user-learning-notes` |
-| 프로젝트 상태·사람용 시각화 | `building-project-visual-dashboards` — repository 정본에서 생성한 `HUMAN_GDD_PDF_DERIVED_VIEW`가 기본이며 외부 HTML/Notion workspace를 새 정본으로 만들지 않음 |
+| 프로젝트 상태·사람용 시각화 | `building-project-visual-dashboards` — repository 정본에서 생성한 candidate를 사용자 승인·manifest 등록한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`이 기본이며 외부 HTML/Notion workspace를 새 정본으로 만들지 않음 |
 | Godot·Unity 런타임 오류 | `diagnosing-game-engine-runtime-failures` |
 | Godot live Editor·MCP·addon·Scene·Resource 자동화 | HiGodot persistent authoring → GUT deterministic GDScript test → Hera live QA (`LIVE_QA_AND_OBSERVABILITY_ONLY`) |
 
@@ -141,3 +141,9 @@ Godot 자동화는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERA
 ## 게임 권한·무결성·DRM 진입
 
 entitlement, Play Integrity, Steam DRM Wrapper, STOVE 기능, anti-tamper, offline license 또는 고가치 서버 권위 질문은 `docs/knowledge/game-development/GAME_ENTITLEMENT_INTEGRITY_AND_DRM_GUIDE.md`에서 시작한다. 프로젝트 상태는 `templates/project-operations/GAME_ENTITLEMENT_AND_INTEGRITY_RECORD.md`에 두며 platform sandbox와 사람 복구 증거 전에는 `PRODUCTION_READY`를 선언하지 않는다.
+
+<!-- FEDERATED_DUAL_CANON_ROUTE -->
+
+> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 바꾸지 않는다. 상세 owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다.
+
+> 호환성: `REPOSITORY_PRIMARY_CANON`은 `REPOSITORY_EXECUTION_DATA_CANON`의 repository-domain 별칭이며, 승인 PDF의 사람용 시각·검수 정본 권한을 포함하거나 대체하지 않는다.

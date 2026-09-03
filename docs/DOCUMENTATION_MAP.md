@@ -56,8 +56,8 @@ REPOSITORY_PRIMARY_CANON
 → current planning / decisions / Markdown / JSON / game data / code / scene / resource / config / tests / evidence
 → REPOSITORY_RUNTIME_TRUTH
 
-HUMAN_GDD_PDF_DERIVED_VIEW
-→ exact repository SHA와 evidence ceiling이 연결된 사람이 보는 milestone snapshot
+APPROVED_HUMAN_BLUEPRINT_PDF_CANON
+→ exact repository SHA와 evidence ceiling이 연결되고 사용자 승인·manifest 등록을 마친 불변 사람용 시각·검수 정본
 
 NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
 → unique legacy material 발견·이관에만 사용
@@ -327,7 +327,7 @@ project/build identity
 → REPOSITORY_PRIMARY_CANON
 
 사람용 milestone 검토
-→ HUMAN_GDD_PDF_DERIVED_VIEW (exact source SHA)
+→ APPROVED_HUMAN_BLUEPRINT_PDF_CANON (exact source SHA + user approval + manifest/hash readback)
 
 실제 V4 exception 또는 legacy migration source
 → NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
@@ -387,3 +387,7 @@ Notion 전환은 기존 Base의 공용 능력을 삭제하거나 숨기는 작�
 - GitHub governance: **GitHub Pro 저장소 운영**과 **GitHub Pro 보호·Ruleset·자동 병합**은 기존 GitHub governance owner로 라우팅하며 `GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md`, `GITHUB_USAGE_BUDGET.md`를 호환 발견 경로로 유지한다.
 - 기획 인터뷰: **Grill Me 핵심 의사결정 인터뷰**는 `clarify` + `references/grill-me-protocol.md`로 라우팅하고 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`의 승인 배치 정책을 함께 적용한다.
 - 연재소설: `developing-and-revising-serial-fiction`이 서사 개발·수정의 active owner이며 Coc-Fiction Notion Storyboard/Character/Faction 표면과 조합한다.
+
+<!-- FEDERATED_DUAL_CANON_ROUTE -->
+
+> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 바꾸지 않는다. 상세 owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다.
