@@ -139,7 +139,9 @@ repository가 `REPOSITORY_PRIMARY_CANON`이다. 같은 사실을 Notion·채팅�
 
 ```text
 HUMAN_MASTER_GDD_PDF
-status: APPROVED_HUMAN_BLUEPRINT_PDF_CANON
+candidate_status: GENERATED_CANDIDATE | USER_APPROVED_PENDING_REGISTRATION | CANON_ALIGNED | SUPERSEDED
+canon_role_after_activation: APPROVED_HUMAN_BLUEPRINT_PDF_CANON
+activation: USER_APPROVED_AND_MANIFEST_REGISTERED
 required_identity:
   project:
   source_commit:
@@ -1070,3 +1072,15 @@ POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP
 ```
 
 이 appendix·호환 token이 Notion을 active default로 복원하는 권한은 없다.
+
+> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 바꾸지 않는다. 상세 owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다.
+
+<!-- APPROVED_PDF_CANON_CONSUMER_READBACK -->
+
+    ## 승인 PDF 정본 consumer readback
+
+    `APPROVED_PDF_CANON_MANIFEST_AND_HASH_READBACK`
+
+    GPT Work와 Codex는 구현·검수 시작 전에 repository owner와 함께 `pdf_canon_manifest_ref`를 읽고, manifest가 가리키는 PDF locator의 `pdf_sha256`, `source_commit`, `approval_ref`, `approved_at`, `canonical_status`, `supersedes_pdf_ref`를 readback한다. `USER_APPROVED_AND_MANIFEST_REGISTERED`가 아니거나 hash/locator/source가 맞지 않으면 `CANDIDATE_PDF_NOT_CANON` 또는 `CANON_CONFLICT`로 두고 승인 시각 baseline이라고 주장하지 않는다.
+
+    Codex는 PDF의 구조화 값이나 체크박스를 editable source로 사용하지 않는다. `PDF_STRUCTURED_CONTENT_IS_REPOSITORY_PROJECTION`을 지키면서 승인된 Flow·화면 hierarchy·정보 우선순위·milestone 표현을 implementation review baseline으로 소비한다. implementation이 material하게 다르면 교정하거나 새 candidate를 사용자에게 재승인받는다.

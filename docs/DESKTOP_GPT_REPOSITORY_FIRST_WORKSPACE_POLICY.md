@@ -193,6 +193,12 @@ generated_at:
 included_scope:
 implementation_evidence_ceiling:
 approval_status:
+pdf_sha256:
+approval_ref:
+approved_at:
+canonical_status:
+supersedes_pdf_ref:
+pdf_canon_manifest_ref:
 ```
 
 규칙:
@@ -487,7 +493,7 @@ APPROVED_HUMAN_BLUEPRINT_PDF_CANON
 ONE_EDITABLE_OWNER_PER_ATOMIC_FACT
 ```
 
-`REPOSITORY_EXECUTION_DATA_CANON`는 코드·Scene·Resource·asset·구조화 데이터·ID·수치·공식·조건·상태 전이·Decision source·작업 상태·test·runtime·release evidence의 **편집 가능한 정본**이다. `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`은 사용자가 실제로 검토·승인한 프로젝트/플레이어 경험 지도, 읽기 순서, Flow 구성, 정보 우선순위, 시스템 카드 표현, milestone 범위와 시각적 baseline의 **불변 정본**이다.
+`REPOSITORY_EXECUTION_DATA_CANON`은 코드·Scene·Resource·asset·구조화 데이터·ID·수치·공식·조건·상태 전이·Decision source·작업 상태·test·runtime·release evidence의 **편집 가능한 정본**이다. `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`은 사용자가 실제로 검토·승인한 프로젝트/플레이어 경험 지도, 읽기 순서, Flow 구성, 정보 우선순위, 시스템 카드 표현, milestone 범위와 시각적 baseline의 **불변 정본**이다.
 
 PDF는 두 번째 editable database가 아니다.
 

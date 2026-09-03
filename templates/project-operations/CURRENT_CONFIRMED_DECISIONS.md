@@ -1,6 +1,6 @@
 # CURRENT_CONFIRMED_DECISIONS
 
-> 이 문서는 **현재 승인된 결정만 빠르게 복원**하기 위한 프로젝트 운영 템플릿이다. 현재 승인 결정·설명·Flow/Wireframe·구조화 상태·Commit·실행 진실은 V4 `REPOSITORY_PRIMARY_CANON`을 따른다. 사람용 PDF는 exact-SHA `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`이며, Notion과 Google Sheets는 legacy migration 또는 명시된 V4 exception에서만 사용하고 신규 입력이나 active sync 정본이 아니다.
+> 이 문서는 **현재 승인된 결정만 빠르게 복원**하기 위한 프로젝트 운영 템플릿이다. 현재 승인 결정·구조화 상태·Commit·실행 진실은 V4 `REPOSITORY_EXECUTION_DATA_CANON`을 따른다. exact-SHA 사람용 PDF는 `USER_APPROVED_AND_MANIFEST_REGISTERED` 뒤에만 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` 시각·검수 정본이며, Notion과 Google Sheets는 legacy migration 또는 명시된 V4 exception에서만 사용하고 신규 입력이나 active sync 정본이 아니다.
 
 ```yaml
 project:
@@ -10,6 +10,13 @@ notion_project_key:
 workspace_authority: DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE
 repository_primary_canon: REPOSITORY_PRIMARY_CANON
 approved_human_blueprint_pdf_canon:
+pdf_source_commit:
+pdf_sha256:
+pdf_approval_ref:
+pdf_approved_at:
+pdf_canonical_status: CANDIDATE | USER_APPROVED_PENDING_REGISTRATION | CANON_ALIGNED | SUPERSEDED
+supersedes_pdf_ref:
+pdf_canon_manifest_ref:
 notion_exception_or_legacy_source:
 google_sheet_compatibility_source:
 legacy_sheet_role: COMPATIBILITY_ONLY
@@ -47,6 +54,13 @@ revisit_condition:
 ```yaml
 repository_primary_canon: REPOSITORY_PRIMARY_CANON
 approved_human_blueprint_pdf_canon:
+pdf_source_commit:
+pdf_sha256:
+pdf_approval_ref:
+pdf_approved_at:
+pdf_canonical_status: CANDIDATE | USER_APPROVED_PENDING_REGISTRATION | CANON_ALIGNED | SUPERSEDED
+supersedes_pdf_ref:
+pdf_canon_manifest_ref:
 last_branch_commit:
 last_merge_commit:
 last_main_readback:
@@ -126,12 +140,12 @@ merge
 ## 8. 종료 조건
 
 - 현재 승인 Decision을 과거 대화 없이 복원할 수 있다.
-- `REPOSITORY_EXECUTION_DATA_CANON`와 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`의 역할이 섞이지 않고 `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`를 지킨다.
-- 적용 가능한 사람용 변경은 repository owner와 exact-SHA derived view readback을 가지며, 실제 exception/migration write만 destination readback을 가진다.
+- `REPOSITORY_EXECUTION_DATA_CANON`과 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`의 역할이 섞이지 않고 `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`를 지킨다.
+- 적용 가능한 사람용 변경은 repository owner와 exact-SHA 승인 PDF의 approval·manifest·hash readback을 가지며, 실제 exception/migration write만 destination readback을 가진다.
 - `COMPATIBILITY_ONLY` Sheet는 active workspace로 재승격되지 않는다.
 - 병합 전/후 상태와 Commit이 구분된다.
 - 실행하지 않은 검증은 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`다.
 
 <!-- FEDERATED_DUAL_CANON_ROUTE -->
 
-> V4 authority route: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON` owns editable structured, execution, runtime, work-status, and evidence facts. Only a `USER_APPROVED_AND_MANIFEST_REGISTERED` `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` owns the immutable human visual/review baseline. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON` and PDF annotations do not mutate repository-owned facts. See `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` and `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`.
+> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 바꾸지 않는다. 상세 owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다.

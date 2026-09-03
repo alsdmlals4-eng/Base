@@ -27,7 +27,7 @@ REPOSITORY_RUNTIME_TRUTH
 → 실제 구현·build·runtime·QA evidence
 
 APPROVED_HUMAN_BLUEPRINT_PDF_CANON
-→ exact source SHA와 evidence ceiling을 명시한 사람용 milestone snapshot
+→ exact source SHA와 evidence ceiling을 명시하고 사용자 승인·manifest 등록을 마친 불변 사람용 시각·검수 정본
 ```
 
 repository는 기획·시각·구조화·구현 도메인의 현행 정본이며, 사람용 이해에는 정확한 source SHA의 PDF 또는 프로젝트가 정한 repository-native 문서를 사용한다. 파생 PDF와 static mockup은 runtime proof가 아니다.
@@ -44,7 +44,7 @@ Google Sheets는 `COMPATIBILITY_ONLY` migration source다. 기존 unique materia
 | GitHub Issue·PR 댓글 | 질문, 사용자 답변, 승인 시점, 검토 대화의 추적 증거 | 최종 정본 아님 |
 | `CURRENT_CONFIRMED_DECISIONS.md` | 현재 승인 결정의 요약, 대체 관계, 반영 위치, 동기화 상태 | 승인 결정 복원 정본 |
 | 등록된 repository 분야 문서·JSON·asset catalog | 시스템·서사·아트·UI·Flow/Wireframe 등 현행 상세 규칙과 예외 | `REPOSITORY_PRIMARY_CANON` |
-| exact-SHA PDF | 사람이 읽는 milestone snapshot | `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` |
+| exact-SHA PDF | 사용자가 승인한 milestone 시각·검수 baseline | 승인·manifest 등록 후 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` |
 | 프로젝트 Notion | 실제 V4 exception/legacy migration의 보조 source | 정본 아님 |
 | `ACTIVE_CONTEXT.md` | 현재 단계·작업·위험·다음 행동 | 현재 상태 원본 |
 | GitHub `main` | 반영된 structured 문서·코드·데이터·자산의 저장소 상태 | 통합 structured/runtime 상태 |
@@ -230,7 +230,7 @@ validation:
 → main Commit SHA 재조회
 → 사람이 봐야 하는 변화면 exact-SHA derived PDF 발행 또는 repository-native view 갱신
 → 실제 V4 exception/migration write가 있었다면 destination readback
-→ Decision ID·Commit·derived view/exception 표현·대체 관계 비교
+→ Decision ID·Commit·approved PDF canon/exception 표현·대체 관계 비교
 → SYNCED 판정
 → 다음 질문
 ```
@@ -324,7 +324,7 @@ BLOCKED_UNVERIFIED
 
 `SHEET_UPDATED`와 `NOTION_UPDATED`는 과거 workspace 동기화의 **legacy compatibility audit token**이다. 현재 정상 상태 전이는 `DERIVED_VIEW_UPDATED` 또는 실제 필요한 `EXCEPTION_MIGRATION_UPDATED`를 사용하며, legacy token을 새 프로젝트의 active 상태로 사용하지 않는다.
 
-정상 종료는 repository primary owner와 필요한 derived view/exception readback이 일치한 `SYNCED`다.
+정상 종료는 repository primary owner와 필요한 approved PDF canon/exception readback이 일치한 `SYNCED`다.
 
 - repository 쓰기 실패: 기존 댓글에 실패와 재개 조건을 기록한다.
 - derived view 또는 exception write/readback 실패: repository 정본은 유지하고 `SYNC_FAILED`와 재발행/재동기화 대상 Decision ID를 기록한다.
@@ -370,7 +370,7 @@ BLOCKED_UNVERIFIED
 → finding 분류
 → 필요한 최소 수정
 → regression-recheck
-→ 필요한 derived view/exception readback
+→ 필요한 approved PDF canon/exception readback
 → 최종 충돌 보고
 ```
 
@@ -440,7 +440,7 @@ BLOCKED_UNVERIFIED
 
 ## 14. 완료 조건
 
-- 질문 전에 최신 main·repository 정본·PR·필요한 derived view/exception source를 비교했다.
+- 질문 전에 최신 main·repository 정본·PR·필요한 approved PDF canon/exception source를 비교했다.
 - 기존 승인 결정을 다시 묻지 않았다.
 - 기술 기본값과 사용자 기획 결정을 구분했다.
 - 질문과 승인 원문이 GitHub 추적 surface에 남았다.
@@ -462,14 +462,14 @@ BLOCKED_UNVERIFIED
 - `CURRENT_CONFIRMED_DECISIONS.md`만 갱신하고 repository 분야 책임 원본을 누락함
 - 사람이 봐야 하는 중요 변경인데 repository-native view 또는 required derived PDF를 갱신하지 않음
 - exception/legacy source에서 structured/runtime 의미를 바꾸고 repository 동기화 없이 구현함
-- repository 또는 필요한 derived view/exception source 한쪽만 갱신하고 `SYNCED`로 주장함
+- repository 또는 필요한 approved PDF canon/exception source 한쪽만 갱신하고 `SYNCED`로 주장함
 - Google Sheets를 새 기본 사용자 workspace로 복원함
 - 같은 Goal에 새 PR을 반복 생성함
 - merge-complete가 아닌 PR을 열린 상태로 방치하거나 검증 Gate를 무시해 main에 병합함
 - 병합된/닫힌 PR 기록을 삭제 대상으로 오인함
-- 병합 뒤 정본·최근 승인·derived view/exception·회귀 비교를 생략함
-- 실행하지 않은 CI·runtime·derived view/exception readback을 통과로 보고함
+- 병합 뒤 정본·최근 승인·approved PDF canon/exception·회귀 비교를 생략함
+- 실행하지 않은 CI·runtime·approved PDF canon/exception readback을 통과로 보고함
 
 <!-- FEDERATED_DUAL_CANON_ROUTE -->
 
-> V4 authority route: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON` owns editable structured, execution, runtime, work-status, and evidence facts. Only a `USER_APPROVED_AND_MANIFEST_REGISTERED` `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` owns the immutable human visual/review baseline. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON` and PDF annotations do not mutate repository-owned facts. See `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` and `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`.
+> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 바꾸지 않는다. 상세 owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다.

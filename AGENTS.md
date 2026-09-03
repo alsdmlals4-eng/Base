@@ -71,7 +71,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 
 - **`ZERO_INCREMENTAL_COST_REQUIRED`**: 기본 경로는 추가 금전 지출 0이다. 포함된 구독 기능도 별도 **separately metered** API·credit·runner·storage·SaaS 과금으로 바뀌지 않는 범위에서만 사용한다. **pay-as-you-go**나 신규 유료 서비스는 승인 전 실행하지 않으며 불명확하면 `COST_GATE_BLOCKED`다.
 - `CURRENT_PAID_PLANS: GPT_PRO`, `PAID_PLAN_COUNT: 1`. 현재 기본 유료 플랜은 **GPT Pro** 하나다. Notion·Google Sheets·Figma·외부 storage를 새 필수 유료 경로로 추가하지 않으며 다른 유료 기능은 **새 사용자 승인**이 필요하다.
-- 새 프로젝트·새 기획·시각 작업의 기본 계약은 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`다. 프로젝트 repository가 기획·결정·구조화 데이터·승인 runtime asset·코드·Scene·Resource·Test·Evidence를 소유하는 `REPOSITORY_PRIMARY_CANON`이며, 사람용 상세 기획서 PDF는 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`다.
+- 새 프로젝트·새 기획·시각 작업의 기본 계약은 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`의 `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`다. `REPOSITORY_EXECUTION_DATA_CANON`이 편집 가능한 기획 source·결정·구조화 데이터·승인 runtime asset·코드·Scene·Resource·Test·Evidence를 소유한다. 사람용 상세 기획서 PDF는 생성만으로 정본이 아니며 `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 version만 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`이다.
 - `NO_NEW_NOTION_WRITE_BY_DEFAULT`: 신규 기획·결정·이미지 승인·Codex handoff를 완료하기 위해 Notion에 중간 복제하지 않는다. 기존 `NOTION_DEFAULT_PROJECT_WORKSPACE`는 `NOTION_DEFAULT_PROJECT_WORKSPACE_RETIRED`이며, 고유 자료가 남은 프로젝트에서만 `NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE`로 읽는다.
 - `PROJECT_RELATION_REQUIRED`는 새 repository 정본의 필수 DB 모델이 아니라, legacy Notion record를 이관할 때 project provenance·source relation을 잃지 않기 위한 compatibility migration rule로만 유지한다.
 - active machine owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`이다. 기존 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json` V3와 과거 Notion 문서는 `V3_COMPATIBILITY_AND_HISTORY_ONLY`이며 새 작업의 기본 route가 아니다.
@@ -118,4 +118,6 @@ L1 이상 완료보고는 역할 → 핵심 규칙/작동 시점 → 사용한 W
 
 <!-- FEDERATED_DUAL_CANON_ROUTE -->
 
-> V4 authority route: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON` owns editable structured, execution, runtime, work-status, and evidence facts. Only a `USER_APPROVED_AND_MANIFEST_REGISTERED` `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` owns the immutable human visual/review baseline. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON` and PDF annotations do not mutate repository-owned facts. See `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` and `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`.
+> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 바꾸지 않는다. 상세 owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다.
+
+> 호환성: `REPOSITORY_PRIMARY_CANON`은 `REPOSITORY_EXECUTION_DATA_CANON`의 repository-domain 별칭이며, 승인 PDF의 사람용 시각·검수 정본 권한을 포함하거나 대체하지 않는다.

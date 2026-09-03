@@ -753,10 +753,21 @@ predecessor discovery and exact source pin
 → AI Markdown/source SHA/ID/delta cross-check
 → exact-head repository validation
 → user final review
+→ PDF_CANON_MANIFEST_REGISTRATION
+→ USER_APPROVED_AND_MANIFEST_REGISTERED
+→ CANON_ALIGNED
 ```
 
 최종 보고에는 predecessor ref/source SHA, revision mode, semantic delta, 삭제·상태 하향 정당화, carry-forward 범위, PM snapshot 시각과 loss-regression 결과를 추가해. 이 규칙은 `NO_SEPARATE_BLUEPRINT_ARTIFACT`, `NO_MASS_BLUEPRINT_BACKFILL`, `RUNTIME_TRUTH_SEPARATE`, 이미지 승인 경계와 사용자 최종 승인 Gate를 그대로 유지해.
 
 <!-- FEDERATED_DUAL_CANON_ROUTE -->
 
-> V4 authority route: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON` owns editable structured, execution, runtime, work-status, and evidence facts. Only a `USER_APPROVED_AND_MANIFEST_REGISTERED` `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` owns the immutable human visual/review baseline. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON` and PDF annotations do not mutate repository-owned facts. See `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` and `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`.
+> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 바꾸지 않는다. 상세 owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다.
+
+<!-- PDF_CANON_MANIFEST_REGISTRATION -->
+
+    ### 9.6 사용자 승인 뒤 PDF 정본을 등록해
+
+    `PDF_CANON_MANIFEST_REGISTRATION`
+
+    user final review가 승인된 뒤에만 `source_commit`, `pdf_sha256`, `approval_ref`, `approved_at`, `canonical_status`, `supersedes_pdf_ref`, `pdf_canon_manifest_ref`를 repository-controlled manifest에 기록하고 readback해. 생성 성공이나 다운로드 가능만으로 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`이라고 하지 마. 승인본은 immutable이며 다음 수정은 새 version·hash로 만들고 이전 승인본을 `SUPERSEDED`로 보존해.

@@ -177,7 +177,11 @@
     "PDF canon activation requires user approval, exact source commit, PDF SHA-256, approval reference, approval time, canonical status, supersession reference, and repository-controlled manifest reference.",
     "An approved PDF is immutable; a correction creates a new version and hash while preserving superseded approval history.",
     "A structured mismatch requires repository-owner reconciliation and PDF regeneration; an approved visual-baseline mismatch requires implementation correction or a newly approved PDF.",
-    "CANON_CONFLICT blocks completion and release until repository and approved-PDF domains are reconciled."
+    "CANON_CONFLICT blocks completion and release until repository and approved-PDF domains are reconciled.",
+    "The original V4 effective date is preserved; the federated dual-canon authority amendment is effective 2026-09-04 under the recorded user approval reference.",
+    "Codex and GPT Work read the approved PDF canon manifest, locator, source commit, approval reference, canonical status, and PDF SHA-256 before using its visual/review baseline.",
+    "Canonical PDF storage uses a project-controlled repository path or governed GitHub Release locator whose hash and supersession history are registered in the repository manifest.",
+    "The dual-canon contract does not trigger mass project backfill; a project adopts it through explicit synchronization or its next Blueprint revision while preserving its currently adopted contract until then."
   ],
   "repository_canon": "REPOSITORY_EXECUTION_DATA_CANON",
   "human_pdf_canon": "APPROVED_HUMAN_BLUEPRINT_PDF_CANON",
@@ -226,6 +230,14 @@
       "approved_visual_baseline_mismatch": "CORRECT_IMPLEMENTATION_OR_NEW_PDF_USER_REAPPROVAL",
       "simultaneous_unresolved_difference": "CANON_CONFLICT"
     },
-    "conflict_gate": "CANON_CONFLICT_BLOCKS_COMPLETION_AND_RELEASE"
-  }
+    "conflict_gate": "CANON_CONFLICT_BLOCKS_COMPLETION_AND_RELEASE",
+    "storage_policy": "PROJECT_CONTROLLED_REPOSITORY_OR_GITHUB_RELEASE_LOCATOR_WITH_HASH",
+    "consumer_readback": "APPROVED_PDF_CANON_MANIFEST_AND_HASH_READBACK",
+    "manifest_owner": "PROJECT_AGENTS_OR_BLUEPRINT_PUBLICATION_OWNER"
+  },
+  "authority_model_effective_date": "2026-09-04",
+  "authority_model_approval_ref": "current-user-message:2026-09-04:앞으로-둘-다-정본",
+  "repository_primary_canon_compatibility_alias": "REPOSITORY_EXECUTION_DATA_CANON",
+  "codex_blueprint_rehydration": "APPROVED_PDF_CANON_MANIFEST_AND_HASH_READBACK",
+  "dual_canon_adoption_policy": "NO_MASS_BACKFILL_PROJECT_ADOPTS_ON_EXPLICIT_SYNC_OR_NEXT_BLUEPRINT_REVISION"
 }

@@ -4,7 +4,7 @@
 
 The default project operating surface is `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE` from `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`.
 
-`REPOSITORY_PRIMARY_CANON` owns current planning, structured data, approved assets, code and evidence; `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` is the exact-SHA person-facing snapshot. `V4_NOTION_EXCEPTION_ONLY` / `NO_NEW_NOTION_WRITE_BY_DEFAULT`: Notion can be a bounded exception or read-only migration source, never the default Project Home, visual owner or active decision-sync route.
+`REPOSITORY_EXECUTION_DATA_CANON` owns editable planning sources, structured data, approved runtime assets, code and evidence; only a `USER_APPROVED_AND_MANIFEST_REGISTERED` `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` is the immutable exact-SHA person-facing visual/review baseline. `V4_NOTION_EXCEPTION_ONLY` / `NO_NEW_NOTION_WRITE_BY_DEFAULT`: Notion can be a bounded exception or read-only migration source, never the default Project Home, visual owner or active decision-sync route.
 
 ```text
 repository-native Markdown / JSON / game data / code / scenes / resources / tests
@@ -13,7 +13,7 @@ repository-native Markdown / JSON / game data / code / scenes / resources / test
 
 exact-source-SHA PDF and repository-native visual/flow artifacts
 → APPROVED_HUMAN_BLUEPRINT_PDF_CANON
-→ person-facing review without a second editable canon
+→ user-approved, manifest-registered visual/review canon without a second editable structured canon
 
 approved Notion exception or legacy source only
 → explicit owner / scope / measurable value / exit-or-revisit condition
@@ -223,4 +223,4 @@ Reject or revise a change if it:
 
 <!-- FEDERATED_DUAL_CANON_ROUTE -->
 
-> V4 authority route: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON` owns editable structured, execution, runtime, work-status, and evidence facts. Only a `USER_APPROVED_AND_MANIFEST_REGISTERED` `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` owns the immutable human visual/review baseline. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON` and PDF annotations do not mutate repository-owned facts. See `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` and `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`.
+> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 바꾸지 않는다. 상세 owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다.

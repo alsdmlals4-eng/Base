@@ -104,4 +104,12 @@ Notion Project Home = legacy migration source only
 
 <!-- FEDERATED_DUAL_CANON_ROUTE -->
 
-> V4 authority route: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON` owns editable structured, execution, runtime, work-status, and evidence facts. Only a `USER_APPROVED_AND_MANIFEST_REGISTERED` `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` owns the immutable human visual/review baseline. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON` and PDF annotations do not mutate repository-owned facts. See `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` and `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`.
+> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 바꾸지 않는다. 상세 owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다.
+
+<!-- APPROVED_PDF_CANON_CODEX_READBACK -->
+
+    ## 승인 PDF 정본 재수화
+
+    `APPROVED_PDF_CANON_MANIFEST_AND_HASH_READBACK`
+
+    제품 수정 전에 프로젝트 `AGENTS.md`가 지정한 `pdf_canon_manifest_ref`를 읽고 `source_commit`, `pdf_sha256`, `approval_ref`, `approved_at`, `canonical_status`, `supersedes_pdf_ref`를 확인한다. `USER_APPROVED_AND_MANIFEST_REGISTERED`인 PDF만 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` 시각·검수 baseline으로 소비한다. PDF의 수치·ID·작업상태는 `PDF_STRUCTURED_CONTENT_IS_REPOSITORY_PROJECTION`이므로 repository owner를 수정하고, PDF 주석만으로 구현 의미를 바꾸지 않는다.

@@ -57,7 +57,7 @@ REPOSITORY_PRIMARY_CANON
 → REPOSITORY_RUNTIME_TRUTH
 
 APPROVED_HUMAN_BLUEPRINT_PDF_CANON
-→ exact repository SHA와 evidence ceiling이 연결된 사람이 보는 milestone snapshot
+→ exact repository SHA와 evidence ceiling이 연결되고 사용자 승인·manifest 등록을 마친 불변 사람용 시각·검수 정본
 
 NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
 → unique legacy material 발견·이관에만 사용
@@ -327,7 +327,7 @@ project/build identity
 → REPOSITORY_PRIMARY_CANON
 
 사람용 milestone 검토
-→ APPROVED_HUMAN_BLUEPRINT_PDF_CANON (exact source SHA)
+→ APPROVED_HUMAN_BLUEPRINT_PDF_CANON (exact source SHA + user approval + manifest/hash readback)
 
 실제 V4 exception 또는 legacy migration source
 → NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
@@ -390,4 +390,4 @@ Notion 전환은 기존 Base의 공용 능력을 삭제하거나 숨기는 작�
 
 <!-- FEDERATED_DUAL_CANON_ROUTE -->
 
-> V4 authority route: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON` owns editable structured, execution, runtime, work-status, and evidence facts. Only a `USER_APPROVED_AND_MANIFEST_REGISTERED` `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` owns the immutable human visual/review baseline. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON` and PDF annotations do not mutate repository-owned facts. See `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` and `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`.
+> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 바꾸지 않는다. 상세 owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다.
