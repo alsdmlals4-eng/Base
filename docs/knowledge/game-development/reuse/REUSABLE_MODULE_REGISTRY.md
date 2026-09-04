@@ -1,7 +1,7 @@
 # Reusable Module Registry
 
 - 상태: Base 공용 재사용 모듈 카탈로그
-- 기준일: 2026-08-22 KST
+- 기준일: 2026-09-04 KST
 - source method: `docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md`
 - context synthesis method: `docs/knowledge/research/CONTEXT_DRIVEN_REUSE_SYNTHESIS.md`
 - project scan template: `templates/research/PROJECT_REUSE_OPPORTUNITY_SCAN.md`
@@ -82,6 +82,8 @@ EVIDENCE_REQUIRED_FOR_PROMOTION
 | `BASE_ACTIVE_METHOD` | 이미 Base의 실행 방법/Template로 사용 중 |
 | `EXISTING_OWNER_REUSE` | 새 도구/Skill을 만들지 않고 기존 Base owner를 재사용 |
 | `NO_DEDICATED_CAPTURE_APP` | 별도 검증 GUI/app 대신 repository/runtime/CI 증거를 조합 |
+| `OPTIONAL_REFERENCE_IMPLEMENTATION` | 기존 owner 아래 bounded CLI/template을 선택적으로 제공하며 전 프로젝트 필수 의존성이나 새 정본으로 승격하지 않음 |
+| `PROJECT_ADOPTION_NOT_RUN` | Base reference만 존재하며 실제 project adapter/consumer runtime 검증은 아직 없음 |
 | `DIRECT_LICENSED_REUSE_CANDIDATE` | 라이선스·버전·보안·소비 경로 검토 후 직접 자산/패키지 재사용 가능 후보 |
 | `RIGHTS_REVIEW_REQUIRED` | 표현·상표·trade dress·라이선스 등 별도 권리 검토가 필요 |
 | `NOTION_HUMAN_VIEW` | Notion은 사람이 보는 요약/현황. 구조화·runtime 권위는 저장소/프로젝트 owner |
@@ -143,11 +145,13 @@ EVIDENCE_REQUIRED_FOR_PROMOTION
 | `RM-TOOL-001` | `DATA_SCHEMA_CROSSREF_VALIDATOR` | 전체 데이터 중심 프로젝트 | `PATTERN_EXTRACT` | `MODULE_CONTRACT_DEFINED · BASE_PROMOTION_CANDIDATE · REFERENCE_IMPLEMENTATION_EXISTS` |
 | `RM-TOOL-002` | `DETERMINISTIC_SEED_REPLAY_CAPTURE` | TEN_PACES / OMENWARD / BLACKSMITH / SWITCHY / TETRIS / NINJA_SURVIVAL | `PATTERN_EXTRACT` | `MODULE_CONTRACT_DEFINED · BASE_PROMOTION_CANDIDATE · IMPLEMENTATION_NOT_BUILT` |
 | `RM-TOOL-003` | `BALANCE_SCENARIO_BATCH_SIMULATOR` | deterministic runner + project snapshot candidate | `PATTERN_EXTRACT` | `MODULE_CONTRACT_DEFINED · REFERENCE_IMPLEMENTATION_EXISTS · MULTI_PROJECT_READ_ONLY_CONTRACT_EVIDENCE` |
-| `RM-TOOL-004` | `REPOSITORY_NATIVE_EVIDENCE_CAPTURE` | current project tests/runtime/CI + Notion human link | `EXISTING_OWNER_REUSE` | `BASE_ACTIVE_METHOD · NO_DEDICATED_CAPTURE_APP` |
+| `RM-TOOL-004` | `REPOSITORY_NATIVE_EVIDENCE_CAPTURE` | current project tests/runtime/CI + Notion human link | `EXISTING_OWNER_REUSE + OPTIONAL_REFERENCE_IMPLEMENTATION` | `BASE_ACTIVE_METHOD · NO_DEDICATED_CAPTURE_APP · REFERENCE_IMPLEMENTATION_EXISTS · FOCUSED_VERIFIED · PROJECT_ADOPTION_NOT_RUN` |
 | `RM-TOOL-005` | `PUBLIC_VIDEO_RESEARCH_INGEST_ADAPTER` | public talk/tutorial/developer interview evidence | `PATTERN_EXTRACT` + thin `yt-dlp` adapter | `MODULE_CONTRACT_DEFINED · BASE_PROMOTION_CANDIDATE · REFERENCE_IMPLEMENTATION_EXISTS` |
 | `RM-WORK-001` | `PROJECT_REUSE_OPPORTUNITY_SCAN` | merged Base reverse-engineering method | `EXISTING_OWNER_REUSE` | `BASE_ACTIVE_METHOD` |
 | `RM-WORK-002` | `SKILL_WORKFLOW_PATTERN_EVAL` | `docs/AI_SKILL_ADOPTION_GUIDE.md` | `EXISTING_OWNER_REUSE` | `BASE_ACTIVE_METHOD · HUMAN_EDIT_DELTA` |
 | `RM-WORK-003` | `HUMAN_FACING_ARTIFACT_SYNTHESIS` | Base human-publication context + official presentation-AI patterns | `HYBRID · PROVIDER_NEUTRAL` | `MODULE_CONTRACT_DEFINED · FOCUSED_VERIFIED` |
+
+`RM-TOOL-004` optional runtime media reference: `tools/runtime_media_capture.py`, `templates/project-operations/runtime-media-capture/`, `RUNTIME_MEDIA_CAPTURE_REFERENCE.md`. 실제 scene/localization/effect/reward/UI adapter와 project runtime 검증은 프로젝트 owner가 별도로 수행한다.
 
 `RM-TOOL-005` reference implementation: `tools/public_video_research_ingest.py`. Network-free unit test evidence와 실제 live YouTube compatibility는 구분한다.
 
@@ -244,7 +248,7 @@ license/source/version check
 2. 실제로 중복 코드/기획 시간이 줄었는지 비교한다.
 3. 플레이 경험을 바꾸는 gameplay module은 release-near Vertical Slice에서 검증한다.
 4. Visual module은 Notion Asset/Visual workflow와 repository implementation evidence를 통해 실제 화면 품질을 검수한다.
-5. `RM-TOOL-004`는 별도 capture app 설치 없이 project-native test/runtime/CI evidence로 실제 유용성을 검증한다.
+5. `RM-TOOL-004`는 별도 capture app 설치 없이 project-native test/runtime/CI evidence를 우선하며, 선택형 `runtime_media_capture.py`는 실제 필요한 프로젝트에서만 adapter/runtime 검증 후 채택한다.
 6. `RM-TOOL-005`는 `yt-dlp`가 준비된 실제 로컬 환경에서 manual caption, auto caption, no-caption 대표 영상 각각을 검증하고 site compatibility·failure recovery evidence를 남긴다.
 7. `RM-VIS-006`은 실제 승인된 시각 제작 작업에서 기존 방식과 provider 후보를 `HUMAN_EDIT_DELTA`로 비교하고 quality/consistency/rights가 함께 개선되는지 확인한다.
 8. `RM-WORK-003`의 첫 Notion human-facing Pilot은 `FOCUSED_VERIFIED`; 다음 단계는 실제 사용자 `HUMAN_EDIT_DELTA`/`HUMAN_VISUAL_REVIEW`와 materially different 두 번째 consumer다.
