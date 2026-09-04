@@ -225,7 +225,7 @@ preview_policy:
 
 ## RM-TOOL-004 · REPOSITORY_NATIVE_EVIDENCE_CAPTURE
 
-**판정:** `EXISTING_OWNER_REUSE · NO_DEDICATED_CAPTURE_APP`.
+**판정:** `EXISTING_OWNER_REUSE · NO_DEDICATED_CAPTURE_APP · OPTIONAL_REFERENCE_IMPLEMENTATION`.
 
 프로젝트 검증 증거는 별도 QA 관리 앱을 기본 경로로 두지 않고 **이미 존재하는 repository/runtime/test/CI 증거**를 exact project/build identity에 묶는다.
 
@@ -257,7 +257,7 @@ verdict:
 2. screenshot/video가 필요한 경우 현재 실행환경에서 직접 캡처하고 commit/build/viewport/input context를 함께 기록한다.
 3. Notion은 사람이 보는 링크·preview·설명면이 될 수 있지만 repository/runtime truth를 대체하지 않는다.
 4. 사람이 실제로 관찰하지 않은 usability/fun evidence는 `NOT_RUN`이다.
-5. capture app·project adapter·별도 local management UI를 신규 기본 의존성으로 만들지 않는다.
+5. capture app·project adapter·별도 local management UI를 신규 **기본 의존성**으로 만들지 않는다. 사용자 승인에 따른 bounded CLI/template은 선택형 참조 구현으로 둘 수 있으며 실제 project adapter와 consumer는 프로젝트 owner가 소유한다.
 
 `REPOSITORY_NATIVE_EVIDENCE_CAPTURE != AI_AUTO_PASS`.
 
@@ -286,9 +286,37 @@ runtime_visual_capture_manifest:
 
 `SMALLEST_REPRESENTATIVE_CAPTURE_SET`: 정상·읽기 가능 상태 하나와, 결과를 실제로 바꾸는 distinct impact/result 또는 unavailable state가 있을 때 그 상태만 보관한다. 모든 프레임·모든 상태를 보관하거나, 이미지가 필요한지 확인하지 않은 채 capture를 기본 산출물로 만들지 않는다.
 
-`NO_COMMON_CAPTURE_SCHEMA_OR_BINARY_POLICY`: 이 YAML은 공통 JSON schema, 새 CLI/app/adapter, repository binary 보관 의무, 일률적인 용량 예산을 만들지 않는다. 저장소/CI artifact 중 무엇을 보관할지는 해당 프로젝트의 기존 권리·개인정보·용량·release 정책 owner가 결정한다. `actual_consumers`에는 실제 screen/scene/UI 또는 review consumer만 적고, 계획상 소비처를 구현 완료로 쓰지 않는다.
+`NO_COMMON_CAPTURE_SCHEMA_OR_BINARY_POLICY`: 위 visual manifest 자체는 공통 JSON schema, 필수 CLI/app/adapter, repository binary 보관 의무, 일률적인 용량 예산을 만들지 않는다. 아래 선택형 CLI가 사용하는 JSON job은 해당 도구의 bounded 입력일 뿐 프로젝트 정본 schema나 전 프로젝트 필수 의존성이 아니다. 저장소/CI artifact 중 무엇을 보관할지는 해당 프로젝트의 기존 권리·개인정보·용량·release 정책 owner가 결정한다. `actual_consumers`에는 실제 screen/scene/UI 또는 review consumer만 적고, 계획상 소비처를 구현 완료로 쓰지 않는다.
 
 `RUNTIME_VISUAL_CAPTURE_IS_NOT_HUMAN_OR_DEVICE_PASS`: hash·경로·상태가 맞는 machine runtime capture는 선언된 실행 artifact가 기록됐다는 증거일 뿐이다. Human UX, 접근성 사용자, 물리 device/platform, 성능·release, 자산 권리, 최종 사용자 승인을 PASS로 승격하지 않는다. source/build/run identity와 capture path/hash의 freshness는 기존 `FRESH_RUNTIME_ARTIFACT_GATE` owner를 계속 따른다.
+
+### 선택형 runtime media capture 참조 구현
+
+`OPTIONAL_RUNTIME_MEDIA_CAPTURE_REFERENCE_IMPLEMENTATION`
+
+2026-09-04 사용자 승인에 따라 RM-TOOL-004 아래에 별도 GUI가 아닌 bounded reference path를 둔다.
+
+- implementation: `tools/runtime_media_capture.py`
+- project adapter/job/operator templates: `templates/project-operations/runtime-media-capture/`
+- contract and official-profile notes: `docs/knowledge/game-development/reuse/RUNTIME_MEDIA_CAPTURE_REFERENCE.md`
+- focused regression: `tests/test_runtime_media_capture.py`
+
+이 참조 구현은 project-owned numbered PNG sequence를 입력으로 받거나, argument-array capture command를 locale별로 호출한 뒤 다음을 수행한다.
+
+```text
+project locale/fixture capture
+→ contiguous PNG/source-dimension readback
+→ Steam About MP4 + GIF preview encode
+→ ffprobe profile/duration readback
+→ SHA-256 portable manifest
+→ rollback-aware all-locale publish
+```
+
+Steam About profile은 공식 extra-asset 권고에 맞춰 폭 1170px, 종횡비 유지·짝수 높이, H.264/libx264, yuv420p, square pixels, BT.709 metadata, 최대 12초, faststart를 검사한다. GIF는 palettegen/paletteuse 품질 ladder에서 5,000,000 bytes 미만인 첫 후보를 선택한다. 단일 job은 Steam 페이지 전체 screenshots+GIF 예산, 실제 업로드·재인코딩, 번역/가독성, 마케팅 품질, 자산 권리, Human/사용자 승인을 증명하지 않는다.
+
+이 경로는 `NO_DEDICATED_CAPTURE_APP`와 양립한다. Base는 encoder/validator/orchestrator만 제공하고, 실제 scene, `TranslationServer`, effect/reward result packet, notice UI, readiness, gameplay meaning, artifact retention은 프로젝트가 계속 소유한다. 프로젝트 채택 전 상태는 `PROJECT_ADOPTION_NOT_RUN`이며, Godot template 존재를 project runtime 구현으로 계산하지 않는다.
+
+상태: `BASE_ACTIVE_METHOD · REFERENCE_IMPLEMENTATION_EXISTS · FOCUSED_VERIFIED · PROJECT_ADOPTION_NOT_RUN`.
 
 ---
 
@@ -586,9 +614,9 @@ Existing Solution First
 | P1 | `RM-TOOL-003 BALANCE_SCENARIO_BATCH_SIMULATOR` | 가치가 크지만 project snapshot/runner evidence가 먼저 필요; OMENWARD read-only Pilot이 1차 소비자 |
 | P1 | `RM-TOOL-005 PUBLIC_VIDEO_RESEARCH_INGEST_ADAPTER` | 영상 연구의 근거 손실을 줄이지만 live site compatibility와 실제 프로젝트 소비 검증이 필요 |
 | ACTIVE | `ATOMIC_RESOLUTION_BOUNDARY` | 새 runtime module이 아니라 기존 FSM/result/replay owner가 공유하는 경계 계약 |
-| ACTIVE | `RM-TOOL-004 REPOSITORY_NATIVE_EVIDENCE_CAPTURE` | 별도 앱 없이 기존 test/runtime/CI 증거를 재사용 |
+| ACTIVE | `RM-TOOL-004 REPOSITORY_NATIVE_EVIDENCE_CAPTURE` | 별도 앱 없이 기존 test/runtime/CI 증거를 재사용하고, 필요 시 선택형 MP4/GIF encoder/validator를 사용 |
 | ACTIVE | `RM-WORK-001/002` | 이미 Base 방법으로 존재; subsystem change map과 `HUMAN_EDIT_DELTA`는 기존 owner 보강 |
 
 # 완료 상태
 
-이 문서의 신규 tool contract는 실제 executable 구현과 분리한다. `RM-TOOL-004`는 별도 프로그램이 아니라 현재 repository/runtime evidence를 조합하는 **활성 방법 계약**이다. `RM-TOOL-001/002/003`은 실제 공용 executable 증거가 생기기 전까지 `IMPLEMENTATION_NOT_BUILT` 또는 project-local pilot 상태를 유지한다. `ATOMIC_RESOLUTION_BOUNDARY`와 `PROJECT_SUBSYSTEM_CHANGE_MAP`은 기존 owner를 보강하는 계약이며 별도 공용 runtime/Skill 구현이 아니다. `RM-TOOL-005`는 bounded reference implementation `tools/public_video_research_ingest.py`가 있으며 unit test는 계약·parser·fail-closed 동작과 caller-supplied local transcript provenance 제한을 증명한다. live YouTube compatibility와 project adoption은 별도 검증이 필요하다.
+이 문서의 신규 tool contract는 실제 project adoption과 분리한다. `RM-TOOL-004`는 현재 repository/runtime evidence를 조합하는 **활성 방법 계약**이며, 별도 Capture Studio를 만들지 않고 bounded reference implementation `tools/runtime_media_capture.py`를 선택적으로 제공한다. 이 구현의 synthetic FFmpeg/ffprobe 검증은 project Godot runtime, localization, Steam upload, Human UX 또는 release PASS가 아니다. `RM-TOOL-001/002/003`은 실제 공용 executable 증거가 생기기 전까지 `IMPLEMENTATION_NOT_BUILT` 또는 project-local pilot 상태를 유지한다. `ATOMIC_RESOLUTION_BOUNDARY`와 `PROJECT_SUBSYSTEM_CHANGE_MAP`은 기존 owner를 보강하는 계약이며 별도 공용 runtime/Skill 구현이 아니다. `RM-TOOL-005`는 bounded reference implementation `tools/public_video_research_ingest.py`가 있으며 unit test는 계약·parser·fail-closed 동작과 caller-supplied local transcript provenance 제한을 증명한다. live YouTube compatibility와 project adoption은 별도 검증이 필요하다.
