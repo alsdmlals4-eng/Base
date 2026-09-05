@@ -82,7 +82,7 @@ measurement_repetitions:
 - CPU·GPU·메모리·네트워크·로딩을 분리한다.
 - 에디터·디버거·프로파일러 오버헤드를 기록한다.
 - 재현 가능한 대표 장면과 입력을 고정한다.
-- 화면·렌더 부하나 오브젝트 배치 밀도가 측정값에 영향을 주면 viewport/window 크기, render scale/DPI/stretch/embedded-window 상태와 workload를 배치한 coordinate space를 고정한다. 이 조건이 달라져 배치 밀도·픽셀 부하·충돌/상호작용 수가 변하면 같은 workload로 직접 비교하지 않는다.
+- 화면·렌더 부하나 오브젝트 배치 밀도가 측정값에 영향을 주면 viewport/window 크기, render scale/stretch/embedded-window 상태와 workload를 배치한 coordinate space를 고정한다. 이 조건이 달라져 배치 밀도·픽셀 부하·충돌/상호작용 수가 변하면 같은 workload로 직접 비교하지 않는다.
 - 입력 처리 비용이 성능에 영향을 줄 수 있으면 장치 polling/event rate, 엔진의 accumulation/coalescing 설정, 대표·최악 입력 패턴을 capture 조건으로 고정한다. 같은 Scene이라도 이벤트 빈도가 다르면 별도 workload로 취급한다.
 - 한 번의 캡처보다 여러 번 측정해 변동을 확인한다.
 - 병목을 측정하기 전에 임의 최적화하지 않는다.
@@ -132,7 +132,7 @@ Unity Test Framework처럼 엔진이 Edit Mode, Play Mode, target player를 구�
 - 목표 플랫폼·빌드·장면
 - baseline과 변경 후 frame time
 - CPU·GPU·메모리·네트워크 병목
-- viewport/window·render scale/DPI/stretch/embedded-window·coordinate-space 조건
+- viewport/window·render scale/stretch/embedded-window·coordinate-space 조건
 - input device event rate·accumulation/coalescing 조건
 - profiler 오버헤드와 반복 변동
 - 품질·기능 trade-off
@@ -148,7 +148,7 @@ Unity Test Framework처럼 엔진이 Edit Mode, Play Mode, target player를 구�
 - 에디터의 빈 장면만 측정해 실제 빌드 성능으로 주장한다.
 - profiler 없이 추측으로 병목을 최적화한다.
 - baseline·장면·빌드 조건이 다른 수치를 직접 비교한다.
-- viewport/window 크기, render scale/DPI/stretch/embedded-window 또는 workload coordinate space 차이가 배치 밀도·픽셀 부하·충돌/상호작용 수를 바꾸는데도 같은 workload로 직접 비교한다.
+- viewport/window 크기, render scale/stretch/embedded-window 또는 workload coordinate space 차이가 배치 밀도·픽셀 부하·충돌/상호작용 수를 바꾸는데도 같은 workload로 직접 비교한다.
 - 입력 집약 캡처에서 장치 polling/event rate 또는 accumulation/coalescing 설정이 다른데 같은 조건으로 비교한다.
 - 성능 개선으로 게임 규칙·가독성·아트 약속이 훼손됐는데 회귀를 생략한다.
 
