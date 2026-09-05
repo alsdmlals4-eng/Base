@@ -15,7 +15,7 @@ class PerformanceWorkloadIdentityTests(unittest.TestCase):
         for token in (
             "display_viewport_render_scale_and_coordinate_space",
             "viewport/window 크기",
-            "render scale/DPI/stretch/embedded-window",
+            "render scale/stretch/embedded-window",
             "배치 밀도·픽셀 부하·충돌/상호작용 수",
             "같은 workload로 직접 비교하지 않는다",
         ):
