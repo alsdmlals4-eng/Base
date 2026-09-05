@@ -65,6 +65,7 @@ status:
 target_hardware_and_os:
 build_configuration:
 representative_scenes_and_loads:
+display_viewport_render_scale_and_coordinate_space:
 input_device_event_rate_and_accumulation:
 frame_time_budget_ms:
 cpu_gpu_memory_network_budgets:
@@ -81,6 +82,7 @@ measurement_repetitions:
 - CPU·GPU·메모리·네트워크·로딩을 분리한다.
 - 에디터·디버거·프로파일러 오버헤드를 기록한다.
 - 재현 가능한 대표 장면과 입력을 고정한다.
+- 화면·렌더 부하나 오브젝트 배치 밀도가 측정값에 영향을 주면 viewport/window 크기, render scale/DPI/stretch/embedded-window 상태와 workload를 배치한 coordinate space를 고정한다. 이 조건이 달라져 배치 밀도·픽셀 부하·충돌/상호작용 수가 변하면 같은 workload로 직접 비교하지 않는다.
 - 입력 처리 비용이 성능에 영향을 줄 수 있으면 장치 polling/event rate, 엔진의 accumulation/coalescing 설정, 대표·최악 입력 패턴을 capture 조건으로 고정한다. 같은 Scene이라도 이벤트 빈도가 다르면 별도 workload로 취급한다.
 - 한 번의 캡처보다 여러 번 측정해 변동을 확인한다.
 - 병목을 측정하기 전에 임의 최적화하지 않는다.
@@ -89,6 +91,8 @@ measurement_repetitions:
 Unreal Engine 공식 문서는 30·60·120 FPS 같은 목표를 frame time과 목표 하드웨어 예산으로 연결하고, Unreal Insights·Stat Commands 등으로 CPU·GPU·메모리·네트워크를 측정하도록 안내한다. 또한 에디터 노이즈를 줄이고 목표 환경과 가까운 재현 사례에서 밀리초 단위로 비교할 것을 권장한다.
 
 Godot의 2026-08-24 Windows high-polling mouse 성능 사례는 같은 장면에서도 입력 event rate와 accumulation 설정이 입력 처리 비용을 크게 바꿀 수 있음을 보여준다. Godot 4.7.2에는 해당 Windows 입력 경로 수정이 포함되지만, 프로젝트의 `_input()`·`_unhandled_input()` 비용은 여전히 실제 이벤트 빈도에 영향을 받을 수 있다. 이 사례의 특정 polling rate·하드웨어·Windows 결과를 다른 OS·장치·Godot 버전의 보편 임계값으로 사용하지 않고, exact engine version·OS·input mode·event rate·accumulation 조건을 함께 기록한다.
+
+Godot Benchmarks의 2026-08-25 workload-identity 교정 사례에서는 `Area2D`와 `CharacterBody2D` benchmark가 오브젝트 위치를 window 좌표로 무작위 배치해, 창을 줄였을 때 오브젝트가 더 조밀해지고 physics 성능이 달라졌다. upstream은 배치 기준을 `get_viewport_rect().size`로 바꾸어 실제 viewport 좌표에 고정했다. 이 사례에서 재사용하는 것은 **측정 대상 자체를 만드는 좌표계·viewport/window·display scale이 capture identity의 일부**라는 원칙이며, 해당 Godot benchmark의 결과나 특정 장치·버전 수치를 보편 성능 수치나 임계값으로 승격하지 않는다.
 
 ## 6. 성능 검수 절차
 
@@ -128,6 +132,7 @@ Unity Test Framework처럼 엔진이 Edit Mode, Play Mode, target player를 구�
 - 목표 플랫폼·빌드·장면
 - baseline과 변경 후 frame time
 - CPU·GPU·메모리·네트워크 병목
+- viewport/window·render scale/DPI/stretch/embedded-window·coordinate-space 조건
 - input device event rate·accumulation/coalescing 조건
 - profiler 오버헤드와 반복 변동
 - 품질·기능 trade-off
@@ -143,6 +148,7 @@ Unity Test Framework처럼 엔진이 Edit Mode, Play Mode, target player를 구�
 - 에디터의 빈 장면만 측정해 실제 빌드 성능으로 주장한다.
 - profiler 없이 추측으로 병목을 최적화한다.
 - baseline·장면·빌드 조건이 다른 수치를 직접 비교한다.
+- viewport/window 크기, render scale/DPI/stretch/embedded-window 또는 workload coordinate space 차이가 배치 밀도·픽셀 부하·충돌/상호작용 수를 바꾸는데도 같은 workload로 직접 비교한다.
 - 입력 집약 캡처에서 장치 polling/event rate 또는 accumulation/coalescing 설정이 다른데 같은 조건으로 비교한다.
 - 성능 개선으로 게임 규칙·가독성·아트 약속이 훼손됐는데 회귀를 생략한다.
 
@@ -157,3 +163,6 @@ Unity Test Framework처럼 엔진이 Edit Mode, Play Mode, target player를 구�
 - Epic Games — Performance and Profiling Overview: https://dev.epicgames.com/documentation/en-us/unreal-engine/performance-and-profiling-overview
 - Unity — Edit Mode vs Play Mode tests: https://docs.unity3d.com/Packages/com.unity.test-framework@2.0/manual/edit-mode-vs-play-mode-tests.html
 - Godot — Fixing high polling rate mice on Windows in Godot: https://godotengine.org/article/fixing-high-polling-rate-mice-on-windows/
+- Godot Benchmarks — repository: https://github.com/godotengine/godot-benchmarks
+- Godot Benchmarks — workload-coordinate failure report #140: https://github.com/godotengine/godot-benchmarks/issues/140
+- Godot Benchmarks — fix PR #141: https://github.com/godotengine/godot-benchmarks/pull/141
