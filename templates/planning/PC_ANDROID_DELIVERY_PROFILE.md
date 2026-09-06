@@ -143,6 +143,8 @@ large_screen_configuration_continuity:
   guideline_source: https://developer.android.com/games/guidelines
   technical_source: https://developer.android.com/games/develop/multiplatform/support-large-screen-resizability
   project_large_screen_scope:
+  declared_supported_transitions: []
+  unsupported_scope_reason:
   transitions:
     rotation: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED
     fold_unfold: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED
@@ -154,10 +156,11 @@ large_screen_configuration_continuity:
   interactive_ui_visibility_status: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED
   distortion_or_overlap_status: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED
   focus_resume_path_status: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED
+  resume_depends_only_on_focus_reacquire: false | true | UNKNOWN
   evidence_or_capture_refs: []
 ```
 
-`PASS`는 transition 전후 정지 화면만 비교해서 부여하지 않는다. 동일한 active gameplay state에서 실제 transition을 수행하고, state/progress·touch mapping·interactive UI·resume path를 함께 관찰한 runtime evidence가 있어야 한다.
+`PASS`는 transition 전후 정지 화면만 비교해서 부여하지 않는다. 동일한 active gameplay state에서 실제 transition을 수행하고, state/progress·touch mapping·interactive UI·resume path를 함께 관찰한 runtime evidence가 있어야 한다. Multi-window 복귀는 focus reacquire 하나만으로 정상 복구를 가정하지 않는다.
 
 ## 6. Semantic Input Actions
 
@@ -363,6 +366,7 @@ physical_android_evidence:
 
 large_screen_configuration_transition_evidence:
   build:
+  environment_type: EMULATOR | PHYSICAL_DEVICE
   device_or_emulator:
   os_version:
   transitions_exercised: []
@@ -375,7 +379,7 @@ large_screen_configuration_transition_evidence:
   focus_resume_observation:
   artifact_or_log_refs: []
   result:
-  state: NOT_APPLICABLE | DEVICE_NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED
+  state: NOT_APPLICABLE | EMULATOR_NOT_RUN | EMULATOR_FAIL | EMULATOR_PASS | DEVICE_NOT_RUN | DEVICE_FAIL | DEVICE_PASS | BLOCKED_UNVERIFIED
 
 human_usability_evidence:
   participants:
@@ -384,6 +388,8 @@ human_usability_evidence:
   result:
   state: HUMAN_NOT_RUN | FAIL | PASS
 ```
+
+에뮬레이터 transition PASS는 재현 가능한 사전 검증으로 사용할 수 있지만 실제 foldable/tablet hardware 호환성 PASS를 대신하지 않는다. 물리 장치 지원을 주장하려면 해당 범위에 대한 `DEVICE_PASS` evidence가 필요하다.
 
 ## 10. Store and Account Readiness
 
