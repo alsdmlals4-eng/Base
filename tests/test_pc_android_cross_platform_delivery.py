@@ -224,7 +224,7 @@ class PcAndroidCrossPlatformDeliveryTests(unittest.TestCase):
             "focus_resume_path_status:",
             "configuration_transition_continuity_when_supported",
             "large_screen_configuration_transition_evidence:",
-            "actual transition",
+            "실제 transition",
             'android:appCategory="game"',
         ):
             self.assertIn(term, profile)
