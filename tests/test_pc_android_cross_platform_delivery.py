@@ -196,6 +196,51 @@ class PcAndroidCrossPlatformDeliveryTests(unittest.TestCase):
         ):
             self.assertIn(term, profile)
 
+    def test_android_large_screen_configuration_continuity_is_explicit_and_scope_bound(self) -> None:
+        guide = read(GUIDE)
+        profile = read(PROFILE)
+
+        for term in (
+            "태블릿·폴더블",
+            "Google Play Games Level Up",
+            "voluntary",
+            "developer.android.com/games/guidelines",
+        ):
+            self.assertIn(term, guide)
+
+        for term in (
+            "Android Large-Screen Configuration Continuity",
+            "large_screen_configuration_continuity:",
+            "https://developer.android.com/games/guidelines",
+            "https://developer.android.com/games/develop/multiplatform/support-large-screen-resizability",
+            "declared_supported_transitions:",
+            "rotation: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED",
+            "fold_unfold: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED",
+            "split_screen: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED",
+            "freeform_resize: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED",
+            "active_game_state_preserved:",
+            "progress_preserved:",
+            "touch_mapping_status:",
+            "interactive_ui_visibility_status:",
+            "focus_resume_path_status:",
+            "resume_depends_only_on_focus_reacquire:",
+            "configuration_transition_continuity_when_supported",
+            "large_screen_configuration_transition_evidence:",
+            "environment_type: EMULATOR | PHYSICAL_DEVICE",
+            "EMULATOR_PASS",
+            "DEVICE_PASS",
+            "실제 transition",
+            "물리 장치 지원",
+            'android:appCategory="game"',
+        ):
+            self.assertIn(term, profile)
+
+        self.assertIn(
+            "프로그램 전용 요구를 일반 Google Play submission Gate로 승격하지 않는다",
+            profile,
+        )
+        self.assertNotIn("LU-LS-GAB: PASS", profile)
+
     def test_benchmark_and_evidence_limits_are_explicit(self) -> None:
         guide = read(GUIDE)
         for term in (

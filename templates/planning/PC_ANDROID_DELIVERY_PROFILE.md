@@ -131,6 +131,37 @@ finger_occlusion_controls:
 android_back_behavior:
 ```
 
+### 5.1 Android Large-Screen Configuration Continuity
+
+정상 상태의 태블릿·폴더블 화면이 한 번 잘 보이는 것과 **화면 구성 전환 중 상태·입력·레이아웃이 보존되는 것**은 별도 증거다. 프로젝트가 해당 form factor/window mode를 지원한다고 선언했거나 `level_up_program_scope`가 `CANDIDATE | ENROLLED`이면 적용 가능한 transition을 실제 build에서 검증한다. 지원 범위 밖 transition은 이유를 남긴 `NOT_APPLICABLE`로 둘 수 있다.
+
+`Google Play Games Level Up`은 voluntary program이므로 프로그램 전용 요구를 일반 Google Play submission Gate로 승격하지 않는다. 프로그램 후보/참여 프로젝트는 적용 시점의 현재 공식 guideline을 다시 읽는다. Android 16/17의 일반 app resizability 동작도 `android:appCategory="game"` 예외와 target/version 조건을 확인한 뒤 적용한다.
+
+```yaml
+large_screen_configuration_continuity:
+  checked_at:
+  guideline_source: https://developer.android.com/games/guidelines
+  technical_source: https://developer.android.com/games/develop/multiplatform/support-large-screen-resizability
+  project_large_screen_scope:
+  declared_supported_transitions: []
+  unsupported_scope_reason:
+  transitions:
+    rotation: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED
+    fold_unfold: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED
+    split_screen: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED
+    freeform_resize: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED
+  active_game_state_preserved: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED
+  progress_preserved: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED
+  touch_mapping_status: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED
+  interactive_ui_visibility_status: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED
+  distortion_or_overlap_status: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED
+  focus_resume_path_status: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED
+  resume_depends_only_on_focus_reacquire: false | true | UNKNOWN
+  evidence_or_capture_refs: []
+```
+
+`PASS`는 transition 전후 정지 화면만 비교해서 부여하지 않는다. 동일한 active gameplay state에서 실제 transition을 수행하고, state/progress·touch mapping·interactive UI·resume path를 함께 관찰한 runtime evidence가 있어야 한다. Multi-window 복귀는 focus reacquire 하나만으로 정상 복구를 가정하지 않는다.
+
 ## 6. Semantic Input Actions
 
 ```yaml
@@ -308,6 +339,7 @@ test_matrix:
     - minimum_device_physical
     - long_aspect_phone
     - tablet_or_foldable_when_supported
+    - configuration_transition_continuity_when_supported
     - touch_and_android_back
     - background_foreground_process_recreation
     - install_update_save_migration_offline
@@ -332,6 +364,23 @@ physical_android_evidence:
   artifact_or_log:
   state: DEVICE_NOT_RUN | FAIL | PASS
 
+large_screen_configuration_transition_evidence:
+  build:
+  environment_type: EMULATOR | PHYSICAL_DEVICE
+  device_or_emulator:
+  os_version:
+  transitions_exercised: []
+  active_game_state_before:
+  active_game_state_after:
+  progress_before:
+  progress_after:
+  touch_mapping_observation:
+  ui_visibility_observation:
+  focus_resume_observation:
+  artifact_or_log_refs: []
+  result:
+  state: NOT_APPLICABLE | EMULATOR_NOT_RUN | EMULATOR_FAIL | EMULATOR_PASS | DEVICE_NOT_RUN | DEVICE_FAIL | DEVICE_PASS | BLOCKED_UNVERIFIED
+
 human_usability_evidence:
   participants:
   critical_tasks:
@@ -339,6 +388,8 @@ human_usability_evidence:
   result:
   state: HUMAN_NOT_RUN | FAIL | PASS
 ```
+
+에뮬레이터 transition PASS는 재현 가능한 사전 검증으로 사용할 수 있지만 실제 foldable/tablet hardware 호환성 PASS를 대신하지 않는다. 물리 장치 지원을 주장하려면 해당 범위에 대한 `DEVICE_PASS` evidence가 필요하다.
 
 ## 10. Store and Account Readiness
 
@@ -448,6 +499,7 @@ windows_export_and_runtime:
 android_export_and_runtime:
 physical_android_device:
 mobile_ui_and_input:
+large_screen_configuration_continuity:
 background_foreground_recovery:
 performance_budget:
 google_play_android_vitals:
@@ -459,4 +511,4 @@ human_usability:
 final_profile_status:
 ```
 
-문서 작성만으로 `DUAL_TARGET_APPROVED`를 부여하지 않는다. 실행하지 않은 build·device·human·store 검증은 각각 `NOT_RUN`, `DEVICE_NOT_RUN`, `HUMAN_NOT_RUN`, `BLOCKED_UNVERIFIED`로 유지한다. Google Play production field data가 없으면 `google_play_android_vitals`도 `NOT_ENOUGH_FIELD_DATA` 또는 해당 pre-release 상태로 유지한다.
+문서 작성만으로 `DUAL_TARGET_APPROVED`를 부여하지 않는다. 실행하지 않은 build·device·human·store 검증은 각각 `NOT_RUN`, `DEVICE_NOT_RUN`, `HUMAN_NOT_RUN`, `BLOCKED_UNVERIFIED`로 유지한다. Large-screen configuration continuity도 실제 transition runtime evidence 없이 `PASS`로 만들지 않는다. Google Play production field data가 없으면 `google_play_android_vitals`도 `NOT_ENOUGH_FIELD_DATA` 또는 해당 pre-release 상태로 유지한다.
