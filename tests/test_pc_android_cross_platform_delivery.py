@@ -213,6 +213,7 @@ class PcAndroidCrossPlatformDeliveryTests(unittest.TestCase):
             "large_screen_configuration_continuity:",
             "https://developer.android.com/games/guidelines",
             "https://developer.android.com/games/develop/multiplatform/support-large-screen-resizability",
+            "declared_supported_transitions:",
             "rotation: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED",
             "fold_unfold: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED",
             "split_screen: NOT_APPLICABLE | NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED",
@@ -222,9 +223,14 @@ class PcAndroidCrossPlatformDeliveryTests(unittest.TestCase):
             "touch_mapping_status:",
             "interactive_ui_visibility_status:",
             "focus_resume_path_status:",
+            "resume_depends_only_on_focus_reacquire:",
             "configuration_transition_continuity_when_supported",
             "large_screen_configuration_transition_evidence:",
+            "environment_type: EMULATOR | PHYSICAL_DEVICE",
+            "EMULATOR_PASS",
+            "DEVICE_PASS",
             "실제 transition",
+            "물리 장치 지원",
             'android:appCategory="game"',
         ):
             self.assertIn(term, profile)
