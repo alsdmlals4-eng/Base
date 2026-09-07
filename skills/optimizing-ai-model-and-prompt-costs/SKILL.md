@@ -58,6 +58,7 @@ COST_GATE_BLOCKED
 ## Skill Modes
 
 - `route-model-and-effort`: 작업 난도·품질 위험·권한·실패 비용·재시도·재작업을 분류해 모델 등급과 추론 단계를 추천한다.
+  - 먼저 `references/model-stack-routing.md`의 **작업별 실행 방식 선택**을 적용해 기존 도구 재사용 또는 `Single / Cascade / Critique`와 선택 이유를 기록한다. 이는 mode 추가나 자동 모델 전환이 아니다.
 - `design-cacheable-prefix`: 반복 가능한 안정 접두부와 현재 작업의 변동 접미부를 분리하고 민감·변동 정보를 캐시 경계에서 제외한다.
 - `estimate-cost`: 입력·출력·cache write·cache read·재시도·상위 모델 재작업 비용을 분리해 사전 추정한다.
 - `measure-actual-usage`: provider usage·청구 근거·cache hit/miss·재시도·품질 결과를 기록한다.
@@ -84,6 +85,8 @@ COST_GATE_BLOCKED
 - 현재 `SUBSCRIPTION_INCLUDED` surface만으로 충분한데 API/credits 사용을 정당화하기 위해 비용 계산을 추가하려 한다.
 
 ## Required inputs
+
+단일 모델 환경의 비사용 조건과 Registry trigger는 유지한다. 이 경우 비용 Skill을 억지로 활성화하지 않고 기존 작업 owner가 `templates/project-operations/SKILL_EXECUTION_REPORT.md`에서 연결한 실행 방식 reference만 사용한다. 모델 선택권이 없어도 기존 검증·실패 분류는 생략하지 않는다.
 
 ```yaml
 work_package:
@@ -209,6 +212,7 @@ mode:
 cost_surface:
 paid_path_approval:
 model_recommendation:
+execution_strategy: # 실행 방식 비교 시에만 사용; 상세 필드와 기존 보고서 매핑은 model-stack-routing.md
 provider_profile:
 prompt_cache_boundary:
 cost_estimate:
@@ -234,6 +238,7 @@ verification_status: PASSED | PARTIAL | FAILED | NOT_RUN | BLOCKED
 - 절감률이 실제 usage와 품질 통과 뒤 계산됐는가
 - 모델 하향으로 생긴 재작업이 총비용에 포함됐는가
 - 실행하지 않은 billing·cache hit·절감 검증을 `NOT_RUN`으로 남겼는가
+- 실행 방식을 비교했다면 선택 이유·실제 capability·필수 gate·실패 원인·다음 행동·관측 상한이 기존 결과에 연결됐는가
 
 ## Failure conditions
 

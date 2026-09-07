@@ -1,13 +1,54 @@
 from __future__ import annotations
 
 import unittest
+import re
 from pathlib import Path
+from urllib.parse import unquote, urlsplit
+
+from markdown_it import MarkdownIt
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class P08AiOperationsContractTests(unittest.TestCase):
+    def test_execution_report_routes_to_resolvable_cost_reference_and_owners(self) -> None:
+        """Catch missing report routing, broken relative targets and stale anchors.
+
+        This validates the actual Markdown navigation graph, not model behavior.
+        Consumer application is evaluated separately with isolated agents.
+        """
+        report = ROOT / "templates/project-operations/SKILL_EXECUTION_REPORT.md"
+        reference = ROOT / "skills/optimizing-ai-model-and-prompt-costs/references/model-stack-routing.md"
+        parser = MarkdownIt()
+        for source in (report, reference):
+            tokens = parser.parse(source.read_text(encoding="utf-8"))
+            local_targets: list[Path] = []
+            for token in tokens:
+                for child in token.children or []:
+                    if child.type != "link_open":
+                        continue
+                    url = urlsplit(child.attrGet("href") or "")
+                    if url.scheme or url.netloc or not url.path:
+                        continue
+                    target = (source.parent / unquote(url.path)).resolve()
+                    with self.subTest(source=source.relative_to(ROOT), href=child.attrGet("href")):
+                        self.assertTrue(target.is_relative_to(ROOT.resolve()))
+                        self.assertTrue(target.is_file(), f"Unresolved reference: {target}")
+                        local_targets.append(target)
+                        if url.fragment:
+                            headings = parser.parse(target.read_text(encoding="utf-8"))
+                            slugs = {
+                                re.sub(r"[^\w\- ]", "", headings[index + 1].content.lower()).replace(" ", "-")
+                                for index, node in enumerate(headings[:-1])
+                                if node.type == "heading_open"
+                            }
+                            self.assertIn(unquote(url.fragment), slugs, "Unresolved Markdown heading")
+            if source == report:
+                self.assertIn(reference.resolve(), local_targets, "Report has no route to its execution-pattern owner")
+            else:
+                self.assertIn(report.resolve(), local_targets, "Reference has no result consumer")
+
     def test_external_executor_rehydrates_current_canon_and_gpt_reviews(self) -> None:
         skill = (ROOT / "skills/orchestrating-deepseek-worktrees/SKILL.md").read_text(encoding="utf-8")
         for term in (

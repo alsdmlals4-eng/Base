@@ -1,0 +1,111 @@
+{
+  "work_level": "L1",
+  "approval_ref": "2026-09-07 current conversation: recommended existing-Skill execution-pattern extension approved by user 진행해",
+  "approved_scope": "Extend existing cost Skill/reference with advisory execution-pattern selection, failure routing and observation mapping; verify, review, normal PR merge and readback. No runtime router, model/config changes, paid tools or project rollout.",
+  "outcome_status": "START_SNAPSHOT_NOT_CLOSEOUT",
+  "current_status_owner": "Current-task PR on codex/execution-pattern-routing-20260907; final evidence on PR, not this historical snapshot",
+  "benchmark_preflight_receipt": {
+    "state": "PASS",
+    "entries": [
+      {
+        "source_and_evidence": "Base@1072e201900e3aa4a403330d4132c737fc86142a: cost SKILL and model-stack-routing reference, actual SKILL_EXECUTION_REPORT template, recovery and continuous-work owners read; 41 baseline tests PASS.",
+        "observed_pattern": "Risk-aware model recommendation and total-cost gates exist; reference lacks an explicit execution-pattern and failure-routing output.",
+        "project_fit_and_difference": "Extend existing advisory owner/output and reuse existing recovery/review gates; do not create a runner.",
+        "disposition": "ADOPT"
+      },
+      {
+        "source_and_evidence": "https://github.blog/ai-and-ml/github-copilot/project-hydrafusion-frontier-quality-via-multi-model-orchestration/ read 2026-09-07",
+        "observed_pattern": "Task-conditioned Single/Cascade/Critique; bounded legs and workflow-wide accounting. Vendor reports controlled offline results.",
+        "project_fit_and_difference": "Adapt selection principles only; no universal savings, no replacement of Base review floor, no installation or new payment surface.",
+        "disposition": "ADAPT"
+      },
+      {
+        "source_and_evidence": "Base reuse handoff and module registry RM-WORK-002 -> docs/AI_SKILL_ADOPTION_GUIDE.md; source/catalog and handoff changes from merged855-858; open807/808 paths inspected read-only.",
+        "observed_pattern": "Pattern-not-package-copy and representative before/after/negative routing eval; reference is not runtime proof.",
+        "project_fit_and_difference": "Existing reference and consumer evaluation suffice; no game module or other project is implicated; no open-PR content absorption.",
+        "disposition": "ADOPT"
+      }
+    ]
+  },
+  "alternatives": [
+    {
+      "option": "Keep current guidance",
+      "disposition": "REJECT",
+      "reason": "Preserves safety but leaves requested explicit execution-pattern recording absent."
+    },
+    {
+      "option": "Extend current Skill/reference and existing report mapping",
+      "disposition": "ADOPT",
+      "reason": "Smallest reversible change with actual agent consumers and existing validators."
+    },
+    {
+      "option": "Install HydraFusion or build multi-model runtime router",
+      "disposition": "REJECT",
+      "reason": "Unneeded executor and new availability/cost/permission boundary; outside approval."
+    }
+  ],
+  "context_configuration_hygiene": {
+    "scope": "Cost Skill, reference, Learning Log, existing report mapping and task-only plan/receipt; no broad deletion.",
+    "inventory": [
+      {
+        "path": "skills/optimizing-ai-model-and-prompt-costs/SKILL.md",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "Current cost/routing owner",
+        "references_and_consumers": "Registry, Documentation Map, model-stack-routing, real report fields",
+        "removal_proposed": false
+      },
+      {
+        "path": "skills/optimizing-ai-model-and-prompt-costs/references/model-stack-routing.md",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "Existing advisory reference",
+        "references_and_consumers": "SKILL Read first and route-model-and-effort mode",
+        "removal_proposed": false
+      }
+    ]
+  },
+  "project_work_kanban": {
+    "goal_or_slice_issue_ref": "User-approved execution-pattern recommendation / codex/execution-pattern-routing-20260907",
+    "source_main_sha": "1072e201900e3aa4a403330d4132c737fc86142a",
+    "work_item_refs": [
+      "PATTERN-01"
+    ],
+    "active_work_item_ref": "PATTERN-01",
+    "next_action": "Baseline consumer gap test, then bounded reference extension and verification.",
+    "work_items": [
+      {
+        "work_item_id": "PATTERN-01",
+        "title": "Connect advisory execution pattern to current cost Skill",
+        "status": "IN_PROGRESS",
+        "canon_owner": "skills/optimizing-ai-model-and-prompt-costs/references/model-stack-routing.md",
+        "actual_consumers": [
+          "skills/optimizing-ai-model-and-prompt-costs/SKILL.md",
+          "templates/project-operations/SKILL_EXECUTION_REPORT.md"
+        ],
+        "depends_on": [],
+        "acceptance_criteria": [
+          "PATTERN-AC"
+        ],
+        "required_evidence": [
+          "E2_TEST"
+        ],
+        "checklist": [
+          {
+            "id": "PATTERN-AC",
+            "text": "Representative and negative route application recovers pattern/reason/failure/limits without new authority; existing tests, independent review, exact CI and postmerge readback.",
+            "status": "IN_PROGRESS"
+          }
+        ],
+        "verification": [
+          {
+            "level": "E2_TEST",
+            "status": "NOT_RUN",
+            "evidence": []
+          }
+        ],
+        "next_action": "Complete baseline/candidate consumer evaluation and repository verification."
+      }
+    ]
+  },
+  "evidence_ceiling": "Advisory routing/reference retrieval and regression only; model switching, provider billing, measured savings, live runtime, Human and project adoption NOT_RUN.",
+  "rollback": "Revert only this PR's Skill/reference/log/plan/receipt additions together, preserve later changes and existing files; run existing package/cost/receipt checks."
+}
