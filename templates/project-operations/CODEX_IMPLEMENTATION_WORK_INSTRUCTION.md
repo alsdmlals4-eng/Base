@@ -146,6 +146,12 @@ vfx_implementation_contract: []
 
 ### 검증 요구
 
+연속 실행 인계에 적용할 때는 `skills/maintaining-project-context-and-handoff/references/gpt-codex-implementation-handoff.md`의 `## 8A. 승인 Slice 연속 실행 인계`를 읽는다. Blueprint 승인만으로 연속 실행을 활성화하지 않고, 기존 실행 계약의 continuation intent와 승인 범위를 먼저 확인한다.
+
+- `repository_sources`: 실제 working directory, project.godot, engine/version, 실행 명령·기존 script 및 환경의 경로를 연결한다.
+- 아래 `runtime/play checks`와 `review_evidence_expected`: reference의 `required_runtime_or_play_checks`에 대응한다. scenario/seed, 입력·상태·캡처와 판정 기준을 실제 consumer에 연결한다.
+- 기존 실행 계약·작업 기록: checkpoint, 실행 상한·quota·중단 조건과 외부 side effect readback 경로를 연결한다. 별도 Schema나 중복 상태 장부를 만들지 않는다.
+
 ```yaml
 review_evidence_expected: []
 ```
