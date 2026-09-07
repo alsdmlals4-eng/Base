@@ -128,7 +128,7 @@ class CiWorkflowCostPolicyTests(unittest.TestCase):
         for term in (
             '$libreOfficeVersion = "26.2.3.2"',
             '$libreOfficeSha256 = "468d1fb3880af3bcddac002e9054155912c70b45d105bfa1c82036f33456133d"',
-            "https://download.documentfoundation.org/libreoffice/stable/$libreOfficeVersion/win/x86_64/LibreOffice_${libreOfficeVersion}_Win_x86-64.msi",
+            "https://downloadarchive.documentfoundation.org/libreoffice/old/$libreOfficeVersion/win/x86_64/LibreOffice_${libreOfficeVersion}_Win_x86-64.msi",
             "Get-FileHash -Algorithm SHA256",
             "Start-Process msiexec.exe",
             "@(0, 3010) -notcontains $libreOfficeInstall.ExitCode",

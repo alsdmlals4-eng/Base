@@ -130,7 +130,7 @@ RESEARCH
              → Codex Project GitHub + Notion Rehydration
              → Godot Product Build / Runtime / Play Evidence
              → GPT Final Review
-→ AT LEAST 5 FULL ADVERSARIAL LOOPS, THEN UNTIL CLEAN
+→ EXACTLY 2 FULL ADVERSARIAL ROUNDS, THEN TARGETED VERIFICATION
 → LONG-TERM FIT CLOSURE
 → EXACT-HEAD PR GATE
 → MERGE
