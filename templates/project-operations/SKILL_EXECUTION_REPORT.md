@@ -21,6 +21,8 @@ user_skill_declaration_required: false
 
 ## 사용하지 않은 중요 후보
 
+AI 작업의 실행 방식·재작업을 비교할 때는 기존 [모델 스택 reference의 작업별 실행 방식 선택](../../skills/optimizing-ai-model-and-prompt-costs/references/model-stack-routing.md#작업별-실행-방식-선택)을 필요한 범위만 읽고 위 표와 아래 결과 요약에 판단·근거를 연결한다. 모델 선택권이 없는 환경은 기존 작업 owner가 reference만 사용하며, 비사용 조건에 걸리는 비용 Skill을 사용했다고 기록하지 않는다. 실제 실행 없이 전략 선택만 했다면 그 증거 상한을 유지한다.
+
 | Skill | 제외 이유 |
 |---|---|
 |  | trigger 불일치 / 비사용 조건 / 현재 단계 아님 / 도구·입력 없음 |

@@ -1,5 +1,15 @@
 # Optimizing AI Model and Prompt Costs — Learning Log
 
+## 2026-09-07 · Selective execution-pattern reference
+
+- Approved scope: user accepted existing-Skill extension after HydraFusion comparison; no provider installation, paid path, model switch or runner.
+- Baseline: `1072e201900e3aa4a403330d4132c737fc86142a`. Separate-context reader applied three hypothetical tasks before edits: model/effort and cost gates were found, but execution-pattern/role/failure record slots were absent; single-model exclusion prevented treating the Skill as a universal workflow router.
+- Reusable correction: retain Registry activation boundaries; extend existing reference and map its advisory output to the existing report. Single-model tasks reuse the reference through their existing owner, not a fictional cost-Skill activation.
+- Failure lesson: distinguish output defects from missing environment, missing authority and unknown external effects before escalation; reuse current recovery/verification owners.
+- Knowledge state: reference application candidate; representative before/after retrieval evidence and final review belong to `docs/superpowers/plans/2026-09-07-execution-pattern-routing.md` and its current-task PR. No production efficacy, savings, automatic activation, cross-family model comparison or game runtime claim.
+- Source: [GitHub HydraFusion announcement](https://github.blog/ai-and-ml/github-copilot/project-hydrafusion-frontier-quality-via-multi-model-orchestration/), read 2026-09-07. Adapt workflow reasoning; reject package adoption and vendor results as local measurements.
+- Rollback: revert only this task's additions to Skill, reference, report template, learning, plan and start receipt together; preserve existing and later work.
+
 ## 2026-08-19 · P08 cost-surface audit
 
 ```yaml
