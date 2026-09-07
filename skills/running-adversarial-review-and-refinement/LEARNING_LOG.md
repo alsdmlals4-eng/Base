@@ -73,3 +73,10 @@
 - 교훈: 최소 5회는 서로 다른 관점 5개가 아니라 **동일한 전체 lifecycle을 개선된 상태에 대해 최소 5번 반복**한다는 뜻이어야 한다.
 - 반영: `FULL_LOOP_IS_NOT_A_REVIEW_LENS`와 full-scope coverage evidence를 추가하고 lens-only 회차를 계수하지 않는다.
 - reuse_scope: BASE_PROMOTION_CANDIDATE
+## 2026-09-08 — Repository-first completion consumer correction
+
+- Observation: the full Base audit at `86ebb1f13f3c48e45392ece4b3167216445dca4f` found active completion gates still requiring Notion despite the V4 default; two baseline whole-scope rounds were already completed.
+- Correction: retain the existing authority owner and make the lower completion gate conditional on an explicitly scoped V4 exception. `NOT_CONFIGURED` alone is not a blocker; missing required exception readback remains blocked.
+- Related propagation: Human Home delivery owner, Documentation Map and postmerge consumers; exhausted two-round budgets allow targeted correction/verification, not a new whole-scope audit.
+- Evidence: focused static protocol regression was RED before correction (4 failures across 3 tests) and GREEN afterward; related suite 23 tests passed. These tests detect known stale contracts, not arbitrary prose contradictions or model behavior quality. Full-suite/independent/remote closeout evidence belongs to this work's PR.
+- Boundary: preserve legacy/migration evidence, approval and runtime gates; no external writes, new Skills or project rollout. Recurrence prevention and productivity improvement are not measured.

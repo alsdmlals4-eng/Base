@@ -1,0 +1,59 @@
+{
+  "work_level": "L1",
+  "approval_ref": "current-user-message:2026-09-08:fix-audit-findings-as-recommended",
+  "approved_scope": "Correct audited F1/F2 repository-first completion/Human Home consumers and F3 same-work postmerge review-budget branch. Preserve V3 history, other PRs and project contracts; no external workspace writes or new framework.",
+  "outcome_status": "PREMERGE_VERIFICATION_CHECKPOINT_NOT_CLOSEOUT",
+  "benchmark_preflight_receipt": {
+    "state": "PASS",
+    "entries": [{
+      "source_and_evidence": "Base@86ebb1f13f3c48e45392ece4b3167216445dca4f: V4 authority, dashboard Skill, full-review-loop policy; preceding full-Base audit two rounds",
+      "observed_pattern": "Upper V4 owner and dashboard route are repository-first; lower Home/delivery and completion consumers still require Notion. Postmerge prose omits exhausted-budget branch.",
+      "project_fit_and_difference": "Propagate existing authority and user-set two-round budget in place; do not add a routing framework or remove compatibility history.",
+      "disposition": "ADAPT"
+    }]
+  },
+  "alternatives": [
+    {"option": "Correct existing owners and direct consumers", "disposition": "ADOPT", "reason": "Smallest approved correction preserving runtime and authority boundaries."},
+    {"option": "Delete all Notion history or introduce new workflow", "disposition": "REJECT", "reason": "Unnecessary data-loss and duplicate-authority risk."}
+  ],
+  "context_configuration_hygiene": {
+    "scope": "Audited active owners and their direct consumers only; no file deletion.",
+    "inventory": [
+      {"path": "docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md", "classification": "ACTIVE_OWNER", "owner_or_provenance": "Existing dashboard Skill consumer", "references_and_consumers": "building-project-visual-dashboards and documentation map", "removal_proposed": false},
+      {"path": "docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md", "classification": "COMPATIBILITY", "owner_or_provenance": "V3 legacy migration", "references_and_consumers": "Historical and migration evidence; not active default", "removal_proposed": false}
+    ]
+  },
+  "project_work_kanban": {
+    "goal_or_slice_issue_ref": "current-user-message:2026-09-08:fix-audit-findings-as-recommended",
+    "source_main_sha": "86ebb1f13f3c48e45392ece4b3167216445dca4f",
+    "work_item_refs": ["F1-F2-F3"],
+    "active_work_item_ref": "F1-F2-F3",
+    "next_action": "Complete independent targeted verification, whole regression, exact-head CI and protected merge/readback.",
+    "work_items": [{
+      "work_item_id": "F1-F2-F3",
+      "title": "Close audited active repository-first and postmerge consumer conflicts",
+      "status": "VERIFY_REVIEW",
+      "canon_owner": "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json",
+      "actual_consumers": ["docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md", "skills/running-adversarial-review-and-refinement/SKILL.md", "docs/OPERATING_MODEL.md"],
+      "depends_on": [],
+      "acceptance_criteria": ["CORRECT", "VERIFY", "MERGE"],
+      "required_evidence": ["E0_CONTRACT", "E2_TEST"],
+      "checklist": [
+        {"id": "CORRECT", "text": "Apply F1/F2/F3 without V3 history deletion or new authority", "status": "PASS", "evidence": ["Independent read-only targeted application: repo-only delivery closes without Notion; explicit exception readback remains blocked; exhausted two-round budget uses targeted verification. No reviewed MUST_FIX/SHOULD_FIX. V3 files unchanged."]},
+        {"id": "VERIFY", "text": "Independent targeted application and full regression/exact-head CI", "status": "IN_PROGRESS"},
+        {"id": "MERGE", "text": "Protected squash merge and exact-main readback", "status": "NOT_RUN"}
+      ],
+      "verification": [{"level": "E0_CONTRACT", "status": "PASS", "evidence": ["Receipt validator start-phase PASS after recording actual preflight; independent targeted consumer verification PASS."]}, {"level": "E2_TEST", "status": "PARTIAL", "evidence": ["Final focused 54 tests PASS; full and exact-head remote checks pending."]}],
+      "next_action": "Complete independent targeted verification, whole regression, exact-head CI and protected merge/readback."
+    }]
+  },
+  "review_evidence": {
+    "full_scope_round_count": 2,
+    "reviewed_head": "86ebb1f13f3c48e45392ece4b3167216445dca4f",
+    "lineage": "Prior full-Base audit rounds 1 and 2 identified F1/F2/F3; this is their approved correction, not a new audit budget.",
+    "candidate_verification": "Independent targeted consumer verification found no remaining reviewed blockers; 39 related tests passed independently, followed by 54 tests after consolidating the same three regression methods into the existing freshness suite. Whole/exact-head remote regression pending; no third whole-scope review.",
+    "evidence_ceiling": "Static protocol checks and textual consumer application do not establish runtime, UX, project adoption or productivity gains."
+  },
+  "current_status_owner": "Current correction branch PR; assigned upon publication",
+  "checkpoint_policy": "Committed snapshot is not future merge evidence. Exact-head CI, independent verification, protected merge and main readback will be recorded on the correction PR."
+}

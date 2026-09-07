@@ -270,7 +270,7 @@ CONFIRMED HUMAN TABLE
 - `PROJECT_ASSET_APPROVED`: 명시적 project approval을 획득한 자산 상태.
 - `APPLIED_AND_RUNTIME_VERIFIED`: repository/runtime 적용과 별도 증거가 확인된 상태.
 
-Context token은 필요할 때 `GDD`, `EXTERNAL_COLLABORATION`, `BOTH`를 유지할 수 있으나, 세 context 모두 Notion Project relation과 repository truth를 우회하지 않는다.
+Context token은 필요할 때 `GDD`, `EXTERNAL_COLLABORATION`, `BOTH`를 유지할 수 있으나, 세 context 모두 repository의 Project identity와 승인·실제 consumer를 확인한다. Notion Project relation은 명시된 V4 exception에만 적용하며, 미구성은 `NOT_CONFIGURED`로 남긴다.
 
 ```text
 generate / edit
@@ -359,7 +359,7 @@ contract/diff review
 → regression
 → exact-head PR checks
 → merge
-→ postmerge main + Notion readback
+→ postmerge main + repository human projection readback; explicitly scoped V4 Notion exception only when applicable
 ```
 
 Notion page·image upload 성공은 Godot runtime proof가 아니다. Upload/attach 작업은 destination readback을 해야 완료로 보고할 수 있다.
@@ -379,7 +379,7 @@ Notion은 Free 범위에서 사용한다. paid Notion AI, separately metered API
 Notion 전환은 기존 Base의 공용 능력을 삭제하거나 숨기는 작업이 아니다. 아래 라우팅 표현은 계속 발견 가능해야 한다.
 
 - **공용 용어**: `docs/CONTROLLED_VOCABULARY.md`에서 stable term과 bounded-context 의미를 찾는다.
-- 승인 Decision 복원: `→ CURRENT_CONFIRMED_DECISIONS.md`를 거쳐 분야 정본과 사람용 Notion 표현을 교차검증한다.
+- 승인 Decision 복원: `→ CURRENT_CONFIRMED_DECISIONS.md`를 거쳐 분야 정본과 repository human projection을 교차검증한다. 명시된 V4 exception이 있으면 해당 Notion 표현도 범위 내에서 확인한다.
 - 저장소 전체 감사: `repository-wide-audit`는 별도 신규 Skill이 아니라 기존 REVIEW/검증 능력의 통합 mode로 라우팅한다.
 - 프로젝트 설치 템플릿: **프로젝트 설치 템플릿을 활성 상태 문서로 오인하지 않는다**. Template은 소비될 때만 프로젝트 상태가 된다.
 - Codex handoff: **GPT→Codex 단계별 Godot 구현 인계**는 기존 `implementation-package-handoff` mode를 사용하며, `USER_REQUESTED_CODEX_HANDOFF`가 있을 때만 생성한다. 계획/검토 작업은 자동으로 Codex 구현 승인이 되지 않는다.

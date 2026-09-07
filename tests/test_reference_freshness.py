@@ -14,6 +14,27 @@ CHECKER = ROOT / "tools/check_canonical_reference_freshness.py"
 
 
 class CanonicalReferenceFreshnessTests(unittest.TestCase):
+    # Bounded protocol regression: these guard known stale contracts, not
+    # arbitrary prose contradictions or actual model/runtime behavior.
+    def test_active_home_retires_unconditional_external_delivery_gate(self):
+        text = (ROOT / "docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md").read_text(encoding="utf-8")
+        self.assertNotIn("`APPROVED_VISUAL_NOTION_DELIVERY_REQUIRED`", text)
+        self.assertNotIn("`APPROVAL_WITHOUT_NOTION_DELIVERY_IS_INCOMPLETE`", text)
+        for marker in ("PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json", "NOT_CONFIGURED", "SHA-256", "readback"):
+            self.assertIn(marker, text)
+
+    def test_completion_skill_does_not_require_unconfigured_notion(self):
+        text = (ROOT / "skills/running-adversarial-review-and-refinement/SKILL.md").read_text(encoding="utf-8")
+        self.assertNotIn("사람용 변경이 있으면 정확한 Project의 Notion destination을 readback했다.", text)
+        self.assertIn("NOT_CONFIGURED", text)
+
+    def test_postmerge_consumers_branch_on_exhausted_budget(self):
+        for name in ("docs/OPERATING_MODEL.md", "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"):
+            with self.subTest(path=name):
+                text = (ROOT / name).read_text(encoding="utf-8")
+                self.assertIn("budget exhausted → targeted correction/verification only", text)
+                self.assertNotIn("→ GitHub + Notion destination readback", text)
+
     def setUp(self) -> None:
         self.tempdir = tempfile.TemporaryDirectory()
         self.root = Path(self.tempdir.name)

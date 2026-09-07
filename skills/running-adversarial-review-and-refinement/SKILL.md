@@ -256,10 +256,10 @@ GitHub와 repository human projection이 다르면 최신 사용자 승인, Deci
 
 ## Post-merge final decisions
 
-- `NO_CONFLICT`: 정본·최근 승인·diff·Notion readback·적용 검증에서 확인된 충돌이 없다.
+- `NO_CONFLICT`: 정본·최근 승인·diff·repository human projection readback·적용 검증에서 확인된 충돌이 없다. 명시된 V4 Notion exception이 있으면 승인된 destination도 검증한다.
 - `CONFLICT_FIXED`: 검증된 충돌을 승인 범위 안에서 최소 수정하고 재검사했다.
 - `USER_DECISION_REQUIRED`: 기술적으로 단일 답을 정할 수 없는 중요 기획 충돌이 남았다.
-- `BLOCKED_UNVERIFIED`: 필요한 도구·권한·정본·CI·런타임·Notion readback/sync 증거가 없어 완료 판정할 수 없다.
+- `BLOCKED_UNVERIFIED`: 적용되는 완료 조건의 도구·권한·정본·CI·런타임·readback 증거가 없어 완료 판정할 수 없다. Notion 미구성은 `NOT_CONFIGURED`이며 단독 blocker가 아니다. 명시된 V4 exception의 필수 readback 누락은 blocker다.
 
 ## Quality gate
 
@@ -271,7 +271,7 @@ GitHub와 repository human projection이 다르면 최신 사용자 승인, Deci
 - 현재 확정 Decision과 관련 분야 정본을 비교했다.
 - 최근 승인 누락과 이전 Decision 부활을 검사했다.
 - 동일 Goal의 열린·중복 PR을 확인했다.
-- 사람용 변경이 있으면 정확한 Project의 Notion destination을 readback했다.
+- 사람용 변경은 repository owner와 해당 human projection을 readback했다. 명시된 V4 Notion exception이 있으면 그 owner·scope·destination에 한해서 추가 readback했다. 새 Notion surface를 만들거나 legacy 자료를 수정할 권한을 추정하지 않는다.
 - 가능한 reference freshness·정적·런타임·회귀 검사를 실제 실행했다.
 - 실행하지 못한 검사를 성공으로 표시하지 않았다.
 

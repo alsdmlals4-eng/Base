@@ -310,15 +310,17 @@ executor handoff는 실제로 연결·호출 가능한 실행 환경이 있을 �
 
 연속작업에서 merge는 종료 신호가 아니다. 현재 승인된 계약이 PR/merge 이후 readback·후속 검증·교훈 정리까지 포함하면 다음을 수행한다.
 
-이 단계는 `POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP`를 소비한다. 새 main의 exact SHA에서 전체 범위를 다시 공격하고, 유효 finding은 `POSTMERGE_CORRECTION_REQUIRED`로 새 Branch/PR에 교정한다. repository primary canon·asset manifest·exact-SHA human projection을 다시 읽은 `PROGRESS_READBACK_REQUIRED` 없이는 완료율을 확정하지 않는다. 명시된 V4 Notion exception은 GitHub 증거 뒤에만 별도 갱신·readback한다.
+이 단계는 `POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP`를 소비한다. 새 main의 exact SHA에서 같은 작업 lineage의 검토 예산을 확인한다. 이미 전체 검토 2회를 소진했다면 추가 전체 검토 없이 finding과 영향 consumer만 교정·검증한다. 유효 finding은 `POSTMERGE_CORRECTION_REQUIRED`로 새 Branch/PR에 교정한다. repository primary canon·asset manifest·exact-SHA human projection을 다시 읽은 `PROGRESS_READBACK_REQUIRED` 없이는 완료율을 확정하지 않는다. 명시된 V4 Notion exception은 GitHub 증거 뒤에만 별도 갱신·readback한다.
 
 ```text
 merge
 → merged main SHA / changed canon / generated consumer readback
-→ full-scope adversarial review
+→ same-work review budget readback (docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md)
+   ├─ budget remains → remaining full-scope round(s), total exactly two
+   └─ budget exhausted → targeted correction/verification only
 → required correction on new latest-main branch/PR when findings exist
 → applicable Notion current-state update after GitHub evidence
-→ GitHub + Notion destination readback
+→ GitHub/repository human projection readback; explicitly scoped V4 Notion destination only when applicable
 → postmerge regression evidence
 → acceptance criteria를 현재 main 기준으로 다시 대조
 → REMAINING_WORK_RECALCULATION_REQUIRED
