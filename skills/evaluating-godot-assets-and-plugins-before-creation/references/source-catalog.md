@@ -144,3 +144,32 @@ Godot addon 범위를 넘어 코드 리뷰 도구, 출력 압축 프록시, 외�
 - 선택형 외부 reviewer·output proxy·model CLI·agent workspace의 권위·원문 fallback·비용·비밀·실행 안전·킬 스위치 계약: `docs/knowledge/ai/agent-tools/EXTERNAL_AGENT_ADAPTER_CONTRACT.md`
 
 이 두 문서는 새 실행 권위나 설치 승인이 아니다. 후보의 버전·라이선스·가격·telemetry·auth·model·hook·출력 의미가 바뀌거나 프로젝트별 A/B 결과가 달라지면 현재 1차 자료로 재검증한다. ordinary Godot 에셋 검색에서는 불필요하게 로드하지 않는다.
+
+## 8. 2D 캐릭터 애니메이션·리깅 Route
+
+2D 캐릭터·생물·초상·전투 유닛의 제작 방식을 정할 때는 특정 제품 검색 전에 다음 active reference를 읽는다.
+
+- `skills/evaluating-godot-assets-and-plugins-before-creation/references/2d-character-animation-routing-and-rigging.md`
+- 프로젝트 기록 Template: `templates/planning/2D_CHARACTER_ANIMATION_ROUTE_RECORD.md`
+
+```text
+actual consumer + current implementation
+→ FRAME / GODOT_NATIVE_RIG / EXTERNAL_RIG_RUNTIME / EXTERNAL_RIG_BAKED
+→ same-axis comparison
+→ selected route + rejected-route reasons
+→ isolated trial when required
+→ exact version / license / platform / performance / rollback evidence
+```
+
+검색 예시:
+
+```text
+Godot 4.7 Skeleton2D Bone2D Polygon2D official
+Godot 4.7 2D skeletal animation runtime GDExtension
+<후보명> Godot exact version GDExtension release
+<후보명> editor runtime version compatibility
+<후보명> runtime license game distribution
+<후보명> Android Windows export performance removal
+```
+
+유명세나 부드러운 보간만으로 외부 runtime을 채택하지 않는다. 프레임·Godot native rig·external runtime·rig-to-baked를 실제 consumer, 화면 크기, 동시 개체, 상태·방향·Skin·Attachment 수, 실루엣, 플랫폼, 성능, 라이선스, 업데이트, 제거 비용으로 비교한다. 외부 tool trial, 구매, 설치, production adoption, 모든 프로젝트 rollout은 서로 다른 승인·증거 상태다.

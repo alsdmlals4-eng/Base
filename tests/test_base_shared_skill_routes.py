@@ -76,6 +76,41 @@ class BaseSharedSkillRouteTests(unittest.TestCase):
             "skills/evaluating-godot-assets-and-plugins-before-creation/LEARNING_LOG.md",
         )
 
+    def test_godot_asset_route_exposes_2d_character_animation_contract(self) -> None:
+        registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+        item = next(
+            entry
+            for entry in registry["shared_skills"]
+            if entry["skill_id"]
+            == "evaluating-godot-assets-and-plugins-before-creation"
+        )
+
+        for tag in (
+            "2d-character-animation",
+            "2d-skeletal-animation",
+            "rig-ready-source",
+            "external-rig-runtime",
+            "rig-to-baked",
+            "spine-godot",
+        ):
+            self.assertIn(tag, item["trigger_tags"])
+
+        reference = (
+            "skills/evaluating-godot-assets-and-plugins-before-creation/"
+            "references/2d-character-animation-routing-and-rigging.md"
+        )
+        template = "templates/planning/2D_CHARACTER_ANIMATION_ROUTE_RECORD.md"
+        self.assertIn(reference, item["references"])
+        self.assertIn(template, item["templates"])
+        self.assertTrue((ROOT / reference).is_file())
+        self.assertTrue((ROOT / template).is_file())
+
+        use_when = " ".join(item["use_when"])
+        self.assertIn("2D 캐릭터", use_when)
+        self.assertIn("FRAME", use_when)
+        self.assertIn("external rig runtime", use_when)
+        self.assertIn("rig-to-baked", use_when)
+
     def test_godot_provider_route_exposes_reuse_first_and_higodot_contracts(self) -> None:
         registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
         item = next(

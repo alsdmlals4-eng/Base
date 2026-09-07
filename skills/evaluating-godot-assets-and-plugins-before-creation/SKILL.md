@@ -313,3 +313,7 @@ BUILD_CUSTOM
 ## Learning Log
 
 채택·제외 이유, 버전 파손, 라이선스 변화, 성공한 wrapper, 제거 실패, 프로젝트별 재사용 가능성과 실제 검증 결과를 `skills/evaluating-godot-assets-and-plugins-before-creation/LEARNING_LOG.md`에 기록한다.
+
+## Conditional references
+
+- 2D 캐릭터 애니메이션 route·rig-ready source·external runtime trial은 `references/2d-character-animation-routing-and-rigging.md`를 사용한다.

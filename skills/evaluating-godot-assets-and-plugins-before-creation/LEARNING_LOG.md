@@ -56,3 +56,14 @@
 - **Closeout correction:** 어댑터 본문의 재실행 금지와 달리 사람용 briefing의 rollback 예시가 원본 명령 재실행을 권하는 형태로 남아 있었다. 기존 원본 출력과 현재 상태를 먼저 확인하도록 예시를 고치고, 새 실행은 기존 owner의 승인·멱등성·재시도 경계로 위임한다. 같은 7개 파일의 exact-blob 스냅샷에서 기존 17개 계약 검사는 통과했고, 예시 회귀검사를 추가한 18개 검사에서 새 1개만 실패하는 RED를 확인했다. 이는 문서 충돌의 재현이며 실제 외부 명령이나 도구 runtime을 실행한 증거가 아니다.
 - **Current-state owner:** 최종 exact HEAD, 전체 CI, 별도 독립 검토, 허용된 merge와 postmerge main readback은 PR #788의 최신 기록에서 확인한다. 문서 존재·브랜치 GREEN만으로 merged-main absorption이나 실제 도구 동작 PASS를 선언하지 않는다.
 - **Next trigger:** 실제 프로젝트가 하나의 선택형 도구를 필요로 할 때 현재 환경·exact version·데이터/비용/권한·동등한 격리 baseline·원문 복구·rollback을 확인한 뒤 별도 trial gate를 적용한다. 기존 작업 중 HEAD가 바뀌면 새 diff를 읽고 다른 변경을 보존하며 stale 문서로 덮어쓰지 않는다.
+
+## 2026-09-03 — 2D character animation route must precede rig-ready source or runtime adoption
+
+- **상태:** `PATTERN_CANDIDATE`.
+- **Trigger:** Spine의 2D skeletal animation 제작·Godot runtime을 조사하고, 여러 프로젝트의 디자인 작업에 흡수할 공용 구조를 판단하라는 사용자 요청과 후속 승인 `권장안대로 진행해`.
+- **Finding:** Base의 pose/sequence reference는 frame·atlas 후보 품질을 관리하고 Godot addon 평가 Skill은 외부 도구를 검토하지만, 같은 actual consumer에 대해 `FRAME / GODOT_NATIVE_RIG / EXTERNAL_RIG_RUNTIME / EXTERNAL_RIG_BAKED`를 먼저 비교하는 2D character animation route와 rig-ready source part 계약이 없었다. 이 공백은 flat art를 만든 뒤 관절을 억지로 절단하거나, 유명 상용 도구를 default dependency로 오인하게 할 수 있다.
+- **Decision:** 새 Skill을 만들지 않는다. `evaluating-godot-assets-and-plugins-before-creation`의 하위 reference와 project record Template로 route·trial·version/license/performance/rollback을 소유하고, 기존 `sprite-pose-sequence-controls.md`는 rig-ready source가 필요한 경우에만 연결한다. retired Sprite Animation Studio를 재활성화하지 않는다. Spine 구매·설치·프로젝트 도입·모든 프로젝트 rollout은 수행하지 않는다.
+- **Evidence contract:** actual consumer, 화면 크기·체류·동시 인스턴스, 상태·방향·Skin·Attachment 수, continuous deformation과 extreme redraw, target platform, exact editor/runtime/Godot pin, license, performance baseline, platform export, removal/fallback을 같은 record에 둔다. animation event는 damage·cost·reward·save·progress 권위가 아니며 결과는 domain에서 exactly once 확정한다.
+- **Current source boundary:** 2026-09-03 공식 자료에서 Godot는 `Skeleton2D`/`Bone2D` 내장 경로를 제공하고, 공식 `spine-godot`는 GDExtension과 custom engine module을 구분한다. Spine 4.3 runtime README와 Godot 4.7.1 CI는 candidate compatibility 근거지만 우리 프로젝트 import/export/runtime proof가 아니다. 가격·라이선스·지원 범위는 도입 결정 시 다시 읽는다.
+- **Verification state:** focused contract RED를 current-blob partial snapshot에서 재현했다. 문서 계약은 Godot runtime 증거가 아니다. exact-head GREEN, remote full CI, independent review, merge/main readback과 실제 project trial은 별도 gate다.
+- **Next trigger:** 실제 프로젝트의 named consumer가 선택되고 frame baseline과 exact local Godot environment를 읽을 수 있을 때 무료 official sample 기반 A/B/C trial을 수행한다. 외부 runtime이 native/frame보다 장기 이익을 증명하지 못하면 `DEFERRED` 또는 `REJECTED`로 유지한다.
