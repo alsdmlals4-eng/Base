@@ -200,6 +200,54 @@ GPT로 반환:
 
 기본 병렬성은 `SEQUENTIAL`이다.
 
+## 8A. 승인 Slice 연속 실행 인계
+
+이 절은 **이미 승인된 `PLAY_MEANINGFUL_WORK_SLICE` 하나**에서 사용자 재전달을 줄이기 위한 기존 인계의 상세 절차다. 역할·승인 정본은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`, 연속 실행·복구 정본은 `skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md`를 그대로 사용한다. 새 Skill·Work Mode·게임 전체 원큐 제작 계약이 아니다.
+
+### 승인과 기존 consumer
+
+- 유효한 approval reference와 해당 범위의 사용자 승인 `BLUEPRINT_PASS_2_FINAL exact revision`을 확인한다. 같은 승인 범위의 기술적 교정에는 routine 재승인을 요구하지 않는다. 새 Goal·범위·비용·권한을 자동 승인하지 않는다.
+- `templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md`의 기존 `approved_scope / explicit_non_scope / acceptance_criteria / repository_sources / asset_audio_dependencies / review_evidence_expected`에 아래 실행 정보를 연결한다. 이 reference의 `required_runtime_or_play_checks`는 Template의 검증 요구에 대응한다. 같은 정보를 새 정본에 복제하지 않고 기존 owner의 경로·ID를 참조하며, 새 필수 Schema나 별도 진행표를 만들지 않는다.
+- 필요한 이미지·의미 변경은 각각 `GPT_VISUAL_REQUEST`와 `CHANGE_PROPOSAL`로 분리한다. 승인 자산을 임의 교체하지 않는다. 이에 의존하지 않는 승인 작업만 계속하며, 미승인 대체물로 완료 처리하지 않는다.
+
+### 실행 가능한 인계 준비
+
+| 기존 인계 위치 | 연결할 실제 정보 |
+|---|---|
+| `repository_sources` | exact revision, working directory, `project.godot`, 채택한 engine/version, 실제 명령 또는 기존 script 경로, 필요한 환경과 authoring authority |
+| `acceptance_criteria / ui_ux_flow` | 승인된 시작 → 선택·행동 → 결과 → 다음 행동과 판정 기준. 실패·재시작·저장/불러오기는 해당 Slice에 적용되는 경우만 연결하고, 비적용 이유를 남긴다. |
+| `review_evidence_expected / required_runtime_or_play_checks` | 재현 scene/fixture와 필요한 scenario/seed, 입력 → 상태 변화 → 화면·소리 → 결과, assert·로그·캡처 위치, 실제 consumer와 exact revision 연결 |
+| 기존 실행 계약·작업 기록 | 현재 계약의 실행 상한·quota·중단 조건, checkpoint 위치, 되돌릴 범위와 보호할 사용자 변경·저장 데이터 |
+
+없는 명령·도구·실행 결과를 만들어 적지 않는다. 저장소에서 복원 가능한 정보는 다시 묻지 않고 읽으며, 새 테스트 진입점이 필요하면 승인 범위의 구현 작업으로 구분한다. 아직 없는 진입점을 이미 검증된 경로처럼 쓰지 않는다. 실행 경로 미확인은 `BLOCKED_UNVERIFIED`로 표시하고 기존 recovery 절차를 적용한다. 새 화면·기능을 검증 명목으로 추가하지 않는다. 재현은 격리 fixture를 우선하여 사용자 저장 데이터를 보호한다.
+
+### 구현·검증·교정 루프
+
+```text
+exact project/approval/asset/consumer 재수화
+→ 기존 동작의 baseline smoke와 기존 실패 기록
+→ 승인 흐름의 최소 end-to-end 구현
+→ 자동 검사 + 실제 입력·상태·캡처 확인
+→ 실패 재현 → 범위 안 교정 → 영향받는 회귀검사
+→ acceptance와 미완료 범위 재대조
+→ 요구된 evidence가 준비되면 READY_FOR_GPT_REVIEW
+→ GPT 최종 검수 + 기존 사용자 결정·merge/readback Gate
+```
+
+- 완료를 위해 acceptance나 테스트의 기대 결과를 낮추지 않는다. 잘못된 테스트는 정본·반례 근거를 남겨 교정하되 승인된 제품 의미를 바꾸지 않는다. 기존 실패와 새 회귀를 구분하고, 기존 실패라고 해서 필수 acceptance를 면제하지 않는다.
+- 반복 실패·개선 정체 또는 상한 도달 시 같은 방법을 무한 반복하지 않는다. 기존 계약의 `recover → local defer → independent ready work`로 분류하고, 반복 원인·대안·남은 필수 항목을 기록한다. 최신 사용자 지시·AGENTS가 명시한 전역 중단 조건은 우선한다. 상한 미확인은 무제한 실행 허가가 아니다. 안전한 실행 한도를 기존 owner에서 먼저 복원하며, 해결되지 않은 해당 실행은 보류한다.
+- side effect 뒤에는 기존 작업 기록에 checkpoint를 남긴다. 중단 후 commit·PR·외부 쓰기를 무조건 재시도하지 않는다. current SHA·dirty state·PR ownership readback 뒤 완료된 단계는 보호하고 미완료 단계만 재개한다. 다른 open/draft/ready PR은 read-only이며, main 이동 시 현재 계약의 drift·영향 재검증 경계를 따른다.
+- 필수 검증이 실패했거나 `NOT_RUN`이면 전체 완료가 아니다. 증거가 부족한 항목과 의존 작업만 보류하고 독립 작업은 계속한다. headless 통과를 화면·조작 검증 PASS로 바꾸지 않는다. `codex_result`의 기존 tests/evidence/risks/status로 결과를 반환하며, `READY_FOR_GPT_REVIEW`는 사용자 승인이나 출시 PASS가 아니다.
+- 이 절은 `GPT_LOCAL_CODEX_ORCHESTRATION_RETIRED` 경로를 재활성화하거나 도입하지 않는다. 새 daemon·scheduler·유료 API도 추가하지 않는다. 실제로 제공된 승인 실행 환경 안에서만 동작하며, 채팅 종료 후 백그라운드 실행을 보장하지 않는다.
+
+### 시범 적용·학습과 증거 상한
+
+첫 실제 프로젝트 시범 적용에서는 기존 작업 기록에 첫 플레이 가능 결과까지의 시간, 사용자 재전달·재지시 횟수, 검수 결함·회귀·재작업을 관측 가능할 때만 남긴다. 정당한 핵심 결정 요청은 불필요한 재전달과 구분한다. 기록이 없으면 `NOT_MEASURED`이며 0이나 추정 절감률로 바꾸지 않는다. 비교는 같은 범위·엔진·자산·완료 기준에서 수행하고 측정 전 생산성 향상을 단정하지 않는다. 이 자료를 실제 consumer의 다음 인계 개선에 사용하되 프로젝트 고유 사실은 프로젝트에 남긴다.
+
+문서 회귀검사는 agent 실행 강제·프로젝트 채택·Godot runtime의 증거가 아니다. 이 절을 읽거나 Template을 채웠다는 사실만으로 시범 적용 성공·사용자 개입 감소·완성 게임을 주장하지 않는다. 실제 프로젝트 적용은 해당 프로젝트의 최신 `AGENTS.md`와 채택한 Base 계약·drift 분류를 따르며 일괄 교체하지 않는다.
+
+2026-09-07 원출처 비교: [OpenAI Codex app 사례](https://openai.com/index/introducing-the-codex-app/)의 초기 프롬프트 뒤 반복 재지시와 플레이 검증, [Anthropic 장기 실행 실험](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)의 작은 기능 단위·진행 기록·end-to-end 검사, [Godot 공식 CLI](https://docs.godotengine.org/en/stable/tutorials/editor/command_line_tutorial.html)의 실제 실행 경로를 `ADAPT`한다. 웹 실험의 성과 수치를 Godot에 전이하거나 새 provider·전체 게임 자율 확장·검증 생략을 채택하지 않는다. 공용 교훈은 **승인 입력뿐 아니라 실행·관측·교정 경로까지 기존 인계에 연결해야 한다**는 것이며, 효과 검증은 실제 프로젝트 시범 실행에 남는다.
+
 ## 9. 선택적 Codex Godot technical preflight
 
 고위험 Godot 구현에서만 별도 read-only 기술 preflight를 사용할 수 있다.
