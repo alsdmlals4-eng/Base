@@ -13,6 +13,73 @@ func _advance_to_choice(session: RefCounted) -> void:
     while session.advance_line():
         pass
 
+# Public readback only: diagnostic errors are not domain state.
+func _domain_snapshot(session: RefCounted) -> Dictionary:
+    return {
+        "beat_id": session.get_current_beat_id(),
+        "scene_id": session.get_current_scene_id(),
+        "background_ref": session.get_current_background_ref(),
+        "line": session.current_line(),
+        "choices": session.get_choices(),
+        "waiting": session.is_waiting_for_choice(),
+        "ended": session.is_ended()
+    }.duplicate(true)
+
+func _expect_rejected(session: RefCounted, choice_id: String, expected_error: String, label: String) -> void:
+    var before: Dictionary = _domain_snapshot(session)
+    var event: Dictionary = session.choose(choice_id)
+    _check(event.get("ok", true) == false, label + ": rejected")
+    _check(event.get("error", "") == expected_error, label + ": precise error")
+    _check(session.get_last_error() == expected_error, label + ": diagnostic readback")
+    _check(event.get("choice_id", null) == choice_id, label + ": request identity preserved")
+    _check(_domain_snapshot(session) == before, label + ": domain state unchanged")
+    _check(event.get("beat_id", null) == before["beat_id"] and event.get("scene_id", null) == before["scene_id"] and event.get("ended", null) == before["ended"], label + ": result matches state readback")
+
+func _test_direct_call_boundaries(model: RefCounted, session_script: Script) -> void:
+    var session: RefCounted = session_script.new()
+    var not_waiting: String = "session is not waiting for a choice"
+    _expect_rejected(session, "choice_talk", not_waiting, "before start")
+    _check(session.start(model), "direct-call session starts")
+    _check(not session.is_waiting_for_choice(), "sample has a pre-choice line")
+    _expect_rejected(session, "choice_talk", not_waiting, "premature choice")
+
+    _advance_to_choice(session)
+    _check(session.is_waiting_for_choice(), "direct-call fixture reaches choice boundary")
+    _expect_rejected(session, "", "unknown choice_id: ", "empty ID")
+    _expect_rejected(session, "choice_missing", "unknown choice_id: choice_missing", "unknown ID")
+    _expect_rejected(session, "choice_library", "choice does not belong to current beat: choice_library", "foreign beat ID")
+
+    var before_read: Dictionary = _domain_snapshot(session)
+    var line_copy: Dictionary = session.current_line()
+    line_copy["text"] = "caller-owned edit"
+    var choice_copies: Array = session.get_choices()
+    _check(not choice_copies.is_empty(), "read-isolation fixture has choices")
+    if not choice_copies.is_empty():
+        choice_copies[0]["target_beat_id"] = "beat_library"
+        choice_copies.clear()
+    _check(_domain_snapshot(session) == before_read, "editing read results cannot mutate owned state")
+
+    var event: Dictionary = session.choose("choice_talk")
+    _check(event.get("ok", false) and session.get_current_beat_id() == "beat_talk", "valid choice succeeds after rejected calls")
+    _check(event.get("error", "missing").is_empty() and session.get_last_error().is_empty(), "valid choice clears old diagnostics")
+    _check(event.get("beat_id", "") == session.get_current_beat_id() and event.get("scene_id", "") == session.get_current_scene_id(), "successful result matches state readback")
+    event["beat_id"] = "caller-owned-result-edit"
+    _check(session.get_current_beat_id() == "beat_talk", "editing event does not mutate session")
+    _expect_rejected(session, "choice_talk", not_waiting, "immediate replay")
+    _advance_to_choice(session)
+    _expect_rejected(session, "choice_talk", "choice does not belong to current beat: choice_talk", "stale ID at next boundary")
+
+    event = session.choose("choice_library")
+    _check(event.get("ok", false) and session.get_current_scene_id() == "scene_library", "normal scene move still succeeds")
+    _advance_to_choice(session)
+    event = session.choose("choice_study_end")
+    _check(event.get("ok", false) and session.is_ended(), "normal explicit END still succeeds")
+    _expect_rejected(session, "choice_study_end", not_waiting, "terminal replay")
+    var terminal: Dictionary = _domain_snapshot(session)
+    _check(not session.advance_line(), "terminal line advance rejected")
+    _check(_domain_snapshot(session) == terminal, "terminal line rejection preserves state")
+    _check(session.current_line().is_empty() and session.get_choices().is_empty(), "terminal readback exposes no actionable choices")
+
 func _initialize() -> void:
     print("NARRATIVE_DIALOGUE_RUNTIME_TEST_START")
 
@@ -95,6 +162,7 @@ func _initialize() -> void:
     var dead_end_model: RefCounted = model_script.new()
     _check(not dead_end_model.load_from_dictionary(dead_end_data), "beat without explicit END or transition fails closed")
 
+    _test_direct_call_boundaries(model, session_script)
     _finish()
 
 func _finish() -> void:
