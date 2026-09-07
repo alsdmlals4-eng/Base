@@ -121,3 +121,7 @@ compare GitHub ↔ Notion = migration conflict check only
 ```
 
 구형 토큰은 consumer compatibility를 위해 남긴 것이며 dual-canon reconstruction을 복원하지 않는다.
+
+## Bounded failure/recovery evaluation
+
+장기 작업의 복원 품질을 평가할 때는 [long-horizon-failure-recovery-pilot.md](long-horizon-failure-recovery-pilot.md)의 기존 검사기 연결 시험과 독립 live pilot을 구분한다. 새 executor나 전역 필수 Gate를 만들지 않는다. 단위 시험 PASS는 실제 context 복구, 원격 중복 실행 방지 또는 `TRANSFER_ACCEPTED`의 증거가 아니다.

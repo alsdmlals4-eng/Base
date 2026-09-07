@@ -1,5 +1,43 @@
 # Maintaining Project Context and Handoff Learning Log
 
+## 2026-09-07 — Recovery guard composition is not live receiver proof
+
+### Context
+
+PR #857 prepares six bounded long-horizon failure/recovery cases using existing identity validation, sequential execution and fresh-read owners. It adds no executor, memory service, paid fallback or production authorization gate.
+
+### Finding
+
+- Authorized PR #857 correction rechecked two later review findings against current main: LHR-02 pointed to generic reconstruction instead of the actual side-effect owner, and the guide's rollback omitted existing Skill/test consumers. New regressions first failed on both defects, then passed after the owner anchor and seven-path delta rollback were corrected. This is documentation/link evidence, not live idempotency proof.
+- A written checkpoint rule, an individual validator, a composed fail-fast check and a live receiver recovery are different evidence layers. Synthetic schema-valid model/review fields do not attest a model run or genuine independent review.
+- Initial CI at `f01eb75ecdd7f0d15ed6b0d28b50d4b8b02c2fb4` passed all 14 new pilot tests but failed the existing package-integrity test because the two reference artifacts were not directly linked from SKILL.md.
+- This repeats the existing 2026-08-26 owner-link lesson below. The prior lesson was available but was not applied during the initial preflight; document existence alone did not prevent recurrence.
+- After direct-link correction, the existing reference-freshness check required the related contract test and this registered learning owner to change together. Those requirements are preserved, not bypassed.
+- Oversized whole-job logs obscured the useful failure summary. Downloading the existing diagnostics artifact and selecting traceback/test-result lines recovered the actionable failure without another logging system.
+
+### Decision
+
+- Reuse unchanged `tools/check_skill_behavior_evals.py` and `tools/run_local_validation.py` in isolated temporary Git/subprocess tests.
+- Keep live cases in `references/long-horizon-failure-recovery-pilot.json` as `PILOT_SPECIFICATION_NOT_RESULT`; observed evidence stays empty and live status stays NOT_RUN until actual execution.
+- Keep the detailed protocol in `references/long-horizon-failure-recovery-pilot.md`, with direct links from this Skill and a bootstrap backlink.
+- Pair the Skill change with `tests/test_gpt_codex_workflow_contract.py::test_recovery_pilot_is_owned_without_claiming_live_handoff_success`; retain the generic package-integrity check rather than creating a duplicate checker.
+- Read this existing learning owner and applicable source/companion rules before the next package edit. The lesson is applied to the active consumer and test, not promoted into a new global Skill or Registry entry.
+
+### Evidence and ceiling
+
+- PR #857 is the work/preflight/result receipt; diagnostic run `34107210842`, core job `101694906649`, artifact `10012879803` records 2604 tests, one package-link failure and 37 skips. All 14 new pilot tests passed at that initial HEAD.
+- Direct-link correction compare `f01eb75..eb2b2fc` is two additions and zero deletions to SKILL.md. Final-head CI/review results belong in the existing PR receipt, not in a self-referential source-SHA loop here.
+- `UNIT_GUARD_ONLY` / `NO_PRODUCTION_AUTHORIZATION_GATE` / `MODEL_RUN_STATUS: NOT_RUN` / `TRANSFER_ACCEPTED_NOT_CLAIMED`.
+- No remote idempotency, task/call routing, native compaction, steering cancellation, race protection, Godot runtime, UX or measured improvement is proven. An unchanged valid receipt can still be replayed; production write authorization is not implemented by this test.
+
+### Reuse boundary and rollback
+
+Source discovery, function composition and live recovery must be measured separately. Reuse the smallest existing owner and regression path. Roll back only PR #857's additive test/reference/link/learning changes together; preserve existing policies, original validators and unrelated workstreams.
+
+### Status
+
+`IMPLEMENTED_ON_TASK_BRANCH`; final integration and independent live receiver validation are not claimed here.
+
 ## 2026-08-28 — Fresh-read continuity must terminate in repository authority
 
 ### Context

@@ -26,6 +26,8 @@ Machine contract: `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`
 Godot work-instruction template: `templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md`
 Packaged Godot handoff reference: [gpt-codex-implementation-handoff.md](references/gpt-codex-implementation-handoff.md)
 Packaged fresh-read bootstrap reference: [fresh-read-project-bootstrap.md](references/fresh-read-project-bootstrap.md)
+Packaged bounded recovery evaluation: [long-horizon-failure-recovery-pilot.md](references/long-horizon-failure-recovery-pilot.md)
+Packaged recovery case specification (not a result): [long-horizon-failure-recovery-pilot.json](references/long-horizon-failure-recovery-pilot.json)
 
 현재 Godot 구현 인계는 canonical policy와 packaged handoff reference의 bounded Slice 계약을 얇게 소비한다.
 
