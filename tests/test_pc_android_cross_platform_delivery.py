@@ -159,6 +159,44 @@ class PcAndroidCrossPlatformDeliveryTests(unittest.TestCase):
         ):
             self.assertIn(term, profile)
 
+    def test_android_developer_verification_is_current_scoped_and_fail_closed(self) -> None:
+        profile = read(PROFILE)
+
+        for term in (
+            "Android Developer Verification Release Gate",
+            "android_developer_verification:",
+            "https://developer.android.com/developer-verification",
+            "https://developer.android.com/developer-verification/guides/google-play-console",
+            "distribution_path:",
+            "identity_verification_status:",
+            "package_name:",
+            "package_registration_status:",
+            "signing_key_ownership_status:",
+            "current_enforcement_scope:",
+            "release_readiness_status:",
+            "READY_FOR_CURRENT_SCOPE",
+            "BLOCKED_UNVERIFIED",
+            "Play Console",
+            "ADB",
+            "advanced flow",
+            "2026-09-30",
+            "2027",
+            "자동 등록",
+            "영구 상수",
+        ):
+            self.assertIn(term, profile)
+
+        self.assertIn(
+            "ADB 또는 advanced flow 성공을 consumer release PASS로 사용하지 않는다",
+            profile,
+        )
+        self.assertIn(
+            "자동 등록 가능성만으로 package registration을 PASS로 만들지 않는다",
+            profile,
+        )
+        self.assertNotIn("package_registration_status: REGISTERED\n", profile)
+        self.assertNotIn("identity_verification_status: VERIFIED\n", profile)
+
     def test_android_vitals_memory_gate_is_policy_bound_and_separate_from_local_pass(self) -> None:
         guide = read(GUIDE)
         profile = read(PROFILE)
