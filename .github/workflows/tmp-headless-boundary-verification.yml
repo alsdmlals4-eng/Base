@@ -17,13 +17,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      TARGET_SHA: 575807d5f3917f3765beeee0f19955726d2e36b7
+      TARGET_SHA: 14ca577a9edba5189904f8ea95c64258c6071f45
       SOURCE_SHA: 07330c89411cd15d68106c80bb6e2bc138179ca3
     steps:
       - name: Check out exact verification subject
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: 575807d5f3917f3765beeee0f19955726d2e36b7
+          ref: 14ca577a9edba5189904f8ea95c64258c6071f45
           fetch-depth: 0
           persist-credentials: false
       - name: Verify subject and work receipt
@@ -65,6 +65,27 @@ jobs:
           baseline_test = subprocess.check_output(['git', 'show', source + ':examples/godot-narrative-dialogue-flow/tests/test_dialogue_flow_runtime.gd'], text=True)
           candidate_test = (sample / test_path).read_text()
           original_session = (sample / session_path).read_text()
+          owner_path = 'skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md'
+          readme_path = 'examples/godot-narrative-dialogue-flow/README.md'
+          allowed = {owner_path, readme_path, 'examples/godot-narrative-dialogue-flow/tests/test_dialogue_flow_runtime.gd', 'tests/test_shared_direct_call_contract.py', 'docs/operations/work-receipts/2026-09-07-headless-shared-boundary.json'}
+          changed = set(subprocess.check_output(['git', 'diff', '--name-only', source, target], text=True).splitlines())
+          assert changed == allowed, changed
+          owner = (root / owner_path).read_text()
+          old_owner = subprocess.check_output(['git', 'show', source + ':' + owner_path], text=True)
+          heading = '### UI\u00b7\uc9c1\uc811 \ud638\ucd9c\uc758 \ub3d9\uc77c \uaddc\uce59 \uacbd\uacc4\n'
+          following = '### Godot \uc5f0\uacb0\n'
+          assert owner.count(heading) == 1 and owner.count(following) == 1
+          before, added = owner.split(heading, 1)
+          _, after = added.split(following, 1)
+          assert before + following + after == old_owner, 'unrelated owner content changed'
+          helper_start = candidate_test.index('# Public readback only: diagnostic errors are not domain state.\n')
+          helper_end = candidate_test.index('func _initialize() -> void:\n')
+          restored_test = candidate_test[:helper_start] + candidate_test[helper_end:]
+          restored_test = restored_test.replace('    _test_direct_call_boundaries(model, session_script)\n', '', 1)
+          assert restored_test == baseline_test, 'baseline runtime tests changed'
+          old_readme = subprocess.check_output(['git', 'show', source + ':' + readme_path])
+          assert (root / readme_path).read_bytes().startswith(old_readme), 'baseline README changed'
+          print('FINAL_SCOPE_AND_ORIGINAL_CONTENT_PRESERVATION_PASS')
           def run(label, project, expected_pass):
               completed = subprocess.run([godot, '--headless', '--path', str(project), '--script', 'res://tests/test_dialogue_flow_runtime.gd'], text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=30)
               log = completed.stdout
