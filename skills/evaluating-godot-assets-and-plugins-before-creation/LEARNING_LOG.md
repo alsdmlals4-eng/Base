@@ -56,3 +56,14 @@
 - **Closeout correction:** 어댑터 본문의 재실행 금지와 달리 사람용 briefing의 rollback 예시가 원본 명령 재실행을 권하는 형태로 남아 있었다. 기존 원본 출력과 현재 상태를 먼저 확인하도록 예시를 고치고, 새 실행은 기존 owner의 승인·멱등성·재시도 경계로 위임한다. 같은 7개 파일의 exact-blob 스냅샷에서 기존 17개 계약 검사는 통과했고, 예시 회귀검사를 추가한 18개 검사에서 새 1개만 실패하는 RED를 확인했다. 이는 문서 충돌의 재현이며 실제 외부 명령이나 도구 runtime을 실행한 증거가 아니다.
 - **Current-state owner:** 최종 exact HEAD, 전체 CI, 별도 독립 검토, 허용된 merge와 postmerge main readback은 PR #788의 최신 기록에서 확인한다. 문서 존재·브랜치 GREEN만으로 merged-main absorption이나 실제 도구 동작 PASS를 선언하지 않는다.
 - **Next trigger:** 실제 프로젝트가 하나의 선택형 도구를 필요로 할 때 현재 환경·exact version·데이터/비용/권한·동등한 격리 baseline·원문 복구·rollback을 확인한 뒤 별도 trial gate를 적용한다. 기존 작업 중 HEAD가 바뀌면 새 diff를 읽고 다른 변경을 보존하며 stale 문서로 덮어쓰지 않는다.
+
+## 2026-09-07 — MCP capability absorption does not imply MCP implementation
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** 사용자가 Blender MCP의 활용·단일/다중 구성 비교 후 “좋아 프레쉬리드해서 확인 후 추가,교정해”로 기존 도구 우선의 안전한 교정을 승인했다.
+- **Finding:** 기존 owner에는 단일 Godot writer, 재사용, inspect/mutate/verify, telemetry·cost·rollback Gate가 이미 있었다. 빠진 것은 host 등록·활성·연결·실행 증거를 구분하고 기능별로 흡수 위치를 정하는 구체적인 MCP 비교 경로였다. Tetris의 v3.2.0 채택 기록과 upstream v4 문서를 혼합하거나 현재 세션의 도구 부재를 PC의 기능 부재로 해석하면 불필요한 재구현·업데이트를 유발할 수 있다.
+- **Decision:** 기존 `references/source-catalog.md`의 MCP 조건부 preflight를 확장한다. native host 인벤토리 → 현재 기능 재사용 → 설정·workflow·test 보강 → 확인된 결함의 bounded patch → 별도 역할의 기존 도구 검토 순서다. 별도 MCP·parser·Bridge·Schema·Registry·Skill·설치·프로젝트 rollout은 추가하지 않는다.
+- **Evidence contract:** 기존 작업 계약에 실제 consumer·exact version·current operation/schema·근거·변경 owner·disposition·검증·rollback을 연결한다. Source Catalog의 2026-09-07 비교 절이 공식 출처와 dated project evidence를 소유하며 다른 문서에 프로젝트 pin을 중복 정본화하지 않는다.
+- **Verification:** exact Git blob으로 대조한 baseline에서 새 문서 계약 검사 12개가 의도한 missing-section assertion으로 실패했고, MCP 절 추가 뒤 12개가 통과했다. 이것은 계약 회귀검사이며 실제 MCP 연결·Blender/Godot 실행·성능·UX/Human·독립 검토·병합 증거가 아니다. 최종 exact HEAD·CI·review·readback은 해당 PR에서 확인한다.
+- **Recovery lesson:** 연결 도구에서 읽은 원문을 로컬 검증용으로 복원할 때 마지막 LF 유무까지 Git blob SHA로 대조했다. 검증 스냅샷은 전체 clone이나 원래 commit history가 아니므로 full-repository local PASS로 보고하지 않는다.
+- **Boundary and next trigger:** 사용자 PC의 live host 접근이 없는 현재 작업에서는 설정·권한·vendor pin·승인 자산을 변경하지 않는다. 실제 프로젝트에서 확인된 기능 결함이나 Blender consumer가 생기면 같은 owner로 trial·runtime·rollback을 검증한다. 문서 흡수를 설치 완료로, 테스트를 실제 생산성 향상으로 승격하지 않는다.
