@@ -1,0 +1,108 @@
+name: Temporary Headless Boundary Verification
+
+on:
+  push:
+    branches:
+      - work/headless-boundary-verification-20260907
+
+permissions:
+  contents: read
+
+concurrency:
+  group: temporary-headless-boundary-verification-20260907
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TARGET_SHA: 575807d5f3917f3765beeee0f19955726d2e36b7
+      SOURCE_SHA: 07330c89411cd15d68106c80bb6e2bc138179ca3
+    steps:
+      - name: Check out exact verification subject
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: 575807d5f3917f3765beeee0f19955726d2e36b7
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Verify subject and work receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$TARGET_SHA"
+          git merge-base --is-ancestor "$SOURCE_SHA" HEAD
+          python tools/validate_work_contract_receipt.py --receipt docs/operations/work-receipts/2026-09-07-headless-shared-boundary.json --phase resume --expected-source-sha "$SOURCE_SHA" --render-markdown
+          git diff --exit-code "$SOURCE_SHA" HEAD -- examples/godot-narrative-dialogue-flow/src examples/godot-narrative-dialogue-flow/data examples/godot-narrative-dialogue-flow/project.godot examples/godot-narrative-dialogue-flow/main.tscn
+          echo "VERIFIED_SUBJECT=$TARGET_SHA"
+      - name: Run focused Python contract tests
+        run: python -m unittest tests.test_shared_direct_call_contract tests.test_feature_code_contract_modularity -v
+      - name: Download existing pinned Godot reference engine
+        shell: bash
+        working-directory: ${{ runner.temp }}
+        run: |
+          set -euo pipefail
+          curl --fail --location --connect-timeout 15 --max-time 120 --retry 2 --output godot.zip https://github.com/godotengine/godot-builds/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip
+          echo 'c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba  godot.zip' | sha256sum --check -
+          unzip -q godot.zip
+          chmod +x Godot_v4.7.1-stable_linux.x86_64
+          ./Godot_v4.7.1-stable_linux.x86_64 --version
+          echo "GODOT_BIN=$RUNNER_TEMP/Godot_v4.7.1-stable_linux.x86_64" >> "$GITHUB_ENV"
+      - name: Execute baseline candidate and negative controls
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import os, shutil, subprocess, tempfile
+          root = Path.cwd()
+          sample = root / 'examples/godot-narrative-dialogue-flow'
+          source = os.environ['SOURCE_SHA']
+          target = os.environ['TARGET_SHA']
+          godot = os.environ['GODOT_BIN']
+          test_path = Path('tests/test_dialogue_flow_runtime.gd')
+          session_path = Path('src/dialogue_flow_session.gd')
+          baseline_test = subprocess.check_output(['git', 'show', source + ':examples/godot-narrative-dialogue-flow/tests/test_dialogue_flow_runtime.gd'], text=True)
+          candidate_test = (sample / test_path).read_text()
+          original_session = (sample / session_path).read_text()
+          def run(label, project, expected_pass):
+              completed = subprocess.run([godot, '--headless', '--path', str(project), '--script', 'res://tests/test_dialogue_flow_runtime.gd'], text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=30)
+              log = completed.stdout
+              count = sum(line.startswith('PASS: ') for line in log.splitlines())
+              print(f'{label}: exit={completed.returncode} PASS_assertions={count} expected_pass={expected_pass}', flush=True)
+              assert 'Parse Error' not in log and 'SCRIPT ERROR' not in log, log
+              if expected_pass:
+                  assert completed.returncode == 0 and 'NARRATIVE_DIALOGUE_RUNTIME_TEST_PASS' in log and 'FAIL:' not in log, log
+              else:
+                  assert completed.returncode != 0 and 'NARRATIVE_DIALOGUE_RUNTIME_TEST_FAIL' in log and 'FAIL:' in log, log
+                  print('\n'.join(line for line in log.splitlines() if 'FAIL:' in line)[:3000])
+              return count
+          with tempfile.TemporaryDirectory(prefix='headless-boundary-') as tmp:
+              project = Path(tmp) / 'reference'
+              shutil.copytree(sample, project, ignore=shutil.ignore_patterns('.godot'))
+              (project / test_path).write_text(baseline_test)
+              baseline_count = run('BASELINE', project, True)
+              (project / test_path).write_text(candidate_test)
+              candidate_count = run('CANDIDATE', project, True)
+              assert candidate_count > baseline_count
+              mutations = [
+                  ('source-beat-ownership', 'if _model.get_choice_source_beat(choice_id) != _current_beat_id:', 'if false:'),
+                  ('premature-choice', 'if not is_waiting_for_choice():\n        return _choice_error(event, "session is not waiting for a choice")', 'if not _started or _ended:\n        return _choice_error(event, "session is not waiting for a choice")'),
+              ]
+              for label, before, after in mutations:
+                  assert original_session.count(before) == 1
+                  (project / session_path).write_text(original_session.replace(before, after))
+                  (project / test_path).write_text(baseline_test)
+                  run('OLD_SUITE_MISSES_' + label, project, True)
+                  (project / test_path).write_text(candidate_test)
+                  run('NEW_SUITE_CATCHES_' + label, project, False)
+              (project / session_path).write_text(original_session)
+              assert run('RESTORED_CANDIDATE', project, True) == candidate_count
+          assert (sample / session_path).read_text() == original_session
+          assert (sample / test_path).read_text() == candidate_test
+          smoke = subprocess.run([godot, '--headless', '--path', str(sample), '--quit-after', '5'], text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=30)
+          assert smoke.returncode == 0 and 'NARRATIVE_DIALOGUE_SAMPLE_READY' in smoke.stdout and 'SCRIPT ERROR' not in smoke.stdout and 'Parse Error' not in smoke.stdout, smoke.stdout
+          print('HEADLESS_STARTUP_PASS_NOT_UI_INPUT_OR_RENDER_PROOF')
+          subprocess.run(['git', 'diff', '--exit-code'], check=True)
+          print(f'HEADLESS_BOUNDARY_VERIFIED_SOURCE={target}; BASELINE={baseline_count}; CANDIDATE={candidate_count}; MUTANTS={len(mutations)}')
+          PY
