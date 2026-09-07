@@ -46,7 +46,7 @@
 
 `HUMAN_RELEVANT_PROJECT_OUTPUTS_VIEWABLE_FROM_HOME`
 
-Notion의 Base Home과 Project Home은 링크 허브가 아니라 사람이 **추가 이동 없이 핵심을 이해하는 첫 화면**이다. GitHub/Repository의 structured/runtime truth를 복제해 새 정본을 만드는 것이 아니라, latest merged facts와 사용자 확정 방향을 사람이 읽기 쉬운 형태로 투영한다.
+Base Home과 Project Home은 링크 허브가 아니라 사람이 **추가 이동 없이 핵심을 이해하는 첫 화면**이다. 기본은 repository-owned Markdown 및 source-bound PDF 등 human projection이다. `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`가 authority를 소유한다. latest merged facts와 사용자 확정 방향을 투영하되 독립 정본을 복제하지 않는다. Notion은 명시된 V4 exception의 owner·scope·exit 조건에서만 추가 surface로 사용한다. 미구성은 `NOT_CONFIGURED`이며 Notion 생성·동기화 의무나 완료 blocker를 만들지 않는다. Legacy Notion은 기본적으로 읽기·고유 자료 이관용이다.
 
 `HUMAN_PROJECT_HOME_IS_LIVING_GDD_VISUAL_DASHBOARD`: 각 프로젝트의 Human Project Home은 사람을 위한 **Project Living GDD + Visual Dashboard**다. 사용자는 이 Home을 중심으로 현재 승인된 기획·시각 방향·핵심 시스템·Flow·핵심 데이터와 구현 상태를 읽고 비교·교정할 수 있어야 한다.
 
@@ -66,7 +66,7 @@ Notion의 Base Home과 Project Home은 링크 허브가 아니라 사람이 **�
 
 `PROJECT_HOME_TOP_VISUAL_GDD_REQUIRED`: 각 프로젝트 Human Home은 제목·짧은 한 줄 정의 다음의 **최상단 핵심 구간**에서 그 프로젝트를 이해하고 제작하는 데 필요한 설명형 시각자료를 먼저 보여준다. Home의 첫 구간을 장식 이미지나 링크 목록으로 소비하지 않는다.
 
-`PROJECT_HOME_PROJECT_SPECIFIC_PRIORITY`: 모든 프로젝트를 같은 이미지 세트나 같은 taxonomy로 기계적으로 맞추지 않는다. 해당 프로젝트의 최신 Notion/GitHub 정본과 승인된 자료를 먼저 읽고, **무엇을 만들어야 하는지와 어떻게 플레이되는지를 가장 빨리 설명하는 자료**를 프로젝트별로 선정한다. 기본 우선순위는 다음과 같은 판단 가이드이며 고정 템플릿이 아니다.
+`PROJECT_HOME_PROJECT_SPECIFIC_PRIORITY`: 모든 프로젝트를 같은 이미지 세트나 같은 taxonomy로 기계적으로 맞추지 않는다. 해당 프로젝트의 최신 repository 정본과 승인된 자료를 먼저 읽고, **무엇을 만들어야 하는지와 어떻게 플레이되는지를 가장 빨리 설명하는 자료**를 프로젝트별로 선정한다. 명시된 V4 exception의 자료는 그 범위에서만 추가 확인한다. 기본 우선순위는 다음과 같은 판단 가이드이며 고정 템플릿이 아니다.
 
 ```text
 Core Concept / North Star
@@ -92,6 +92,8 @@ Core Concept / North Star
 `HOME_PROJECTION_IS_NOT_DUPLICATE_CANON`: Home에 사람용 설명·표·필터 View·Visual anchor를 보여주는 것은 repository/Master의 구조화 원본을 독립 복제하는 것이 아니다. 긴 원시 데이터나 machine-consumed 규칙을 Home에 두 번째 정본으로 재구현하지 않는다. 동일 데이터를 Home용으로 복사해 따로 관리하는 대신 canonical Page/Database의 project-filtered linked view, table, gallery, board, toggle/section을 우선 사용한다.
 
 ## Human Home / AI-System 물리 분리
+
+아래 Page/Database/linked view 용어는 V4 exception이 채택한 UI의 표현 방식이지 외부 DB 생성 의무가 아니다. 기본 repository projection에서는 기존 책임 원본에서 파생한 표·이미지·목차와 source-bound drilldown을 사용한다. 사람용 문서와 raw registry/evidence 파일을 분리하며 같은 데이터의 독립 편집 사본을 만들지 않는다.
 
 `PROJECT REGISTRY · Master`와 같은 Project Registry는 프로젝트 identity·자동화 연결·동기화 상태를 유지하는 **AI/System Master**이며 사람용 Project Home으로 사용하지 않는다. 프로젝트 허브에서 사용자가 프로젝트를 선택했을 때 열리는 기본 진입점은 Registry row와 물리적으로 분리된 **전용 Human Project Home**이어야 한다.
 
@@ -125,7 +127,7 @@ Human Project Home
 ↔ Repository structured canon / implementation / runtime evidence
 ```
 
-위 연결은 책임 경계를 유지하면서 서로 추적 가능해야 한다. Home은 사람용 전체 그림을, Detail Canon은 사람이 비교·수정하는 상세 정본을, AI Workspace는 구현·검증용 세부 운영 정보를, repository는 구조화/런타임 사실과 evidence를 소유한다.
+위 연결은 책임 경계를 유지하면서 서로 추적 가능해야 한다. Home은 사람용 전체 그림을, repository의 Detail Canon은 사람이 비교·수정하는 상세 정본을, AI Workspace는 구현·검증용 세부 운영 정보를 제공한다. repository는 기획·결정·구조화 데이터·런타임 사실과 evidence의 기본 정본이다. 표현 역할의 분리는 플랫폼별 이중 정본을 허용하지 않는다.
 
 Human Home은 구현·동기화·검증 상태를 **사람이 판단할 수 있는 수준으로 요약**할 수 있다. 예를 들어 `Runtime NOT_RUN`, `현재 main과 동기화됨`, `Human playtest 미실행`은 허용하지만, 이를 설명하기 위해 원시 SHA·포트·로컬 경로·전체 CI 로그를 기본 화면에 노출하지 않는다. 사용자가 명시적으로 기술 evidence를 요청하면 분리된 AI/System 또는 Production/Handoff drilldown에서 확인한다.
 
@@ -143,22 +145,20 @@ AI가 이해한 핵심
 → 따라서 UI·밸런스·콘텐츠 변경에서 선택의 정보성·긴장감·결과 가독성을 먼저 보호한다.
 ```
 
-사용자는 이 요약이 틀리면 바로 수정할 수 있어야 한다. AI는 교정된 내용을 새 사실로 독립 승격하지 않고 승인 Decision·repository/Notion owner에 동기화한다.
+사용자는 이 요약이 틀리면 바로 수정할 수 있어야 한다. AI는 교정된 내용을 새 사실로 독립 승격하지 않고 승인 Decision과 기존 repository owner에 반영한다. 명시된 V4 exception의 추가 surface만 승인 범위 안에서 동기화한다.
 
 ## 승인 시각자료 전달 Gate
 
-`APPROVED_VISUAL_NOTION_DELIVERY_REQUIRED`
-
-`APPROVAL_WITHOUT_NOTION_DELIVERY_IS_INCOMPLETE`
+승인과 전달·구현은 별도 상태이며, 전달 매체는 현재 V4 authority를 따른다.
 
 실제 이미지·목업·다이어그램·시각화가 생성 또는 편집되었고 사용자/프로젝트 authority가 프로젝트용으로 승인했다면, 승인 상태만 텍스트로 남기고 끝내지 않는다.
 
 ```text
 actual visual exists
 → user/project approval
-→ 해당 Project Visual Bible 또는 Project-filtered Asset record에 업로드/첨부
-→ Approved 상태와 용도 기록
-→ destination readback으로 파일/preview/Project/승인 상태 확인
+→ 기존 repository Asset Catalog/Visual Bible owner에 경로·SHA-256·provenance·승인·용도·실제 consumer 기록
+→ repository의 실제 파일과 manifest/승인 상태 readback
+→ source-bound human projection에서 실제 이미지/preview와 Project identity 확인
 → 필요하면 Human Home에서 승인 visual anchor를 사람이 보기 쉽게 노출 또는 직접 연결
 ```
 
@@ -166,13 +166,14 @@ actual visual exists
 - `Asset`/Asset Library는 Preview·Approved·용도·재사용 상태를 구조적으로 추적한다.
 - `Prompt`, `AI Note`, `Hash`, `Implementation Path` 등은 동일 자산의 `AI / System` 정보로 남기되 Human Home 기본 화면에는 노출하지 않는다.
 - **텍스트로만 승인된 시각 방향**, 생성 전 image package, `READY_TO_GENERATE`, reference 후보는 실제 승인 이미지가 아니다. 사용자가 별도로 이미지 생성을 지시하지 않았다면 그림을 임의 생성하지 않으며, 존재하지 않는 이미지를 업로드 완료로 표시하지 않는다.
-- 업로드 호출 성공만으로 완료하지 않는다. `NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`의 attach + readback 계약을 따른다.
+- Notion 없이 위 repository 전달 증거가 충족되면 전달 gate를 닫을 수 있다. 이는 runtime 적용·Human UX·출시 PASS가 아니다.
+- 명시된 V4 exception이 Notion 전달을 요구할 때만 그 owner·scope·destination에 upload/attach 후 실제 파일·Project·승인 상태를 readback한다. 호출 성공만으로 완료하지 않으며 필수 readback이 없으면 `BLOCKED_UNVERIFIED`다. V3 `NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md`는 compatibility/history 자료이며 자체로 새 write 권한을 부여하지 않는다.
 
 `VISUAL_ASSET_ANCHORS`: Home은 모든 승인 asset을 복사하는 archive가 아니다. 프로젝트/핵심 경험을 가장 빨리 이해시키는 HERO와 주요 시스템·캐릭터·세계·UI를 설명하는 PRIMARY 시각자료만 해당 설명 가까이에 배치한다. 나머지는 Visual Bible/Asset drilldown에서 보존한다.
 
 ## Base Home 필수 내용
 
-- Base 목적과 Notion/GitHub authority split
+- Base 목적과 repository primary canon / derived human projection / 명시적 V4 exception 경계
 - 전체 작업 lifecycle과 각 단계의 존재 이유
 - 중요 규칙과 작동 조건
 - active Skill별 **Skill 목적 / 호출 조건 / 입력 / 처리 / 출력 / 기대효과 / 연결 Module·consumer·Test**
@@ -243,20 +244,20 @@ Home에는 사람이 이해하는 대표 값·관계·요약표 또는 project-f
 ```text
 사용자: "이 설명을 더 쉽게 바꿔줘"
 → human-facing 표현만 수정
-→ Notion destination readback
+→ 기존 repository human owner/projection readback; 명시된 V4 exception의 destination은 해당 범위에서만 추가 확인
 ```
 
-구조화 규칙이나 runtime 동작이 바뀌지 않으면 repository 변경을 억지로 만들지 않는다.
+설명만 바뀌면 기존 사람용 책임 문서와 필요한 파생 표현만 갱신한다. runtime 코드 변경을 억지로 만들지 않는다. 외부 예외 surface만 바뀐 경우에는 그 승인된 owner 경계를 따른다.
 
 ### 2. 게임/프로젝트 규칙 바꾸기
 
 ```text
 사용자 제안
-→ 현재 정본·영향·PR·Notion 조사
+→ 현재 repository 정본·영향·PR 조사; 명시된 V4 exception만 추가 확인
 → 변경 전 / 변경 후 / 기대효과 / 위험 / 롤백 보고
 → 사용자 승인
 → repository structured canon 동기화
-→ 필요한 Notion human surface 동기화 + readback
+→ repository human projection 동기화 + readback; 명시된 V4 exception만 추가 동기화
 → 구현/검증
 ```
 

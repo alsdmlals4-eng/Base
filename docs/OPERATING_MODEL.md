@@ -154,19 +154,21 @@ approved-scope remaining work
 
 #### `POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP`
 
-Base 또는 프로젝트 변경을 GitHub에 병합한 뒤에는 병합 자체를 완료로 보지 않는다. 새 `main`의 정확한 SHA를 다시 가져와 전체 승인 범위를 적대적으로 검토하고, 검증된 finding은 `POSTMERGE_CORRECTION_REQUIRED`에 따라 최신 main에서 새 Branch/PR로 교정한다. repository primary canon, asset manifest, exact-SHA human projection과 runtime evidence를 다시 읽어 `PROGRESS_READBACK_REQUIRED`를 닫는다. 명시된 V4 Notion exception이 있을 때만 GitHub 병합 증거 뒤에 해당 destination을 추가 갱신·readback한다.
+Base 또는 프로젝트 변경을 GitHub에 병합한 뒤에는 병합 자체를 완료로 보지 않는다. 새 `main`의 정확한 SHA를 다시 가져와 같은 작업 lineage의 검토 예산을 확인한다. 전체 검토 2회를 이미 소진했다면 세 번째 전체 검토를 시작하지 않고 finding과 영향 consumer의 교정·검증만 수행한다. 검증된 finding은 `POSTMERGE_CORRECTION_REQUIRED`에 따라 최신 main에서 새 Branch/PR로 교정한다. repository primary canon, asset manifest, exact-SHA human projection과 runtime evidence를 다시 읽어 `PROGRESS_READBACK_REQUIRED`를 닫는다. 명시된 V4 Notion exception이 있을 때만 GitHub 병합 증거 뒤에 해당 destination을 추가 갱신·readback한다.
 
 ```text
 GitHub merge
 → exact new main SHA fetch/readback
-→ full-scope adversarial review
+→ same-work review budget readback (docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md)
+   ├─ budget remains → remaining full-scope round(s), total exactly two
+   └─ budget exhausted → targeted correction/verification only
 → finding validation
 → required correction on a new branch/PR
 → regression + exact-head verification
 → repository primary/asset manifest/human projection current-state update after GitHub evidence
 → GitHub/repository artifact destination readback; V4 Notion exception only when applicable
 → progress, remaining work, blockers recalculation
-→ repeat until clean
+→ repeat targeted correction/verification until clean; merge/phase changes never reset the two-round budget
 ```
 
 열린 다른 PR은 계속 read-only이며, V4 Notion exception이 실제 적용되지 않는 저장소 작업에 가짜 동기화 증거를 만들지 않는다. 과거 기록은 현재 상태처럼 일괄 치환하지 않고 명시적 역사로 보존한다.

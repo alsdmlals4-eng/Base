@@ -2,6 +2,8 @@
 
 ## Unreleased — Base v9.5 focused maintenance candidate
 
+- Corrected active Human Home and completion consumers to repository-first delivery/readback with explicitly scoped V4 Notion exceptions; preserved V3 migration history and existing visual approval/runtime boundaries. Postmerge consumers now explicitly reuse the same-work two-round budget and continue only targeted correction/verification after it is exhausted. No new Skill, schema, runtime or external workspace was added.
+
 - Closed every material project-start route through the adapter-pinned, repository-owned L1+ benchmark/hygiene receipt gate; the default Work→Codex starter now fails closed before production, and the Intake Skill distinguishes its request metadata from a validator-executable root receipt JSON.
 - Routed the active engine baseline/adaptor policy through V4 repository-first authority (`REPOSITORY_PRIMARY_CANON` plus exact-SHA derived human view); Notion is now explicit exception/migration-only there too, while the Godot baseline and engine selection rules remain unchanged.
 - Recorded PR #586's bounded local transcript fallback for existing `RM-TOOL-005`: caller-supplied `.vtt`, `.srt`, or `.txt` can be ingested without `yt-dlp`, local bytes are SHA-256-bound and bounded-read, absolute local paths are not persisted, and `video_binding=UNVERIFIED` / `creation_source=UNKNOWN` remain explicit; live YouTube retrieval/current-site compatibility and project adoption remain `NOT_RUN / NOT_PROVEN`.
