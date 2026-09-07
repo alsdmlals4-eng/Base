@@ -191,4 +191,4 @@ execution_strategy:
 
 ### 외부 사례의 채택 경계
 
-2026-09-07 확인한 [GitHub HydraFusion 공식 발표](https://github.blog/ai-and-ml/github-copilot/project-hydrafusion-frontier-quality-via-multi-model-orchestration/)는 선택적 실행 조합·단계 제한·전체 호출 관측의 참고 근거다. `ADAPT`: 위 기존 owner 연결과 판단 기준만 흡수한다. `REJECT`: 제품 설치, 자동 모델 교체, 다른 계열 강제 사용, 단일 비평으로 Base review floor 대체, 발표 절감률의 프로젝트 전용 실측 전용. 연구 프리뷰와 통제된 오프라인 결과를 장기 Godot 작업 효과로 일반화하지 않는다. 프로젝트 성과와 모델 전환은 별도 실험 전 `NOT_RUN / NOT_MEASURED`다.
+2026-09-07 확인한 [GitHub HydraFusion 공식 발표](https://github.blog/ai-and-ml/github-copilot/project-hydrafusion-frontier-quality-via-multi-model-orchestration/)는 선택적 실행 조합·단계 제한·전체 호출 관측의 참고 근거다. `ADAPT`: 위 기존 owner 연결과 판단 기준만 흡수한다. `REJECT`: 제품 설치, 자동 모델 교체, 다른 계열 강제 사용, 단일 비평으로 Base review floor 대체, 발표 절감률을 프로젝트 실측으로 바꾸어 주장하는 행위. 연구 프리뷰와 통제된 오프라인 결과를 장기 Godot 작업 효과로 일반화하지 않는다. 프로젝트 성과와 모델 전환은 별도 실험 전 `NOT_RUN / NOT_MEASURED`다.

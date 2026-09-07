@@ -20,7 +20,7 @@
 
 ## Task 1 — complete existing reference and its consumer
 
-**Files:** Modify the cost Skill `SKILL.md`, `references/model-stack-routing.md`, `LEARNING_LOG.md` and existing `templates/project-operations/SKILL_EXECUTION_REPORT.md` consumer link; retain this plan and start receipt as evidence. No new runtime schema or code.
+**Files:** Modify the cost Skill `SKILL.md`, `references/model-stack-routing.md`, `LEARNING_LOG.md`, existing `templates/project-operations/SKILL_EXECUTION_REPORT.md` consumer link and `tests/test_p08_ai_operations_contract.py` navigation regression; retain this plan and start receipt as evidence. No new runtime schema or production code.
 
 **Interface:** Input is the existing work_package, cost_surface, actual capability and acceptance evidence. Output adds a conditional advisory execution_strategy inside the existing Skill result; map it to existing SKILL_EXECUTION_REPORT fields. Unknown evidence is not a successful route execution.
 
@@ -28,7 +28,8 @@
 - [x] Baseline regression: 41 existing tests PASS. Start receipt validator PASS.
 - [x] Baseline reference application by separate-context agent on exact baseline: three cases below; missing pattern/role/failure-record structure and single-model exclusion observed, not an unsafe production execution.
 - [x] Extend existing Skill/reference/log and report link to close observed retrieval gaps, retaining Registry non-use boundaries.
-- [ ] New separate-context consumer applies same cases with extended Skill; retain counterexamples and actual outputs on this task PR.
+- [x] New separate-context consumer applies same three cases plus four variations with extended Skill; actual outputs retained in task review and published on this task PR.
+- [x] Freshness checker initially rejected missing companion test. Added actual Markdown graph navigation regression (report/reference/owners/anchors); baseline report has no owner route and fails the same path assertion; candidate P08 10 tests PASS. This is navigation correctness, not model behavior.
 - [ ] Existing focused tests, full local validation, canonical freshness and package checks pass.
 - [ ] Independent full-scope review loops, exact-head CI, protected merge and postmerge readback.
 
@@ -58,4 +59,4 @@ No grep-only new test is presented as agent behavior. Existing text contracts re
 
 ## Rollback and closeout
 
-Revert only this change's additions to Skill/reference/log/plan/receipt together, preserving preexisting and subsequent work. Recheck routing, package and cost boundaries. Final subject SHA, exact checks, review, merge and cleanup belong to current-task PR; the receipt is an immutable start snapshot, not a second current board. Project local copies adopt only through their own approved synchronization.
+Revert only this change's additions to Skill/reference/report/log/test/plan/receipt together, preserving preexisting and subsequent work. Recheck routing, package and cost boundaries. Final subject SHA, exact checks, review, merge and cleanup belong to current-task PR; this plan's checked items describe preparation evidence and the receipt is an immutable start snapshot, not a second current board. Project local copies adopt only through their own approved synchronization.
