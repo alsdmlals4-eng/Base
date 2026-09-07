@@ -176,6 +176,34 @@ class GuardCompositionTests(unittest.TestCase):
 
 
 class PilotSpecificationTests(unittest.TestCase):
+    def test_resume_case_resolves_the_specific_side_effect_owner(self) -> None:
+        case = next(c for c in self.load_pilot()["cases"] if c["case_id"] == "LHR-02")
+        path, anchor = case["owner"].split("#", 1)
+        owner = ROOT / path
+        self.assertTrue(owner.is_file(), "resume owner must resolve from repository root")
+        heading = "## " + anchor.replace("-", " ")
+        section = owner.read_text(encoding="utf-8").split(heading + "\n", 1)
+        self.assertEqual(2, len(section), "resume anchor must resolve to the actual owner section")
+        contract = section[1].split("\n## ", 1)[0]
+        for field in ("last_safe_checkpoint", "side_effects_already_applied", "retry_safe", "verify_before_retry"):
+            self.assertIn(field, contract)
+
+    def test_rollback_covers_existing_consumers_as_well_as_new_artifacts(self) -> None:
+        guide = (ROOT / REFERENCE / "long-horizon-failure-recovery-pilot.md").read_text(encoding="utf-8")
+        rollback = guide.split("## Reusable lesson and rollback\n", 1)[1]
+        for path in (
+            "skills/maintaining-project-context-and-handoff/SKILL.md",
+            "skills/maintaining-project-context-and-handoff/LEARNING_LOG.md",
+            str(REFERENCE / "fresh-read-project-bootstrap.md").replace("\\", "/"),
+            PILOT.as_posix(),
+            (REFERENCE / "long-horizon-failure-recovery-pilot.md").as_posix(),
+            "tests/test_gpt_codex_workflow_contract.py",
+            "tests/test_long_horizon_failure_recovery.py",
+        ):
+            with self.subTest(path=path):
+                self.assertTrue((ROOT / path).is_file())
+                self.assertIn(path, rollback)
+
     def load_pilot(self) -> dict:
         self.assertTrue((ROOT / PILOT).is_file(), "missing bounded recovery pilot specification")
         return json.loads((ROOT / PILOT).read_text(encoding="utf-8"))

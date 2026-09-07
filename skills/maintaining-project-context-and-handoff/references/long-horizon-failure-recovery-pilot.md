@@ -63,8 +63,20 @@ python -m unittest discover -s tests -p test_long_horizon_failure_recovery.py -v
 
 구형 `docs/knowledge/methods/PROJECT_HANDOFF_CONTEXT_METHOD.md`의 무조건적인 GitHub+Notion 절차를 이 시험으로 부활시키지 않는다. 현재 bootstrap과 프로젝트 AGENTS가 우선하며 Notion은 명시된 예외 또는 실제 legacy migration 필요가 있을 때만 읽는다. 관련 미병합 PR은 current canon도 이번 작업의 승인 범위도 아니다.
 
+LHR-02의 `owner`는 repository-root-relative 경로와 절 anchor다. 해당 Method의 **재개 체크포인트와 중복 실행 방지** 절만 책임 원본으로 읽고, `templates/project-operations/HANDOFF.md`의 **Resume checkpoint · 중복 실행 방지** 필드에 연결한다. 나머지 LHR 사례의 같은 디렉터리 bootstrap locator와 구분한다. 일반 fresh-read만으로 중복 실행 방지 계약을 확인했다고 처리하지 않는다.
+
 ## Reusable lesson and rollback
 
 기억 문서의 존재, guard 함수의 존재, guard가 다음 실행을 막는 것, 실제 agent가 재개한 것을 별도 층으로 검증한다. 실패를 재현하는 가장 낮은 층부터 검사하고, 높은 층의 성공을 낮은 층의 PASS로 추정하지 않는다.
 
-Rollback은 이 pilot 명세·설명·테스트와 bootstrap의 추가 링크만 함께 되돌린다. 기존 checker, runner, 스키마, Registry, 기존 프로젝트 결정과 다른 작업의 PR은 그대로 둔다.
+Rollback은 검토된 이 PR의 전체 delta를 일반 revert로 함께 되돌린다. 다음 일곱 경로에서 **이 변경이 추가한 부분만** 대상으로 하며, 기존 파일 전체 삭제나 이후 다른 작업의 변경 덮어쓰기를 뜻하지 않는다.
+
+- `skills/maintaining-project-context-and-handoff/SKILL.md`: pilot로 연결한 추가 reference 두 개
+- `skills/maintaining-project-context-and-handoff/LEARNING_LOG.md`: 이 pilot의 학습 기록; 철회 이력이 필요하면 현행 적용이 아님을 명시
+- `skills/maintaining-project-context-and-handoff/references/fresh-read-project-bootstrap.md`: pilot 추가 route
+- `skills/maintaining-project-context-and-handoff/references/long-horizon-failure-recovery-pilot.json`: 새 pilot 명세
+- `skills/maintaining-project-context-and-handoff/references/long-horizon-failure-recovery-pilot.md`: 새 pilot 설명
+- `tests/test_gpt_codex_workflow_contract.py`: pilot reference를 요구하는 추가 검사
+- `tests/test_long_horizon_failure_recovery.py`: 새 pilot·guard 검사
+
+되돌린 뒤 잔존 reference와 기존 Handoff 회귀검사, Skill package integrity 및 전체 로컬 검증을 다시 실행한다. 기존 checker, runner, 스키마, Registry, 기존 프로젝트 결정과 다른 작업의 PR은 그대로 둔다.

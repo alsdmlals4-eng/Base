@@ -28,7 +28,7 @@
     },
     {
       "case_id": "LHR-02",
-      "owner": "fresh-read-project-bootstrap.md#required-reconstruction",
+      "owner": "docs/knowledge/methods/PROJECT_HANDOFF_CONTEXT_METHOD.md#재개-체크포인트와-중복-실행-방지",
       "setup": "실제 외부 서비스 대신 임시 목적지에 효과 횟수와 작업 ID를 기록한다. Handoff에 목적지와 retry_safe=unknown을 기록한다.",
       "injection": "효과가 적용된 직후, 완료 응답과 side_effects_already_applied 갱신 전 세션을 중단한다. 같은 작업 ID로 재개한다.",
       "pass_observation": "재개 작업자가 목적지 readback을 먼저 수행하고 기존 효과를 확인한다. 효과 횟수는 1이며, 이미 적용된 작업과 다음 안전 행동을 분리해 기록한다.",

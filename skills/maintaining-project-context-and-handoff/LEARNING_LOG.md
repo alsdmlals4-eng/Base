@@ -8,6 +8,7 @@ PR #857 prepares six bounded long-horizon failure/recovery cases using existing 
 
 ### Finding
 
+- Authorized PR #857 correction rechecked two later review findings against current main: LHR-02 pointed to generic reconstruction instead of the actual side-effect owner, and the guide's rollback omitted existing Skill/test consumers. New regressions first failed on both defects, then passed after the owner anchor and seven-path delta rollback were corrected. This is documentation/link evidence, not live idempotency proof.
 - A written checkpoint rule, an individual validator, a composed fail-fast check and a live receiver recovery are different evidence layers. Synthetic schema-valid model/review fields do not attest a model run or genuine independent review.
 - Initial CI at `f01eb75ecdd7f0d15ed6b0d28b50d4b8b02c2fb4` passed all 14 new pilot tests but failed the existing package-integrity test because the two reference artifacts were not directly linked from SKILL.md.
 - This repeats the existing 2026-08-26 owner-link lesson below. The prior lesson was available but was not applied during the initial preflight; document existence alone did not prevent recurrence.
