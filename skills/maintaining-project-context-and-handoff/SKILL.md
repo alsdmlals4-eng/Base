@@ -183,7 +183,7 @@ PLAY_MEANINGFUL_WORK_SLICE
 → Acceptance Criteria / review evidence
 → PLANNING_CANON_BEFORE_HANDOFF
 → PRE_HANDOFF_GPT_STOP
-→ CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA
+→ exact repository SHA / current Decision / AI production spec / handoff
 → approved Visual repository path / SHA-256 / manifest
 → 실제 Godot 구현 대상
 → runtime/play test
