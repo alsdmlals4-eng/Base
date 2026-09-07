@@ -43,7 +43,8 @@ class McpCapabilityAbsorptionTests(unittest.TestCase):
                      "설정 파일만으로 활성 상태를 확정하지 않는다",
                      "등록", "활성", "연결", "실제 작업 검증",
                      "UNVERIFIED", "기능 부재의 증거가 아니다",
-                     "새 구현이 필요하다고 추론하지 않는다")
+                     "새 구현이 필요하다고 추론하지 않는다",
+                     "노출된 tool/schema", "호출 권한·실행 성공")
 
     def test_absorption_order_prefers_no_code_change(self) -> None:
         body = self.require("### 8.2 추가 위치와 대안 선택",

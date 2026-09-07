@@ -159,7 +159,7 @@ MCP 추가, 기존 MCP 기능 보강, 다른 MCP의 구조 흡수 요청에서�
 |---|---|---|
 | 프로젝트 채택 기록·exact pin | 프로젝트가 선택한 provider·version·역할 | 현재 PC 설치·실행·연결 |
 | host 등록·설정 | 해당 profile에 등록된 서버와 설정 출처 | 활성 여부·인증·현재 tool schema·정상 작동 |
-| 현재 host 활성·연결 및 schema 관찰 | 이번 세션에서 호출 가능한 범위 | 실제 작업 검증·영구 변경의 정확성 |
+| 현재 host 활성·연결 및 schema 관찰 | 이번 세션에 노출된 tool/schema·readiness | 호출 권한·실행 성공·실제 작업 검증·영구 변경의 정확성 |
 | exact revision의 readback·테스트·화면 | 실제로 실행한 작업의 결과 | 다른 프로젝트·버전·세션의 PASS |
 
 - 별도 인벤토리 CLI 또는 config parser를 만들기 전에 host 기본 기능을 재사용한다. Codex는 해당 프로젝트의 `CODEX_HOME`·작업 디렉터리에서 `codex mcp list`로 등록을, `/mcp`로 현재 활성 서버를 확인한다. 설치된 CLI의 도움말과 버전에 맞는 기능만 사용한다.
