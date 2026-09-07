@@ -99,6 +99,24 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         ):
             self.assertIn(term, text)
 
+    def test_recovery_pilot_is_owned_without_claiming_live_handoff_success(self) -> None:
+        owner = ROOT / "skills/maintaining-project-context-and-handoff"
+        skill = (owner / "SKILL.md").read_text(encoding="utf-8")
+        for suffix in ("md", "json"):
+            relative = f"references/long-horizon-failure-recovery-pilot.{suffix}"
+            self.assertIn(relative, skill)
+            self.assertTrue((owner / relative).is_file())
+        pilot = json.loads((owner / "references/long-horizon-failure-recovery-pilot.json").read_text(encoding="utf-8"))
+        self.assertEqual("PILOT_SPECIFICATION_NOT_RESULT", pilot["artifact_role"])
+        self.assertEqual("NOT_RUN", pilot["live_model_run_status"])
+        self.assertEqual(
+            (owner / "references/fresh-read-project-bootstrap.md").relative_to(ROOT).as_posix(),
+            pilot["owner"],
+        )
+        guide = (owner / "references/long-horizon-failure-recovery-pilot.md").read_text(encoding="utf-8")
+        for marker in ("UNIT_GUARD_ONLY", "NO_PRODUCTION_AUTHORIZATION_GATE", "TRANSFER_ACCEPTED_NOT_CLAIMED"):
+            self.assertIn(marker, guide)
+
     def test_work_mode_routes_base_notion_to_gpt_and_godot_product_to_codex(self) -> None:
         routing = (ROOT / "docs/WORK_MODE_AND_SKILL_ROUTING.md").read_text(encoding="utf-8")
         for term in (
