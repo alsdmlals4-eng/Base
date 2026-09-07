@@ -426,6 +426,20 @@ google_play_target_api:
   project_target_sdk:
   status: VERIFIED_CURRENT | UPDATE_REQUIRED | EXTENSION_REQUIRED | BLOCKED_UNVERIFIED
 
+android_developer_verification:
+  checked_at:
+  policy_source: https://developer.android.com/developer-verification
+  play_console_guide_source: https://developer.android.com/developer-verification/guides/google-play-console
+  play_policy_deadline_source: https://developer.android.com/distribute/play-policies
+  distribution_path: GOOGLE_PLAY_ONLY | GOOGLE_PLAY_AND_OUTSIDE | OUTSIDE_GOOGLE_PLAY_ONLY | LIMITED_DISTRIBUTION | UNKNOWN
+  identity_verification_status: NOT_RUN | VERIFIED | ACTION_REQUIRED | NOT_APPLICABLE_LIMITED_DISTRIBUTION | BLOCKED_UNVERIFIED
+  package_name:
+  package_registration_status: NOT_RUN | REGISTERED | NOT_REGISTERED | DRAFT | ACTION_REQUIRED | BLOCKED_UNVERIFIED
+  signing_key_ownership_status: NOT_RUN | VERIFIED | ACTION_REQUIRED | NOT_APPLICABLE | BLOCKED_UNVERIFIED
+  current_enforcement_scope:
+  release_readiness_status: NOT_RUN | READY_FOR_CURRENT_SCOPE | ACTION_REQUIRED | BLOCKED_UNVERIFIED
+  evidence_or_console_ref:
+
 steam:
   steamworks_partner_status:
   direct_fee_budget_status:
@@ -437,6 +451,16 @@ steam:
 `google_play_target_api`는 프로젝트의 실제 `target SDK`와 현재 Google Play 정책을 대조하는 가변 Gate다. Base의 기록값을 영구 상수로 간주하지 않고 출시·업데이트 제출 직전에 공식 원문과 Play Console에서 다시 확인한다.
 
 `google_play_android_vitals`는 제출 전 local/device performance와 제출 후 production quality evidence를 합치지 않기 위한 별도 Gate다. current threshold, 효력 시점, Play Console field data를 확인하지 않은 상태를 `WITHIN_CURRENT_THRESHOLD` 또는 `NO_CURRENT_BAD_BEHAVIOR`로 승격하지 않는다.
+
+### 10.1 Android Developer Verification Release Gate
+
+2026-09-07에 재확인한 공식 Android 문서에서 다음 enforcement milestone은 **2026-09-30**이다. 참여 store의 Brazil·Indonesia·Singapore·Thailand에서 certified Android 7+ 기기 설치·업데이트에 developer verification이 적용되기 시작하고, broader rollout은 2027로 예고되어 있다. Google Play 쪽은 별도로 Play Console에서 Play 배포 package name을 관리하며, 기존 앱 대부분은 자동 등록되지만 남은 package를 확인·등록하지 않으면 Play distribution continuity가 막힐 수 있다.
+
+이 날짜·지역·store 범위와 2027 확대 계획은 가변 platform policy다. Base 영구 상수로 간주하지 않고 실제 release/update 시점의 `policy_source`, `play_console_guide_source`, `play_policy_deadline_source`, Play Console 또는 Android Developer Console 상태를 다시 읽는다. 2026-09-30의 지역 install enforcement와 Google Play package registration의 distribution consequence도 같은 claim으로 합치지 않는다.
+
+`identity_verification_status`, `package_registration_status`, `signing_key_ownership_status`는 독립 상태다. 자동 등록 가능성만으로 package registration을 PASS로 만들지 않는다. 실제 Play Console 또는 적용 가능한 Android Developer Console의 package/status readback이 있어야 `REGISTERED`를 기록한다. signing key ownership proof가 필요한 경우에도 private signing key, 신분증 원본, recovery code, secret/account credential을 repository evidence에 저장하지 않고 안전한 status/receipt reference만 남긴다.
+
+ADB 또는 advanced flow 성공을 consumer release PASS로 사용하지 않는다. ADB는 개발·테스트 install 경로이고 advanced flow는 power-user용 예외 경로이므로, 해당 경로 성공은 일반 플레이어가 intended distribution path에서 설치·업데이트할 수 있다는 증거가 아니다. 현재 enforcement에 참여하지 않는 off-Play 경로는 적용 조건을 확인해 `NOT_APPLICABLE` 또는 `READY_FOR_CURRENT_SCOPE`를 사용할 수 있지만 2027 확대 전에 다시 검증한다.
 
 ## 11. Release Waves
 
@@ -503,6 +527,7 @@ large_screen_configuration_continuity:
 background_foreground_recovery:
 performance_budget:
 google_play_android_vitals:
+android_developer_verification:
 build_size_and_asset_optimization:
 stove_readiness:
 google_play_readiness:
@@ -511,4 +536,4 @@ human_usability:
 final_profile_status:
 ```
 
-문서 작성만으로 `DUAL_TARGET_APPROVED`를 부여하지 않는다. 실행하지 않은 build·device·human·store 검증은 각각 `NOT_RUN`, `DEVICE_NOT_RUN`, `HUMAN_NOT_RUN`, `BLOCKED_UNVERIFIED`로 유지한다. Large-screen configuration continuity도 실제 transition runtime evidence 없이 `PASS`로 만들지 않는다. Google Play production field data가 없으면 `google_play_android_vitals`도 `NOT_ENOUGH_FIELD_DATA` 또는 해당 pre-release 상태로 유지한다.
+문서 작성만으로 `DUAL_TARGET_APPROVED`를 부여하지 않는다. 실행하지 않은 build·device·human·store 검증은 각각 `NOT_RUN`, `DEVICE_NOT_RUN`, `HUMAN_NOT_RUN`, `BLOCKED_UNVERIFIED`로 유지한다. Large-screen configuration continuity도 실제 transition runtime evidence 없이 `PASS`로 만들지 않는다. Google Play production field data가 없으면 `google_play_android_vitals`도 `NOT_ENOUGH_FIELD_DATA` 또는 해당 pre-release 상태로 유지한다. Android developer verification도 실제 console/status readback 없이 `READY_FOR_CURRENT_SCOPE`로 승격하지 않는다.
