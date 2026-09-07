@@ -33,7 +33,10 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$TARGET_SHA"
           test "$(git rev-parse HEAD^)" = "$SOURCE_SHA"
-          test "$(git rev-parse HEAD^{tree})" = "$(git rev-parse "$REVIEWED_SHA^{tree}")"
+          # Squash-merged topic branches may be removed; do not assume their objects are reachable from heads.
+          git fetch --no-tags origin refs/pull/858/head
+          test "$(git rev-parse FETCH_HEAD)" = "$REVIEWED_SHA"
+          test "$(git rev-parse HEAD^{tree})" = "$(git rev-parse FETCH_HEAD^{tree})"
           python tools/validate_work_contract_receipt.py --receipt docs/operations/work-receipts/2026-09-07-headless-shared-boundary.json --phase resume --expected-source-sha "$SOURCE_SHA"
           python -m unittest tests.test_shared_direct_call_contract tests.test_feature_code_contract_modularity -v
           echo "MERGED_TREE_EQUALS_INDEPENDENTLY_REVIEWED_AND_CI_VERIFIED_TREE"
