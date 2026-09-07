@@ -28,7 +28,7 @@ WEEKLY = (
     / "knowledge"
     / "game-development"
     / "reuse"
-    / "AI_ASSISTED_INDIE_WEEKLY_SCAN_2026-08-31.md"
+    / "AI_ASSISTED_INDIE_WEEKLY_SCAN_2026-09-07.md"
 )
 
 
@@ -103,10 +103,10 @@ class AiIndieGameReverseEngineeringRadarTests(unittest.TestCase):
             with self.subTest(required=required):
                 self.assertIn(required, text)
 
-    def test_weekly_scan_routes_runtime_ai_deployment_budget_to_existing_radar(self) -> None:
+    def test_weekly_scan_routes_current_evidence_and_visible_ai_distribution_preflight(self) -> None:
         radar = RADAR.read_text(encoding="utf-8")
         self.assertIn(
-            "latest_weekly_scan_receipt: docs/knowledge/game-development/reuse/AI_ASSISTED_INDIE_WEEKLY_SCAN_2026-08-31.md",
+            "latest_weekly_scan_receipt: docs/knowledge/game-development/reuse/AI_ASSISTED_INDIE_WEEKLY_SCAN_2026-09-07.md",
             radar,
         )
         for required in (
@@ -115,6 +115,9 @@ class AiIndieGameReverseEngineeringRadarTests(unittest.TestCase):
             "REMOTE_PROVIDER_TRANSPORT_BUDGET",
             "LOCAL_IS_NOT_FREE",
             "REMOTE_IS_NOT_ZERO_FOOTPRINT",
+            "TARGET_DISTRIBUTION_CHANNEL_PREFLIGHT",
+            "VISIBLE_AI_REPLACEMENT_ROUTE",
+            "CHANNEL_REJECTION_IS_NOT_UNIVERSAL_POLICY",
         ):
             with self.subTest(required=required):
                 self.assertIn(required, radar)
@@ -122,15 +125,21 @@ class AiIndieGameReverseEngineeringRadarTests(unittest.TestCase):
         self.assertTrue(WEEKLY.is_file())
         weekly = WEEKLY.read_text(encoding="utf-8")
         for required in (
+            "Slotbound",
+            "Vapor World: Over The Mind",
             "Matchinko",
             "CODEX MORTIS",
-            "Express 404",
-            "Slotbound",
             "The Last Admiral",
             "Neon Angora",
             "Wanderfolk",
             "Suck Up!",
-            "RUNTIME_AI_DEPLOYMENT_MODE_BUDGET",
+            "Ashen Crown",
+            "FARLUME",
+            "The Black Breath",
+            "Vonkelveld",
+            "Homunculus: The Little One in the Flask",
+            "Black Rope Hell - Ximen Qing",
+            "TARGET_DISTRIBUTION_CHANNEL_PREFLIGHT",
             "MATERIAL_BASE_FINDING",
             "PROJECT_ADOPTION_NOT_RUN",
         ):

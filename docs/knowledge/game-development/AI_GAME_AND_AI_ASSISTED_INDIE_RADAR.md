@@ -7,7 +7,7 @@ owner_policy: docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST
 reuse_owner: docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md
 ai_workflow_owner: docs/knowledge/game-development/AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md
 current_project_adoption_receipt: docs/knowledge/game-development/reuse/AI_ASSISTED_INDIE_PROJECT_ADOPTION_RECEIPT_2026-08-24.md
-latest_weekly_scan_receipt: docs/knowledge/game-development/reuse/AI_ASSISTED_INDIE_WEEKLY_SCAN_2026-08-31.md
+latest_weekly_scan_receipt: docs/knowledge/game-development/reuse/AI_ASSISTED_INDIE_WEEKLY_SCAN_2026-09-07.md
 scheduler_authority: EXTERNAL_TO_BASE
 recommended_cadence: weekly
 compare_with_previous_scan: true
@@ -207,6 +207,38 @@ PLAYER_FEEDBACK_REBUILD_LOOP
 AI_VISIBLE_OUTPUT_QUALITY_GATE
 ```
 
+### 9.1 `AI_VISIBLE_OUTPUT_QUALITY_GATE`의 배포 표면 사전검사
+
+player-facing AI output은 빌드 안에서 보기에 괜찮고 Steam 설문을 통과할 수 있다는 이유만으로 출시·홍보 준비가 끝난 것이 아니다. 실제로 사용할 배포·발견 채널이 정해져 있으면 같은 산출물의 채널별 허용·수용 조건과 교체 가능성을 함께 확인한다.
+
+```text
+AI_VISIBLE_OUTPUT_QUALITY_GATE
+→ existing art / UX / continuity / rights / platform checks
+→ TARGET_DISTRIBUTION_CHANNEL_PREFLIGHT
+   target store/platform
+   target festival/showcase when planned
+   target creator/streamer outreach when planned
+   target community/discovery surface when planned
+   checked_at + source + evidence class
+   channel-specific eligibility / disclosure / acceptance constraint
+→ VISIBLE_AI_REPLACEMENT_ROUTE
+   high-visibility asset owner
+   editable/original source or regeneration route
+   non-AI or independently produced replacement when required
+   replacement scope / cost / schedule risk
+→ accept | rework | replace | skip channel
+```
+
+정식 플랫폼 설문·권리·release compliance는 계속 `PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`와 release evidence owner가 소유한다. 이 Radar는 festival/showcase/creator/community 같은 **실제로 의존할 발견 채널의 현재 조건이 별도일 수 있음**만 확인하며 두 번째 release policy owner가 되지 않는다.
+
+```text
+CHANNEL_REJECTION_IS_NOT_UNIVERSAL_POLICY
+STORE_APPROVAL_IS_NOT_CHANNEL_ACCEPTANCE
+SELF_REPORT_IS_NOT_CHANNEL_POLICY
+```
+
+한 개발자가 특정 festival·streamer·community에서 거절됐다고 보고한 사실을 다른 채널의 보편 정책으로 일반화하지 않는다. 반대로 특정 store에서 공개·승인 가능한 AI 사용이라는 사실도 planned discovery channel에서 같은 방식으로 다뤄진다는 증거가 아니다. 채널별 공식 정책이 없으면 `DEVELOPER_SELF_REPORT` 또는 관찰 가능한 실제 결과의 evidence ceiling을 그대로 유지한다.
+
 이 Gate는 `AI_ASSISTED_GAME_DEVELOPMENT_GUIDE.md`를 대체하지 않는다. 실제 프로젝트 실행 시 Guide의 Prompt/Context/Eval/권리/비용/검증 계약을 따른다.
 
 ## 10. 런타임 AI용 보수적 Gate
@@ -319,6 +351,8 @@ initial research capture
 - 기존 Base 모듈과 중복됨
 - 런타임 AI가 deterministic rule로 더 싸고 안정적으로 해결 가능함
 - player-facing AI output이 현재 quality bar를 통과하지 못함
+- planned festival/showcase/creator/community channel이 있는데 AI 사용 관련 현재 조건·수용 경계를 확인하지 않음
+- high-visibility AI asset이 target channel과 충돌할 때 교체 가능한 owner/source/route 또는 비용 경계를 갖지 않음
 - provider/API 비용이 zero-incremental-cost 기본 정책과 충돌함
 - local model의 hardware/install/performance budget이 target platform에서 증명되지 않음
 - remote provider의 network/outage/rate-limit/privacy/cost fallback이 증명되지 않음
