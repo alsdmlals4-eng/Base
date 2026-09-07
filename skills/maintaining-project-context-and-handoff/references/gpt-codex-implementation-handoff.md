@@ -206,6 +206,7 @@ GPT로 반환:
 
 ### 승인과 기존 consumer
 
+- 이 절의 연속 루프는 유효한 approval reference와 명시적 `CONTINUATION_INTENT_ALIASES`를 기존 실행 계약에 기록하여 `APPROVED_CONTRACT_CONTINUATION` / `CONTINUOUS_WORK_ACTIVE`가 확인된 경우에만 적용한다. Blueprint 승인만 있거나 계속 실행 의도가 없으면 `CONTINUOUS_WORK_INACTIVE`를 유지하고 일반 인계·검토 경계를 따른다. 사용자 중지·검토만 요청은 즉시 우선한다.
 - 유효한 approval reference와 해당 범위의 사용자 승인 `BLUEPRINT_PASS_2_FINAL exact revision`을 확인한다. 같은 승인 범위의 기술적 교정에는 routine 재승인을 요구하지 않는다. 새 Goal·범위·비용·권한을 자동 승인하지 않는다.
 - `templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md`의 기존 `approved_scope / explicit_non_scope / acceptance_criteria / repository_sources / asset_audio_dependencies / review_evidence_expected`에 아래 실행 정보를 연결한다. 이 reference의 `required_runtime_or_play_checks`는 Template의 검증 요구에 대응한다. 같은 정보를 새 정본에 복제하지 않고 기존 owner의 경로·ID를 참조하며, 새 필수 Schema나 별도 진행표를 만들지 않는다.
 - 필요한 이미지·의미 변경은 각각 `GPT_VISUAL_REQUEST`와 `CHANGE_PROPOSAL`로 분리한다. 승인 자산을 임의 교체하지 않는다. 이에 의존하지 않는 승인 작업만 계속하며, 미승인 대체물로 완료 처리하지 않는다.
@@ -237,6 +238,7 @@ exact project/approval/asset/consumer 재수화
 - 완료를 위해 acceptance나 테스트의 기대 결과를 낮추지 않는다. 잘못된 테스트는 정본·반례 근거를 남겨 교정하되 승인된 제품 의미를 바꾸지 않는다. 기존 실패와 새 회귀를 구분하고, 기존 실패라고 해서 필수 acceptance를 면제하지 않는다.
 - 반복 실패·개선 정체 또는 상한 도달 시 같은 방법을 무한 반복하지 않는다. 기존 계약의 `recover → local defer → independent ready work`로 분류하고, 반복 원인·대안·남은 필수 항목을 기록한다. 최신 사용자 지시·AGENTS가 명시한 전역 중단 조건은 우선한다. 상한 미확인은 무제한 실행 허가가 아니다. 안전한 실행 한도를 기존 owner에서 먼저 복원하며, 해결되지 않은 해당 실행은 보류한다.
 - side effect 뒤에는 기존 작업 기록에 checkpoint를 남긴다. 중단 후 commit·PR·외부 쓰기를 무조건 재시도하지 않는다. current SHA·dirty state·PR ownership readback 뒤 완료된 단계는 보호하고 미완료 단계만 재개한다. 다른 open/draft/ready PR은 read-only이며, main 이동 시 현재 계약의 drift·영향 재검증 경계를 따른다.
+- 외부 쓰기의 완료 여부는 Git 상태로 판정하지 않는다. 기존 task-recovery owner에 따라 해당 provider의 실제 목적지 상태, request/result identity 또는 idempotency key와 postcondition을 readback한 뒤 이미 적용된 효과를 분류한다. 확인할 수 없으면 `retry_safe: unknown`과 해당 쓰기 차단을 유지하며, 응답 누락만으로 미완료로 간주하지 않는다.
 - 필수 검증이 실패했거나 `NOT_RUN`이면 전체 완료가 아니다. 증거가 부족한 항목과 의존 작업만 보류하고 독립 작업은 계속한다. headless 통과를 화면·조작 검증 PASS로 바꾸지 않는다. `codex_result`의 기존 tests/evidence/risks/status로 결과를 반환하며, `READY_FOR_GPT_REVIEW`는 사용자 승인이나 출시 PASS가 아니다.
 - 이 절은 `GPT_LOCAL_CODEX_ORCHESTRATION_RETIRED` 경로를 재활성화하거나 도입하지 않는다. 새 daemon·scheduler·유료 API도 추가하지 않는다. 실제로 제공된 승인 실행 환경 안에서만 동작하며, 채팅 종료 후 백그라운드 실행을 보장하지 않는다.
 
@@ -246,7 +248,9 @@ exact project/approval/asset/consumer 재수화
 
 문서 회귀검사는 agent 실행 강제·프로젝트 채택·Godot runtime의 증거가 아니다. 이 절을 읽거나 Template을 채웠다는 사실만으로 시범 적용 성공·사용자 개입 감소·완성 게임을 주장하지 않는다. 실제 프로젝트 적용은 해당 프로젝트의 최신 `AGENTS.md`와 채택한 Base 계약·drift 분류를 따르며 일괄 교체하지 않는다.
 
-2026-09-07 원출처 비교: [OpenAI Codex app 사례](https://openai.com/index/introducing-the-codex-app/)의 초기 프롬프트 뒤 반복 재지시와 플레이 검증, [Anthropic 장기 실행 실험](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)의 작은 기능 단위·진행 기록·end-to-end 검사, [Godot 공식 CLI](https://docs.godotengine.org/en/stable/tutorials/editor/command_line_tutorial.html)의 실제 실행 경로를 `ADAPT`한다. 웹 실험의 성과 수치를 Godot에 전이하거나 새 provider·전체 게임 자율 확장·검증 생략을 채택하지 않는다. 공용 교훈은 **승인 입력뿐 아니라 실행·관측·교정 경로까지 기존 인계에 연결해야 한다**는 것이며, 효과 검증은 실제 프로젝트 시범 실행에 남는다.
+2026-09-07 원출처 비교: [OpenAI Codex app 사례](https://openai.com/index/introducing-the-codex-app/)의 단일 초기 사용자 프롬프트 이후 자율 작업과 실제 플레이 검증, [Anthropic 장기 실행 실험](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)의 작은 기능 단위·진행 기록·end-to-end 검사, [Godot 공식 CLI](https://docs.godotengine.org/en/stable/tutorials/editor/command_line_tutorial.html)의 실제 실행 경로를 `ADAPT`한다. 웹 실험의 성과 수치를 Godot에 전이하거나 새 provider·전체 게임 자율 확장·검증 생략을 채택하지 않는다. 공용 교훈은 **승인 입력뿐 아니라 실행·관측·교정 경로까지 기존 인계에 연결해야 한다**는 것이며, 효과 검증은 실제 프로젝트 시범 실행에 남는다.
+
+이번 교정의 사전 비교·실행 상태는 `docs/operations/work-receipts/2026-09-07-approved-slice-continuous-handoff.json`에 기록한다. 최초 PR 작성 시점의 누락된 기록을 소급하여 PASS로 바꾸지 않으며, final exact-head 검사·독립 검토·병합 readback의 현황은 PR #856이 소유한다.
 
 ## 9. 선택적 Codex Godot technical preflight
 

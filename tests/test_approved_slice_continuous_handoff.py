@@ -35,12 +35,27 @@ class ApprovedSliceContinuousHandoffTests(unittest.TestCase):
         )
 
     def test_existing_template_and_fields_are_the_consumer(self) -> None:
+        template = (ROOT / "templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md").read_text(encoding="utf-8")
+        for field in ("repository_sources:", "review_evidence_expected:", "asset_audio_dependencies:",
+                      "codex_result:", "### Acceptance Criteria", "### 검증 요구"):
+            self.assertIn(field, template)
+        self.assertIn("## 8A. 승인 Slice 연속 실행 인계", template)
+        for label in ("working directory", "engine/version", "실행 명령", "checkpoint", "quota", "중단 조건"):
+            self.assertIn(label, template)
         self.assert_terms(
             "templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md",
             "acceptance_criteria", "review_evidence_expected", "required_runtime_or_play_checks",
             "repository_sources", "asset_audio_dependencies", "codex_result",
             "새 필수 Schema나 별도 진행표를 만들지 않는다.",
         )
+
+    def test_activation_requires_intent_not_blueprint_approval_alone(self) -> None:
+        self.assert_terms("CONTINUATION_INTENT_ALIASES", "APPROVED_CONTRACT_CONTINUATION",
+                          "CONTINUOUS_WORK_ACTIVE", "CONTINUOUS_WORK_INACTIVE")
+
+    def test_external_effect_recovery_reads_the_destination_not_only_git(self) -> None:
+        self.assert_terms("provider", "request/result identity", "idempotency key",
+                          "postcondition", "retry_safe: unknown")
 
     def test_run_and_reproduction_routes_come_from_actual_project(self) -> None:
         self.assert_terms(

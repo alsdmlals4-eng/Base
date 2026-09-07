@@ -1,0 +1,41 @@
+{
+  "work_level": "L1",
+  "approval_ref": "2026-09-07 current conversation: explicit PR855/856/857 correction-validation-squash-readback approval followed by 좋아 진행해줘",
+  "approved_scope": "PR856 approved-slice handoff correction and consumer mapping, not game implementation, installation, new permissions or runtime proof.",
+  "outcome_status": "PREMERGE_CORRECTION_CHECKPOINT_NOT_CLOSEOUT",
+  "current_status_owner": "https://github.com/alsdmlals4-eng/Base/pull/856",
+  "checkpoint_policy": "Recorded during correction, not backdated proof of the initial author preflight. Final-head verification/review/merge readback belongs on the PR; no self-SHA or automatic DONE claim.",
+  "benchmark_preflight_receipt": {
+    "state": "PASS",
+    "entries": [
+      {"source_and_evidence": "Base@46ac4c2ca8326739a31b68f3e474ffd2cf6018af: continuous-work-execution.md, task-recovery-protocol.md and CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md read before correction; PR856 full delta and four current review threads inspected.", "observed_pattern": "Existing owners require intent plus approval and provider destination readback; the template already has repository_sources and review_evidence_expected but lacks the detailed execution mapping.", "project_fit_and_difference": "Reuse existing fields and owner rules; add explicit reference mapping without a new schema or executor.", "disposition": "ADOPT"},
+      {"source_and_evidence": "https://openai.com/index/introducing-the-codex-app/ read 2026-09-07", "observed_pattern": "Game example describes one initial user prompt and actual gameplay testing, not repeated user re-instruction.", "project_fit_and_difference": "Correct the attribution; retain scoped approval and avoid transferring demo productivity to Godot.", "disposition": "ADAPT"},
+      {"source_and_evidence": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents read 2026-09-07", "observed_pattern": "Incremental features, durable progress and end-to-end testing address premature completion and context loss.", "project_fit_and_difference": "Use current Slice and handoff owners rather than copy a web-specific harness.", "disposition": "ADAPT"},
+      {"source_and_evidence": "https://docs.godotengine.org/en/stable/tutorials/editor/command_line_tutorial.html read 2026-09-07", "observed_pattern": "Project and script execution routes depend on the actual engine and project; headless is not visual verification.", "project_fit_and_difference": "Require real project command discovery; do not run or configure a game as part of this Base-only correction.", "disposition": "ADAPT"}
+    ]
+  },
+  "alternatives": [
+    {"option": "Reference-only guidance", "disposition": "REJECT", "reason": "Leaves template consumers and activation/recovery omissions unprotected."},
+    {"option": "Existing reference and template mapping plus focused regressions", "disposition": "ADOPT", "reason": "Smallest correction with existing authority and no schema migration."},
+    {"option": "New runtime orchestrator and handoff schema", "disposition": "REJECT", "reason": "Duplicates existing owners and exceeds the approved correction scope."}
+  ],
+  "context_configuration_hygiene": {
+    "scope": "PR856 reference, actual handoff template, tests and this evidence checkpoint; no broad deletion.",
+    "inventory": [
+      {"path": "skills/maintaining-project-context-and-handoff/references/gpt-codex-implementation-handoff.md", "classification": "ACTIVE_OWNER", "owner_or_provenance": "Current Handoff Skill reference", "references_and_consumers": "Owning SKILL and implementation work instruction"},
+      {"path": "templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md", "classification": "ACTIVE_OWNER", "owner_or_provenance": "Existing product handoff template", "references_and_consumers": "Actual template read by regression; field semantics preserved"}
+    ]
+  },
+  "project_work_kanban": {
+    "goal_or_slice_issue_ref": "https://github.com/alsdmlals4-eng/Base/pull/856",
+    "source_main_sha": "46ac4c2ca8326739a31b68f3e474ffd2cf6018af",
+    "work_item_refs": ["SLICE-CORRECTION"],
+    "active_work_item_ref": "SLICE-CORRECTION",
+    "next_action": "Validate corrected final head, independent review, then normal merge gates and main readback.",
+    "work_items": [
+      {"work_item_id": "SLICE-CORRECTION", "title": "Close activation, recovery and consumer gaps in PR856", "status": "IN_PROGRESS", "canon_owner": "skills/maintaining-project-context-and-handoff/references/gpt-codex-implementation-handoff.md", "actual_consumers": ["templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md", "tests/test_approved_slice_continuous_handoff.py"], "depends_on": [], "acceptance_criteria": ["SLICE-AC-01"], "required_evidence": ["E2_TEST"], "checklist": [{"id": "SLICE-AC-01", "text": "Correct reference, actual template and tests agree; final review and CI have no unresolved finding.", "status": "IN_PROGRESS"}], "verification": [{"level": "E2_TEST", "status": "NOT_RUN", "evidence": []}], "next_action": "Run correction regressions and whole repository validation; publish exact-head evidence on PR856."}
+    ]
+  },
+  "evidence_ceiling": "Documentation and contract verification only. Actual project pilot, runtime, Human and productivity measurement remain NOT_RUN/NOT_MEASURED.",
+  "rollback": "Normally revert only PR856 additions to reference, template, tests and this checkpoint together; preserve original files, other PRs and all projects. Recheck consumer links and regression after revert."
+}
