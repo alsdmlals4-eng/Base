@@ -15,9 +15,10 @@
   "unassigned_path_policy": "COORDINATOR_REVIEW_WITH_SEMANTIC_OWNER_ATTRIBUTION",
   "cross_part_protocol": "CROSS_PART_CHANGE_DEFAULT_REQUEST_ONLY_FOR_REAL_BLOCKERS",
   "review_contract": {
-    "FULL_LOOP_COUNT_MINIMUM": 5,
-    "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT": 5,
-    "maximum_loop_count": null,
+    "FULL_LOOP_COUNT_MINIMUM": 2,
+    "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT": 2,
+    "FULL_LOOP_COUNT_MAXIMUM": 2,
+    "maximum_loop_count": 2,
     "exit": "CLEAN_REVIEW_EXIT",
     "FULL_LOOP_IS_NOT_A_REVIEW_LENS": true
   },
@@ -407,8 +408,8 @@
         "all Part diffs as adversarial inputs"
       ],
       "important_rules": [
-        "FULL_LOOP_COUNT_MINIMUM: 5",
-        "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5",
+        "FULL_LOOP_COUNT_MINIMUM: 2",
+        "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2",
         "CLEAN_REVIEW_EXIT",
         "POST_CHANGE_MONITOR_LOOP",
         "INDEPENDENT_WORKSTREAM_ISOLATION"
@@ -425,7 +426,7 @@
         "python -m unittest tests.test_neutral_adversarial_feature_lifecycle tests.test_concurrent_git_sync_preflight_contract -v"
       ],
       "acceptance_criteria": [
-        "최소 5회 + 이후 blocker 0까지 계약 유지",
+        "정확히 2회 전체 검토 + 이후 결함별 수정·검증만; blocker 0 계약 유지",
         "다른 workstream 수정 0",
         "refactor semantic regression 0",
         "실행하지 않은 검증을 PASS로 승격 0"

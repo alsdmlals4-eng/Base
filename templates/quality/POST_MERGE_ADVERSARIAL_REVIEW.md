@@ -1,5 +1,7 @@
 # 병합 후 적대적 검토 결과
 
+회차 정본은 `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`다. 병합 전 2회를 이미 수행했다면 이 양식은 exact merge/main identity, 교정 영향과 consumer readback 기록에만 사용한다. 항목을 전부 재공격하여 세 번째 전체 검토를 만들거나 병합을 이유로 회차를 초기화하지 않는다.
+
 `CONFIGURED_PROJECT_WORKSPACE: CONDITIONAL`
 
 별도 사람용 프로젝트 작업면은 현행 authority contract가 설정하고 현재 검토 책임을 배정한 경우에만 읽는다. 설정되지 않았으면 `NOT_CONFIGURED`로 기록하며, 폐기·migration-only surface를 일반 완료 Gate로 부활시키지 않는다.

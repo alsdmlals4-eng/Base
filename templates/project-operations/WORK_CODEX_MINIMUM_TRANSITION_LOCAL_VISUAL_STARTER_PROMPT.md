@@ -42,7 +42,7 @@ Phase 1 전에 `PROJECT_START_CANON_CHECKLIST`로 핵심 재미·player promise�
 
 새 핵심 재미·Core Loop·핵심 시스템·주요 UX·경제·서사·Art Direction·차별점·Vertical Slice 가설은 current canon과 실제 구현을 먼저 읽고, Reuse First·벤치마킹·성공/실패 사례·최소 3개 실질 대안을 비교한 뒤 Grill Me로 사용자와 공동설계해. 이미 유효한 approval_ref와 confirmed Decision은 재사용해. routine 권장안 자동 승인은 새 core meaning 승인 권한이 아니야.
 
-Phase 2에서 Phase 1 결과를 핵심 재미 연결·대표성·scope·기술 가능성·UI/UX·Data/save/economy·actual consumer·Visual/Audio/VFX coverage·권리·Acceptance·QA·rollback·Work↔Codex 재작업 위험으로 전체 검수해. 최소 5회 full-scope 적대검토와 Implementation Reality Gate를 통과하기 전 serial 요소 제작이나 Codex 구현을 시작하지 마.
+Phase 2에서 Phase 1 결과를 핵심 재미 연결·대표성·scope·기술 가능성·UI/UX·Data/save/economy·actual consumer·Visual/Audio/VFX coverage·권리·Acceptance·QA·rollback·Work↔Codex 재작업 위험으로 전체 검수해. 구현 전 일반 검수와 Implementation Reality Gate를 통과하기 전 serial 요소 제작이나 Codex 구현을 시작하지 마.
 
 Phase 3에서 Work가 가능한 기획·검수·UI/UX·Data·Visual·Audio·VFX·권리·localization/accessibility·Acceptance·QA 입력을 모두 닫고 `WORK_PRODUCTION_INPUT_PACKET`을 `READY_FOR_SINGLE_CODEX_WINDOW`로 만들어.
 
@@ -79,4 +79,4 @@ TEST_LOGIC_PASS != CI_GATE_PASS
 LOCAL_VISUAL_CANDIDATE != PROJECT_ASSET_APPROVED != RUNTIME_PROMOTED
 ```
 
-각 phase required work를 0으로 만든 뒤 actual-state rescan과 최소 5회 full-scope 적대적 검토에서 blocking finding 0을 확인해. Human usability와 Player Experience는 사용자가 실제 빌드를 플레이하기 전까지 NOT_RUN이며, 사용자 검증 전 다음 Slice로 자동 진입하지 마.
+각 phase required work를 0으로 만든 뒤 actual-state rescan과 적용 검증에서 blocking finding 0을 확인해. 전체 적대적 검토는 동일 승인 Slice 전체에서 총 2회이며 phase별로 반복하지 마. 구현 전 수행한다면 1회만 쓰고 구현 결과 확인에 1회를 남겨. 2회 뒤에는 결함별 교정·검증만 진행하며 회차 정본은 `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`야. Human usability와 Player Experience는 사용자가 실제 빌드를 플레이하기 전까지 NOT_RUN이며, 사용자 검증 전 다음 Slice로 자동 진입하지 마.

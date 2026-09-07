@@ -34,7 +34,7 @@ Part 경계는 수정 금지선이 아니라 semantic owner 지도다. 다른 Pa
 중복 승인 Gate, GPT→Codex 강제 흐름, Notion 프로젝트 혼입, 사람이 읽는 계획과 repository runtime truth 혼동, view-local 표현과 linked source mutation 혼동, single-record 요청의 database-global layout 확산, desktop column만 보고 mobile stacking을 누락하는 문제, 오래된 Sheets/HTML 참조, Blueprint의 제3 정본화·불필요한 일괄 backfill·기존 Blueprint 중복 제작.
 
 ## 검증/완료
-Manifest validation + P01 관련 focused tests + 최소 5회 전체 적대적 개선, 이후 blocker 0까지. 완료보고는 사용자 학습형으로 작성한다.
+Manifest validation + P01 관련 focused tests + 정확히 2회 전체 적대적 검토, 이후 blocker 0까지. 완료보고는 사용자 학습형으로 작성한다.
 ## 학습 루프
 - 작업마다 `docs/operations/base-partitions/learning/P01_LEARNING_LOG.md`에 Learning Checkpoint를 남긴다.
 - 새 공용 교훈이 없으면 `NO_NEW_REUSABLE_LESSON`; 프로젝트 전용이면 `PROJECT_ONLY`; Base 승격 후보면 `BASE_PROMOTION_CANDIDATE`.

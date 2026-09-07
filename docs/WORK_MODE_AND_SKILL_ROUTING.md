@@ -156,7 +156,7 @@ GitHub 비제품 문서/정본 교정
 - 호환 lifecycle 표현인 **`refine-approved-findings`에서 분야 Skill BUILD로 한 번만 구현·수정**은 현재 owner 분류를 따른다. Base/Notion/noncoding은 GPT BUILD, 실제 Godot 제품 구현은 Codex Build다. 여기서 Notion은 legacy migration이다.
 - 구현된 finding은 GPT가 다시 중복 구현하지 않고 REVIEW의 `regression-recheck → decision-report`로 이동한다.
 - 사용자안과 AI 최초안을 동일 기준으로 평가하며 무조건 동의나 무조건 반대 요청보다 정본·증거를 우선한다.
-- 최소 5회의 완전한 전체 개선 루프 후 clean exit까지 계속한다.
+- 정확히 2회의 완전한 전체 검토 후 clean exit까지 계속한다.
 
 ## 5. REVIEW finding 분류
 

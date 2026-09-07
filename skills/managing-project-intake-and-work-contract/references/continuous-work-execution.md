@@ -137,12 +137,12 @@ explicit user-directed continue
    └─ no required finding
       → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
       → same final POST_CHANGE_MONITOR_LOOP
-      → minimum-five full-scope loops, then until CLEAN_REVIEW_EXIT
+      → exactly two full-scope rounds; targeted correction/verification until CLEAN_REVIEW_EXIT
       → FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
 → 최종 실행 보고
 ```
 
-`POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`는 **두 번째 5회 검토가 아니다.** 마지막 구현·교정 뒤의 completion candidate를 입력으로 하는 기존 `POST_CHANGE_MONITOR_LOOP` 자체이며, 같은 final-state lineage가 최소 5회와 `CLEAN_REVIEW_EXIT`를 충족한다. `NO_MATERIAL_FOLLOWUP`이면 가짜 finding이나 불필요한 변경을 만들지 않는다.
+`POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`는 **두 번째 2회 검토가 아니다.** 마지막 구현·교정 뒤의 completion candidate를 입력으로 하는 기존 `POST_CHANGE_MONITOR_LOOP` 자체이며, 같은 final-state lineage가 정확히 2회와 `CLEAN_REVIEW_EXIT`를 충족한다. `NO_MATERIAL_FOLLOWUP`이면 가짜 finding이나 불필요한 변경을 만들지 않는다.
 
 진행 시간이 긴 경우 짧은 진행 업데이트를 제공할 수 있다. 다만 업데이트를 `진행할까요?`, `승인할까요?` 같은 승인 Gate로 바꾸지 않는다.
 
@@ -332,7 +332,7 @@ merge
             ├─ finding → NEW_FINDING_REOPENS_REMAINING_WORK → REQUEUE_IN_SCOPE_WHEN_NONZERO
             └─ clean → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
                        → same final POST_CHANGE_MONITOR_LOOP
-                       → minimum-five full loops, then until CLEAN_REVIEW_EXIT
+                       → exactly two full-scope rounds; targeted correction/verification until CLEAN_REVIEW_EXIT
                        → FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
                        → COMPLETE
 ```

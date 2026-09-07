@@ -559,21 +559,12 @@ jobs:
             }
           }
 
-          $libreOfficeVersion = "26.2.3"
+          # Stable mirrors expire old versions; the archive contains the identical pinned MSI.
+          $libreOfficeVersion = "26.2.3.2"
           $libreOfficeSha256 = "468d1fb3880af3bcddac002e9054155912c70b45d105bfa1c82036f33456133d"
-          $libreOfficeUrl = "https://mirror.clarkson.edu/tdf/libreoffice/stable/$libreOfficeVersion/win/x86_64/LibreOffice_${libreOfficeVersion}_Win_x86-64.msi"
-          $libreOfficeFallbackUrl = "https://download.documentfoundation.org/libreoffice/stable/$libreOfficeVersion/win/x86_64/LibreOffice_${libreOfficeVersion}_Win_x86-64.msi"
+          $libreOfficeUrl = "https://downloadarchive.documentfoundation.org/libreoffice/old/$libreOfficeVersion/win/x86_64/LibreOffice_${libreOfficeVersion}_Win_x86-64.msi"
           $libreOfficeMsi = Join-Path $env:RUNNER_TEMP "LibreOffice_${libreOfficeVersion}_Win_x86-64.msi"
-          try {
-            Invoke-VerifiedDownload -Uri $libreOfficeUrl -OutFile $libreOfficeMsi -ExpectedSha256 $libreOfficeSha256
-          }
-          catch {
-            if ($_.Exception.Message -like "DOWNLOAD_SHA256_MISMATCH*") {
-              throw
-            }
-            Write-Warning "Direct TDF mirror route failed; trying the TDF download endpoint with the same pinned hash. $($_.Exception.Message)"
-            Invoke-VerifiedDownload -Uri $libreOfficeFallbackUrl -OutFile $libreOfficeMsi -ExpectedSha256 $libreOfficeSha256
-          }
+          Invoke-VerifiedDownload -Uri $libreOfficeUrl -OutFile $libreOfficeMsi -ExpectedSha256 $libreOfficeSha256
           $libreOfficeInstall = Start-Process msiexec.exe -ArgumentList @(
             "/i",
             "`"$libreOfficeMsi`"",

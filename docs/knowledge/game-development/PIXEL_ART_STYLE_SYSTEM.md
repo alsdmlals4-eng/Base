@@ -39,7 +39,7 @@ NO_AUTOMATIC_PROJECT_STYLE_PROMOTION
 MINIMUM_VIABLE_ALTERNATIVES: 3
 BETTER_ALTERNATIVE_SEARCH
 LONG_TERM_PLAN_FIT_REQUIRED
-FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS
+TWO_FULL_ADVERSARIAL_REVIEW_ROUNDS
 ```
 
 ### 최소 3개 실질 대안
@@ -89,7 +89,7 @@ FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS
 4. 작은 화면·축소 화면에서도 핵심 상태가 읽히는가.
 5. 승인된 기존 Art Bible을 불필요하게 갈아엎고 있지 않은가.
 
-L1 이상에서는 `FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS`를 별도 축 체크리스트가 아니라 전체 승인 범위에 대한 완전한 개선 루프로 수행한다. blocking finding이 남으면 5회차 뒤에도 종료하지 않는다.
+L1 이상에서는 `TWO_FULL_ADVERSARIAL_REVIEW_ROUNDS`를 별도 축 체크리스트가 아니라 전체 승인 범위에 대한 완전한 개선 루프로 수행한다. blocking finding이 남으면 2회 뒤에도 완료 처리하지 않으며 결함별 수정·검증만 계속한다. 전체 회차를 추가하지 않는다.
 
 ## 3. 다축 모델
 

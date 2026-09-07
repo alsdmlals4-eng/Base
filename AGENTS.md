@@ -44,7 +44,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 - **`BETTER_ALTERNATIVE_SEARCH`**: 새 증거·실패·finding이 나오면 **더 나은 방안**을 다시 찾는다. 핵심 방향·플레이어 경험·비용·범위를 바꾸면 `USER_DECISION_REQUIRED`다.
 - **`LONG_TERM_PLAN_FIT_REQUIRED`**: 권장안은 사용자/플레이어 가치, 정확성, 위험, 수명주기 비용, 유지보수성, 재사용·모듈성, 증거 강도, **되돌리기 난이도**, **장기계획** 적합성과 재검토 조건까지 비교한다.
 - **`BEST_LONG_TERM_EFFICIENT_METHOD` / `QUALITY_OVER_RESPONSE_SPEED` / `BENCHMARK_PRACTICE_COMPARISON`**: 가장 빠른 답보다 장기 총비용과 결과 품질을 우선하고 공식/1차 자료·현업 성공/실패 사례를 `ADOPT / ADAPT / REJECT`로 판정한다.
-- **`ADVERSARIAL_REVIEW_UNTIL_CLEAN`**: `FULL_LOOP_COUNT_MINIMUM: 5`, `MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5`. 매 회 전체 결과 상태를 다시 읽고 공격·검증·수정·회귀검사를 반복한다. 최소 5회 뒤 새 유효 blocking finding 0과 acceptance 충족일 때만 `CLEAN_REVIEW_EXIT`다. **사용자 주장과 AI의 최초 제안** 모두 **동일한 평가 기준**으로 검토하며 **근거 없는 동의**와 **반대를 위한 반대**를 모두 금지한다.
+- **`ADVERSARIAL_REVIEW_UNTIL_CLEAN`**: `FULL_LOOP_COUNT_MINIMUM: 2`, `MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2`, `FULL_LOOP_COUNT_MAXIMUM: 2`. 매 회 전체 결과 상태를 다시 읽고 공격·검증·수정·회귀검사를 반복한다. 정확히 2회 뒤 새 유효 blocking finding 0과 acceptance 충족일 때만 `CLEAN_REVIEW_EXIT`다. **사용자 주장과 AI의 최초 제안** 모두 **동일한 평가 기준**으로 검토하며 **근거 없는 동의**와 **반대를 위한 반대**를 모두 금지한다.
 - `REQUIRED_WORK_REMAINING`, `REMAINING_WORK_COMPLETION_GATE`, `IMPLEMENTATION_CORRECTION_RESCAN`, `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`를 거쳐 남은 필수 작업·퇴행·누락을 다시 계산한다.
 
 ## 3. 기획·승인·연속작업

@@ -71,7 +71,7 @@ Part 경계는 수정 금지선이 아니라 semantic owner 지도다. 다른 Pa
 중복 writer, process 존재를 readiness로 오판, 사용자 PC에서 실행하지 않은 테스트 PASS, 불필요 addon/tool, QA/local tool unique 기능 없는 잔존, 좌표/이미지 first UI selector로 인한 layout-brittle 테스트, action dispatch acknowledgement를 실제 gameplay 결과로 오판하는 false PASS.
 
 ## 검증/완료
-Godot focused tests와 가능한 실제 runtime evidence를 분리 보고. 최소 5회 전체 적대적 개선 후 clean까지.
+Godot focused tests와 가능한 실제 runtime evidence를 분리 보고. 정확히 2회 전체 적대적 검토 후 clean까지.
 ## 학습 루프
 - 작업마다 `docs/operations/base-partitions/learning/P06_LEARNING_LOG.md`에 Learning Checkpoint를 남긴다.
 - 새 공용 교훈이 없으면 `NO_NEW_REUSABLE_LESSON`; 프로젝트 전용이면 `PROJECT_ONLY`; Base 승격 후보면 `BASE_PROMOTION_CANDIDATE`.

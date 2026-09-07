@@ -33,6 +33,15 @@ class BasePartitionContractTests(unittest.TestCase):
         for path in (MANIFEST, OPERATING_MODEL, WORKER_PROMPT, INTEGRATION_PROMPT, SCOPE_CHECKER, LEARNING_SYSTEM):
             self.assertTrue(path.exists(), str(path.relative_to(ROOT)))
 
+    def test_review_receipt_cannot_offer_an_unbounded_or_conflicting_budget(self) -> None:
+        contract = self.load_manifest()["review_contract"]
+        bounds = [contract[key] for key in (
+            "FULL_LOOP_COUNT_MINIMUM", "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT",
+            "FULL_LOOP_COUNT_MAXIMUM", "maximum_loop_count",
+        )]
+        self.assertEqual([2, 2, 2, 2], bounds)
+        self.assertEqual("CLEAN_REVIEW_EXIT", contract["exit"])
+
     def test_manifest_uses_control_plane_plus_nine_functional_parts(self) -> None:
         manifest = self.load_manifest()
         self.assertEqual("BASE_PARTITION_OPERATING_MODEL_V1", manifest["contract_id"])
@@ -127,12 +136,12 @@ class BasePartitionContractTests(unittest.TestCase):
         self.assertEqual(len(flattened), len(set(flattened)))
         self.assertTrue(manifest["integration"]["ordered_steps"])
 
-    def test_prompts_require_minimum_five_then_until_clean_and_cross_part_requests(self) -> None:
+    def test_prompts_require_two_rounds_with_clean_gate_and_cross_part_requests(self) -> None:
         worker = WORKER_PROMPT.read_text(encoding="utf-8")
         integration = INTEGRATION_PROMPT.read_text(encoding="utf-8")
         for text in (worker, integration):
-            self.assertIn("FULL_LOOP_COUNT_MINIMUM: 5", text)
-            self.assertIn("MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5", text)
+            self.assertIn("FULL_LOOP_COUNT_MINIMUM: 2", text)
+            self.assertIn("MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2", text)
             self.assertIn("CLEAN_REVIEW_EXIT", text)
             self.assertIn("CROSS_PART_CHANGE_REQUEST", text)
         self.assertIn("BASE_GOVERNANCE = GPT", worker)

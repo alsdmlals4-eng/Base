@@ -13,16 +13,16 @@ class FullAdversarialLoopSemanticsTests(unittest.TestCase):
     def authoritative_text(self) -> str:
         return POLICY.read_text(encoding="utf-8") + "\n" + OPERATING_MODEL.read_text(encoding="utf-8")
 
-    def test_base_still_requires_minimum_five_full_loops(self) -> None:
+    def test_base_still_requires_exactly_two_full_rounds(self) -> None:
         agents = AGENTS.read_text(encoding="utf-8")
-        self.assertIn("FULL_LOOP_COUNT_MINIMUM: 5", agents)
-        self.assertIn("MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5", agents)
+        self.assertIn("FULL_LOOP_COUNT_MINIMUM: 2", agents)
+        self.assertIn("MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2", agents)
 
     def test_full_loop_is_not_a_review_lens(self) -> None:
         text = self.authoritative_text()
         self.assertIn("FULL_LOOP_IS_NOT_A_REVIEW_LENS", text)
         self.assertIn("관점 하나", text)
-        self.assertIn("최소 5", text)
+        self.assertIn("정확히 2", text)
 
     def test_each_counted_loop_repeats_the_complete_lifecycle(self) -> None:
         text = self.authoritative_text()

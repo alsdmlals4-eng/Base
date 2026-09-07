@@ -16,12 +16,12 @@ class P03TakeoverContractTests(unittest.TestCase):
         for token in (
             "FULL_LOOP_IS_NOT_A_REVIEW_LENS",
             "FIX_GUIDED_VERIFICATION_WHEN_EXECUTABLE",
-            "FULL_LOOP_COUNT_MINIMUM: 5",
+            "FULL_LOOP_COUNT_MINIMUM: 2",
             "CLEAN_REVIEW_EXIT",
         ):
             self.assertIn(token, text)
         self.assertIn("Loop 1=scope", text)
-        self.assertIn("full loop로 계수", text)
+        self.assertIn("관점 하나를 회차로 세지 않는다", text)
 
     def test_review_protocols_use_configured_workspace_conditionally(self) -> None:
         paths = (

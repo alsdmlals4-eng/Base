@@ -237,7 +237,7 @@ REMAINING_WORK_RECALCULATION_REQUIRED
    ├─ valid finding → NEW_FINDING_REOPENS_REMAINING_WORK → 기존 owner에서 교정·검증·재계산
    └─ no required finding → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
 → same final POST_CHANGE_MONITOR_LOOP
-→ minimum-five full-scope adversarial loops, then until CLEAN_REVIEW_EXIT
+→ exactly two full-scope adversarial rounds, then until CLEAN_REVIEW_EXIT
 → FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
 → completion report
 ```

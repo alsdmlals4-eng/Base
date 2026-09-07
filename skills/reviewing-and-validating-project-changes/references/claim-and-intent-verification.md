@@ -146,7 +146,7 @@ REMAINING_WORK_RECALCULATION_REQUIRED
    ├─ valid finding → NEW_FINDING_REOPENS_REMAINING_WORK → fix / verify / recalculate
    └─ no required finding → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
 → same final POST_CHANGE_MONITOR_LOOP
-→ minimum-five full-scope loops, then until CLEAN_REVIEW_EXIT
+→ exactly two full-scope rounds; targeted correction/verification until CLEAN_REVIEW_EXIT
 → FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
 → full-completion claim allowed
 ```

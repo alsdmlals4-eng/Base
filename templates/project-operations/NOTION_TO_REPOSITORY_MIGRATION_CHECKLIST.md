@@ -181,34 +181,36 @@ ACTIVE_NOTION_WRITE_REQUIREMENT_COUNT = 0
 
 `NO_DELETE_REQUIRED_FOR_RETIREMENT`: 퇴역 완료를 위해 Notion workspace를 삭제할 필요는 없다. 삭제는 별도 사용자 승인, backup, exact readback, rollback 불필요성 확인 뒤에만 수행한다.
 
-## 11. 적대적 검토 5회
+## 11. 전체 적대적 검토 2회
 
-### Loop 1 — 정본 충돌
+다음 다섯 관점은 각 회차의 coverage이며 회차 수가 아니다. 회차·교정·종료는 `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`를 따른다.
+
+### 관점 1 — 정본 충돌
 
 - [ ] 같은 Decision·수치·asset이 repository와 Notion에서 다를 때 current authority가 명확한가.
 - [ ] 오래된 Notion 값을 조용히 덮어쓰거나 승격하지 않았는가.
 
-### Loop 2 — 자료 손실
+### 관점 2 — 자료 손실
 
 - [ ] 숨은 page·relation·attachment·원본 binary가 누락되지 않았는가.
 - [ ] 미리보기나 요약으로 원문 의미를 잃지 않았는가.
 
-### Loop 3 — 구현 인계
+### 관점 3 — 구현 인계
 
 - [ ] 새 채팅/Codex가 exact repository SHA만으로 재수화 가능한가.
 - [ ] runtime asset의 path/hash/consumer가 실제로 회수되는가.
 
-### Loop 4 — 사람용 이해
+### 관점 4 — 사람용 이해
 
 - [ ] PDF가 핵심 시스템·콘텐츠·구현 원리를 충분히 설명하는가.
 - [ ] PDF snapshot과 current repository의 시점 차이를 알 수 있는가.
 
-### Loop 5 — 완료 과장·rollback
+### 관점 5 — 완료 과장·rollback
 
 - [ ] 문서·test PASS를 runtime/player PASS로 확대하지 않았는가.
 - [ ] 기존 Notion을 삭제하지 않고도 안전하게 rollback·재감사 가능한가.
 
-새 blocking finding이 있으면 수정 후 전체 다섯 관점을 다시 확인한다.
+2회 뒤 새 blocking finding이 있으면 수정 후 영향 범위를 검증한다. 전체 검토를 추가하지 않으며 미해결 차단은 완료를 막는다.
 
 ## 12. 완료 receipt
 

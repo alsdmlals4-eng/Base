@@ -1,0 +1,171 @@
+{
+  "work_level": "L1",
+  "approval_ref": "current-user-message:2026-09-08:two-reviews-and-optimization",
+  "approved_scope": "Two whole-scope adversarial rounds, current consumer propagation, existing Windows CI archive download correction. No new framework, project adoption, permission changes, unrelated PR absorption or unverified file deletion.",
+  "outcome_status": "PREMERGE_VERIFICATION_CHECKPOINT_NOT_CLOSEOUT",
+  "benchmark_preflight_receipt": {
+    "state": "PASS",
+    "entries": [
+      {
+        "source_and_evidence": "Base@62eadf848117c9dee45b769540be4589ae124283; adversarial Skill/full-loop policy/partition manifest and Windows install step; read-only baseline agent review_two_baseline",
+        "observed_pattern": "At zero findings after two rounds, current consumers force at least three extra whole-scope reviews; Windows stable MSI endpoint now returns HTTP 404.",
+        "project_fit_and_difference": "Adapt existing review owner to user limit; retain real defect verification. Reuse the identical pinned MSI from official archive.",
+        "disposition": "ADAPT"
+      },
+      {
+        "source_and_evidence": "https://google.github.io/eng-practices/review/reviewer/standard.html and looking-for.html; read 2026-09-08",
+        "observed_pattern": "Review code health, functionality, complexity and actual need without demanding perfection.",
+        "project_fit_and_difference": "Two is a user-set budget, not a researched optimal count or measured quality guarantee.",
+        "disposition": "ADAPT"
+      },
+      {
+        "source_and_evidence": "https://downloadarchive.documentfoundation.org/libreoffice/old/26.2.3.2/win/x86_64/LibreOffice_26.2.3.2_Win_x86-64.msi.sha256; HTTP 200 and SHA256 468d1fb3880af3bcddac002e9054155912c70b45d105bfa1c82036f33456133d read 2026-09-08",
+        "observed_pattern": "Official archive exposes same pinned payload after stable retention removed the URL.",
+        "project_fit_and_difference": "Use existing verified downloader without package upgrades or extra download infrastructure.",
+        "disposition": "ADOPT"
+      }
+    ]
+  },
+  "alternatives": [
+    {
+      "option": "Keep five-to-unbounded reviews and retry deleted stable URL",
+      "disposition": "REJECT",
+      "reason": "Contradicts user budget and cannot recover persistent HTTP404."
+    },
+    {
+      "option": "Two full-scope rounds plus targeted correction/verification; official archive same hash",
+      "disposition": "ADOPT",
+      "reason": "Smallest existing-owner change preserving gates and binary identity."
+    },
+    {
+      "option": "New review orchestrator and automatic latest dependency upgrades",
+      "disposition": "REJECT",
+      "reason": "Unnecessary execution authority, maintenance and compatibility risk."
+    }
+  ],
+  "context_configuration_hygiene": {
+    "scope": "Only current adversarial owners/active consumers/tests and Windows dependency download; retain historical evidence, frozen locks and unknown backups.",
+    "inventory": [
+      {
+        "path": "docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "Base current review lifecycle owner",
+        "references_and_consumers": "AGENTS, current policies, Skill bodies, project templates and partition manifest",
+        "removal_proposed": false
+      },
+      {
+        "path": ".github/workflows/validate-game-project-operating-system.yml",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "Existing Windows publication install job",
+        "references_and_consumers": "Required ci-gate and publication smoke tests",
+        "removal_proposed": false
+      }
+    ]
+  },
+  "project_work_kanban": {
+    "goal_or_slice_issue_ref": "https://github.com/alsdmlals4-eng/Base/pull/860",
+    "source_main_sha": "62eadf848117c9dee45b769540be4589ae124283",
+    "work_item_refs": [
+      "REVIEW-CI"
+    ],
+    "active_work_item_ref": "REVIEW-CI",
+    "next_action": "Verify final exact-head whole regression and Windows publication CI, then normal protected squash merge and main readback.",
+    "work_items": [
+      {
+        "work_item_id": "REVIEW-CI",
+        "title": "Bound review work and restore pinned Windows publication dependency",
+        "status": "VERIFY_REVIEW",
+        "canon_owner": "docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md",
+        "actual_consumers": [
+          "skills/running-adversarial-review-and-refinement/SKILL.md",
+          ".github/workflows/validate-game-project-operating-system.yml"
+        ],
+        "depends_on": [],
+        "acceptance_criteria": [
+          "POLICY",
+          "VERIFY",
+          "MERGE"
+        ],
+        "required_evidence": [
+          "E0_CONTRACT",
+          "E2_TEST"
+        ],
+        "checklist": [
+          {
+            "id": "POLICY",
+            "text": "Current review consumers enforce two rounds without automatic extra audits; missing and unsafe closure stay blocked.",
+            "status": "PASS",
+            "evidence": [
+              "805457a independent full-scope review2: same-work-lineage two-round cap, phase/merge reset prevention, unknown-backup preservation; subsequent targeted uppercase lifecycle correction1b83733."
+            ]
+          },
+          {
+            "id": "VERIFY",
+            "text": "Baseline/candidate application, regression tests, two reviews and actual Windows CI pass.",
+            "status": "PARTIAL",
+            "evidence": [
+              "First local suite2638tests/55skips/4failures (stale consumer expectations); corrected targeted suites70PASS. Final full regression and WindowsCI pending."
+            ]
+          },
+          {
+            "id": "MERGE",
+            "text": "Exact-head normal protected merge and main readback.",
+            "status": "NOT_RUN"
+          }
+        ],
+        "verification": [
+          {
+            "level": "E0_CONTRACT",
+            "status": "PASS",
+            "evidence": [
+              "Start receipt CLI PASS; referencefreshness1430scanned58changedPASS at805457a; independent review2/2 with zero remaining reviewed blocking findings."
+            ]
+          },
+          {
+            "level": "E2_TEST",
+            "status": "NOT_RUN",
+            "evidence": []
+          }
+        ],
+        "next_action": "Verify final exact-head whole regression and Windows publication CI, then normal protected squash merge and main readback."
+      }
+    ]
+  },
+  "current_status_owner": "https://github.com/alsdmlals4-eng/Base/pull/860",
+  "checkpoint_policy": "Committed snapshot, not a claim about its own future commit SHA. Final exact-head CI, merge and main readback are recorded on PR860; no project rollout or productivity improvement inferred.",
+  "review_evidence": {
+    "full_scope_round_count": 2,
+    "reviewed_head": "805457a58a57dc41a3bbd84fc3e60891b114f4e3",
+    "round1": {
+      "state": "REVISE_REQUIRED",
+      "findings": [
+        "R1-01 phase budget reset / reserve implementation review",
+        "R1-02 maximum_loop_count null conflicts with cap2",
+        "R1-03 pixel stale5",
+        "R1-04 active profile stale5",
+        "R1-05 machine bounds coverage"
+      ],
+      "verification": "26 tests PASS did not catch semantic omissions; all valid findings corrected."
+    },
+    "round2": {
+      "state": "NO_REMAINING_REVIEWED_BLOCKING_FINDINGS",
+      "verification": "27 tests PASS; diff check0; same-scope consumer application confirms two clean rounds -> gates, after2regression -> targeted correction without false completion, unknownbackup -> preserve."
+    },
+    "evidence_ceiling": "Independent textual consumer application, not statistical agent benchmark, CI completion, runtime or user approval.",
+    "post_round2_targeted_corrections": [
+      "CI found Windows cost-test filename and URL expectations stale; synchronized to identical archive hash.",
+      "Local suite found old completion expectation; corrected its uppercase long-horizon consumer and test.",
+      "No third full-scope audit."
+    ]
+  },
+  "reuse_learning_handoff": {
+    "reuse_mode": "ADAPT",
+    "selected_modules": [
+      "existing full-review lifecycle owner",
+      "existing Invoke-VerifiedDownload"
+    ],
+    "project_paths_changed": [],
+    "evidence_ceiling": "Base-only policy propagation and existing CI recovery; project adoption and productivity measurement NOT_RUN.",
+    "rollback": "Revert only this own PR via normal protected PR; no data migration."
+  }
+}

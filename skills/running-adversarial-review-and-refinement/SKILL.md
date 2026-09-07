@@ -35,12 +35,13 @@ Registry의 `칭찬·균형 평가만 요청` 비사용 조건은 결정·권장
 
 ### Adversarial review until clean invariant
 
-이 Skill을 L1 이상 작업물·PR·저장소 감사·병합 후 결과의 적대적 검토로 호출하면 **최소 5회의 완전한 전체 개선 루프를 수행하고, 그 이후 CLEAN_REVIEW_EXIT까지 전체 검토·개선 생명주기를 반복한다.** `FULL_LOOP_COUNT_MINIMUM: 5`, `MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5`다. 5회는 종료 quota나 최대치가 아니라 최소 floor다. 앞 회차의 수정 결과와 새 증거 자체가 다음 회차의 공격 입력이다.
+이 Skill은 **정확히 2회의 완전한 전체 검토**를 수행한다. 회차·종료·교정 경계의 책임 원본은 `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`이며 검토 전에 읽는다.
 
 ```text
 ADVERSARIAL_REVIEW_UNTIL_CLEAN: REQUIRED_WHEN_REVIEW_RUNS
-FULL_LOOP_COUNT_MINIMUM: 5
-MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
+FULL_LOOP_COUNT_MINIMUM: 2
+MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2
+FULL_LOOP_COUNT_MAXIMUM: 2
 FULL_LOOP_IS_NOT_A_REVIEW_LENS
 FULL_SCOPE_REVIEW
 FIND → VALIDATE → REFINE → VERIFY → RE-ATTACK
@@ -49,53 +50,9 @@ LONG_TERM_PLAN_FIT_RECHECK
 CLEAN_REVIEW_EXIT
 ```
 
-`FULL_LOOP_IS_NOT_A_REVIEW_LENS`: `Loop 1=scope`, `Loop 2=UX`, `Loop 3=CI`처럼 서로 다른 관점을 각각 한 번 검사한 것은 여러 full loop로 계수하지 않는다. Scope·UX·CI·security·cost·long-term 등 필요한 lens는 **각 counted loop 안에서** 전체 승인 범위를 다시 공격하기 위한 coverage로 사용한다. 회차별 대표 finding을 기록할 수는 있지만 대표 finding이 그 회차의 검토 범위를 뜻하지 않는다.
+`Loop 1=scope`, `Loop 2=UX`, `Loop 3=CI`처럼 관점 하나를 회차로 세지 않는다. 각 회차는 전체 승인 범위와 실제 consumer를 확인하고 불필요한 작업·과설계·충돌·누락을 검토한다. 1회차 교정 뒤 2회차에서 결과 전체를 확인한다. **2회 이후에는** 결함별 수정·영향 회귀검증·readback만 수행한다. `NO_AUTOMATIC_THIRD_FULL_REVIEW`: 전체 감사 재명명, 커밋·세션·병합 전후의 회차 초기화로 상한을 우회하지 않는다.
 
-한 전체 회차:
-
-```text
-FULL_SCOPE_REVIEW
-→ attack
-→ validate-critique
-→ refine-approved-findings
-→ regression-recheck / execution verification
-→ BETTER_ALTERNATIVE_SEARCH
-→ LONG_TERM_PLAN_FIT_RECHECK
-→ decision-report
-→ RE-ATTACK resulting state
-```
-
-각 회차는 사용자 의도·핵심 방향·정본/owner/routing·Skill/Tool/Module·실제 구현·데이터·자산·실패복구·보안·동시성·비용·벤치마크·장기 유지·증거·완료조건을 전체적으로 다시 본다.
-
-각 loop evidence:
-
-```yaml
-loop_index: 1..N
-input_state_or_head:
-evidence_delta: []
-full_scope_findings: []
-validated_findings: []
-changes_applied: []
-verification: []
-better_alternative_result:
-long_term_fit:
-unresolved: []
-output_state_or_head:
-clean_exit_candidate: true | false
-```
-
-종료 규칙:
-
-1. **1~5회는 의무 전체 루프다.** 최소 5회의 완전한 전체 개선 루프를 실제 수행하기 전에는 중간 회차 finding이 0이어도 `CLEAN_REVIEW_EXIT`를 선언하지 않는다.
-2. 새 유효 `MUST_FIX`, P0/P1, acceptance blocker가 하나라도 나오면 수정·검증 뒤 다음 전체 회차를 수행한다.
-3. 정본·consumer·reference·Schema drift, 정상 경로 회귀, evidence ceiling 위반이 발견되면 종료하지 않는다.
-4. `BETTER_ALTERNATIVE_SEARCH`와 `LONG_TERM_PLAN_FIT_RECHECK`에서 현재 승인 범위 안의 더 강한 개선이 확인되면 적용 후 다시 전체 검토한다.
-5. `NOT_RUN`, `BLOCKED_UNVERIFIED`, `CANCELLED`는 PASS가 아니며, 완료 조건에 필요한 증거가 없으면 clean exit가 아니다.
-6. **5회 이후에도** 새로운 유효 오류·충돌·누락·blocking finding, 정본 충돌, acceptance failure 또는 회귀가 하나라도 나오면 수정·검증 후 6..N번째 전체 루프를 계속한다. 최대 회차 수는 고정하지 않는다.
-7. 동일 finding을 표현만 바꿔 반복 계수하거나, 최소 횟수를 채우기 위해 가짜 finding/불필요한 변경을 만들지 않는다. full-scope attack·검증·대안·장기 적합성 재검사를 실제 수행했다면 finding과 changes가 0인 clean loop도 유효한 의무 회차다.
-8. **최소 5회를 완료한 뒤 전체 재공격 결과 새로운 유효 오류·충돌·누락·blocking finding이 0이고, 기존 수정 회귀 0, acceptance criteria 충족, 정본/참조 신선도와 evidence ceiling이 모두 닫힐 때만 `CLEAN_REVIEW_EXIT`다.**
-
-구현 전 PLAN에서는 수정 대상이 아직 없을 수 있으므로 공격·검증 결과를 계약 입력으로 사용한다. 실제 BUILD/수정 뒤에는 검증된 출력 상태를 다시 전체 공격한다. PR 병합 후에도 새 `main`을 입력으로 같은 clean-exit 규칙을 적용한다.
+회차별 입력/출력 HEAD, 실제 읽기·finding 검증·교정·실행 검사 또는 freshness가 유지된 재사용 증거·대안·장기 적합성·미해결 항목은 기존 receipt/PR에 기록한다. 가짜 finding이나 불필요한 변경을 만들지 않는다. `NOT_RUN`, `BLOCKED_UNVERIFIED`, `CANCELLED`는 PASS가 아니며, 검증된 blocker·회귀·acceptance failure가 남으면 완료·병합하지 않는다. 독립 승인·CI·병합 후 main readback은 그대로 유지한다.
 
 ### `POST_CHANGE_MONITOR_LOOP`
 
@@ -145,7 +102,7 @@ planned work exhausted
    │  → remaining-work recalculation again
    └─ no required finding → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
 → POST_CHANGE_MONITOR_LOOP on the final candidate
-→ minimum 5 full-scope loops on that same final state lineage
+→ exactly two full-scope rounds on that same final state lineage
 → CLEAN_REVIEW_EXIT
 → FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
 → completion-report
@@ -153,7 +110,7 @@ planned work exhausted
 
 `IMPLEMENTATION_CORRECTION_RESCAN`은 단순히 기존 체크리스트의 미체크 항목만 세지 않는다. 실제 diff/runtime, 승인 Intent, 정본과 applicable Notion/Repository sync, untouched consumer·Test·Template·reference, 동일 Goal의 열린/최근 PR, 실패·복구·rollback, evidence ceiling을 다시 공격해 “계획에는 없었지만 현재 완료를 막는 구현/교정 누락”을 찾는다. 유효한 `OMISSION`, `CONFLICT`, `COMPLEMENT_GAP` 또는 승인 범위의 blocking finding은 `NEW_FINDING_REOPENS_REMAINING_WORK`로 남은 작업에 편입한다.
 
-`POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`는 새 review framework나 **두 번째 5회 루프가 아니다.** 최종 completion candidate를 입력으로 수행하는 기존 `POST_CHANGE_MONITOR_LOOP` 자체를 뜻하며, 그 동일 loop lineage가 `ADVERSARIAL_REVIEW_UNTIL_CLEAN`의 최소 5회와 `CLEAN_REVIEW_EXIT`를 충족한다. 마지막 구현·교정으로 후보 상태가 바뀌면 그 새 상태를 다시 공격해야 하지만, 같은 최종 후보를 대상으로 이미 수행한 full loop를 중복 실행하지 않는다. `NO_MATERIAL_FOLLOWUP`인 clean loop는 유효하지만 가짜 finding이나 불필요한 수정은 만들지 않는다.
+`POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`는 새 review framework나 **두 번째 2회 루프가 아니다.** 최종 completion candidate를 입력으로 수행하는 기존 `POST_CHANGE_MONITOR_LOOP` 자체를 뜻하며, 그 동일 loop lineage가 `ADVERSARIAL_REVIEW_UNTIL_CLEAN`의 정확히 2회와 `CLEAN_REVIEW_EXIT`를 충족한다. 마지막 교정으로 후보가 바뀌면 남은 회차에서 확인한다. 2회를 소진한 뒤에는 교정 영향 범위만 검증하며, 같은 최종 후보를 대상으로 수행한 full loop를 중복 실행하지 않는다. `NO_MATERIAL_FOLLOWUP`인 clean loop는 유효하지만 가짜 finding이나 불필요한 수정은 만들지 않는다.
 
 `FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK`는 **현재 승인 범위에서** 필요한 구현·교정·검증이 0이고 완료 acceptance에 필요한 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, 미해결 `DEFER`가 없을 때만 `전체 완료`를 허용한다. 범위 밖 future improvement는 `DEFER` 또는 후보로 남길 수 있지만 현재 범위의 미완료를 숨겨서는 안 된다. blocker/defer가 승인 범위 안에 남아 있으면 전체 완료가 아니라 partial/blocked/deferred 상태와 재개 조건을 보고한다.
 

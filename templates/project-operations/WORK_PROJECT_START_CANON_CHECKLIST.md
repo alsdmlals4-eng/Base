@@ -435,7 +435,7 @@ AND unresolved product-meaning decisions explicitly deferred
 | project-scoped Godot·computer operation | PRESERVED |
 | user-downloadable build / machine QA / Human evidence ceiling | PRESERVED |
 | failure recovery / Incident-Solution-Lesson | PRESERVED |
-| minimum 5 full adversarial loops / Completion Candidate | PRESERVED |
+| exactly 2 full adversarial rounds / Completion Candidate | PRESERVED |
 | Notion human canon / upload / dual sync | INTENTIONALLY_SUPERSEDED · legacy read-only migration only |
 
 세부 알고리즘은 다음 current owner를 따른다.

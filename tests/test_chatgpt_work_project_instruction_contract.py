@@ -119,7 +119,7 @@ class ChatGPTWorkProjectInstructionContractTests(unittest.TestCase):
         text = self._text()
         for term in (
             "ADVERSARIAL_REVIEW_UNTIL_CLEAN",
-            "FULL_LOOP_COUNT_MINIMUM: 5",
+            "FULL_LOOP_COUNT_MINIMUM: 2",
             "FULL_LOOP_IS_NOT_A_REVIEW_LENS",
             "REQUIRED_WORK_REMAINING: 0",
             "COMPLETION_CANDIDATE",

@@ -128,18 +128,18 @@ class AutonomousResearchImplementationLearningPolicyTests(unittest.TestCase):
             "EXACT_HEAD_OR_STATE_REQUIRED",
             "ACTUAL_READS_AND_CHECK_RESULTS_REQUIRED",
             "VALIDATED_FINDING_REQUIRES_CORRECTION_OR_EXPLICIT_BLOCKER",
-            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5",
+            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2",
         ):
             self.assertIn(token, policy)
         for token in (
             "CLAIM_ONLY_ADVERSARIAL_REVIEW_INVALID",
             "EVIDENCE_RECEIPT_REQUIRED_PER_FULL_LOOP",
-            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5",
+            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2",
             "같은 검토에 관점 이름만 바꿔 횟수를 채우지 않는다",
         ):
             self.assertIn(token, custom)
         for token in (
-            "minimum_full_loops_before_clean_exit: 5",
+            "minimum_full_loops_before_clean_exit: 2",
             "claim_only_review_is_invalid: true",
             "input_exact_head_or_state:",
             "actual_reads:",

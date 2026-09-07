@@ -144,21 +144,21 @@ class NeutralAdversarialFeatureLifecycleTests(unittest.TestCase):
         ):
             self.assertIn(term, adversarial)
 
-    def test_adversarial_review_repeats_minimum_five_then_until_verified_clean_exit(self) -> None:
+    def test_adversarial_review_repeats_two_rounds_with_verified_clean_exit(self) -> None:
         adversarial = read("skills/running-adversarial-review-and-refinement/SKILL.md")
         for term in (
             "ADVERSARIAL_REVIEW_UNTIL_CLEAN: REQUIRED_WHEN_REVIEW_RUNS",
-            "FULL_LOOP_COUNT_MINIMUM: 5",
-            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5",
+            "FULL_LOOP_COUNT_MINIMUM: 2",
+            "MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2",
             "FULL_SCOPE_REVIEW",
             "FIND → VALIDATE → REFINE → VERIFY → RE-ATTACK",
             "BETTER_ALTERNATIVE_SEARCH",
             "LONG_TERM_PLAN_FIT_RECHECK",
             "CLEAN_REVIEW_EXIT",
-            "loop_index",
-            "최소 5회의 완전한 전체 개선 루프",
-            "5회 이후에도",
-            "새로운 유효 오류·충돌·누락·blocking finding이 0",
+            "FULL_LOOP_COUNT_MAXIMUM: 2",
+            "정확히 2회의 완전한 전체 검토",
+            "2회 이후에는",
+            "NO_AUTOMATIC_THIRD_FULL_REVIEW",
             "이미 구현된 finding을 다시 수정하지 않는다",
         ):
             self.assertIn(term, adversarial)

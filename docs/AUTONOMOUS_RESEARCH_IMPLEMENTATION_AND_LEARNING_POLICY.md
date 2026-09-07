@@ -39,7 +39,7 @@ EVIDENCE_RECEIPT_REQUIRED_PER_FULL_LOOP
 EXACT_HEAD_OR_STATE_REQUIRED
 ACTUAL_READS_AND_CHECK_RESULTS_REQUIRED
 VALIDATED_FINDING_REQUIRES_CORRECTION_OR_EXPLICIT_BLOCKER
-MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
+MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2
 ```
 
 ## 2. 조사에서 실제 구현 가능성까지
@@ -191,14 +191,14 @@ GENERATED_CANDIDATE != USER_APPROVED != CANON_REGISTERED != IMPLEMENTED != RUNTI
 
 ### `CLAIM_ONLY_ADVERSARIAL_REVIEW_INVALID`
 
-`검토했다`, `5회 확인했다`, `문제 없음`이라는 문장만으로 적대적 검토를 완료 처리하지 않는다. retained L1 이상 변경은 작업 뒤 최소 5회의 **실제 full-scope loop**를 수행하고, 각 회차의 입력 상태·실제 읽기·실행 검사·finding·교정·재검증을 durable evidence로 남긴다.
+`검토했다`, `2회 확인했다`, `문제 없음`이라는 문장만으로 적대적 검토를 완료 처리하지 않는다. retained L1 이상 변경은 작업 뒤 정확히 2회의 **실제 full-scope loop**를 수행하고, 각 회차의 입력 상태·실제 읽기·실행 검사·finding·교정·재검증을 durable evidence로 남긴다.
 
 ```text
 EVIDENCE_RECEIPT_REQUIRED_PER_FULL_LOOP
 EXACT_HEAD_OR_STATE_REQUIRED
 ACTUAL_READS_AND_CHECK_RESULTS_REQUIRED
 VALIDATED_FINDING_REQUIRES_CORRECTION_OR_EXPLICIT_BLOCKER
-MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
+MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2
 ```
 
 각 full loop는 전체 승인 범위를 다시 읽고 다음 lifecycle을 수행한다.
@@ -216,7 +216,7 @@ FULL_SCOPE_READ
 
 각 loop는 `templates/project-operations/ADVERSARIAL_REVIEW_EVIDENCE_RECEIPT.yml`의 필드를 실제 값으로 남긴다. 관점 이름만 바꾼 한 번의 검토, 실제 파일·diff·상태를 읽지 않은 checklist, exact head가 없는 검토, 실행하지 않은 PASS, 검증하지 않은 비판, correction·blocker·회귀검사 없이 닫은 finding은 무효다.
 
-5회 이후에도 새 `MUST_FIX`, acceptance blocker, canon/consumer drift, evidence ceiling 위반 또는 더 강한 in-scope 대안이 발견되면 수정 후 다음 full loop를 계속한다. 최소 횟수를 채우기 위한 가짜 finding이나 무의미한 변경을 만들지 않는다.
+2회 이후에는 새 `MUST_FIX`, acceptance blocker, canon/consumer drift 또는 evidence ceiling 위반을 결함별로 수정·검증한다. 전체 검토를 추가하지 않으며 미해결 차단을 완료로 쓰지 않는다. 더 강한 대안은 실제 필요·승인 범위가 있을 때만 최소 반영하고 선택적 과설계를 강제하지 않는다. 회차 정본은 `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`다.
 
 ## 8. 완료 기준
 

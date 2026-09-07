@@ -80,7 +80,7 @@ TEXT_BRIEF_STOP_REQUIRED
 IMPLEMENTATION_REALITY_GATE
 PLAYABLE_MEANINGFUL_SLICE_INCREMENTAL_DELIVERY
 ADVERSARIAL_REVIEW_UNTIL_CLEAN
-FULL_LOOP_COUNT_MINIMUM: 5
+FULL_LOOP_COUNT_MINIMUM: 2
 FULL_LOOP_IS_NOT_A_REVIEW_LENS
 
 OPEN_PR_READ_ONLY_BY_DEFAULT
@@ -811,7 +811,7 @@ symptom
 
 `ADVERSARIAL_REVIEW_UNTIL_CLEAN`
 
-`FULL_LOOP_COUNT_MINIMUM: 5`
+`FULL_LOOP_COUNT_MINIMUM: 2`
 
 `FULL_LOOP_IS_NOT_A_REVIEW_LENS`
 
@@ -945,7 +945,7 @@ remaining work recalculation
    YES → reopen remaining work → fix → verify → recalculate
    NO  → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
 → final full-scope adversarial lineage
-→ minimum 5 full loops and clean exit
+→ exactly two full-scope rounds and verified clean exit
 → completion allowed
 ```
 
@@ -1027,7 +1027,7 @@ GPT/Work/connector/Codex가 직접 할 수 있는 일을 사용자에게 떠넘�
 11. 새 생성 이미지는 actual consumer + text brief + 사용자 approval을 요구한다.
 12. 승인 binary를 repository path + SHA-256 + manifest로 승격한다.
 13. 의미 있는 Gate에서 사람용 상세 기획서 PDF를 생성·점검한다.
-14. 전체 결과를 최소 5회 full adversarial loop로 검토하고 clean exit까지 교정한다.
+14. 전체 결과를 정확히 2회 full adversarial loop로 검토하고 clean exit까지 교정한다.
 15. Implementation Reality Gate를 적용한다.
 16. 제품 구현이 없으면 Work/GPT가 repository readback까지 닫는다.
 17. 제품 구현이 있으면 exact repository SHA 기반 Codex work instruction을 만든다.

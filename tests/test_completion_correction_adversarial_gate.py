@@ -50,7 +50,7 @@ class CompletionCorrectionAdversarialGateTests(unittest.TestCase):
             self.assertIn("POST_CHANGE_MONITOR_LOOP", text)
 
         self.assertIn("두 번째 독립 review cycle", operating)
-        self.assertIn("두 번째 5회 루프가 아니다", adversarial)
+        self.assertIn("두 번째 2회 루프가 아니다", adversarial)
         self.assertIn("별도 두 번째 검토 루프", project_os)
 
     def test_completion_gate_reaches_active_execution_consumers(self) -> None:
@@ -96,7 +96,7 @@ class CompletionCorrectionAdversarialGateTests(unittest.TestCase):
 
     def test_long_horizon_preserves_premerge_review_before_completion_candidate_review(self) -> None:
         long_horizon = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
-        premerge_review = long_horizon.index("AT LEAST 5 FULL ADVERSARIAL LOOPS, THEN UNTIL CLEAN")
+        premerge_review = long_horizon.index("EXACTLY 2 FULL ADVERSARIAL ROUNDS, THEN TARGETED VERIFICATION")
         exact_head = long_horizon.index("EXACT-HEAD PR GATE")
         merge = long_horizon.index("→ MERGE")
         postmerge = long_horizon.index("POSTMERGE READBACK")
