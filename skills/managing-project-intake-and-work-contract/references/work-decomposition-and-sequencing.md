@@ -24,7 +24,7 @@ project_work_kanban:
 
 ## 1.1 분해 전 누락·충돌 감사
 
-분해 전에 최신 main, 현재 Decision, 관련 분야 정본, 동일 Goal의 열린·최근 병합 PR, 실제 구현과 개별 프로젝트 Sheet를 비교한다. `DUPLICATE_WORK`, `DUPLICATE_QUESTION`, `MISSING_CANON`, `CANON_CONFLICT`, `IMPLEMENTATION_CONFLICT`, `STALE_REFERENCE`, `MISSING_SYNC`가 있으면 새 작업 목록보다 복원과 정리를 먼저 배치한다. Base 저장소 자체의 Sheet 상태는 `BASE_EXCLUDED`다.
+분해 전에 최신 main, 현재 Decision, 관련 분야 정본, 동일 Goal의 열린·최근 병합 PR, 실제 구현과 개별 프로젝트 Sheet를 비교한다. `DUPLICATE_WORK`, `DUPLICATE_QUESTION`, `MISSING_CANON`, `MISSING_CONSUMER`, `CANON_CONFLICT`, `IMPLEMENTATION_CONFLICT`, `STALE_REFERENCE`, `MISSING_SYNC`가 있으면 새 작업 목록보다 복원과 정리를 먼저 배치한다. Base 저장소 자체의 Sheet 상태는 `BASE_EXCLUDED`다.
 
 ### 1.2 필수 benchmark·역공학 preflight, 범위 한정 hygiene와 PM 실행 Gate
 
