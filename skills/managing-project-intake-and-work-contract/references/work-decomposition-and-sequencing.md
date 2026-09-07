@@ -24,7 +24,7 @@ project_work_kanban:
 
 ## 1.1 분해 전 누락·충돌 감사
 
-분해 전에 최신 main, 현재 Decision, 관련 분야 정본, 동일 Goal의 열린·최근 병합 PR, 실제 구현과 개별 프로젝트 Sheet를 비교한다. `DUPLICATE_WORK`, `DUPLICATE_QUESTION`, `MISSING_CANON`, `MISSING_CONSUMER`, `CANON_CONFLICT`, `IMPLEMENTATION_CONFLICT`, `STALE_REFERENCE`, `MISSING_SYNC`가 있으면 새 작업 목록보다 복원과 정리를 먼저 배치한다. Base 저장소 자체의 Sheet 상태는 `BASE_EXCLUDED`다.
+분해 전에 최신 main, 현재 Decision, 관련 분야 정본, 동일 Goal의 열린·최근 병합 PR, 실제 구현과 개별 프로젝트 Sheet를 비교한다. `DUPLICATE_WORK`, `DUPLICATE_QUESTION`, `MISSING_CANON`, `CANON_CONFLICT`, `IMPLEMENTATION_CONFLICT`, `STALE_REFERENCE`, `MISSING_SYNC`가 있으면 새 작업 목록보다 복원과 정리를 먼저 배치한다. Base 저장소 자체의 Sheet 상태는 `BASE_EXCLUDED`다.
 
 ### 1.2 필수 benchmark·역공학 preflight, 범위 한정 hygiene와 PM 실행 Gate
 
@@ -140,6 +140,18 @@ UI·시스템·데이터·이미지/아트·문서/Skill처럼 여러 요소가 
 기능 계약의 정본 owner는 하나만 둔다. 공용 불변조건은 기존 owner를 참조하고 기능별 차이만 해당 계약이 소유한다. 같은 수치·규칙·Schema를 코드·문서·JSON에 중복 정본으로 만들지 않는다. 구현 세부를 문서에 전사하지 않고 권위 있는 선언·데이터·테스트를 참조한다. 책임 원본을 여러 계약에서 사용하는 것과 같은 사실을 여러 곳에서 따로 관리하는 것은 구별한다.
 
 다른 기능의 내부 상태를 직접 수정하거나 내부 구현 경로에 결합하지 않는다. 필요한 상호작용은 좁은 공개 함수·데이터·signal/event 또는 명시적 연결 지점으로 표현한다. 순환 의존·숨은 전역 상태·소유권 충돌을 검토한다. 단순 연결에 불필요한 인터페이스 클래스·범용 manager·추상 계층을 추가하지 않는다.
+
+### UI·직접 호출의 동일 규칙 경계
+
+UI·CLI·API·MCP·자동 테스트는 같은 기능의 공개 진입점과 규칙을 재사용한다. 표현·전송 adapter는 달라도 AI 전용 상태·규칙 복제본을 만들지 않는다. 기존 Registry와 owner로 `필요 기능 탐색 → 선택한 계약 확인 → 허용된 실행 → 결과 readback`을 연결하며, 새 MCP·범용 dispatcher·Registry를 기본 산출물로 추가하지 않는다.
+
+입력 ID·타입·현재 상태·대상 소유권과 적용되는 권한·승인 범위는 실제 실행 경계에서 검사한다. 비활성 버튼·프롬프트·MCP readOnlyHint는 실행 권한 검사나 격리를 대신하지 않는다. 로컬 상태기계의 유효성 검사는 원격 인증·인가가 구현됐다는 증거가 아니다. 이미 있는 권한·승인·감사 owner를 재사용하며, 해당 기능에 필요하지 않은 원격 인증 계층을 발명하지 않는다.
+
+거절된 호출은 소유한 도메인 상태를 변경하지 않는다. 오류·감사 기록처럼 허용된 진단 부작용은 별도로 명시한다. 읽기 결과를 수정해 원본 상태를 우회 변경할 수 없게 한다. 중복·재시도·취소는 기능별 기존 계약을 따르며 모든 명령을 무조건 멱등으로 바꾸지 않는다. 실제 외부 부작용이 있는 작업은 해당 owner의 원자성·부분 실패·복구 계약을 추가로 검증한다.
+
+정상 경로와 미시작·잘못된 ID·타 구간 ID·조기 호출·종료 후 재호출 중 적용되는 실패 경로를 같은 구현으로 검사한다. 반환 오류와 호출 후 상태를 함께 읽고, 실패 후 유효한 작업으로 정상 진행할 수 있는지도 확인한다. 적용되지 않는 사례는 이유를 남기며 모든 기능에 대화 상태를 강제하지 않는다. 기존 실행 예제는 `examples/godot-narrative-dialogue-flow/tests/test_dialogue_flow_runtime.gd`다. 이 예제의 `src/main.gd`와 테스트는 동일한 `session.choose()`를 소비한다.
+
+헤드리스 규칙 PASS는 렌더링·입력 장치·UX·사용자 승인 PASS가 아니다. Godot 변경 권위는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`를 유지한다. Base 예제 검증은 실제 프로젝트 채택·HiGodot 저작·원격 MCP 보안·runtime UI 입력 검증을 대신하지 않는다.
 
 ### Godot 연결
 
