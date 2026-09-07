@@ -1,0 +1,110 @@
+{
+  "work_level": "L1",
+  "approval_ref": "current-user-message:2026-09-07:좋아-진행해:shared-function-direct-call-validation",
+  "approved_scope": "Extend existing Base feature-contract guidance and dialogue reference regressions. No new MCP, product rollout, runtime semantic change, permission change, paid dependency or other-PR mutation.",
+  "outcome_status": "PREMERGE_VERIFICATION_CHECKPOINT_NOT_CLOSEOUT",
+  "current_status_owner": "https://github.com/alsdmlals4-eng/Base/pull/858",
+  "checkpoint_policy": "This committed receipt is a premerge evidence snapshot, not a claim about its own future commit hash. Exact-final-head verification, independent review and integration/readback are recorded on PR #858. Do not infer DONE or merge from this snapshot.",
+  "source_drift_readback": "d44c0d2 -> 07330c8 changed only PC_ANDROID_DELIVERY_PROFILE.md and test_pc_android_cross_platform_delivery.py; all task owners, validators and consumers are unchanged.",
+  "benchmark_preflight_receipt": {
+    "state": "PASS",
+    "entries": [
+      {
+        "source_and_evidence": "Base@07330c89411cd15d68106c80bb6e2bc138179ca3: work-decomposition-and-sequencing.md and examples/godot-narrative-dialogue-flow source, UI and tests; original narrative reference PR #387.",
+        "observed_pattern": "UI and tests use the same session.choose. Waiting-state, ID and source-beat checks already exist; invalid direct-call coverage is missing.",
+        "project_fit_and_difference": "Reuse existing functions and add regression coverage. Do not create an AI-only rule engine or change game semantics.",
+        "disposition": "ADOPT"
+      },
+      {
+        "source_and_evidence": "https://modelcontextprotocol.io/specification/2025-06-18/server/tools (read 2026-09-07)",
+        "observed_pattern": "Input validation and access control belong to the execution boundary; annotations are not enforcement.",
+        "project_fit_and_difference": "Separate local state validation from remote authentication and authorization. No MCP endpoint is added.",
+        "disposition": "ADAPT"
+      },
+      {
+        "source_and_evidence": "https://docs.godotengine.org/en/stable/tutorials/editor/command_line_tutorial.html (read 2026-09-07); current Base reusable-godot-project-pilot.yml engine pin.",
+        "observed_pattern": "Headless script execution exercises real engine code but is not rendered UI or human experience evidence.",
+        "project_fit_and_difference": "Reuse the dependency-free sample and pinned Godot 4.7.1; no new framework or project pin upgrade.",
+        "disposition": "ADAPT"
+      }
+    ]
+  },
+  "alternatives": [
+    {"option": "UI automation only", "disposition": "REJECT", "reason": "Does not isolate invalid direct-call boundaries; keep UI QA as a separate evidence layer."},
+    {"option": "Existing shared functions with bounded regressions", "disposition": "ADOPT", "reason": "Smallest change with real consumers and preserved authority."},
+    {"option": "New generic MCP or automation platform", "disposition": "REJECT", "reason": "No missing executor justifies duplicate authority or maintenance cost."}
+  ],
+  "context_configuration_hygiene": {
+    "scope": "Only the shared feature boundary, existing dialogue reference, test entrypoints and this receipt. No broad sweep or deletion.",
+    "inventory": [
+      {"path": "skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md", "classification": "ACTIVE_OWNER", "owner_or_provenance": "Existing intake/decompose-and-sequence owner", "references_and_consumers": "Existing intake Skill, execution plan and feature-contract tests"},
+      {"path": "examples/godot-narrative-dialogue-flow", "classification": "ACTIVE_OWNER", "owner_or_provenance": "Existing Base reference implementation", "references_and_consumers": "src/dialogue_flow_session.gd consumed by src/main.gd and tests/test_dialogue_flow_runtime.gd"},
+      {"path": "docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md", "classification": "ACTIVE_OWNER", "owner_or_provenance": "Current sole persistent Godot authoring policy", "references_and_consumers": "Current Base routing; tests do not create another authoring provider"}
+    ]
+  },
+  "project_work_kanban": {
+    "goal_or_slice_issue_ref": "https://github.com/alsdmlals4-eng/Base/pull/858",
+    "source_main_sha": "07330c89411cd15d68106c80bb6e2bc138179ca3",
+    "work_item_refs": ["HEADLESS-BOUNDARY"],
+    "active_work_item_ref": "HEADLESS-BOUNDARY",
+    "next_action": "Verify final PR head including this checkpoint, finish full-scope self-review and independent review, then evaluate normal merge gates.",
+    "work_items": [
+      {
+        "work_item_id": "HEADLESS-BOUNDARY",
+        "title": "Shared UI/direct-call boundary and reference regression",
+        "status": "VERIFY_REVIEW",
+        "canon_owner": "skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md",
+        "actual_consumers": ["tests/test_shared_direct_call_contract.py", "examples/godot-narrative-dialogue-flow/tests/test_dialogue_flow_runtime.gd"],
+        "depends_on": [],
+        "acceptance_criteria": ["OWNER", "REGRESSION", "VERIFY", "MERGE_READBACK"],
+        "checklist": [
+          {"id": "OWNER", "text": "Existing owner specifies shared rules, executor guards, state preservation and evidence limits.", "status": "PASS", "evidence": ["a4338b5859e8b450f4f93413552aaf863948d90b owner blob 9160404c416c234c43ad7dd16b99d8ffd8933e64; original content preserved outside the bounded addition."]},
+          {"id": "REGRESSION", "text": "Invalid direct calls preserve domain state and normal flow remains intact.", "status": "PASS", "evidence": ["Run 34107535337 job 101695895893 at subject 575807d5f3917f3765beeee0f19955726d2e36b7: 84/84 assertions, two guard-removal negative controls detected, restored suite 84/84."]},
+          {"id": "VERIFY", "text": "Exact-head relevant CI, real Godot reference tests and five full-scope reviews verified.", "status": "PARTIAL", "evidence": ["Three canonical CI workflows passed at a4338b5859e8b450f4f93413552aaf863948d90b. Final checkpoint commit requires fresh verification; see PR #858."]},
+          {"id": "MERGE_READBACK", "text": "Independent review, expected-head normal merge and merged-main readback.", "status": "NOT_RUN"}
+        ],
+        "required_evidence": ["E0_CONTRACT", "E1_STATIC", "E2_TEST", "E3_RUNTIME"],
+        "verification": [
+          {"level": "E0_CONTRACT", "status": "PASS", "evidence": ["Existing receipt start/resume CLI and focused contract/routing tests passed; reference owner readback at a4338b5859e8b450f4f93413552aaf863948d90b."]},
+          {"level": "E1_STATIC", "status": "PASS", "evidence": ["Run 34107810456: syntax, whitespace, reference freshness, required-check topology and contract jobs passed at a4338b5859e8b450f4f93413552aaf863948d90b."]},
+          {"level": "E2_TEST", "status": "PASS", "evidence": ["Run 34107810456 whole-core regression passed at a4338b5859e8b450f4f93413552aaf863948d90b; run 34107535337 focused suite 11/11 at subject 575807d5f3917f3765beeee0f19955726d2e36b7."]},
+          {"level": "E3_RUNTIME", "status": "PASS", "evidence": ["Run 34107535337: Godot 4.7.1.stable.official.a13da4feb, checked archive SHA-256, reference suite 84/84 and headless startup PASS. Tested subject 575807d5f3917f3765beeee0f19955726d2e36b7, not workflow-branch head. No rendered UI/input proof."]}
+        ],
+        "next_action": "Fresh exact-head CI/runtime verification and independent review; current integration state belongs to PR #858.",
+        "rollback": "Revert this bounded own-PR delta through a normal PR. No project runtime or data migration."
+      }
+    ],
+    "progress_summary": {"completed_items": 0, "applicable_items": 1, "display": "0 / 1"}
+  },
+  "local_evidence": {
+    "environment": "Exact-blob subset, not a full clone; GitHub DNS blocked in local container.",
+    "validator_blobs": {"tools/validate_work_contract_receipt.py": "3a01a540c5a4447b1520b2c77dcb61d7e2ab5f6c", "tools/project_work_tracking.py": "db1b18dd43e1041b52185c17a1cc5cb31daad47b"},
+    "receipt_gate": "Actual start and resume CLI PASS with independently fresh-read source SHAs; evidence consistency only.",
+    "doc_tdd": "4 tests: initial RED had 15 missing-clause failures, then 4/4 GREEN after the bounded owner addition. Additional negative controls removed each of 15 clauses and the section heading: all 16 were detected; restored 4/4.",
+    "preservation": "Four changed text blobs match remote IDs; removing only the intended addition reconstructs original owner and runtime suite exactly; original README is an unchanged prefix.",
+    "runtime": "NOT_RUN_LOCALLY"
+  },
+  "remote_evidence": {
+    "runtime_run": "https://github.com/alsdmlals4-eng/Base/actions/runs/34107535337",
+    "runtime_job_id": 101695895893,
+    "workflow_commit": "127a8d24324e73584799244cd6fe1237097188ce",
+    "tested_subject_commit": "575807d5f3917f3765beeee0f19955726d2e36b7",
+    "engine_version": "4.7.1.stable.official.a13da4feb",
+    "engine_archive_sha256": "c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba",
+    "baseline_assertions": 22,
+    "candidate_assertions": 84,
+    "negative_controls": ["source-beat ownership guard removed: old suite passes, new suite fails", "premature-choice guard weakened: old suite passes, new suite fails"],
+    "restored_assertions": 84,
+    "focused_python_tests": 11,
+    "ci_subject_commit": "a4338b5859e8b450f4f93413552aaf863948d90b",
+    "ci_success_run_ids": [34107810456, 34107810550, 34107810698],
+    "workflow_boundary": "Temporary task-owned read-only verification branch only; no permanent main workflow, service, runner class, cache or artifact added. Standard public GitHub-hosted runner; no new paid service."
+  },
+  "learning_log": [
+    {"problem": "Existing successful tests did not exercise rejected direct calls.", "cause": "Normal-path coverage cannot demonstrate executor guard enforcement.", "correction": "Reuse the same session.choose function and add public-state readback assertions.", "verification": "Both temporary guard-removal controls passed the old 22-assertion suite but failed the new suite; restoration passed 84/84.", "reuse_boundary": "BASE_SHARED_CONTRACT: same-owner execution and applicable rejection tests; not a blanket project installation or remote-auth implementation."},
+    {"problem": "One existing MISSING_CONSUMER audit token was accidentally omitted during a full-file connector replacement.", "cause": "Manual reconstruction can alter unrelated bytes even when new-clause tests pass.", "correction": "Restored the token before PR creation and verified exact blob IDs and unchanged original content.", "verification": "Final owner blob 9160404c416c234c43ad7dd16b99d8ffd8933e64; PR has no deletion of baseline owner content.", "reuse_boundary": "BASE_WORKFLOW_LESSON: after full-file writes, compare preserved content as well as testing the new behavior."},
+    {"problem": "Local full clone and engine download were unavailable because GitHub DNS was blocked.", "cause": "Execution-surface network limitation, not a repository failure.", "correction": "Use the existing GitHub connector and a bounded read-only exact-source verification branch; fetch logs through the dedicated workflow-job-log action.", "verification": "Actual canonical CI and checked-engine execution above; local results remain labeled subset-only.", "reuse_boundary": "ENVIRONMENT_WORKAROUND: never invent local runtime PASS or use a verification workflow's own SHA as its checked-out subject SHA."}
+  ],
+  "evidence_ceiling": "Base reference and contract only; not user-PC Godot, live MCP authorization, product adoption, UI input, render, UX, human approval or release proof.",
+  "protected_scope": ["other open/draft/ready PRs", "project repositories and adoption locks", "Skill Registry", "released/frozen/generated artifacts", "Godot authoring authority", "gameplay semantics"]
+}
