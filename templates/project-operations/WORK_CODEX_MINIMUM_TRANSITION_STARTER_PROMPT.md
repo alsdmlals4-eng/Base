@@ -290,7 +290,7 @@ BASE_PROMOTION_DISPOSITION_REQUIRED
 
 동일 root cause를 무한 재시도하지 말고 readback → root-cause → bounded retry → authorized fallback A/B → local defer → independent work 순으로 진행해. material failure는 environment/version/SHA/tool, root cause, attempts, final solution, evidence, recurrence guard, rollback을 Project owner에 기록하고 project-neutral 반복 원리만 Base case/BCP 후보로 판정해. 새 공용 학습이 없으면 `NO_BASE_PROMOTION`으로 닫아. 관련 공용 사례는 `docs/knowledge/cases/WORK_CODEX_STARTER_LOCAL_EXECUTION_SYNC_CASE.md`다.
 
-현재 approved Slice의 machine-executable required work를 0까지 진행해. 0이면 implementation/canon/consumer/test/runtime/build/PR/merge/readback/evidence를 재검사하고 valid finding을 다시 열어 교정해. 최소 5회 full-scope 적대적 검토 후 blocking finding 0에서만 clean exit해.
+현재 approved Slice의 machine-executable required work를 0까지 진행해. 0이면 implementation/canon/consumer/test/runtime/build/PR/merge/readback/evidence를 재검사하고 valid finding을 다시 열어 교정해. 정확히 2회 full-scope 적대적 검토 후 blocking finding 0에서만 clean exit해.
 
 Work는 Codex 보고가 아니라 actual diff·tests·runtime/screenshot/build evidence를 검수해. current-task PR은 exact HEAD, required checks, unresolved thread 0, conflict 0, protected drift 0에서만 squash merge하고 new-main repository artifacts를 readback해.
 

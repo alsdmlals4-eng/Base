@@ -223,8 +223,8 @@ Periodic Source Scan Queue를 사용하되 discovery를 곧바로 canon으로 �
 ## 13. 적대적 검토
 
 ```text
-FULL_LOOP_COUNT_MINIMUM: 5
-MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
+FULL_LOOP_COUNT_MINIMUM: 2
+MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2
 FULL_LOOP_IS_NOT_A_REVIEW_LENS
 ```
 
@@ -242,7 +242,7 @@ CURRENT STATE / CANON / ACTUAL IMPLEMENTATION READBACK
 → RE-ATTACK THE WHOLE RESULTING STATE
 ```
 
-1~5회는 의무이고, 5회 이후에도 오류·충돌·누락·blocker가 있으면 계속한다.
+전체 검토는 정확히 2회다. 2회 뒤에는 오류·충돌·누락·blocker별 수정·검증만 계속하며 전체 회차를 추가하지 않는다. 회차 정본은 `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`다.
 
 ## 14. Git / PR
 
@@ -285,7 +285,7 @@ python tools/check_base_partition_scope.py --coordinator --base <BASELINE_SHA> -
 2. P01~P09 결과/학습/finding 재검증
 3. CP0·Registry·generated·Notion 정합성 **직접 마감**
 4. whole-Base regression/Required CI
-5. 최소 5회 full-scope adversarial loop, 이후 오류 0까지
+5. 정확히 2회 full-scope adversarial loop, 이후 결함별 수정·검증으로 오류 0 확인
 6. exact-head merge
 7. post-merge main + Base/Project Home readback
 8. 사용자 학습형 최종보고
@@ -294,7 +294,7 @@ python tools/check_base_partition_scope.py --coordinator --base <BASELINE_SHA> -
 
 ## Clean exit token
 
-최소 5회 full-scope loop 이후 blocker·회귀·acceptance·정본·evidence 문제가 0이어야 `CLEAN_REVIEW_EXIT`다.
+정확히 2회 full-scope loop 이후 blocker·회귀·acceptance·정본·evidence 문제가 0이어야 `CLEAN_REVIEW_EXIT`다.
 
 ## 사용자 학습형 완료보고
 

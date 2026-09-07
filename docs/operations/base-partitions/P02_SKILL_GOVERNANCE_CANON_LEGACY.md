@@ -25,7 +25,7 @@ Part 경계는 수정 금지선이 아니라 semantic owner 지도다. 다른 Pa
 중복 Skill/Mode, 소비자 없는 규칙, Registry와 실제 Skill drift, Figma/HTML/local tool/Sheets 잔존 active authority, unique material 확인 없는 삭제.
 
 ## 검증/완료
-reference freshness와 관련 회귀를 실행하고 최소 5회 전체 적대적 개선 뒤 clean까지 계속한다.
+reference freshness와 관련 회귀를 실행하고 정확히 2회 전체 적대적 검토 뒤 clean까지 계속한다.
 ## 학습 루프
 - 작업마다 `docs/operations/base-partitions/learning/P02_LEARNING_LOG.md`에 Learning Checkpoint를 남긴다.
 - 새 공용 교훈이 없으면 `NO_NEW_REUSABLE_LESSON`; 프로젝트 전용이면 `PROJECT_ONLY`; Base 승격 후보면 `BASE_PROMOTION_CANDIDATE`.

@@ -203,8 +203,8 @@ CP0는 전역 routing/Registry/generated/partition 계약의 semantic owner다. 
 ## 적대적 검토
 
 ```text
-FULL_LOOP_COUNT_MINIMUM: 5
-MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
+FULL_LOOP_COUNT_MINIMUM: 2
+MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2
 FULL_LOOP_IS_NOT_A_REVIEW_LENS
 ```
 
@@ -222,7 +222,7 @@ CURRENT STATE / CANON / ACTUAL IMPLEMENTATION READBACK
 → RE-ATTACK THE WHOLE RESULTING STATE
 ```
 
-최소 5회 후에도 finding이 있으면 6..N회를 계속한다.
+2회 뒤에는 finding별 수정·영향 회귀검증만 수행한다. 전체 회차를 추가하지 않으며 미해결 blocker는 완료를 막는다. 상세 정본: `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`.
 
 ## Human-facing Home
 
@@ -267,7 +267,7 @@ P01→P09 뒤 같은 GPT coordinator가:
 3. cross-Part/CP0 Base finding 직접 교정
 4. Registry/generated/Documentation/Notion 정합성 마감
 5. repository-wide regression / Required CI
-6. 최소 5회 full-scope adversarial loop 후 clean
+6. 정확히 2회 full-scope adversarial loop 후 clean
 7. exact-head merge
 8. post-merge GitHub + Notion readback
 9. 사용자 학습형 최종보고

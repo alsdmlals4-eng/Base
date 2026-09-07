@@ -1,5 +1,16 @@
 # Windows publication dependency download transport failure — Case
 
+## 2026-09-08 — Stable retention expiry, identical archive payload
+
+The older incident below records transport failures and its historical mirror recovery. Current main `62eadf848117c9dee45b769540be4589ae124283`, workflow run `34132954644`, Windows job `101777260652` instead fails with HTTP 404 for the removed stable `26.2.3` MSI. Bounded transport retries cannot recover a removed source.
+
+- **ADOPT:** the official archive `https://downloadarchive.documentfoundation.org/libreoffice/old/26.2.3.2/win/x86_64/LibreOffice_26.2.3.2_Win_x86-64.msi`; HTTP HEAD 200 and adjacent `.sha256` GET verified on 2026-09-08.
+- The archive SHA-256 is `468d1fb3880af3bcddac002e9054155912c70b45d105bfa1c82036f33456133d`, identical to the existing workflow pin. This is an address correction, not a binary upgrade.
+- Reuse `Invoke-VerifiedDownload`, bounded retries, transport fallback and hash verification. Remove the now-useless stable mirror/source fallback. Keep Poppler, installation checks and Windows smoke gates unchanged.
+- **REJECT:** floating latest package upgrades and a new download framework; neither is needed for this incident.
+- **Evidence ceiling:** source availability and checksum metadata do not prove installation/runtime. Actual Windows install/publication smoke and exact-head CI results are required on the correction PR before completion.
+
+
 ```text
 WINDOWS_PUBLICATION_DEPENDENCY_DOWNLOAD_TRANSPORT_FAILURE
 NO_TEST_OR_HASH_WEAKENING

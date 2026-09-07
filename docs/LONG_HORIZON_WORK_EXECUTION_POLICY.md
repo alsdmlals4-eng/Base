@@ -39,8 +39,8 @@ ZERO_INCREMENTAL_COST_REQUIRED
 CURRENT_PAID_PLANS: GPT_PRO
 PAID_PLAN_COUNT: 1
 ADVERSARIAL_REVIEW_UNTIL_CLEAN
-FULL_LOOP_COUNT_MINIMUM: 5
-MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
+FULL_LOOP_COUNT_MINIMUM: 2
+MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2
 POSTMERGE_PROMOTION_AND_SUPERSESSION
 POSTMERGE_REPOSITORY_ARTIFACT_ADVERSARIAL_PROGRESS_LOOP
 POSTMERGE_CORRECTION_REQUIRED
@@ -349,22 +349,22 @@ Codex는 이미지 생성·생성형 편집·임의 AI placeholder를 만들지 
 
 ## 14. 적대적 검토 종료 조건
 
-`ADVERSARIAL_REVIEW_UNTIL_CLEAN`은 **최소 5회 floor + 이후 clean-exit**다.
+`ADVERSARIAL_REVIEW_UNTIL_CLEAN`은 **정확히 2회 전체 검토 + 필요한 결함별 수정·검증 + clean-exit**다. 회차 상한·계보·재사용·차단의 정본은 `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`다.
 
 ```text
-FULL_LOOP_COUNT_MINIMUM: 5
-MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
+FULL_LOOP_COUNT_MINIMUM: 2
+MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2
 FULL_SCOPE_REVIEW
 → finding 검증
 → 개선/보완
 → 실제 검증/회귀
 → 개선된 전체 상태 RE-ATTACK
-→ repeat through loop 5
-→ after loop 5, continue while any valid blocker exists
+→ complete exactly two full-scope rounds
+→ after round 2, targeted correction/verification only; no automatic third full review
 → CLEAN_REVIEW_EXIT
 ```
 
-병합 전 검토와 postmerge readback은 서로 다른 완료를 과장하기 위한 중복 cycle이 아니다. 마지막 교정부터 merge/postmerge 증거까지 **same final-state lineage**로 이어지는 동일 상태를 계속 공격·검증한다.
+병합 전 검토와 postmerge readback은 서로 다른 완료를 과장하기 위한 중복 cycle이 아니다. 마지막 교정부터 merge/postmerge 증거까지 **same final-state lineage**로 이어지는 동일 상태를 검증한다. 2회 이후에는 영향 범위 교정·검증과 main readback만 하며 전체 적대 검토를 추가하지 않는다.
 
 `CLEAN_REVIEW_EXIT`에는 새 유효 오류·충돌·누락·blocking finding 0, 정본/owner/consumer/reference 충돌 0, acceptance failure 0, 회귀 0, evidence ceiling 위반 0이 필요하다.
 

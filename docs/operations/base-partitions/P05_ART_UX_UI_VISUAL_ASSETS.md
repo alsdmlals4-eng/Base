@@ -26,7 +26,7 @@ Part 경계는 수정 금지선이 아니라 semantic owner 지도다. 다른 Pa
 AI 티/스타일 drift/가독성 저하, 시스템-only/회색박스만으로 player-facing 데모 최종판정, player-facing placeholder 잔존, Figma/HTML/local Tool 권위 부활, unique 기능 흡수 없는 삭제.
 
 ## 검증/완료
-visual/BCA 회귀 + scope 검사 + 실제 Notion readback이 필요한 변경은 readback 증거. 최소 5회 **전체 lifecycle** 적대적 검토 후 clean까지. 관점 5개를 5회로 세지 않는다.
+visual/BCA 회귀 + scope 검사 + 실제 Notion readback이 필요한 변경은 readback 증거. 정확히 2회 **전체 lifecycle** 적대적 검토 후 clean까지. 관점 5개를 5회로 세지 않는다.
 
 ## 학습 루프
 - 작업마다 `docs/operations/base-partitions/learning/P05_LEARNING_LOG.md`에 Learning Checkpoint를 남긴다.

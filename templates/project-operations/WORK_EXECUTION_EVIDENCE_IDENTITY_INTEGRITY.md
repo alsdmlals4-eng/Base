@@ -438,7 +438,7 @@ WORK_EXECUTION_EVIDENCE_COMPLETION:
   blockers: []
 ```
 
-`remaining_machine_executable_work = 0`은 completion candidate다. 실제 상태 재검사와 최소 5회 full-scope adversarial review 뒤 새 blocking finding이 0일 때만 종료한다.
+`remaining_machine_executable_work = 0`은 completion candidate다. 실제 상태 재검사와 정확히 2회 full-scope adversarial review 뒤 새 blocking finding이 0일 때만 종료한다.
 
 ## 15. Rollback
 

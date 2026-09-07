@@ -154,7 +154,8 @@ bounded retry → evidence-equivalent fallback → blocked task만 defer
 → independent ready work 계속
 → current phase required work = 0
 → completion rescan
-→ 최소 5회 full-scope adversarial review
+→ same approved Slice lineage: 총 2회 full-scope adversarial review (phase별 재시작 금지; 구현 결과 회차 확보)
+→ after round 2: 결함별 수정·검증만; 회차 정본 docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md
 → blocking finding 0
 ```
 

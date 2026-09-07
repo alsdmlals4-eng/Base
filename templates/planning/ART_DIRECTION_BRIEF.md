@@ -29,7 +29,7 @@
 
 ### 3.1 Pixel art candidate — 조건부
 
-픽셀 아트가 실제 후보일 때만 작성한다. Base Preset을 프로젝트 정본으로 복제하지 않고, Base `AGENTS.md`의 `MINIMUM_VIABLE_ALTERNATIVES: 3`, `BETTER_ALTERNATIVE_SEARCH`, `LONG_TERM_PLAN_FIT_REQUIRED`, `FIVE_FULL_ADVERSARIAL_IMPROVEMENT_LOOPS`를 프로젝트 픽셀 아트 결정에 적용한다. 아래 값은 새 전역 규칙이 아니라 그 적용 결과를 기록하는 프로젝트용 필드다.
+픽셀 아트가 실제 후보일 때만 작성한다. Base Preset을 프로젝트 정본으로 복제하지 않고, Base `AGENTS.md`의 `MINIMUM_VIABLE_ALTERNATIVES: 3`, `BETTER_ALTERNATIVE_SEARCH`, `LONG_TERM_PLAN_FIT_REQUIRED`, `TWO_FULL_ADVERSARIAL_REVIEW_ROUNDS`를 프로젝트 픽셀 아트 결정에 적용한다. 아래 값은 새 전역 규칙이 아니라 그 적용 결과를 기록하는 프로젝트용 필드다.
 
 ```yaml
 pixel_art_candidate: YES | NO

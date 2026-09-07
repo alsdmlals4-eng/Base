@@ -78,7 +78,7 @@ Google Sheets는 `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL` source다. Figma·
 | 항상 적용 규칙 | `AGENTS.md` | 권한·승인·환경·비용·검증·보호·완료 불변 규칙 |
 | 통합 운영 모델 | `docs/OPERATING_MODEL.md` | 생명주기·정본·상태·발행·근거·검증 |
 | Work Mode / Skill | `docs/WORK_MODE_AND_SKILL_ROUTING.md` | PLAN/BUILD/REVIEW와 Skill 자동 라우팅 |
-| 장기 작업 | `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md` | 현행조사→>=3 대안→creative benchmark frontier→최소 5회 전체 적대적 개선→5회 이후 오류·충돌·누락·blocker 0까지 추가 전체 루프→장기 최선안 |
+| 장기 작업 | `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md` | 현행조사→>=3 대안→creative benchmark frontier→정확히 2회 전체 적대적 검토→2회 뒤에는 결함별 수정·검증만 수행→장기 최선안 |
 | 프로젝트 workspace machine authority | `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json` | `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`, `REPOSITORY_PRIMARY_CANON`, derived human PDF, legacy-only Notion migration boundary |
 | 시각 협업 | `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`, `docs/VISUAL_COLLABORATION_TOOL_POLICY.md` | repository-owned visual canon·manifest·exact-SHA PDF review가 현행 owner; 뒤의 정책은 V3 compatibility/history terminology·migration reference이며 V4 기본 작업면을 되살리지 않음 |
 | Notion asset/flow workflow | `docs/knowledge/game-development/NOTION_VISUAL_ASSET_AND_FLOW_WORKFLOW.md` | `V3_COMPATIBILITY_AND_HISTORY_ONLY`; legacy provenance/migration reference, active default 아님 |

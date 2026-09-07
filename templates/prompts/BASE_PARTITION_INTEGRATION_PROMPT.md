@@ -136,8 +136,8 @@ P01~P09 Learning Logs에서:
 ## 9. 적대적 검토
 
 ```text
-FULL_LOOP_COUNT_MINIMUM: 5
-MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
+FULL_LOOP_COUNT_MINIMUM: 2
+MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2
 FULL_LOOP_IS_NOT_A_REVIEW_LENS
 ```
 
@@ -157,7 +157,7 @@ CURRENT STATE / CANON / ACTUAL IMPLEMENTATION READBACK
 
 `Loop 1=scope`, `Loop 2=UX`, `Loop 3=CI`와 같은 lens 분할은 full loop로 계수하지 않는다. 각 full loop에서 필요한 모든 lens를 다시 사용한다.
 
-최소 5회 이후에도 valid error/conflict/omission/blocker/regression/acceptance failure가 하나라도 있으면 6..N회를 계속한다.
+2회 이후에는 valid error/conflict/omission/blocker/regression/acceptance failure를 결함별로 수정·검증한다. `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`에 따라 전체 회차를 추가하지 않고 미해결 blocker는 완료·병합을 막는다.
 
 ## 10. Evidence ceiling
 
@@ -177,7 +177,7 @@ CURRENT STATE / CANON / ACTUAL IMPLEMENTATION READBACK
 - claimed regression actual consumer 확인
 - unresolved review thread 0
 - reference/generated freshness closed
-- 최소 5 true full loops
+- 정확히 2 true full loops
 - `CLEAN_REVIEW_EXIT`
 
 병합 뒤 새 main과 Notion Base/Project Home을 다시 읽고 실제 반영을 확인한다.

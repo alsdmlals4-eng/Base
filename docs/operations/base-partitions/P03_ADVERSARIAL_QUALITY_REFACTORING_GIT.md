@@ -13,7 +13,7 @@
 `running-adversarial-review-and-refinement`, `refactoring-with-contract-preservation`, `synchronizing-local-and-github-state`.
 
 ## 중요 규칙
-`FULL_LOOP_COUNT_MINIMUM: 5`, `MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5`, `CLEAN_REVIEW_EXIT`, POST_CHANGE_MONITOR_LOOP, OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT.
+`FULL_LOOP_COUNT_MINIMUM: 2`, `MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2`, `CLEAN_REVIEW_EXIT`, POST_CHANGE_MONITOR_LOOP, OTHER_CHAT_BRANCH_PATH_PR: DO_NOT_TOUCH_BY_DEFAULT.
 
 ## 핵심 Module
 Attack → Validate Critique → Refine Approved Findings → Regression → Git/PR Integrity → Post-change Monitor.
@@ -22,10 +22,10 @@ Attack → Validate Critique → Refine Approved Findings → Regression → Git
 Part 경계는 수정 금지선이 아니라 semantic owner 지도다. 다른 Part/CP0 finding도 현재 coordinator가 증거와 검증 경로를 확보하면 직접 수정한다. 다른 독립 활성 workstream만 read-only로 보호하며, 실제 조정 blocker만 `CROSS_PART_CHANGE_REQUEST`로 남긴다.
 
 ## 우선 공격 대상
-5회를 checklist/lens로 축소, 5회에서 강제 종료, 가짜 finding, 동일 finding 중복 수정, unrelated branch/worktree 변경, evidence ceiling 위반.
+2회를 checklist/lens로 축소, 2회 뒤 미해결 blocker를 무시한 완료, 3회 이상 전체 검토 자동 추가, 가짜 finding, 동일 finding 중복 수정, unrelated branch/worktree 변경, evidence ceiling 위반.
 
 ## 검증/완료
-focused adversarial/Git tests와 Part scope 검사. 1~5회 의무 전체 loop 후에도 finding이 있으면 6..N회 계속한다.
+focused adversarial/Git tests와 Part scope 검사. 정확히 2회 전체 검토 뒤에는 finding별 수정·검증만 수행한다. 전체 회차를 추가하지 않는다. `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`를 따른다.
 ## 학습 루프
 - 작업마다 `docs/operations/base-partitions/learning/P03_LEARNING_LOG.md`에 Learning Checkpoint를 남긴다.
 - 새 공용 교훈이 없으면 `NO_NEW_REUSABLE_LESSON`; 프로젝트 전용이면 `PROJECT_ONLY`; Base 승격 후보면 `BASE_PROMOTION_CANDIDATE`.

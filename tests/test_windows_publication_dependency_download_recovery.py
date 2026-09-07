@@ -41,19 +41,17 @@ class WindowsPublicationDependencyDownloadRecoveryTests(unittest.TestCase):
         ):
             self.assertIn(token, body)
 
-    def test_libreoffice_uses_verified_tdf_mirror_and_source_fallback(self) -> None:
+    def test_libreoffice_uses_pinned_official_archive(self) -> None:
         body = self._windows_install_step()
         for token in (
-            "https://mirror.clarkson.edu/tdf/libreoffice/stable/",
-            "https://download.documentfoundation.org/libreoffice/stable/",
-            "$libreOfficeFallbackUrl",
-            "Direct TDF mirror route failed",
+            "https://downloadarchive.documentfoundation.org/libreoffice/old/",
+            '$libreOfficeVersion = "26.2.3.2"',
         ):
             self.assertIn(token, body)
         self.assertRegex(
             body,
             r"Invoke-VerifiedDownload\s+"
-            r"-Uri \$libreOfficeFallbackUrl\s+"
+            r"-Uri \$libreOfficeUrl\s+"
             r"-OutFile \$libreOfficeMsi\s+"
             r"-ExpectedSha256 \$libreOfficeSha256",
         )

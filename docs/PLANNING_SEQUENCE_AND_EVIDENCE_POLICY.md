@@ -250,7 +250,7 @@ material approval은 다음 상태까지 같은 승인 단위로 닫는다.
 
 ```text
 user approval
-→ adversarial review (minimum five full loops for L1+ long-horizon scope, then clean exit)
+→ adversarial review (exactly two full-scope rounds for L1+ long-horizon scope; verified clean exit)
 → repository structured update
 → exact-SHA human PDF/Markdown projection update/readback; V4 Notion exception update/readback only when expressly scoped
 → branch / commit / PR

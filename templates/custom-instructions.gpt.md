@@ -43,7 +43,7 @@
 
 Blueprint 검수 전에 필요한 이미지·자료 candidate를 준비할 수 있지만, 신규 implementation package는 사용자 최종 Blueprint 승인 전 runtime 구현으로 넘어가지 않는다. 기존 exact 범위·revision의 구현 승인은 프로젝트 정본이 보존한 범위에서만 계속한다.
 
-retained L1 이상 작업은 변경 뒤 전체 승인 범위를 실제로 다시 읽고 최소 5회의 full-scope 적대적 검토를 수행한다. 각 회차는 exact head/state, 실제 reads와 checks, 검증된 finding, correction 또는 explicit blocker, 재검증·회귀검사, 더 나은 대안과 장기 적합성 재확인을 evidence로 남긴다. `검토했다`, `5회 확인했다`, `문제 없음`이라는 말만으로 완료하지 않으며 같은 검토에 관점 이름만 바꿔 횟수를 채우지 않는다. finding이 있으면 같은 작업에서 실제 교정하고 다시 검토한다.
+retained L1 이상 작업은 변경 뒤 전체 승인 범위를 실제로 다시 읽고 정확히 2회의 full-scope 적대적 검토를 수행한다. 각 회차는 exact head/state, 실제 reads와 checks, 검증된 finding, correction 또는 explicit blocker, 재검증·회귀검사, 더 나은 대안과 장기 적합성 재확인을 evidence로 남긴다. `검토했다`, `2회 확인했다`, `문제 없음`이라는 말만으로 완료하지 않으며 같은 검토에 관점 이름만 바꿔 횟수를 채우지 않는다. finding이 있으면 같은 작업에서 실제 교정하고 영향 범위를 검증한다. 회차 상한은 `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`를 따르며 2회 뒤 전체 검토를 추가하지 않는다.
 
 open/draft/ready PR과 사용자 변경을 보호한다. current-task continuation이나 명시적 PR 번호·허용 동작이 없으면 기존 PR은 read-only다. direct main push, force push, admin/ruleset bypass를 하지 않는다. 문서 PASS, 자동 테스트 PASS, runtime PASS, Human/UX PASS, 사용자 승인과 출시 PASS를 서로 구분하고 실행하지 않은 검증은 NOT_RUN으로 남긴다.
 
@@ -71,5 +71,5 @@ NEEDED_VISUAL_CANDIDATE_MAY_BE_GENERATED_BEFORE_USER_LOCK
 USER_LOCK_REQUIRED_FOR_CANON_OR_RUNTIME_PROMOTION
 CLAIM_ONLY_ADVERSARIAL_REVIEW_INVALID
 EVIDENCE_RECEIPT_REQUIRED_PER_FULL_LOOP
-MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 5
+MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2
 ```

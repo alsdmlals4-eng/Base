@@ -1,5 +1,14 @@
 # Running Adversarial Review and Refinement — Learning Log
 
+## 2026-09-08 — User-bounded two-round review, not unlimited full audits
+
+- **Decision:** Latest user instruction replaces the prior minimum-five rule with exactly two full-scope rounds per approved work lineage. The current count/exit owner is `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`; old entries below are historical evidence, not active defaults.
+- **Evidence:** Repository-only baseline application at `62eadf848117c9dee45b769540be4589ae124283` still required three extra rounds after two clean reviews and unlimited rounds after a regression. Candidate application and exact-head CI belong to this change's PR; no productivity or quality improvement is claimed before measurement.
+- **Optimization:** Consolidate duplicated lifecycle/exit detail in the existing owner; retain always-on safety, coverage and one-hop discovery in the Skill. Reuse fresh same-scope research. Both rounds cover unnecessary work, overengineering, conflicts and omissions.
+- **Boundary:** After round two, verified findings still require targeted correction/regression/readback. Unresolved blockers prohibit completion/merge, but do not authorize another full audit. Preserve independent approvals, CI, current project contracts, historical receipts and unknown backups.
+- **Compatibility:** `SBE-040` explicitly requests five reviews inside its hypothetical user prompt; it is a user-override fixture, not the current default. Do not rewrite past evidence or released locks to pretend two reviews occurred.
+
+
 ## 2026-08-24 — Completion is a candidate until remaining work is recalculated
 
 - **Trigger:** Base와 프로젝트에서 계획된 남은 작업을 모두 처리한 뒤에도 실제 구현·정본·Test·consumer·PR·readback을 다시 확인해 교정할 사항이 없는지 적대적으로 검토하고 나서 완료를 판정하라는 사용자 결정.

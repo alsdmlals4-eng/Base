@@ -411,7 +411,7 @@ If remaining work is not zero, continue. At zero, re-scan actual implementation,
 
 Automated readiness is blocked by missing product implementation, missing required input/consumer, mandatory machine QA `NOT_RUN`, required merge/readback missing, high-risk acceptance blocker, or unresolved P0/P1/evidence overclaim.
 
-After correction, perform at least five full-scope adversarial loops and continue until `CLEAN_REVIEW_EXIT`.
+Perform exactly two full-scope adversarial rounds across this approved work lineage. After round 2, only targeted correction/verification continues toward `CLEAN_REVIEW_EXIT`; do not start another full review. Count/exit owner: `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`.
 
 When all machine-executable current-Slice work is zero and only the user’s explicitly deferred play validation remains:
 
@@ -484,7 +484,7 @@ Hera source delta NONE
 runtime/build/readback evidence complete
 Human/Player evidence remains NOT_RUN
 current-task PR safely merged and read back when applicable
-minimum five full adversarial loops complete
+exactly two full adversarial rounds complete
 blocking finding = 0
 AUTOMATED_VERTICAL_SLICE_READY
 READY_FOR_USER_VERTICAL_SLICE_VALIDATION

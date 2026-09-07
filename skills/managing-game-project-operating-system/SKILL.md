@@ -130,7 +130,7 @@ planned project work exhausted
    │  → remaining-work recalculation again
    └─ no required finding → POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
 → same final `POST_CHANGE_MONITOR_LOOP`
-→ `running-adversarial-review-and-refinement` minimum-five full loops
+→ `running-adversarial-review-and-refinement` exactly two full-scope rounds
 → CLEAN_REVIEW_EXIT
 → FULL_COMPLETION_REQUIRES_ZERO_REMAINING_WORK
 → completion report

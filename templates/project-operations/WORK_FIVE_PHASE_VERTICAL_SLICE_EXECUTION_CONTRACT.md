@@ -104,7 +104,7 @@ NO_CODEX_IMPLEMENTATION_BEFORE_PHASE_3_READY
 CORE_MEANING_FINDING_REOPENS_PHASE_1
 BLUEPRINT_EFFICIENCY_REUSE_ADAPT_REQUIRED
 ```
-Phase 1 packet을 핵심 재미·선택·보상, 대표성·scope, reuse, `implementation_feasibility`, UI/UX, data/save/economy, `actual_consumer_and_asset_coverage`, 권리·비용, `acceptance_test_runtime_and_rollback`, `work_codex_transition_cost`, untouched consumer·canon drift 관점으로 전체 검수한다. 복잡한 player-facing system이면 기존 System Blueprint를 먼저 `REUSE / ADAPT`하고, player meaning → choice/condition → state/data → feedback → owner/validation을 한 bounded decision chain으로 확인한다. 새 별도 Blueprint, 전체 backfill 또는 장식용 노드는 만들지 않으며 상세 규칙은 `NOTION_SYSTEM_BLUEPRINT_CONTRACT.md`가 소유한다. 최소 5회 full-scope 적대검토와 IRG를 통과한다.
+Phase 1 packet을 핵심 재미·선택·보상, 대표성·scope, reuse, `implementation_feasibility`, UI/UX, data/save/economy, `actual_consumer_and_asset_coverage`, 권리·비용, `acceptance_test_runtime_and_rollback`, `work_codex_transition_cost`, untouched consumer·canon drift 관점으로 전체 검수한다. 복잡한 player-facing system이면 기존 System Blueprint를 먼저 `REUSE / ADAPT`하고, player meaning → choice/condition → state/data → feedback → owner/validation을 한 bounded decision chain으로 확인한다. 새 별도 Blueprint, 전체 backfill 또는 장식용 노드는 만들지 않으며 상세 규칙은 `NOTION_SYSTEM_BLUEPRINT_CONTRACT.md`가 소유한다. 구현 전 일반 검수와 IRG를 통과한다. 전체 적대검토를 수행한다면 동일 승인 Slice의 총 2회 중 1회만 사용하고, 구현 결과를 확인할 1회를 Phase 4에 남긴다.
 ```yaml
 REVIEWED_SLICE_PRODUCTION_CONTRACT:
   phase_1_packet_identity:
@@ -329,4 +329,4 @@ planning text exists
 != user actually played
 != USER_VALIDATED_VERTICAL_SLICE
 ```
-`remaining work = 0`은 completion candidate다. current phase의 actual-state rescan과 최소 5회 full-scope 적대검토 후 blocking finding 0에서만 닫는다. Phase 5 판정 뒤에도 다음 Slice는 사용자 결정 전 자동 시작하지 않는다.
+`remaining work = 0`은 completion candidate다. current phase의 actual-state rescan과 적용 가능한 검증에서 blocking finding 0을 확인한다. 전체 적대검토는 동일 승인 Slice 계보에서 총 2회이며 phase마다 다시 시작하지 않는다. 구현 결과 검토 회차를 확보하고, 2회 이후에는 결함별 교정·검증만 수행한다. 회차 정본: `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`. Phase 5 판정 뒤에도 다음 Slice는 사용자 결정 전 자동 시작하지 않는다.

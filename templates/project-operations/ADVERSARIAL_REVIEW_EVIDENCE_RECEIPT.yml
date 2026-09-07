@@ -4,7 +4,10 @@
 review_contract:
   policy: docs/AUTONOMOUS_RESEARCH_IMPLEMENTATION_AND_LEARNING_POLICY.md
   specialist_skill: skills/running-adversarial-review-and-refinement/SKILL.md
-  minimum_full_loops_before_clean_exit: 5
+  minimum_full_loops_before_clean_exit: 2
+  maximum_full_loops: 2
+  no_automatic_third_full_review: true
+  count_and_exit_policy: docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md
   claim_only_review_is_invalid: true
 
 work_item:
@@ -37,6 +40,7 @@ loop:
     failure_recovery_security_cost: NOT_RUN
     research_and_better_alternative: NOT_RUN
     long_term_maintainability: NOT_RUN
+    unnecessary_work_overengineering_conflicts_omissions: NOT_RUN
     evidence_ceiling_and_completion: NOT_RUN
   findings: []
   validated_findings:

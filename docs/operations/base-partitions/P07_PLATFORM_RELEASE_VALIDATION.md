@@ -25,7 +25,7 @@ Part 경계는 수정 금지선이 아니라 semantic owner 지도다. 다른 Pa
 실행 증거 없는 완료 주장, 오래된 플랫폼 정책, planning screenshot을 runtime proof로 사용, Android/출시 단계 조기 확대, backend/DRM 과잉 설계.
 
 ## 검증/완료
-해당 플랫폼/릴리스 focused tests, 최신 공식 출처, exact-head evidence. 최소 5회 전체 review 후 clean까지.
+해당 플랫폼/릴리스 focused tests, 최신 공식 출처, exact-head evidence. 정확히 2회 전체 review 후 clean까지.
 ## 학습 루프
 - 작업마다 `docs/operations/base-partitions/learning/P07_LEARNING_LOG.md`에 Learning Checkpoint를 남긴다.
 - 새 공용 교훈이 없으면 `NO_NEW_REUSABLE_LESSON`; 프로젝트 전용이면 `PROJECT_ONLY`; Base 승격 후보면 `BASE_PROMOTION_CANDIDATE`.
