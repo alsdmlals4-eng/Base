@@ -12,7 +12,7 @@ class GodotUiMaintenanceBaselineTests(unittest.TestCase):
 
         for marker in (
             "Godot 4.7 UI maintenance baseline — dated reference",
-            "target project's adopted Godot version remains authoritative",
+            "The target project's adopted Godot version remains authoritative",
             "Do not silently replace a project engine pin",
             "https://docs.godotengine.org/en/stable/about/release_policy.html",
             "https://godotengine.org/download/archive/",
