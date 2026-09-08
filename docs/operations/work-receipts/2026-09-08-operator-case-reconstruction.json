@@ -70,7 +70,7 @@
     "source_main_sha": "68792fc38340a19945ba6b15eedef39f55d50705",
     "work_item_refs": ["TASK-01"],
     "active_work_item_ref": "TASK-01",
-    "next_action": "Publish the reviewed branch, then wait for exact-head remote CI and PR review before closeout.",
+    "next_action": "Wait for GitHub PR #863 exact-head CI and review before any closeout decision.",
     "work_items": [
       {
         "work_item_id": "TASK-01",
@@ -139,7 +139,7 @@
             ]
           }
         ],
-        "next_action": "Publish the reviewed branch, then wait for exact-head remote CI and PR review before closeout."
+        "next_action": "Wait for GitHub PR #863 exact-head CI and review before any closeout decision."
       }
     ]
   },
@@ -151,6 +151,9 @@
     "full_validation": "2645 tests PASS, 37 skipped; static/generated/integrity/CI topology/Git checks PASS.",
     "evidence_ceiling": "Review and test evidence validates schema/documentation behavior only; it does not validate public case claims, provider tooling, runtime outcomes, productivity, or project adoption."
   },
+  "current_status_owner": "GitHub PR #863 on codex/operator-case-reconstruction-20260908",
+  "published_remote_head": "3b96a06e3ba12456f424565f3f5aaf5dd335d25c",
+  "checkpoint_policy": "This is a pre-merge checkpoint. Remote exact-head CI and PR review remain required before closeout; no merge is attempted by this receipt.",
   "evidence_ceiling": "This work validates Base receipt shape and direct documentation consistency only. It does not establish external-case truth, model capability, runtime behavior, user adoption, game quality, or productivity gains.",
   "rollback": "Revert this branch's focused commit(s); no Base main history, project data, or external service is changed."
 }

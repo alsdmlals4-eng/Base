@@ -170,7 +170,7 @@ Round 2 re-reads the complete changed surface and test/validation evidence after
 
 Set the task `DONE` only after every acceptance/check/required evidence is PASS at the final commit SHA. Run the receipt closeout command with independently read final HEAD.
 
-- [ ] **Step 5: Commit, push the named branch, and create a focused PR**
+- [x] **Step 5: Commit, push the named branch, and create a focused PR**
 
 ```bash
 git add docs/operations/work-receipts/2026-09-08-operator-case-reconstruction.json docs/superpowers/specs/2026-09-08-operator-case-reconstruction-design.md docs/superpowers/plans/2026-09-08-operator-case-reconstruction.md
