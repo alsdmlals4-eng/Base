@@ -131,6 +131,13 @@ PROJECT_START_CANON_CHECKLIST:
         project_fit_and_difference:
         decision: ADOPT | ADAPT | REJECT | NOT_APPLICABLE
         owner_or_consumer:
+        operator_case_reconstruction: # 외부 운영 사례가 workflow/tool/skill/eval/QA/content-pipeline 결정을 바꿀 때만
+          input_anchor_and_source:
+          staged_execution_and_handoffs:
+          human_decision_and_approval_boundary:
+          observable_outcome_and_evidence_ceiling:
+          nontransferable_or_unobserved:
+          project_trial_and_acceptance_gate:
     benchmark_preflight_state: PASS | REUSED_EVIDENCE | NOT_APPLICABLE | BLOCKED_UNVERIFIED
     benchmark_preflight_scope:
     benchmark_preflight_reason_not_applicable:
@@ -141,6 +148,13 @@ PROJECT_START_CANON_CHECKLIST:
           observed_pattern:
           project_fit_and_difference:
           disposition: ADOPT | ADAPT | REJECT
+          operator_case_reconstruction: # 조건 충족 시에만; six fields 모두 nonempty여야 함
+            input_anchor_and_source:
+            staged_execution_and_handoffs:
+            human_decision_and_approval_boundary:
+            observable_outcome_and_evidence_ceiling:
+            nontransferable_or_unobserved:
+            project_trial_and_acceptance_gate:
       reason_not_applicable: # L0 only
       blocked_sources: []
     receipt_validation_command: python <resolved-Base-root-at-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <project-repository-owned-json-receipt> --phase start --expected-source-sha <fresh-read-project-source-sha> --render-markdown
@@ -479,6 +493,15 @@ NO_PROJECTS_WRITE_CAPABILITY_IS_NOT_BLOCKER
 ### 12.1 Receipt extension
 
 실행용 JSON은 다음 **root 구조**를 사용한다. placeholder는 실제 승인 Goal과 fresh-read 결과로 채운다. 아래 구조 자체가 PASS나 실행 승인은 아니다. 필드 의미와 DONE 증거는 `PROJECT_WORK_ITEM_CHECKLIST.md` §10이 소유한다.
+
+외부 사용자의 운용 사례가 workflow/tool/Skill/evaluation/QA/content-pipeline 결정을 실제로 바꿀 때만 해당 `entries[]` 항목에 아래 선택적 object를 추가한다. 일상적인 reference 비교에는 추가하지 않는다. 이 object는 직접 읽은 입력/출처, 실제 handoff, human gate, evidence ceiling, 비이전/미관찰 조건, 현재 프로젝트의 최소 trial을 기록할 뿐 독립 runtime·생산성·채택 증명이 아니다.
+
+- `input_anchor_and_source`: 실제 입력과 직접 읽은 출처
+- `staged_execution_and_handoffs`: actor/tool 단계와 output 전달
+- `human_decision_and_approval_boundary`: 사람의 선택·승인·중단 경계
+- `observable_outcome_and_evidence_ceiling`: 관찰 결과와 reported/unverified 한계
+- `nontransferable_or_unobserved`: 이전할 수 없거나 관찰되지 않은 조건
+- `project_trial_and_acceptance_gate`: 가장 작은 project trial과 acceptance gate
 
 ```json
 {

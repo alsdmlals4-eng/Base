@@ -17,6 +17,14 @@ else:
 BENCHMARK_STATES = {"PASS", "REUSED_EVIDENCE", "NOT_APPLICABLE", "BLOCKED_UNVERIFIED"}
 DISPOSITIONS = {"ADOPT", "ADAPT", "REJECT"}
 HYGIENE_CLASSIFICATIONS = {"ACTIVE_OWNER", "COMPATIBILITY", "ARCHIVE", "OBSOLETE_CANDIDATE", "UNKNOWN_UNVERIFIED"}
+OPERATOR_CASE_RECONSTRUCTION_FIELDS = (
+    "input_anchor_and_source",
+    "staged_execution_and_handoffs",
+    "human_decision_and_approval_boundary",
+    "observable_outcome_and_evidence_ceiling",
+    "nontransferable_or_unobserved",
+    "project_trial_and_acceptance_gate",
+)
 _EXACT_SHA = re.compile(r"[0-9a-f]{40}\Z")
 _RENDER_MISSING_HEAD = "0" * 40
 _RENDER_UNTRUSTED_RECORDED_HEAD = "1" * 40
@@ -75,11 +83,21 @@ def validate_receipt(receipt: object) -> list[str]:
                     if not isinstance(entry, dict):
                         errors.append(f"benchmark_preflight_receipt.entries[{index}] must be an object")
                         continue
+                    entry_prefix = f"benchmark_preflight_receipt.entries[{index}]"
                     for field in ("source_and_evidence", "observed_pattern", "project_fit_and_difference"):
                         if not _nonempty_string(entry.get(field)):
-                            errors.append(f"benchmark_preflight_receipt.entries[{index}].{field} is required")
+                            errors.append(f"{entry_prefix}.{field} is required")
                     if not choice(entry.get("disposition"), DISPOSITIONS):
-                        errors.append(f"benchmark_preflight_receipt.entries[{index}].disposition must be ADOPT, ADAPT, or REJECT")
+                        errors.append(f"{entry_prefix}.disposition must be ADOPT, ADAPT, or REJECT")
+                    if "operator_case_reconstruction" in entry:
+                        reconstruction = entry["operator_case_reconstruction"]
+                        reconstruction_prefix = f"{entry_prefix}.operator_case_reconstruction"
+                        if not isinstance(reconstruction, dict):
+                            errors.append(f"{reconstruction_prefix} must be an object")
+                        else:
+                            for field in OPERATOR_CASE_RECONSTRUCTION_FIELDS:
+                                if not _nonempty_string(reconstruction.get(field)):
+                                    errors.append(f"{reconstruction_prefix}.{field} is required")
         elif state == "NOT_APPLICABLE":
             if work_level != "L0":
                 errors.append("NOT_APPLICABLE is restricted to L0")

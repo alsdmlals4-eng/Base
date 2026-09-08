@@ -1,5 +1,15 @@
 # Managing Project Intake and Work Contracts — Learning Log
 
+## 2026-09-08 — Public operator cases need reconstruction boundaries, not outcome adoption
+
+- **상태:** `OBSERVATION`
+- **호출 트리거:** 사용자가 GPT-6 Astra 공개 사례를 분석한 뒤 자신보다 잘 사용하는 운영자들의 실제 운용·결과물을 역공학해 현재 작업에 참고하라고 요청했다.
+- **Finding:** discovery index의 다수 카드는 self-reported/unverified이며, one-prompt·vendor-result 서술만으로 입력, 단계별 handoff, human decision, 재현 가능한 runtime 결과를 추론할 수 없었다. 반면 Playco·Legora의 공개 사례는 greybox → play/test/validate → themed iteration, per-check record → human final decision처럼 제한적인 workflow anchor를 제공했다. 최초 validator는 field가 없을 때와 explicit `null`을 구분하지 않아 선택적 reconstruction object가 `null`로 들어오면 우회할 수 있었다. 또한 intake Skill 본문을 변경하면서 기존 consumer test와 이 Learning Log가 함께 바뀌지 않으면 canonical freshness가 변경을 차단한다.
+- **Decision:** 새 case database, agent, approval status를 만들지 않는다. 현 benchmark receipt entry에, workflow/tool/Skill/evaluation/QA/content-pipeline 결정을 실제로 바꾸는 사례에만 six-field `operator_case_reconstruction`을 선택적으로 기록한다. public claim은 evidence ceiling으로 남기고, 한 project trial과 기존 human acceptance gate를 유지한다. validator는 key presence로 검사해 explicit `null`을 object error로 거부하고, direct consumer test는 intake/reference/sequence template의 field·`execution_strategy` route를 함께 확인한다.
+- **TDD / regression evidence:** focused validator RED는 incomplete reconstruction이 error 없이 통과함을 재현했고, independent recheck는 explicit `null` bypass를 발견해 object-presence test를 추가했다. remote Game Project OS run `34227421278`은 intake Skill 변화에 recognized companion test와 Learning Log가 없음을 canonical freshness failure로 정확히 보고했다. 이 entry와 `tests/test_consolidated_skill_references.py`의 existing-consumer assertion을 추가한 뒤 같은 freshness command와 full validation으로 재검증해야 하며, remote exact-head CI가 별도 최종 증거다.
+- **Evidence ceiling:** 이 기록·receipt schema·정적 test는 documentation/contract consistency만 검증한다. public 사례의 사실성, Playco internal tooling, 모델 runtime, 생산성 수치, 프로젝트 채택, 게임 품질이나 human QA를 입증하지 않는다.
+- **다음 검토 트리거:** 공개 사례가 구체 input/stage/handoff 없이 결과 수치만 제공하는데 adoption evidence로 승격되거나, `null`/불완전 object가 validation을 우회하거나, intake Skill 변경이 canonical companion test·Learning Log 없이 standalone GREEN만 만들거나, project trial 전에 broad adoption을 승인하려 할 때.
+
 
 ## 2026-09-02 — PM checklist text needs executable consumers and independent final-head binding
 

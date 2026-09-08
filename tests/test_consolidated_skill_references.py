@@ -173,6 +173,22 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         for source in (intake, decomposition, sequence_plan):
             self.assertIn("validate_work_contract_receipt.py", source)
 
+        operator_case_fields = (
+            "input_anchor_and_source",
+            "staged_execution_and_handoffs",
+            "human_decision_and_approval_boundary",
+            "observable_outcome_and_evidence_ceiling",
+            "nontransferable_or_unobserved",
+            "project_trial_and_acceptance_gate",
+        )
+        for source in (intake, decomposition, sequence_plan):
+            self.assertIn("operator_case_reconstruction", source)
+            self.assertIn("model-stack-routing.md", source)
+            self.assertIn("execution_strategy", source)
+            for field in operator_case_fields:
+                self.assertIn(field, source)
+        self.assertIn("EXTERNAL_OPERATOR_CASE_RECONSTRUCTION", intake)
+
     def test_benchmark_reverse_engineering_pipeline_is_required_check_consumed(self) -> None:
         guide = (ROOT / "docs/BENCHMARKING_REFERENCE_GUIDE.md").read_text(encoding="utf-8")
         method = (ROOT / "docs/knowledge/research/DESIGN_RESEARCH_AND_EVIDENCE_METHOD.md").read_text(encoding="utf-8")

@@ -1,0 +1,162 @@
+{
+  "work_level": "L1",
+  "approval_ref": "current-user-message:2026-09-08:proceed-with-external-operator-case-reconstruction",
+  "approved_scope": "Extend the existing Base benchmark receipt and its direct case/intake owners so an external operator case that materially changes a workflow, tool, Skill, evaluation, QA, or content-pipeline decision records bounded reconstruction evidence. Preserve current owners, entries, approvals, history, and no-new-tool constraints.",
+  "outcome_status": "PREMERGE_REVIEW_CHECKPOINT_NOT_CLOSEOUT",
+  "benchmark_preflight_receipt": {
+    "state": "PASS",
+    "entries": [
+      {
+        "source_and_evidence": "Base@68792fc38340a19945ba6b15eedef39f55d50705: BENCHMARKING_REFERENCE_GUIDE, KNOWLEDGE_CASE_STUDY, intake receipt validator, model-stack routing; OpenAI Playco and Legora public case pages; GPT-6 Astra discovery index",
+        "observed_pattern": "High-value operator examples name a concrete input, progress through staged tool/human handoffs, retain a human decision point, record checks or observed outcomes, and distinguish reported results from independently reproduced proof.",
+        "project_fit_and_difference": "Reuse the existing benchmark receipt as the one decision record and add a selective reconstruction only when an external operator case changes the workflow/tool/Skill/evaluation/QA/content-pipeline decision. Do not copy Playbot, paid integrations, or short-case approval removal into Base.",
+        "disposition": "ADAPT",
+        "operator_case_reconstruction": {
+          "input_anchor_and_source": "Playco case: an unthemed greybox game prototype with primitive visuals; supporting discovery anchors came from the GPT-6 Astra index. Sources: https://openai.com/index/playco-game-prototyping-with-astra/ and https://cheerselfai.com/en/usecase/gpt-6-astra.",
+          "staged_execution_and_handoffs": "Reported sequence: build a greybox, play/test/validate it, iterate gameplay and creative details, then create themed variants. The Base analogue is source anchor, bounded reconstruction, one project trial, then an evidence-based decision.",
+          "human_decision_and_approval_boundary": "Playco's public narrative does not establish unattended deployment. Base retains the existing user/project approval and acceptance gate before any broad project adoption.",
+          "observable_outcome_and_evidence_ceiling": "Playco reports 50% fewer manual fixes; Legora reports explicit per-check records with human final decision. These are first-party reported cases and not independent reproduction, runtime proof, or productivity proof for this Base or a user project.",
+          "nontransferable_or_unobserved": "Playco's internal Playbot, API access, team workflow, baseline, and measurement method are not available here; discovery cards include self-reported/unverified cases and cannot supply missing evidence.",
+          "project_trial_and_acceptance_gate": "Trial only this Base change: a complete nested receipt object must pass, an incomplete object must fail, and direct owners must require the trigger and evidence ceiling. Any project adoption still needs its own approved small trial and actual acceptance evidence."
+        }
+      }
+    ]
+  },
+  "alternatives": [
+    {
+      "option": "Extend the existing receipt entry and direct owners",
+      "disposition": "ADOPT",
+      "reason": "Small, inspectable, reversible change that reuses current case, benchmark, execution-strategy, and receipt responsibilities."
+    },
+    {
+      "option": "Create a new external-case database, dedicated agent, or paid-tool workflow",
+      "disposition": "REJECT",
+      "reason": "Duplicates active owners, expands authority, and is not supported by the available case evidence."
+    },
+    {
+      "option": "Force a reconstruction for every benchmark entry",
+      "disposition": "REJECT",
+      "reason": "Ordinary repository and reference comparisons do not necessarily depend on an external operator workflow."
+    }
+  ],
+  "context_configuration_hygiene": {
+    "scope": "Only the existing benchmark/case/receipt owners and their direct validator/test/template consumers; no deletion.",
+    "inventory": [
+      {
+        "path": "tools/validate_work_contract_receipt.py",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "Existing receipt schema validator",
+        "references_and_consumers": "tests/test_work_contract_receipt_validator.py and project receipt command",
+        "removal_proposed": false
+      },
+      {
+        "path": "docs/BENCHMARKING_REFERENCE_GUIDE.md",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "Existing benchmark/reverse-engineering owner",
+        "references_and_consumers": "KNOWLEDGE_CASE_STUDY, intake Skill, and project start templates",
+        "removal_proposed": false
+      },
+      {
+        "path": "skills/optimizing-ai-model-and-prompt-costs/references/model-stack-routing.md",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "Existing execution-strategy, observation, and failure-routing owner",
+        "references_and_consumers": "Referenced by the new intake guidance; no direct edit planned",
+        "removal_proposed": false
+      }
+    ]
+  },
+  "project_work_kanban": {
+    "goal_or_slice_issue_ref": "current-user-message:2026-09-08:proceed-with-external-operator-case-reconstruction",
+    "source_main_sha": "68792fc38340a19945ba6b15eedef39f55d50705",
+    "work_item_refs": ["TASK-01"],
+    "active_work_item_ref": "TASK-01",
+    "next_action": "Add the recognized companion test and intake Learning Log entry, then rerun canonical freshness and GitHub PR #863 exact-head CI before any closeout decision.",
+    "work_items": [
+      {
+        "work_item_id": "TASK-01",
+        "title": "Add and verify bounded external operator case reconstruction evidence",
+        "status": "VERIFY_REVIEW",
+        "canon_owner": "tools/validate_work_contract_receipt.py",
+        "actual_consumers": [
+          "tests/test_work_contract_receipt_validator.py",
+          "tests/test_consolidated_skill_references.py",
+          "docs/BENCHMARKING_REFERENCE_GUIDE.md",
+          "templates/KNOWLEDGE_CASE_STUDY.md",
+          "templates/planning/EXECUTION_SEQUENCE_PLAN.md",
+          "templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md",
+          "skills/managing-project-intake-and-work-contract/SKILL.md",
+          "skills/managing-project-intake-and-work-contract/references/work-decomposition-and-sequencing.md"
+        ],
+        "depends_on": [],
+        "acceptance_criteria": ["AC-SCHEMA", "AC-OWNERS", "AC-VALIDATE", "AC-REVIEW"],
+        "required_evidence": ["E0_CONTRACT", "E2_TEST"],
+        "checklist": [
+          {
+            "id": "AC-SCHEMA",
+            "text": "Existing receipt entries remain valid; when a reconstruction object is present, every one of its six evidence-boundary fields is required.",
+            "status": "PASS",
+            "evidence": [
+              "TDD RED: the focused test failed before implementation because an incomplete object returned no error. Final validator tests cover all six missing fields, complete objects, strings, and explicit null; absent optional objects remain valid."
+            ]
+          },
+          {
+            "id": "AC-OWNERS",
+            "text": "Direct benchmark, case-study, intake, and template owners use the same conditional trigger and preserve evidence ceilings without creating another owner.",
+            "status": "PASS",
+            "evidence": [
+              "Final direct-consumer readback found the same six fields and conditional trigger in the benchmark guide, case-study template, project-start template, execution plan, intake Skill/reference, and existing model-stack execution_strategy route."
+            ]
+          },
+          {
+            "id": "AC-VALIDATE",
+            "text": "Focused unit tests and the complete local validation command exit successfully from the dependency-complete environment.",
+            "status": "PARTIAL",
+            "evidence": [
+              "Final full local validation at 6193b8b7dfbf4f5c762e90073b19cb0d8a855232: 2645 tests PASS, 37 skipped; local fallback CI gate, required-gate topology, generated-artifact check, integrity check, skill coverage, git diff --check, and git fsck --strict PASS.",
+              "GitHub PR #863 remote exact-head Game Project OS run 34227421278 then failed canonical reference freshness because the intake Skill change lacked a recognized companion test and Learning Log update. This criterion remains PARTIAL until the correction is green locally and remotely."
+            ]
+          },
+          {
+            "id": "AC-REVIEW",
+            "text": "Exactly two full-scope adversarial reviews of the final candidate find no unresolved approved-scope blocker.",
+            "status": "PASS",
+            "evidence": [
+              "Two full-scope review rounds completed. Independent review found a null-value bypass in round 2; it was fixed by testing field presence, followed by full validation, whole-result re-attack, and independent targeted recheck PASS."
+            ]
+          }
+        ],
+        "verification": [
+          {
+            "level": "E0_CONTRACT",
+            "status": "PASS",
+            "evidence": [
+              "Start receipt validator PASS at baseline source SHA; the final candidate retains one optional object on the existing benchmark entry and does not add another authority, status taxonomy, agent, or tool."
+            ]
+          },
+          {
+            "level": "E2_TEST",
+            "status": "PARTIAL",
+            "evidence": [
+              "Focused receipt and template contract tests PASS; the earlier full local validation passed, but canonical freshness subsequently found missing required synchronization for this intake Skill change."
+            ]
+          }
+        ],
+        "next_action": "Rerun canonical freshness after the companion test and Learning Log correction, then wait for GitHub PR #863 exact-head CI and review before any closeout decision."
+      }
+    ]
+  },
+  "review_evidence": {
+    "full_scope_round_count": 2,
+    "round_1": "At 3f800de8069f4922a347cb6141ff6916f3491bd6, re-read approved scope, existing owners, direct templates/consumers, validator behavior, three recorded alternatives, source/evidence ceiling, and no-new-owner constraints. No validated blocker found.",
+    "round_2": "Re-attacked the whole candidate, including schema bypasses, root JSON parsing, documentation drift, source claims, and untouched consumers. Independent code review found explicit null bypassing the optional-object check; TDD reproduced it, 6193b8b7dfbf4f5c762e90073b19cb0d8a855232 fixed it, the final whole result was re-attacked, full validation passed, and independent targeted recheck passed.",
+    "reviewed_code_head": "6193b8b7dfbf4f5c762e90073b19cb0d8a855232",
+    "post_review_ci_finding": "GitHub PR #863 run 34227421278 found the required canonical-freshness companion test and Learning Log synchronization missing for the intake Skill change. This is a direct CI finding, not a third adversarial review round; it remains open until the corrected exact head is green.",
+    "full_validation": "2645 tests PASS, 37 skipped at 6193b8b7dfbf4f5c762e90073b19cb0d8a855232 before remote canonical freshness found the missing synchronization; final validation is pending the correction.",
+    "evidence_ceiling": "Review and test evidence validates schema/documentation behavior only; it does not validate public case claims, provider tooling, runtime outcomes, productivity, or project adoption."
+  },
+  "current_status_owner": "GitHub PR #863 on codex/operator-case-reconstruction-20260908",
+  "published_remote_head": "23263da227882a390f33fe69d846347ea513d182",
+  "checkpoint_policy": "This is a pre-merge checkpoint. A remote canonical-freshness correction, remote exact-head CI, and PR review remain required before closeout; no merge is attempted by this receipt.",
+  "evidence_ceiling": "This work validates Base receipt shape and direct documentation consistency only. It does not establish external-case truth, model capability, runtime behavior, user adoption, game quality, or productivity gains.",
+  "rollback": "Revert this branch's focused commit(s); no Base main history, project data, or external service is changed."
+}
