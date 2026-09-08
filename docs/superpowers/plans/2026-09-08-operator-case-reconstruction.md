@@ -71,14 +71,14 @@ Expected: FAIL because `validate_receipt` returns no required-field error.
 - [x] **Step 3: Add the minimal validator branch**
 
 ```python
-reconstruction = entry.get("operator_case_reconstruction")
-if reconstruction is not None:
+if "operator_case_reconstruction" in entry:
+    reconstruction = entry["operator_case_reconstruction"]
     if not isinstance(reconstruction, dict):
-        errors.append(f"{prefix}.operator_case_reconstruction must be an object")
+        errors.append(f"{entry_prefix}.operator_case_reconstruction must be an object")
     else:
         for field in OPERATOR_CASE_RECONSTRUCTION_FIELDS:
             if not _nonempty_string(reconstruction.get(field)):
-                errors.append(f"{prefix}.operator_case_reconstruction.{field} is required")
+                errors.append(f"{entry_prefix}.operator_case_reconstruction.{field} is required")
 ```
 
 - [x] **Step 4: Run the focused validator test module**

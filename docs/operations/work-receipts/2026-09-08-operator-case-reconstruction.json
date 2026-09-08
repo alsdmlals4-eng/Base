@@ -70,7 +70,7 @@
     "source_main_sha": "68792fc38340a19945ba6b15eedef39f55d50705",
     "work_item_refs": ["TASK-01"],
     "active_work_item_ref": "TASK-01",
-    "next_action": "Wait for GitHub PR #863 exact-head CI and review before any closeout decision.",
+    "next_action": "Add the recognized companion test and intake Learning Log entry, then rerun canonical freshness and GitHub PR #863 exact-head CI before any closeout decision.",
     "work_items": [
       {
         "work_item_id": "TASK-01",
@@ -79,6 +79,7 @@
         "canon_owner": "tools/validate_work_contract_receipt.py",
         "actual_consumers": [
           "tests/test_work_contract_receipt_validator.py",
+          "tests/test_consolidated_skill_references.py",
           "docs/BENCHMARKING_REFERENCE_GUIDE.md",
           "templates/KNOWLEDGE_CASE_STUDY.md",
           "templates/planning/EXECUTION_SEQUENCE_PLAN.md",
@@ -109,9 +110,10 @@
           {
             "id": "AC-VALIDATE",
             "text": "Focused unit tests and the complete local validation command exit successfully from the dependency-complete environment.",
-            "status": "PASS",
+            "status": "PARTIAL",
             "evidence": [
-              "Final full local validation at 6193b8b7dfbf4f5c762e90073b19cb0d8a855232: 2645 tests PASS, 37 skipped; local fallback CI gate, required-gate topology, generated-artifact check, integrity check, skill coverage, git diff --check, and git fsck --strict PASS."
+              "Final full local validation at 6193b8b7dfbf4f5c762e90073b19cb0d8a855232: 2645 tests PASS, 37 skipped; local fallback CI gate, required-gate topology, generated-artifact check, integrity check, skill coverage, git diff --check, and git fsck --strict PASS.",
+              "GitHub PR #863 remote exact-head Game Project OS run 34227421278 then failed canonical reference freshness because the intake Skill change lacked a recognized companion test and Learning Log update. This criterion remains PARTIAL until the correction is green locally and remotely."
             ]
           },
           {
@@ -133,13 +135,13 @@
           },
           {
             "level": "E2_TEST",
-            "status": "PASS",
+            "status": "PARTIAL",
             "evidence": [
-              "Focused receipt and template contract tests PASS; full local validation PASS at the final code candidate."
+              "Focused receipt and template contract tests PASS; the earlier full local validation passed, but canonical freshness subsequently found missing required synchronization for this intake Skill change."
             ]
           }
         ],
-        "next_action": "Wait for GitHub PR #863 exact-head CI and review before any closeout decision."
+        "next_action": "Rerun canonical freshness after the companion test and Learning Log correction, then wait for GitHub PR #863 exact-head CI and review before any closeout decision."
       }
     ]
   },
@@ -148,12 +150,13 @@
     "round_1": "At 3f800de8069f4922a347cb6141ff6916f3491bd6, re-read approved scope, existing owners, direct templates/consumers, validator behavior, three recorded alternatives, source/evidence ceiling, and no-new-owner constraints. No validated blocker found.",
     "round_2": "Re-attacked the whole candidate, including schema bypasses, root JSON parsing, documentation drift, source claims, and untouched consumers. Independent code review found explicit null bypassing the optional-object check; TDD reproduced it, 6193b8b7dfbf4f5c762e90073b19cb0d8a855232 fixed it, the final whole result was re-attacked, full validation passed, and independent targeted recheck passed.",
     "reviewed_code_head": "6193b8b7dfbf4f5c762e90073b19cb0d8a855232",
-    "full_validation": "2645 tests PASS, 37 skipped; static/generated/integrity/CI topology/Git checks PASS.",
+    "post_review_ci_finding": "GitHub PR #863 run 34227421278 found the required canonical-freshness companion test and Learning Log synchronization missing for the intake Skill change. This is a direct CI finding, not a third adversarial review round; it remains open until the corrected exact head is green.",
+    "full_validation": "2645 tests PASS, 37 skipped at 6193b8b7dfbf4f5c762e90073b19cb0d8a855232 before remote canonical freshness found the missing synchronization; final validation is pending the correction.",
     "evidence_ceiling": "Review and test evidence validates schema/documentation behavior only; it does not validate public case claims, provider tooling, runtime outcomes, productivity, or project adoption."
   },
   "current_status_owner": "GitHub PR #863 on codex/operator-case-reconstruction-20260908",
-  "published_remote_head": "3b96a06e3ba12456f424565f3f5aaf5dd335d25c",
-  "checkpoint_policy": "This is a pre-merge checkpoint. Remote exact-head CI and PR review remain required before closeout; no merge is attempted by this receipt.",
+  "published_remote_head": "23263da227882a390f33fe69d846347ea513d182",
+  "checkpoint_policy": "This is a pre-merge checkpoint. A remote canonical-freshness correction, remote exact-head CI, and PR review remain required before closeout; no merge is attempted by this receipt.",
   "evidence_ceiling": "This work validates Base receipt shape and direct documentation consistency only. It does not establish external-case truth, model capability, runtime behavior, user adoption, game quality, or productivity gains.",
   "rollback": "Revert this branch's focused commit(s); no Base main history, project data, or external service is changed."
 }
