@@ -24,6 +24,17 @@
 - 사용자 반응:
 - 아직 확인하지 못한 항목:
 
+## 3.1 외부 운영 사례 재구성 (해당 시)
+
+외부 사용자의 실제 운용 사례가 workflow·tool·skill·evaluation·QA·content-pipeline 결정을 바꿀 때만 작성한다. 단일 prompt 결과·공개 카드·vendor claim은 결과/생산성/채택의 독립 증거가 아니다.
+
+- 입력 anchor와 출처:
+- 단계별 실행과 handoff:
+- 사람의 결정·승인 경계:
+- 관찰 가능한 결과와 evidence ceiling:
+- 이전할 수 없거나 관찰하지 못한 조건:
+- 프로젝트의 최소 trial과 acceptance gate:
+
 ## 4. 검토한 대안
 
 ### 대안 A

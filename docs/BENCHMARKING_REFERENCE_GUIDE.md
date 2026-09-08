@@ -134,6 +134,26 @@ rights_and_license_boundary:
 
 “화면이 비슷하다”, “유명 게임이 쓴다”만으로는 재사용 단위가 아니다.
 
+#### EXTERNAL_OPERATOR_CASE_RECONSTRUCTION (조건부)
+
+외부 사용자의 공개 사례가 `WORKFLOW_PATTERN`, `TOOL_PATTERN`, `SKILL_PATTERN`, evaluation, QA 또는 content-pipeline의 **실제 결정**을 바꾸는 근거라면, 기존 `benchmark_preflight_receipt.entries[]`의 같은 항목에 선택적 `operator_case_reconstruction`을 완결해 남긴다. 일반적인 저장소·제품·문헌 비교나 단순 영감에는 이 블록을 억지로 만들지 않는다.
+
+```yaml
+operator_case_reconstruction:
+  input_anchor_and_source: # 운영자가 실제로 받은 입력/기준점과 직접 읽은 출처
+  staged_execution_and_handoffs: # actor/tool별 단계, 출력, 다음 단계 전달
+  human_decision_and_approval_boundary: # 사람이 선택·승인·중단한 지점 또는 관찰 불가 사실
+  observable_outcome_and_evidence_ceiling: # 실행/측정/데모와 reported·unverified 한계
+  nontransferable_or_unobserved: # 내부 도구, 비용, 팀 조건, 빠진 원출처 등
+  project_trial_and_acceptance_gate: # 현재 프로젝트의 가장 작은 시험과 통과 기준
+```
+
+- 1차 원출처와 실제 입력 anchor를 우선한다. 카드·요약·검색 snippet만 읽었거나 원문에 접근하지 못했으면 그 사실을 한계에 적고, 추정된 단계나 수치를 사실처럼 채우지 않는다.
+- 재현은 “누가 어떤 tool로 무엇을 하여 어떤 output을 다음 사람/단계에 넘겼는가”를 기록한다. 한 번의 prompt 결과나 공개된 화면은 workflow 전체·안전한 무인 실행·장기 성과 증거가 아니다.
+- reported metric, vendor case, self-report는 해당 ceiling으로 남긴다. 이 블록은 실제 runtime, 생산성, 프로젝트 채택 또는 사용자 가치 PASS를 자동으로 만들지 않는다.
+- 현재 실행의 관찰·실패·fallback은 새 정본으로 복제하지 않고 `skills/optimizing-ai-model-and-prompt-costs/references/model-stack-routing.md`의 기존 `execution_strategy`에 연결한다.
+- 이 구조는 새 case DB·agent·approval status가 아니다. broad adoption 전에는 `project_trial_and_acceptance_gate`의 실제 project evidence와 기존 승인 Gate가 별도로 필요하다.
+
 #### TOOL_INTERFACE_SURFACE_SELECTION
 
 `TOOL_PATTERN`이 실제 사람이 반복 조작하는 도구로 구체화될 때는 구현 난이도나 유행만 보고 CLI/TUI/GUI를 고르지 않는다. `docs/CAPABILITY_COMPOSITION_MAP.md`의 `TOOL_INTERFACE_SURFACE_SELECTION`을 적용해 **CLI-only / CLI+TUI / reusable core·CLI+thin GUI**를 materially applicable한 후보로 비교한다.

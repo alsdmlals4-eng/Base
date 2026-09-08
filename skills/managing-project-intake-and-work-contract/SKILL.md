@@ -319,6 +319,8 @@ WORK_CONTRACT_RECEIPT_ROOT_JSON_EXAMPLE
 
 실행 경로는 `python <resolved-Base-root-at-current-Base-or-project-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <repository-owned-json-receipt> --phase start --expected-source-sha <fresh-read-project-source-sha> --render-markdown`이다. Base root·adapter pin·receipt를 해석하지 못하거나 nonzero이면 `BLOCKED_UNVERIFIED`이며 새 설계·제작·구현을 시작하지 않는다. 작업 전환은 다음 승인 작업을 먼저 active로 기록한 뒤 같은 trusted source와 `--phase resume`으로 검사한다. 마감은 모든 필수 작업을 같은 최종 HEAD에서 다시 검증하고 `--phase closeout --expected-source-sha <fresh-read-project-source-sha> --expected-head-sha <fresh-read-final-head-sha> --render-markdown`을 실행한다. `TRUSTED_VERIFICATION_TARGET_HEAD`: receipt의 `verified_head_sha`를 기대값으로 복사하지 않고 신뢰한 caller가 final HEAD를 별도로 읽는다.
 
+`EXTERNAL_OPERATOR_CASE_RECONSTRUCTION`: 외부 사용자의 운용 사례가 workflow/tool/Skill/evaluation/QA/content-pipeline 결정을 실제로 바꿀 때만, 그 benchmark entry에 선택적 `operator_case_reconstruction`을 붙인다. `input_anchor_and_source`, `staged_execution_and_handoffs`, `human_decision_and_approval_boundary`, `observable_outcome_and_evidence_ceiling`, `nontransferable_or_unobserved`, `project_trial_and_acceptance_gate`을 모두 기록한다. 직접 원출처·입력 anchor를 우선하고, public card·vendor report·unreadable source는 ceiling을 명시한다. 이 기록은 추가 PM board·agent·approval status가 아니며 project adoption을 자동 승인하지 않는다. 실행 관찰·failure·fallback은 `skills/optimizing-ai-model-and-prompt-costs/references/model-stack-routing.md`의 기존 `execution_strategy`로 연결한다.
+
 ## Read first
 
 1. 최신 사용자 지시

@@ -82,6 +82,48 @@ class WorkContractReceiptValidatorTests(unittest.TestCase):
         self.assertIn("references_and_consumers_zero_before_removal is required", errors)
         self.assertIn("git_recoverable_removal_and_readback is required", errors)
 
+    def test_operator_case_reconstruction_requires_every_evidence_boundary(self) -> None:
+        reconstruction = {
+            "input_anchor_and_source": "operator supplied a greybox prototype request",
+            "staged_execution_and_handoffs": "prototype, human test, then themed iteration",
+            "human_decision_and_approval_boundary": "human selects the next prototype",
+            "observable_outcome_and_evidence_ceiling": "reported outcome; no independent reproduction",
+            "nontransferable_or_unobserved": "internal tooling was not available",
+            "project_trial_and_acceptance_gate": "run one small project trial before adoption",
+        }
+        for missing_field in reconstruction:
+            with self.subTest(missing_field=missing_field):
+                receipt = valid_receipt()
+                receipt["benchmark_preflight_receipt"]["entries"][0]["operator_case_reconstruction"] = {
+                    field: value for field, value in reconstruction.items() if field != missing_field
+                }
+                self.assertIn(
+                    f"benchmark_preflight_receipt.entries[0].operator_case_reconstruction.{missing_field} is required",
+                    validate_receipt(receipt),
+                )
+
+    def test_operator_case_reconstruction_must_be_an_object(self) -> None:
+        for invalid_value in (None, "reported in a public card"):
+            with self.subTest(invalid_value=invalid_value):
+                receipt = valid_receipt()
+                receipt["benchmark_preflight_receipt"]["entries"][0]["operator_case_reconstruction"] = invalid_value
+                self.assertIn(
+                    "benchmark_preflight_receipt.entries[0].operator_case_reconstruction must be an object",
+                    validate_receipt(receipt),
+                )
+
+    def test_complete_operator_case_reconstruction_is_accepted(self) -> None:
+        receipt = valid_receipt()
+        receipt["benchmark_preflight_receipt"]["entries"][0]["operator_case_reconstruction"] = {
+            "input_anchor_and_source": "operator supplied a greybox prototype request",
+            "staged_execution_and_handoffs": "prototype, human test, then themed iteration",
+            "human_decision_and_approval_boundary": "human selects the next prototype",
+            "observable_outcome_and_evidence_ceiling": "reported outcome; no independent reproduction",
+            "nontransferable_or_unobserved": "internal tooling was not available",
+            "project_trial_and_acceptance_gate": "run one small project trial before adoption",
+        }
+        self.assertEqual([], validate_receipt(receipt))
+
 
 if __name__ == "__main__":
     unittest.main()

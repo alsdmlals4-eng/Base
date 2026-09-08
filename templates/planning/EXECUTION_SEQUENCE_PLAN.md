@@ -25,6 +25,8 @@
 
 `BENCHMARK_PREFLIGHT_BEFORE_WORK_REQUIRED`: L1+ 작업은 이 표를 완료한 뒤에만 새 설계·제작·구현으로 진행한다. benchmark는 프로젝트에 맞는 flow·wireframe·기능·시각 방향을 찾는 비교이며, 고정된 메뉴·버튼·장르·구도를 주입하지 않는다. `NO_DELETION_BY_AGE_OR_NAME`: hygiene의 실제 제거는 references·consumer 0, Git recoverability, destination readback와 재검증을 확보한 경우에만 허용한다.
 
+외부 운영 사례가 workflow/tool/Skill/evaluation/QA/content-pipeline 결정을 바꾸는 경우에만 같은 `benchmark_preflight_receipt.entries[]`에 `operator_case_reconstruction`을 추가한다. `input_anchor_and_source`, `staged_execution_and_handoffs`, `human_decision_and_approval_boundary`, `observable_outcome_and_evidence_ceiling`, `nontransferable_or_unobserved`, `project_trial_and_acceptance_gate`의 여섯 field가 모두 필요하다. 일반 reference 비교에는 만들지 않으며, 사례의 reported outcome은 현재 프로젝트의 runtime·생산성·채택 PASS가 아니다. 실제 execution 관찰과 fallback은 기존 `model-stack-routing.md`의 `execution_strategy`를 따른다.
+
 ### 기계 검증 work-contract receipt (L1+ 필수)
 
 `PROJECT_WORK_KANBAN_CHECKLIST`: 아래 repository-owned JSON receipt를 실제 값으로 작성하고, 새 설계·제작·구현 전에 `python <resolved-Base-root-at-current-Base-or-project-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <receipt.json> --phase start --expected-source-sha <fresh-read-project-source-sha> --render-markdown`을 실행한다. `PASS`/`REUSED_EVIDENCE`는 비어 있는 표나 추측으로 통과할 수 없고, `NOT_APPLICABLE`은 L0의 순수 기계 수정만 허용한다. project receipt는 project repository에 두고, Base pin이나 tool root를 확인할 수 없으면 `BLOCKED_UNVERIFIED`로 둔다.
