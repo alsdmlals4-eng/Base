@@ -127,8 +127,11 @@ func _refresh_view() -> void:
             button.text = "%s  [%s]" % [String(choice.get("text", "")), String(choice.get("transition_kind", ""))]
             button.pressed.connect(_on_choice_pressed.bind(String(choice.get("choice_id", ""))))
             choices_box.add_child(button)
+        if choices_box.get_child_count() > 0:
+            choices_box.get_child(0).grab_focus()
     else:
         next_button.visible = true
+        next_button.grab_focus()
 
 func _on_next_pressed() -> void:
     session.advance_line()
@@ -144,6 +147,8 @@ func _on_choice_pressed(choice_id: String) -> void:
 
 func _clear_choices() -> void:
     for child in choices_box.get_children():
+        # queue_free is deferred; detach now so old choices stop receiving GUI input.
+        choices_box.remove_child(child)
         child.queue_free()
 
 func _apply_scene_visual(scene_id: String) -> void:
