@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "tool_id": "aseprite-local-bridge",
+  "role": "LOCAL_ASEPRITE_CANDIDATE_INSPECTION_AND_EXPORT",
+  "adoption_state": "CANDIDATE",
+  "provider": "Base bounded wrapper over the user-supplied official Aseprite CLI",
+  "exact_bridge_version": "0.1.0",
+  "aseprite_exact_version": "RECORD_AFTER_PROJECT_DOCTOR",
+  "source": {
+    "bridge": "tools/aseprite-local-bridge",
+    "aseprite": "https://www.aseprite.org/"
+  },
+  "license": {
+    "bridge": "MIT (Base repository license)",
+    "aseprite": "Separately licensed; supplied by the user; not redistributed"
+  },
+  "platform_scope": [
+    "Windows local authoring"
+  ],
+  "consumption_path": {
+    "source_roots": [
+      ".asset-vault/library"
+    ],
+    "candidate_output_root": ".asset-vault/library/aseprite-generated",
+    "commands": [
+      "doctor",
+      "inspect",
+      "export-candidate",
+      "validate-candidate"
+    ]
+  },
+  "owner_boundary": {
+    "bridge": "candidate inspection/export/readback only",
+    "asset_approval_and_promotion": "PROJECT_LOCAL_ASSET_VAULT_POLICY + ASSET_MANIFEST",
+    "godot_persistent_authoring": "HiGodot",
+    "final_repository_truth": "Git"
+  },
+  "validation": {
+    "automated_contract": "tests/test_aseprite_local_bridge_contract.py",
+    "project_doctor": "NOT_RUN",
+    "aseprite_runtime": "NOT_RUN",
+    "godot_runtime": "NOT_RUN",
+    "ux_human": "NOT_RUN"
+  },
+  "evidence_ceiling": "CLI_EXPORT_AND_READBACK_ONLY_NOT_GODOT_RUNTIME_NOT_HUMAN_APPROVAL",
+  "rollback_or_removal": [
+    "stop invoking the bridge",
+    "remove .asset-vault/tools/Aseprite_Local_Bridge.ps1 from the target project",
+    "python -m pip uninstall aseprite-local-bridge only if a developer installed it with pip",
+    "remove .aseprite-bridge.json only when no longer consumed",
+    "remove only local unapproved candidate output, then run Asset Vault sync",
+    "never auto-delete tracked approved assets or .aseprite sources"
+  ],
+  "unverified": [
+    "licensed Windows Aseprite executable path and exact version",
+    "target-project Godot importer/animation consumer",
+    "actual in-game rendering and human approval"
+  ]
+}
