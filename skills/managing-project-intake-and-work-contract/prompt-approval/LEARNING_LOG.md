@@ -1,0 +1,11 @@
+# Prompt Approval Execution Gate — Learning Log
+
+## 2026-09-03 — Documented approval requires executable enforcement and a no-repeat boundary
+
+- **상태:** `OBSERVATION`
+- **호출 트리거:** 사용자가 모든 새롭거나 의미가 바뀐 L1+ 작업에서 자신의 원문을 좋은 실행 프롬프트로 변환하고, AI가 맞게 이해했는지 한 번 확인받은 뒤에만 진행하도록 프롬프트 엔지니어링 조사·하드코딩·적대적 교정을 요청하고 권장 통합안을 승인했다.
+- **Finding:** 기존 intake는 `first-prompt → contract → Grill Me alignment gate → CONFIRMED`를 명시했지만, 실제 `validate_work_contract_receipt.py`와 정상 L1 fixture는 prompt contract·approval state·approval locator·contract digest 없이도 실행할 수 있었다. 문서 규칙만 강화하면 우회가 남고, 모든 read/tool call마다 확인하면 read-only 조사·L0·동일 검증 재실행·exact approved continuation을 막는다. 구현 과정에서는 malformed `phase` traceback, cold-start consumer 누락, orphan reference, standalone 신규 테스트만으로는 canonical freshness를 통과하지 못하는 기존-suite/Learning Log 동기화 누락도 재현됐다.
+- **Decision:** 새 Prompt Engineering Skill·외부 승인 서버·유료 optimizer를 만들지 않는다. 기존 `managing-project-intake-and-work-contract`가 source-aware prompt contract와 사용자 확인을 소유하고, 같은 root receipt의 `prompt_approval_gate`와 `tools/prompt_approval_gate.py`가 shape·authority·conflict·approval state·SHA-256 drift를 검사한다. `--phase prepare`는 `EXECUTION AUTHORIZED: NO`이고, L1+ `start / resume / closeout`은 `CONFIRMED | REUSED_APPROVAL`과 current digest를 요구한다. read-only 조사, L0, 동일 검증 재실행, exact approved continuation은 중복 질문하지 않는다. Digest는 계약 drift 탐지이지 승인자 신원 증명이 아니다.
+- **TDD / regression evidence:** intentional RED run `33660677860`은 문서 승인과 실제 실행 Gate의 간극을 재현했다. run `33661639339`는 malformed phase와 cold-start 누락을, run `33663685024`는 packaged reference link와 stale diagnostic assertion을 발견했다. 직접 행동 회귀는 `tests/test_prompt_approval_execution_gate.py`, cold-start는 `tests/test_pm_cold_start_contract.py`, routing/module boundary는 `tests/test_prompt_approval_routing_contract.py`, 실제 승인 receipt는 `tests/test_prompt_approval_work_receipt.py`, 기존-suite companion은 `tests/test_p08_ai_operations_contract.py`가 맡는다.
+- **Evidence ceiling:** repository contract와 tests는 필드·상태·digest·routing·fail-closed 동작을 증명하지만, ChatGPT 메시지 작성자 신원, 실제 오해·질문 피로 감소, cross-model prompt 품질, 프로젝트 adapter adoption, Godot runtime·UX·출시 상태를 증명하지 않는다.
+- **다음 검토 트리거:** L1+ receipt가 approval 없이 통과하거나, retrieved context가 approval authority가 되거나, stale digest가 통과하거나, exact continuation에도 같은 질문을 반복하거나, Skill 변경이 기존-suite companion·Learning Log·active consumer 없이 standalone 테스트만 통과할 때.
