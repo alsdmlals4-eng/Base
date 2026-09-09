@@ -10,6 +10,7 @@
 - `RAW_OUTPUT_FALLBACK_REQUIRED`
 - `SOURCE_MODEL_VERSION_RECEIPT`
 - `A_B_EVIDENCE_REQUIRED`
+- `EVAL_RESOURCE_ENVELOPE_REQUIRED`
 - `NO_HIDDEN_BILLING`
 - `NO_PLAINTEXT_SECRET_OR_PROMPT_LOGGING`
 - `BOUNDED_RETRY`
@@ -103,9 +104,12 @@ Each invocation that can affect a decision or change must record, when applicabl
 - repository and project revision;
 - permission policy and telemetry state;
 - start/end timestamps, child and adapter exit statuses, retries, and output locator;
-- deterministic verification command, expected coverage, and result.
+- deterministic verification command, expected coverage, and result;
+- for a resource-sensitive evaluation, the runner/hardware identity, guaranteed CPU/RAM, hard limit / kill threshold, wall-clock timeout, concurrency, egress/network policy, and relevant cache/warm-state conditions.
 
 `MODEL_NOT_APPLICABLE_FOR_DETERMINISTIC_TOOL`: a local deterministic output filter has no inference model. Record `model: NOT_APPLICABLE` with the reason instead of inventing a model or treating its absence as unknown. Apply the same explicit not-applicable distinction to endpoints or accounts that the operation genuinely does not use.
+
+`RESOURCE_ENVELOPE_NOT_APPLICABLE`: deterministic transforms or other tasks whose outcome cannot materially depend on runtime resource headroom may record the evaluation resource envelope as `NOT_APPLICABLE` with the reason. Do not invent CPU/RAM or network values that were not observable.
 
 An unknown tool/version or an unknown model/provider that the operation actually uses permits disposable exploration only. It blocks promotion, mutation, approval, and completion claims until the required identity is established.
 
@@ -145,13 +149,17 @@ Ambiguous retention, auth, or telemetry blocks mutation and canon-impacting use.
 
 `A_B_ISOLATED_EQUIVALENT_STATE`: record a `starting_state_hash` or equivalent immutable input identity for both arms. Use separate disposable workspaces, resettable external fixtures, and equivalent model/configuration/permission budgets so one arm's mutations, learned context, or warm cache cannot silently become the other's starting state. Keep one intentional treatment difference: the evaluated adapter/package. Declare order and cache conditions, control or counterbalance them when material, and use predeclared acceptance criteria. For a pure deterministic text filter, two copies of the same captured immutable input may replace separate workspaces; record why no mutable environment exists. Neither arm may modify canonical project state to obtain the comparison.
 
+`RESOURCE_ENVELOPE_IS_EVAL_IDENTITY`: for resource-sensitive agentic evaluations, runtime infrastructure is part of the test identity rather than neutral background. Match or explicitly record both arms' runner/hardware identity, guaranteed CPU/RAM and separate hard limit / kill threshold, wall-clock timeout, concurrency, egress/network policy, and cache/warm-state conditions. If exact equivalence is unavailable, bound the result as environment-conditioned and use repeated or counterbalanced runs when the remaining variance can change the decision. Do not import a benchmark-specific resource multiplier or score-difference threshold as a Base-wide constant.
+
+`INFRA_FAILURE_IS_NOT_TASK_FAILURE`: classify OOM, container/pod termination, infrastructure timeout, runner loss, dependency/network outage, and comparable harness failures separately from a valid task failure. A reduced infra failure count/rate can improve observed success without proving the model or adapter itself became more capable. Conversely, extra headroom can change which solution strategies are feasible, so resource changes that alter the effective task are a treatment change, not a reliability-only correction.
+
 Compare the raw Base-owned path against the adapter on representative bounded tasks. Record:
 
 - equivalent input and exact revision;
 - task success and deterministic verification;
 - total input/output tokens where measurable and the measurement method;
 - elapsed time and operator interventions;
-- retries, crashes, and fallback frequency;
+- retries, crashes, fallback frequency, and infra failure count/rate separated from task failures;
 - false positives, false negatives, omissions, and altered evidence;
 - marginal cost and exposed data classes.
 
@@ -234,6 +242,7 @@ Before a bounded trial, confirm:
 - proposed argument-array/no-shell, timeout, output cap, retry, exit-status, capture, and task-owned termination controls;
 - source/model/version applicability, measurement kinds, cost limits, and secret/telemetry policy;
 - isolated equivalent starting states, predeclared criteria, a disposable safety test plan, raw fallback, kill switch, and provider-independent rollback;
+- for resource-sensitive evaluations, an explicit resource envelope and infra-vs-task failure classification, or an environment-conditioned evidence ceiling when exact matching is not possible;
 - valid existing authorization, or new approval only where scope/risk actually changes.
 
 Before project activation, require actual safety/fallback/rollback results, representative A/B evidence, implemented applicable receipts, and the project's recorded adoption decision. Documentation checks do not prove these runtime controls are implemented. Do not require completed A/B measurements as a prerequisite to the very trial that will obtain them.
