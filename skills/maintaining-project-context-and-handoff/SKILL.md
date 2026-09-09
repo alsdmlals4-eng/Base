@@ -62,6 +62,8 @@ PLAY_MEANINGFUL_WORK_SLICE
 
 ## Do not use when
 
+아래는 상태 전달·재개 요청 없이 교정·제작 작업 자체만 수행하는 경우다. 작업이 비제품이라는 이유로 `context-refresh`, `session-handoff`, `resume`, `legacy-migration-resume`까지 제외하지 않는다. Godot 제품 구현이 없으면 Codex 구현 인계 mode만 제외한다.
+
 - Base 정책·Skill·Guide·Template·Registry/generated·CI/test contract 교정
 - repository 기획 정본·GDD·밸런스표·Flow·문서 교정
 - 사람용 상세 기획서 PDF 생성·검수

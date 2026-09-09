@@ -54,10 +54,10 @@ Codex가 등장하는 경우는 Base maintenance 자체가 아니라, **별도�
 
 ```text
 Base/P04/P05/P06 기획·검수 finding
-→ GPT가 Base/Notion/설계 정본화
+→ GPT가 Base/repository 설계 정본화
 → 특정 게임 프로젝트에 실제 Godot 구현이 필요함
 → 그 프로젝트용 Codex Godot Work Instruction
-→ Codex가 해당 프로젝트 GitHub+Notion을 읽고 구현
+→ Codex가 해당 프로젝트 repository exact SHA·승인 자산 manifest를 읽고 구현
 ```
 
 ## Part 소유권의 의미
@@ -265,11 +265,11 @@ P01→P09 뒤 같은 GPT coordinator가:
 1. latest main pin
 2. 모든 Part 결과/학습 readback
 3. cross-Part/CP0 Base finding 직접 교정
-4. Registry/generated/Documentation/Notion 정합성 마감
+4. Registry/generated/Documentation 정합성 마감; Notion은 적용 가능한 V4 exception 또는 고유 legacy 이관 범위만
 5. repository-wide regression / Required CI
 6. 정확히 2회 full-scope adversarial loop 후 clean
 7. exact-head merge
-8. post-merge GitHub + Notion readback
+8. post-merge repository exact SHA readback; 적용 가능한 V4 exception만 해당 destination readback 추가
 9. 사용자 학습형 최종보고
 
 를 수행한다.

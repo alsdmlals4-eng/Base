@@ -30,6 +30,16 @@ class WorkProjectStartCanonChecklistContractTests(unittest.TestCase):
         self.assertTrue(path.exists(), f"required Work contract must exist: {path}")
         return path.read_text(encoding="utf-8")
 
+    def _receipt_example_source(self) -> str:
+        intake = self._read(INTAKE_SKILL)
+        marker_line = next(line for line in intake.splitlines() if line.startswith("WORK_CONTRACT_RECEIPT_ROOT_JSON_EXAMPLE"))
+        reference = re.search(r"\]\((references/[^)]+)\)", marker_line)
+        self.assertIsNotNone(reference, "receipt authoring must have a directly discoverable reference")
+        assert reference is not None
+        reference_path = (INTAKE_SKILL.parent / reference.group(1)).resolve()
+        self.assertTrue(reference_path.is_relative_to(INTAKE_SKILL.parent.resolve()))
+        return self._read(reference_path)
+
     def test_starter_routes_startup_canon_checklist_before_new_work(self) -> None:
         text = self._read(STARTER)
         for token in (
@@ -135,7 +145,7 @@ class WorkProjectStartCanonChecklistContractTests(unittest.TestCase):
         plan = self._read(EXECUTION_PLAN)
         validator = self._read(RECEIPT_VALIDATOR)
 
-        for source in (intake, checklist):
+        for source in (intake + self._receipt_example_source(), checklist):
             for token in (
                 "benchmark_preflight_receipt",
                 "context_configuration_hygiene",
@@ -157,10 +167,10 @@ class WorkProjectStartCanonChecklistContractTests(unittest.TestCase):
             self.assertIn(token, validator)
 
     def test_intake_skill_root_receipt_example_is_accepted_by_the_validator(self) -> None:
-        intake = self._read(INTAKE_SKILL)
+        example = self._receipt_example_source()
         match = re.search(
             r"WORK_CONTRACT_RECEIPT_ROOT_JSON_EXAMPLE\s*```json\s*(\{.*?\})\s*```",
-            intake,
+            example,
             flags=re.DOTALL,
         )
         self.assertIsNotNone(match, "intake Skill must provide an executable root receipt example")

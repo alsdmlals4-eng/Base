@@ -1,5 +1,15 @@
 # Managing Project Intake and Work Contracts — Learning Log
 
+## 2026-09-10 — Conditional receipt reference preserves executable evidence
+
+- **State:** `OBSERVATION`, not measured model/productivity improvement.
+- **Finding:** The intake always loaded a full root-receipt fixture; an existing test read only the body. The fact-recovery step also mixed Project Notion observations into repository evidence despite the V4 exception-only owner.
+- **Change:** Move the intact fixture to `references/work-contract-receipt-example.md`, linked with its authoring/validation trigger. Keep receipt execution, trusted SHA, approval and failure gates in the body. Scope Notion observations to explicit V4 exception/migration provenance.
+- **Evidence:** The direct-reference regression failed before extraction; 15 start-contract tests passed after following the link through the real receipt validator. The consolidated consumer also checks that dropping benchmark, hygiene or PM evidence still fails. Whole regression and exact-head delivery results are recorded on the task PR, not inferred here.
+- **Sources:** [OpenAI skill guidance](https://learn.chatgpt.com/docs/build-skills), [OpenAI practices](https://learn.chatgpt.com/guides/best-practices), [Anthropic context-engineering practice](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents), read 2026-09-10. Adapt existing progressive disclosure; do not copy vendor productivity claims into Base evidence.
+- **Preserved:** Full fixture values, authority/gates, existing Skill ID, plugin installations, compatibility history and project contracts. Root instructions remain unchanged because they already declare progressive loading and hard constraints.
+- **Revisit:** A real consumer cannot discover the fixture, a required gate becomes optional, or measured task outcomes justify further extraction. Roll back the fixture, link and consuming tests together.
+
 ## 2026-09-08 — Public operator cases need reconstruction boundaries, not outcome adoption
 
 - **상태:** `OBSERVATION`

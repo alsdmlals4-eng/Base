@@ -1,5 +1,14 @@
 # Maintaining Project Context and Handoff Learning Log
 
+## 2026-09-10 — Discovery exclusions must match state-handoff modes
+
+- **State:** `OBSERVATION` from bounded independent retrieval, not game runtime or productivity proof.
+- **Baseline:** Registry selected new-chat handoff but also excluded every request without Godot implementation. It demanded GitHub+Notion rehydration while the Skill/V4 owner required repository exact SHA and approved asset manifest. Four probes exposed generic handoff and legacy-resume exclusion, an unnecessary Notion dependency, and a correctly excluded GDD typo.
+- **Correction:** Make discovery mode-aware; non-product correction alone is excluded, but state refresh/handoff/resume remains available. Codex implementation mode still requires actual approved Godot product work. Review triggers now check repository SHA and approved Visual manifest. Clarify the body exclusion without adding modes or a second router.
+- **Consumer follow-through:** Correct the directly inspected intake fact-recovery and partition integration examples to respect V4 exception-only Notion readback; preserve V3 compatibility/history. Regenerate the active Skill view through its existing generator; frozen release payloads stay unchanged.
+- **Verification:** Corrected independent retrieval and whole-scope review evidence, actual tests, exact candidate SHA and protected delivery are recorded on the current task PR. No claim of live cross-agent handoff or fleet adoption.
+- **Revisit:** A registry selector rejects a supported non-Godot state mode or makes external workspace configuration mandatory without a current project exception. Rollback includes Registry, generated view, body clarification and directly affected consumers.
+
 ## 2026-09-07 — Recovery guard composition is not live receiver proof
 
 ### Context

@@ -252,70 +252,7 @@ project_work_kanban:
 
 `PROJECT_WORK_KANBAN_CHECKLIST`: `benchmark_preflight_receipt`, `context_configuration_hygiene`, `project_work_kanban`은 위 `request` metadata나 `existing_solution_evidence`의 하위 필드가 아니다. L1+ 작업에서 project/Base repository가 소유하는 **같은 root receipt JSON의 형제 필드**다. 별도 빈 PM 보드나 두 번째 상태 정본을 만들지 않는다. 아래 예시는 `validate_work_contract_receipt.py`의 실제 start 실행 Gate에 전달할 수 있는 최소 구조이며, 실제 작업에서는 예시 값을 fresh-read evidence, 현재 승인 Goal과 그 Goal의 모든 필수 작업으로 바꾼다.
 
-WORK_CONTRACT_RECEIPT_ROOT_JSON_EXAMPLE
-
-```json
-{
-  "work_level": "L1",
-  "benchmark_preflight_receipt": {
-    "state": "PASS",
-    "entries": [
-      {
-        "source_and_evidence": "exact repository SHA and directly relevant approved benchmark",
-        "observed_pattern": "observed owner-to-consumer boundary",
-        "project_fit_and_difference": "reuse the boundary without copying project-specific values or presentation",
-        "disposition": "ADAPT"
-      }
-    ]
-  },
-  "context_configuration_hygiene": {
-    "scope": "only current task paths and their direct consumers",
-    "inventory": [
-      {
-        "path": "repository-relative current owner path",
-        "classification": "ACTIVE_OWNER",
-        "owner_or_provenance": "verified current repository owner",
-        "references_and_consumers": "direct consumer/readback checked",
-        "removal_proposed": false
-      }
-    ]
-  },
-  "project_work_kanban": {
-    "goal_or_slice_issue_ref": "existing approved Goal locator",
-    "source_main_sha": "0123456789abcdef0123456789abcdef01234567",
-    "work_item_refs": ["TASK-01"],
-    "active_work_item_ref": "TASK-01",
-    "next_action": "perform the next approved task",
-    "work_items": [
-      {
-        "work_item_id": "TASK-01",
-        "title": "observable approved outcome",
-        "status": "IN_PROGRESS",
-        "canon_owner": "repository-relative canonical owner",
-        "actual_consumers": ["actual project consumer"],
-        "depends_on": [],
-        "acceptance_criteria": ["AC-01"],
-        "required_evidence": ["E2_TEST"],
-        "checklist": [
-          {
-            "id": "AC-01",
-            "text": "condition, action, and expected result",
-            "status": "NOT_RUN"
-          }
-        ],
-        "verification": [
-          {
-            "level": "E2_TEST",
-            "status": "NOT_RUN",
-            "evidence": []
-          }
-        ],
-        "next_action": "run the first approved implementation or verification step"
-      }
-    ]
-  }
-}
-```
+WORK_CONTRACT_RECEIPT_ROOT_JSON_EXAMPLE: root receipt를 작성·검증할 때 [실행 가능한 전체 JSON 예시](references/work-contract-receipt-example.md)를 읽는다. 접수 분류만 할 때 예시 전문을 미리 로드하지 않는다.
 
 실행 경로는 `python <resolved-Base-root-at-current-Base-or-project-adapter-pin>/tools/validate_work_contract_receipt.py --receipt <repository-owned-json-receipt> --phase start --expected-source-sha <fresh-read-project-source-sha> --render-markdown`이다. Base root·adapter pin·receipt를 해석하지 못하거나 nonzero이면 `BLOCKED_UNVERIFIED`이며 새 설계·제작·구현을 시작하지 않는다. 작업 전환은 다음 승인 작업을 먼저 active로 기록한 뒤 같은 trusted source와 `--phase resume`으로 검사한다. 마감은 모든 필수 작업을 같은 최종 HEAD에서 다시 검증하고 `--phase closeout --expected-source-sha <fresh-read-project-source-sha> --expected-head-sha <fresh-read-final-head-sha> --render-markdown`을 실행한다. `TRUSTED_VERIFICATION_TARGET_HEAD`: receipt의 `verified_head_sha`를 기대값으로 복사하지 않고 신뢰한 caller가 final HEAD를 별도로 읽는다.
 
@@ -402,7 +339,7 @@ current project authority + actual implementation/assets/tests
 
 ### 2. Inspect repository facts
 
-최신 `main`, 동일 Goal의 열린·최근 병합 PR, `CURRENT_CONFIRMED_DECISIONS.md`, 분야 책임 원본, 실제 파일과 정확한 Project Notion workspace에서 확인 가능한 것은 `repository_observed` 근거로 기록하고 사용자에게 되묻지 않는다. legacy Sheet는 `google_sheet_compatibility_source`에 UNIQUE 미이관 material이 있을 때만 migration evidence로 읽는다. 외부 자료와 모델 추론은 요구사항 권한이 없으며 `[확인 필요]` 또는 후보로 남긴다.
+최신 `main`, 동일 Goal의 열린·최근 병합 PR, `CURRENT_CONFIRMED_DECISIONS.md`, 분야 책임 원본과 실제 repository 파일에서 확인 가능한 것은 `repository_observed` 근거로 기록하고 사용자에게 되묻지 않는다. Notion은 `V4_NOTION_EXCEPTION_ONLY`에 해당할 때만 그 scope를 읽고 exception 또는 migration provenance를 별도로 기록한다. legacy Sheet는 `google_sheet_compatibility_source`에 UNIQUE 미이관 material이 있을 때만 migration evidence로 읽는다. 외부 자료와 모델 추론은 요구사항 권한이 없으며 `[확인 필요]` 또는 후보로 남긴다.
 
 ### 3. Build one requirement model
 
