@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  SOURCE_SHA: f703103ad170c867a1f204b660e07289066df6f5
+  SOURCE_SHA: 02e3b3d31858c553b5d248f6c89d3ddc38bdc91f
   EVIDENCE_DIR: /tmp/consumer-864-evidence
 
 jobs:
