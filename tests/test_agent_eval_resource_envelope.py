@@ -34,25 +34,50 @@ class AgentEvalResourceEnvelopeTests(unittest.TestCase):
             with self.subTest(marker=marker):
                 self.assertIn(marker, adapter)
 
-    def test_infrastructure_failures_do_not_become_task_failures(self) -> None:
+    def test_failure_classification_is_causal_not_termination_based(self) -> None:
         adapter = ADAPTER.read_text(encoding="utf-8")
         for marker in (
+            "FAILURE_CLASSIFICATION_IS_CAUSAL",
             "INFRA_FAILURE_IS_NOT_TASK_FAILURE",
-            "OOM",
-            "container/pod termination",
-            "infrastructure timeout",
-            "infra failure count/rate",
+            "failed to deliver the declared envelope",
+            "agent's chosen strategy",
+            "task/resource-efficiency failure",
+            "FAILURE_CAUSE_UNVERIFIED",
+            "infra failure count/rate separated causally",
         ):
             with self.subTest(marker=marker):
                 self.assertIn(marker, adapter)
 
-    def test_resource_envelope_is_conditional_and_does_not_copy_benchmark_thresholds(self) -> None:
+    def test_resource_sensitivity_applies_even_to_deterministic_transforms(self) -> None:
         adapter = ADAPTER.read_text(encoding="utf-8")
-        self.assertIn("RESOURCE_ENVELOPE_NOT_APPLICABLE", adapter)
-        self.assertIn("resource-sensitive", adapter)
-        self.assertIn("environment-conditioned", adapter)
-        self.assertNotIn("3x ceiling", adapter)
-        self.assertNotIn("below 3 percentage points", adapter)
+        for marker in (
+            "RESOURCE_ENVELOPE_NOT_APPLICABLE",
+            "completion, correctness, fidelity, and comparison outcome",
+            "Determinism of the algorithm does not by itself establish resource insensitivity",
+            "deterministic transform over a large capture",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, adapter)
+
+    def test_fixed_resource_confounding_cannot_establish_adapter_benefit(self) -> None:
+        adapter = ADAPTER.read_text(encoding="utf-8")
+        for marker in (
+            "FIXED_RESOURCE_CONFOUNDING_IS_NOT_CURED_BY_REPEATS",
+            "counterbalanced/randomized assignment",
+            "ENVIRONMENT_CONDITIONED_NON_COMPARATIVE",
+            "Environment-conditioned non-comparative observations cannot by themselves establish adapter benefit",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, adapter)
+
+    def test_contract_prohibits_benchmark_specific_resource_thresholds_generically(self) -> None:
+        adapter = ADAPTER.read_text(encoding="utf-8")
+        self.assertIn("NO_BENCHMARK_SPECIFIC_RESOURCE_THRESHOLDS", adapter)
+        self.assertIn("numeric resource multiplier", adapter)
+        self.assertIn("infrastructure-error cutoff", adapter)
+        self.assertIn("score-difference threshold", adapter)
+        self.assertNotIn("Terminal-Bench", adapter)
+        self.assertNotIn("SWE-bench", adapter)
 
 
 if __name__ == "__main__":
