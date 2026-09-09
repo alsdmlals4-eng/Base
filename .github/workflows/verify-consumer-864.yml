@@ -1,0 +1,82 @@
+name: Verify Dialogue Consumer 864
+
+on:
+  push:
+    branches:
+      - verify/frontend-backend-consumer-864
+    paths:
+      - .github/workflows/verify-consumer-864.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-dialogue-consumer-864
+  cancel-in-progress: true
+
+env:
+  SOURCE_SHA: f703103ad170c867a1f204b660e07289066df6f5
+  EVIDENCE_DIR: /tmp/consumer-864-evidence
+
+jobs:
+  consumer-runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact consumer source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Record source identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          mkdir -p "$EVIDENCE_DIR"
+          git rev-parse HEAD | tee "$EVIDENCE_DIR/source-sha.txt"
+          git ls-tree -r HEAD -- examples/godot-narrative-dialogue-flow > "$EVIDENCE_DIR/source-blobs.txt"
+      - name: Install display and Korean font dependencies
+        run: |
+          sudo apt-get -qq update
+          sudo apt-get -qq install -y xvfb libgl1-mesa-dri fonts-noto-cjk
+      - name: Download and verify existing pinned Godot
+        working-directory: ${{ runner.temp }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 2 --output godot.zip \
+            https://github.com/godotengine/godot-builds/releases/download/4.7.1-stable/Godot_v4.7.1-stable_linux.x86_64.zip
+          echo 'c7ff14fd28472c8d4f193043de30278dcf7e5241a1dcf7566b02e27addaa33ba  godot.zip' | sha256sum --check -
+          unzip -q godot.zip
+          chmod +x Godot_v4.7.1-stable_linux.x86_64
+          ./Godot_v4.7.1-stable_linux.x86_64 --version | tee "$EVIDENCE_DIR/godot-version.txt"
+          echo "GODOT_BIN=$RUNNER_TEMP/Godot_v4.7.1-stable_linux.x86_64" >> "$GITHUB_ENV"
+      - name: Existing domain baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 45s "$GODOT_BIN" --headless \
+            --path examples/godot-narrative-dialogue-flow \
+            --script res://tests/test_dialogue_flow_runtime.gd \
+            2>&1 | tee "$EVIDENCE_DIR/domain-runtime.log"
+          grep -qx 'NARRATIVE_DIALOGUE_RUNTIME_TEST_PASS' "$EVIDENCE_DIR/domain-runtime.log"
+      - name: Real GUI input and rendered consumer regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 75s xvfb-run -a "$GODOT_BIN" \
+            --rendering-method gl_compatibility --audio-driver Dummy \
+            --path examples/godot-narrative-dialogue-flow \
+            --script res://tests/test_dialogue_ui_runtime.gd \
+            2>&1 | tee "$EVIDENCE_DIR/ui-runtime.log"
+          grep -qx 'NARRATIVE_DIALOGUE_UI_TEST_PASS' "$EVIDENCE_DIR/ui-runtime.log"
+      - name: Upload bounded source-bound evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: dialogue-consumer-864-${{ env.SOURCE_SHA }}
+          path: /tmp/consumer-864-evidence/
+          if-no-files-found: error
+          retention-days: 1
