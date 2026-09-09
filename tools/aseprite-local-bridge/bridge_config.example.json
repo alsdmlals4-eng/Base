@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "source_roots": [
+    ".asset-vault/library"
+  ],
+  "candidate_output_root": ".asset-vault/library/aseprite-generated",
+  "allowed_source_extensions": [
+    ".aseprite",
+    ".ase"
+  ],
+  "sheet_type": "rows",
+  "border_padding": 0,
+  "shape_padding": 1,
+  "inner_padding": 0,
+  "timeout_seconds": 60,
+  "use_noinapp": true
+}
