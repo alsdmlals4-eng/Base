@@ -1,5 +1,9 @@
 # Designing Art Prompts and Technique Cards Learning Log
 
+## 2026-09-09 — 연속성과 연출 전달력을 분리 검토
+
+사용자 승인으로 동작/VFX 제작 전에 표현 의도·구도·접점·결과별 역할을 조사하도록 기존 sprite/effect reference와 기술 카드를 보강했다. 기술적으로 교차하는 검과 재생되는 GIF도 기대한 긴장감이나 승패를 전달하지 못할 수 있다. 특정 높이·장르·효과를 공용으로 고정하지 않고 실제 사건, 효과 없는 검토, 역할 반전, 후속 회복과 증거 상한을 요구한다. 외부 자료와 승인 범위·RED/GREEN·회귀 한계는 `docs/operations/2026-09-09_ACTION_STAGING_DIRECTION_EXECUTION.md`에 기록했다. 문서 계약 PASS는 Human/엔진 효과 검증이 아니며 모든 프로젝트 adoption을 뜻하지 않는다.
+
 ## 2026-08-26 — 제작 정보와 생성 이미지를 분리하고 실제 소비처를 이미지 진입 조건으로 둔다
 
 ### Trigger

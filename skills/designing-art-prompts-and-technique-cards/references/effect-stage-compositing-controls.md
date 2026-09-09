@@ -8,6 +8,30 @@ A visual effect reference defines appearance and stage relationships. It does no
 
 ## Stage contract
 
+Before effect production, apply `STAGING_RESEARCH_BEFORE_PRODUCTION` from
+[sprite-pose-sequence-controls.md](sprite-pose-sequence-controls.md) to action-bound
+effects. For standalone ambient/UI effects, record their own intended emotion,
+focal hierarchy, meaningful stages and applicable outcome states instead of forcing
+combat participants. A reasoned non-applicability is valid for absent branches.
+
+Bind `resolved_event`, participant/target, actual contact or non-contact anchor,
+direction, onset, peak and decay to the project's presentation contract. The effect
+does not resolve the event or invent contact. `NO_VFX_TO_HIDE_POSE_ERRORS`: repair
+an incorrect pose/trajectory rather than moving a flash to imply a false impact.
+Keep effect, actor motion and editable result text separately controllable.
+
+Require effect-off and effect-on comparison, `reduced_effect_review`, target-scale
+crop and representative backgrounds. Protect faces, hands, action silhouettes and
+decision-bearing UI when relevant. Stronger bloom, camera shake, hit-stop or sound
+is not automatically better; choose an intensity budget and repetition policy from
+the actual scene, accessibility requirements and timing contract. Do not invent
+numeric defaults from a reference. Audio and runtime synchronization need their own
+observed evidence; GIF encoding or alpha extraction cannot prove either.
+
+Source: [Riot Art Education — Visual Effects](https://www.riotgames.com/it/artedu/visual-effects)
+(accessed 2026-09-09). Adapt its explicit balance of satisfaction, accurate action/state
+communication and restraint; its art language is not a mandatory project style.
+
 ```yaml
 effect_id:
 role:

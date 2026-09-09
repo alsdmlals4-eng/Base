@@ -83,6 +83,32 @@ reference_assisted_forecast:
 
 ## 7. 프롬프트 패턴
 
+### 동작·반응·VFX 연출인 경우: 제작 전 조사와 결과 분기
+
+단일 정적 자산에 불필요한 전투 분기를 강제하지 않는다. 적용하지 않는 항목은 이유를 적는다.
+상세 owner: `skills/designing-art-prompts-and-technique-cards/references/sprite-pose-sequence-controls.md` 및 `effect-stage-compositing-controls.md`.
+
+```yaml
+staging_research:
+  sources_and_inspection_dates: []
+  observed_mechanisms_and_limits: []
+  adopt_adapt_reject:
+intended_emotion_and_focal_point:
+silhouette_eyeline_weight_and_contact:
+camera_crop_and_protected_information:
+outcome_branches: [] # actual resolved events, participant roles, reactions, recovery/terminal state
+domain_rule_invention_guard:
+effect_off_review:
+effect_on_and_reduced_effect_review:
+role_reversed_review_or_reason_not_applicable:
+sound_timing_and_intensity_evidence:
+runtime_evidence: NOT_RUN
+human_evidence: NOT_RUN
+```
+
+핵심 자세 → 앞뒤 연결 → 결과별 반응·회복 → 효과 합성 순으로 검토한다.
+GIF 재생 성공, 사용자 방향 승인, 자산 최종 승인, 엔진 실행 검증은 서로 대체하지 않는다.
+
 ```text
 # Goal
 

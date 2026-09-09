@@ -31,6 +31,14 @@ def skill_package_text(skill_id: str) -> str:
 
 
 class ConsolidatedSkillReferenceTests(unittest.TestCase):
+    def test_action_direction_is_consumed_by_existing_art_package(self) -> None:
+        root = ROOT / 'skills/designing-art-prompts-and-technique-cards'
+        owner = (root / 'SKILL.md').read_text(encoding='utf-8')
+        self.assertIn('STAGING_RESEARCH_BEFORE_PRODUCTION', owner)
+        for name in ('sprite-pose-sequence-controls.md', 'effect-stage-compositing-controls.md'):
+            self.assertIn('references/' + name, owner)
+            self.assertIn('STAGING_RESEARCH_BEFORE_PRODUCTION', (root/'references'/name).read_text(encoding='utf-8'))
+
     def test_active_entrypoints_and_templates_have_no_deleted_skill_paths(self) -> None:
         candidates = [
             ROOT / "AGENTS.md",
