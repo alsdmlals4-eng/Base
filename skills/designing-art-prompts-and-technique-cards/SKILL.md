@@ -170,6 +170,8 @@ PLANNED
 
 Pose sequence는 identity anchor와 action continuity를 먼저 잠근 뒤 프레임별 변화만 정의한다. Effect stage는 subject identity를 덮지 않게 effect-only 변화, alpha/compositing, intensity stage를 분리한다. 세부 계약은 conditional reference가 소유한다.
 
+동작·반응·상호작용·연출 시퀀스는 생성 전에 `STAGING_RESEARCH_BEFORE_PRODUCTION`을 적용한다. `references/sprite-pose-sequence-controls.md`의 조사·감정·구도·접점·결과별 반응 계약과, 효과가 있으면 `references/effect-stage-compositing-controls.md`의 분리 합성·가독성 검토를 수행한다. 기술적으로 이어진다는 이유만으로 연출 품질을 통과시키지 않는다. 프로젝트별 구도·승패 의미·수치는 공용으로 강제하지 않는다.
+
 ## Character poster prompt architecture
 
 이 architecture는 actual consumer가 있는 character/key visual 후보에만 적용한다. 제작자·AI용 캐릭터 설정 정보는 구조화 텍스트/DB가 우선이다.
