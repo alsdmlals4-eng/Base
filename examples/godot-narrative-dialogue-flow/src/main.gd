@@ -79,8 +79,8 @@ func _build_ui() -> void:
     dialogue_label = Label.new()
     dialogue_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
     dialogue_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
-    dialogue_box.add_child(dialogue_label)
     dialogue_label.add_theme_font_size_override("font_size", 22)
+    dialogue_box.add_child(dialogue_label)
 
     next_button = Button.new()
     next_button.text = "다음"
