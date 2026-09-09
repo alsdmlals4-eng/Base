@@ -15,6 +15,7 @@ data/
   sample_dialogue.json
 tests/
   test_dialogue_flow_runtime.gd
+  test_dialogue_ui_runtime.gd
 ```
 
 - `sample_dialogue.json`: 샘플 관계 데이터. Scene/Beat/Dialogue/Choice Stable ID와 `STAY_IN_SCENE | MOVE_SCENE | END`를 포함한다.
@@ -64,3 +65,30 @@ godot --headless \
 선택 가능 시점은 기존 규칙인 **마지막 대사가 현재 표시된 상태**를 유지한다. 모든 요청을 멱등으로 만들거나 종료 후 자동 재시작하지 않는다. `NARRATIVE_DIALOGUE_RUNTIME_TEST_PASS`와 종료 코드 0을 함께 확인하며, 파싱 오류·timeout·종료 코드만으로 성공 처리하지 않는다.
 
 `tests/test_shared_direct_call_contract.py`는 공용 문구의 누락을 막는 Python 문서 검사다. 위 Godot 테스트는 실제 참조 상태기계의 동작 검사다. 둘 다 원격 인증·인가, MCP read-only 권한, 실제 UI 버튼 입력·렌더링·시각 UX·프로젝트 채택을 증명하지 않는다. 이전 2026-08-14 실행 기록은 새 테스트 실행 증거가 아니며, 새 exact-source 실행과 한계는 이번 작업 receipt/PR에 따로 남긴다.
+
+## 실제 UI consumer 회귀 검증
+
+`test_dialogue_ui_runtime.gd`는 복제 UI나 fake session 대신 실제 `main.tscn`을 인스턴스화한다. `Viewport.push_input()`으로 포인터 클릭과 Enter/Tab/Shift-Tab을 Godot GUI에 전달하고, 같은 입력 의도를 받은 별도 `DialogueFlowSession`의 공개 상태와 비교한다. 테스트가 `pressed.emit()`이나 강제 `grab_focus()`로 잘못된 연결·포커스를 숨기지 않는다.
+
+```bash
+godot --rendering-method gl_compatibility --audio-driver Dummy \
+  --path examples/godot-narrative-dialogue-flow \
+  --script res://tests/test_dialogue_ui_runtime.gd
+```
+
+Linux의 화면 없는 runner에서는 위 명령 앞에 `xvfb-run -a`를 붙여 실제 렌더 경로를 실행할 수 있다. 캡처가 필요하면 기존 디렉터리의 절대 경로를 `EVIDENCE_DIR` 환경변수로 전달한다. `--headless`이거나 환경변수가 없으면 캡처는 `UI_CAPTURE_NOT_RUN`이다. 캡처 없음은 렌더 검증 성공이 아니다.
+
+검사 범위는 초기 포커스 → Next → 선택지 교체 → 같은 프레임의 반복 갱신 → STAY → MOVE → 거절 후 복구 → END → Scene 재생성이다. 잘못된 선택 거절은 `_on_choice_pressed()`에 stale ID를 주입하는 **handler-boundary 검사**이며, 실제 사용자 입력으로 불가능한 버튼을 눌렀다는 증거가 아니다. 정상 진행·복구는 GUI 입력으로 수행한다. 테스트 성공은 종료 코드 0과 `NARRATIVE_DIALOGUE_UI_TEST_PASS`를 함께 확인한다. 실패·파싱 오류·timeout 또는 marker 누락은 성공으로 올리지 않는다.
+
+### 재현된 문제와 최소 교정
+
+[UI 구현 계약](../../skills/auditing-and-refining-ui-art/references/godot-ui-implementation-contract.md)의 §9 포커스 복구와 §12 반복 갱신 책임을 구현에 적용한다. 공용 owner에 같은 규칙을 중복 추가하지 않는다.
+
+- 기존 도메인 검사 84개는 통과했지만, 새 UI 검사에서는 초기/교체 포커스 부재와 같은 프레임에 남는 이전 선택지가 재현됐다.
+- `_clear_choices()`는 `queue_free()` 전에 현재 Container에서 자식을 분리한다. 수명 종료를 안전하게 지연하되 이전 컨트롤을 live GUI 트리에 남기지 않는다.
+- 화면 진입·대사/선택 전환에는 현재 의미 있는 Next 또는 첫 선택지로 포커스를 설정한다. 이 최소 예제는 상태 전환 시 목록을 다시 만드는 구조이며, 별도 실시간 목록 갱신/선택 보존 기능을 제공하지 않는다.
+- 도메인 모델·세션·샘플 데이터·분기 의미·엔진 pin은 변경하지 않는다. 새로운 async 계층·원격 backend·웹 UI·상시 전용 CI를 추가하지 않는다.
+
+2026-09-09 RED source `f703103ad170c867a1f204b660e07289066df6f5`, run `34327863780`: 도메인 84 PASS, UI 20 assertions 중 8 failures. 최초 GREEN source `02e3b3d31858c553b5d248f6c89d3ddc38bdc91f`, run `34328253408`: 도메인 84 PASS, 렌더 캡처 검사를 포함한 UI 48 PASS/0 failures. 최신 exact-head 재실행·PR/병합 상태는 [작업 기록 #864](https://github.com/alsdmlals4-eng/Base/issues/864)에서 별도로 확인한다. 최초 GREEN을 이후 변경의 자동 검증으로 간주하지 않는다.
+
+Ubuntu/Xvfb/Mesa 소프트웨어 렌더러의 V-Sync 미지원 경고는 성능 PASS가 아니다. 생성된 1280×720 PNG는 초기 화면·선택지·STAY 결과·거절 안내·종료·재진입의 관찰 자료다. 자동 키/포인터 이벤트는 실제 하드웨어 입력이나 사람의 플레이테스트를 대신하지 않는다. 긴 한국어 스트레스, 모든 분기/해상도/장치, screen reader, 성능, 실제 게임 채택과 출시 검증은 별도다. 이 fixture에는 저장·원격 provider·비동기 요청이 없어 해당 검사는 `NOT_APPLICABLE`이며 구현했다고 주장하지 않는다.
