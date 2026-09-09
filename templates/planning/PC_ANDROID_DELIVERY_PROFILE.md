@@ -345,6 +345,7 @@ test_matrix:
     - install_update_save_migration_offline
     - memory_loading_thermal_battery_long_session
     - post_release_android_vitals_when_field_data_exists
+    - play_games_services_v2_auth_and_features_when_used
 ```
 
 ```yaml
@@ -440,6 +441,22 @@ android_developer_verification:
   release_readiness_status: NOT_RUN | READY_FOR_CURRENT_SCOPE | ACTION_REQUIRED | BLOCKED_UNVERIFIED
   evidence_or_console_ref:
 
+google_play_games_services:
+  checked_at:
+  lifecycle_source: https://developer.android.com/games/pgs/deprecation
+  migration_source: https://developer.android.com/games/pgs/migration_overview
+  downloads_source: https://developer.android.com/games/pgs/downloads
+  usage_scope: NOT_USED | PLANNED | IN_USE | UNKNOWN
+  integration_surface: NONE | JAVA_KOTLIN | NATIVE | ENGINE_PLUGIN | UNKNOWN
+  sdk_or_plugin_ref:
+  sdk_or_plugin_version:
+  pgs_generation: NONE | V2 | V1_LEGACY | UNKNOWN
+  identity_model_status: NOT_APPLICABLE | PLATFORM_AND_INGAME_SEPARATED | V1_PLAYER_ID_PRIMARY_LEGACY | BLOCKED_UNVERIFIED
+  dependency_upgrade_compile_status: NOT_APPLICABLE | NOT_RUN | PASS | FAIL | BLOCKED_UNVERIFIED
+  migration_status: NOT_APPLICABLE | CURRENT_V2 | MIGRATION_REQUIRED | BLOCKED_UNVERIFIED
+  physical_device_auth_and_feature_status: NOT_APPLICABLE | DEVICE_NOT_RUN | FAIL | PASS | BLOCKED_UNVERIFIED
+  evidence_or_log_refs: []
+
 steam:
   steamworks_partner_status:
   direct_fee_budget_status:
@@ -461,6 +478,18 @@ steam:
 `identity_verification_status`, `package_registration_status`, `signing_key_ownership_status`는 독립 상태다. 자동 등록 가능성만으로 package registration을 PASS로 만들지 않는다. 실제 Play Console 또는 적용 가능한 Android Developer Console의 package/status readback이 있어야 `REGISTERED`를 기록한다. signing key ownership proof가 필요한 경우에도 private signing key, 신분증 원본, recovery code, secret/account credential을 repository evidence에 저장하지 않고 안전한 status/receipt reference만 남긴다.
 
 ADB 또는 advanced flow 성공을 consumer release PASS로 사용하지 않는다. ADB는 개발·테스트 install 경로이고 advanced flow는 power-user용 예외 경로이므로, 해당 경로 성공은 일반 플레이어가 intended distribution path에서 설치·업데이트할 수 있다는 증거가 아니다. 현재 enforcement에 참여하지 않는 off-Play 경로는 적용 조건을 확인해 `NOT_APPLICABLE` 또는 `READY_FOR_CURRENT_SCOPE`를 사용할 수 있지만 2027 확대 전에 다시 검증한다.
+
+### 10.2 Google Play Games Services SDK Lifecycle Gate
+
+Play Games Services(PGS)를 사용하지 않는 프로젝트에는 이 Gate를 강제하지 않는다. `usage_scope: NOT_USED`이면 관련 상태는 `NOT_APPLICABLE`로 둘 수 있다. 반대로 achievements·leaderboards·events·cloud save·Play Games platform authentication 중 하나라도 실제 consumer라면 사용 중인 SDK 또는 engine plugin의 **정확한 generation과 version을 먼저 확인**한다.
+
+2026-09-07에 갱신된 Android 공식 deprecation 문서는 PGS v1이 Google Sign-In for Android에 의존해 이미 deprecated 상태이며 v2 migration을 요구한다. 같은 문서 안에서도 v1 shutdown 시점 표기에는 May/June 2027 차이가 있으므로 Base에 단일 종료일을 영구 상수로 복제하지 않는다. 출시·업데이트·dependency upgrade 직전에 `lifecycle_source`를 다시 읽고 현재 deadline을 확인한다.
+
+새 통합은 PGS v1을 선택하지 않는다. 기존 v1 통합은 현재 build가 성공한다는 이유만으로 장기 release-ready로 간주하지 않는다. 특히 다른 Google/third-party SDK가 authentication dependency를 올리면 v1의 GSI 의존성 때문에 compile failure가 생길 수 있으므로, SDK/plugin update 뒤에는 실제 release-like Android build를 다시 compile하고 관련 platform feature를 물리 기기에서 실행한다.
+
+PGS v2의 platform identity는 게임의 primary in-game account identity와 분리한다. achievements·leaderboards 같은 platform feature용 Player ID를 재화·inventory·progress의 단일 primary account key로 사용하지 않는다. 이미 v1 Player ID에 primary in-game account를 묶어 둔 프로젝트는 단순 SDK 교체가 아니라 account binding/migration 문제로 별도 검증한다.
+
+Android 공식 downloads page는 third-party engine extension 중 일부가 PGS v1, 일부가 v2일 수 있으므로 제품 문서에서 지원 generation을 확인하라고 명시한다. 따라서 Godot addon을 쓰는 경우 Asset Library에 존재한다는 사실만으로 `CURRENT_V2`를 부여하지 않는다. exact plugin release/source에서 PGS dependency generation을 확인하고, Godot version·Gradle build·package name·signing credential·Play Console configuration과 실제 Android runtime을 함께 검증한다. third-party addon은 project dependency로 채택되기 전 license·maintenance·permissions·tests·rollback을 별도로 검토한다.
 
 ## 11. Release Waves
 
@@ -528,6 +557,7 @@ background_foreground_recovery:
 performance_budget:
 google_play_android_vitals:
 android_developer_verification:
+google_play_games_services_lifecycle:
 build_size_and_asset_optimization:
 stove_readiness:
 google_play_readiness:
@@ -536,4 +566,4 @@ human_usability:
 final_profile_status:
 ```
 
-문서 작성만으로 `DUAL_TARGET_APPROVED`를 부여하지 않는다. 실행하지 않은 build·device·human·store 검증은 각각 `NOT_RUN`, `DEVICE_NOT_RUN`, `HUMAN_NOT_RUN`, `BLOCKED_UNVERIFIED`로 유지한다. Large-screen configuration continuity도 실제 transition runtime evidence 없이 `PASS`로 만들지 않는다. Google Play production field data가 없으면 `google_play_android_vitals`도 `NOT_ENOUGH_FIELD_DATA` 또는 해당 pre-release 상태로 유지한다. Android developer verification도 실제 console/status readback 없이 `READY_FOR_CURRENT_SCOPE`로 승격하지 않는다.
+문서 작성만으로 `DUAL_TARGET_APPROVED`를 부여하지 않는다. 실행하지 않은 build·device·human·store 검증은 각각 `NOT_RUN`, `DEVICE_NOT_RUN`, `HUMAN_NOT_RUN`, `BLOCKED_UNVERIFIED`로 유지한다. Large-screen configuration continuity도 실제 transition runtime evidence 없이 `PASS`로 만들지 않는다. Google Play production field data가 없으면 `google_play_android_vitals`도 `NOT_ENOUGH_FIELD_DATA` 또는 해당 pre-release 상태로 유지한다. Android developer verification도 실제 console/status readback 없이 `READY_FOR_CURRENT_SCOPE`로 승격하지 않는다. PGS를 쓰는 프로젝트도 exact SDK/plugin generation·release-like compile·물리 기기 platform feature evidence 없이 `CURRENT_V2` 또는 release-ready라고 주장하지 않는다.
