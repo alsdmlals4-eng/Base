@@ -11,8 +11,8 @@ REPOSITORY_PRIMARY_CANON
 ├─ 현재 기획·결정·Flow/Wireframe·구조화 상태·Commit
 └─ 실제 코드/데이터/씬/자산·runtime truth·검증 증거
 
-HUMAN_GDD_PDF_DERIVED_VIEW
-└─ exact repository SHA와 evidence ceiling이 연결된 사람용 milestone snapshot
+APPROVED_HUMAN_BLUEPRINT_PDF_CANON
+└─ exact repository SHA와 evidence ceiling에서 생성되어 사용자 승인·manifest/hash 등록을 마친 불변 사람용 milestone 시각·검수 정본
 
 NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
 └─ UNIQUE legacy material 발견·이관 또는 V4 exception이 실제로 필요한 좁은 범위
@@ -155,7 +155,7 @@ Base 저장소 자체를 콜드 스타트할 때 이 디렉터리의 예시/빈 
 ## Definition of Done
 
 - 정확한 프로젝트 Repository와 V4 `REPOSITORY_PRIMARY_CANON` owner를 확인했다.
-- 사람이 보는 PDF가 필요한 경우 exact-SHA `HUMAN_GDD_PDF_DERIVED_VIEW`로 생성했으며 repository를 대체하지 않는다.
+- 사람이 보는 PDF가 필요한 경우 exact-SHA candidate를 생성하고 `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 version만 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`으로 등록했다. `pdf_sha256`, `pdf_canon_manifest_ref`, approval과 supersession을 readback했으며 repository-owned 구조화 사실을 중복 편집하지 않는다.
 - 저장소 루트의 `[기획서]` design root가 유지된다.
 - 승인 Decision은 Branch/Commit과 repository 분야 owner에 추적된다.
 - 실제 V4 exception/migration Notion write가 있었다면 정확한 scope, Project relation, destination readback을 가진다.
@@ -165,3 +165,7 @@ Base 저장소 자체를 콜드 스타트할 때 이 디렉터리의 예시/빈 
 - legacy `UNIQUE` material은 현행 owner 이관·readback/Test·consumer 확인 없이 삭제하지 않는다.
 - 실제로 수행하지 않은 runtime/사용자 검증은 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`로 남긴다.
 - 선택형 `DESKTOP_GPT_TWO_ARTIFACT_MASTER_GDD`를 사용한 경우 두 파일·동일 ID/SHA·PDF-only download·Notion input-only 경계를 검증했다.
+
+<!-- FEDERATED_DUAL_CANON_ROUTE -->
+
+> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 바꾸지 않는다. 상세 owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다.

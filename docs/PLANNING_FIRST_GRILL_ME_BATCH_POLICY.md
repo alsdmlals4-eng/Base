@@ -16,13 +16,13 @@
 프로젝트의 활성 계획·결정 동기화는 `PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`의 `REPOSITORY_PRIMARY_CANON`을 따른다. `V4_NOTION_EXCEPTION_ONLY` / `NO_NEW_NOTION_WRITE_BY_DEFAULT`이며 V3 `DOMAIN_SPLIT_CANON`은 compatibility/history source다.
 
 ```yaml
-workspace_authority: REPOSITORY_PRIMARY_CANON_WITH_DERIVED_HUMAN_PDF
-human_workspace: HUMAN_GDD_PDF_DERIVED_VIEW
+workspace_authority: FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER
+human_workspace: APPROVED_HUMAN_BLUEPRINT_PDF_CANON
 structured_workspace: REPOSITORY_PRIMARY_CANON
 legacy_google_sheets: COMPATIBILITY_ONLY
 ```
 
-- 사람용 프로젝트 계획·결정·설명은 repository source의 exact-SHA `HUMAN_GDD_PDF_DERIVED_VIEW` 또는 repository-native view로 제공한다.
+- 사람용 프로젝트 계획·결정·설명은 repository source의 exact-SHA `APPROVED_HUMAN_BLUEPRINT_PDF_CANON` 또는 repository-native view로 제공한다.
 - 구조화 상태·실행 계약·runtime truth·Git 추적은 `REPOSITORY_PRIMARY_CANON`이 소유한다.
 - Google Sheets는 `COMPATIBILITY_ONLY` legacy migration source다. 신규 입력·활성 동기화·완료 판정의 필수 surface로 사용하지 않는다.
 - V4 exception이 실제로 승인된 경우에만 Notion destination을 owner·scope·value·exit/revisit 조건과 함께 동기화하고 **destination readback**으로 확인한다. 그 외에는 Notion 기록을 발명하지 않는다.
@@ -169,7 +169,7 @@ BATCH_PR_OPEN
 - destination readback 실패
 - 범위 밖 제품 코드·자산·정본 변경
 
-병합 후 `REPOSITORY_PRIMARY_CANON`과 `HUMAN_GDD_PDF_DERIVED_VIEW`의 Decision ID·결정·대체 관계·merge Commit이 일치하고 source/readback이 끝났을 때만 `SYNCED_TO_MAIN`을 사용한다. V4 exception destination은 실제 적용됐을 때만 별도 readback한다. `COMPATIBILITY_ONLY` Sheet의 migration state는 별도 상태이며 active sync 완료를 좌우하지 않는다.
+병합 후 `REPOSITORY_PRIMARY_CANON`과 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`의 Decision ID·결정·대체 관계·merge Commit이 일치하고 source/readback이 끝났을 때만 `SYNCED_TO_MAIN`을 사용한다. V4 exception destination은 실제 적용됐을 때만 별도 readback한다. `COMPATIBILITY_ONLY` Sheet의 migration state는 별도 상태이며 active sync 완료를 좌우하지 않는다.
 
 ## 6. 적대적 검토 체크리스트
 
@@ -223,3 +223,5 @@ BATCH_PR_OPEN
 - 배치 PR 크기·리뷰 시간·재작업률 측정
 - 실제 프로젝트 Notion relation에 대한 end-to-end 쓰기·readback pilot
 - 사람·기기·접근성 검증
+
+> V4 정본 경로: `FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER`. `REPOSITORY_EXECUTION_DATA_CANON`은 편집 가능한 구조화·실행·runtime·작업상태·evidence 정본이다. `USER_APPROVED_AND_MANIFEST_REGISTERED`를 충족한 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`만 불변 사람용 시각·검수 정본이다. `ONE_EDITABLE_OWNER_PER_ATOMIC_FACT`; `CANDIDATE_PDF_NOT_CANON`과 PDF 주석은 repository-owned fact를 직접 바꾸지 않는다. 상세 owner는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`과 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다.

@@ -367,3 +367,48 @@ local defer 또는 실제 `USER_DECISION_REQUIRED`로 전환한다.
 각 실행의 기록·예산·중단·복구는 기존 continuous-work/Loop owner를 재사용한다. 제품별 CLI 옵션을 이름만 바꿔 이식하지 않는다. `codex exec` 새 실행과 `--ephemeral`의 세션 파일 비보존은 다른 개념이며, 새 실행에서도 필요한 evidence는 별도 보존한다. Claude의 `--max-turns`를 Codex 옵션으로 가정하지 않는다. 구독 경로 실패를 유료 API로 우회하거나 OS 서비스·스케줄러를 이 문서만으로 활성화하지 않는다.
 
 원출처 비교: 사용자가 제공한 `kIUhkiAecM8` 댓글 텍스트(영상 전체 시청 증거 아님), OpenAI non-interactive Codex 문서 `https://developers.openai.com/codex/noninteractive`, GitHub sub-issue 문서 `https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/adding-sub-issues`. 새 세션·파일 기억·작은 작업은 ADAPT, 무한 개발·새 정본·자동 정책 승격은 REJECT다. 재사용 교훈은 **문구 존재 검사와 실제 실행 Gate 검사를 반드시 구분한다**는 것이다. 이 개선의 검증 owner는 `tests/test_project_work_tracking.py`다. `HISTORICAL_ISSUE_825_NOT_CURRENT_WORK_AUTHORITY`: Base Issue #825는 기존 PM execution-gate 구현을 마친 CLOSED 역사 증거이며, 새 Goal·Slice·PR 또는 이 템플릿의 현재 적용 기록이 아니다. `CURRENT_WORK_RECORD_IS_CURRENT_GOAL_ISSUE_OR_CARD`: 실제 현재 적용은 fresh-read 뒤 현재 승인 범위의 Goal/Issue/receipt card를 새로 가리켜야 하며, 종료된 Issue를 재사용해 triage·WIP·dependency·evidence readback을 건너뛰지 않는다.
+
+## 12. 사람용 Blueprint PDF 작업 현황 projection
+
+`BLUEPRINT_PDF_PROGRESS_PROJECTION`
+
+`PROJECT_WORK_KANBAN_IS_PROGRESS_SOURCE`
+
+`GOAL_SYSTEM_CASE_TRACEABILITY`
+
+`NO_PARALLEL_BLUEPRINT_STATUS_CANON`
+
+이 카드와 `project_work_kanban`은 사람용 Blueprint PDF에서 작업 현황을 보여 주는 source이지만, PDF 안에 별도 상태 원본을 만들지 않는다. PDF 생성자는 현재 Goal/Issue, Active Context, AI production specification, actual consumer와 evidence를 fresh-read하고 같은 ID와 상태를 파생한다.
+
+### 12.1 Blueprint routing metadata
+
+기존 receipt가 같은 역할의 field를 이미 갖고 있지 않을 때만 다음 optional reference를 work item에 추가한다.
+
+```json
+{
+  "blueprint_refs": {
+    "goal_ids": ["GOAL-..."],
+    "system_ids": ["SYS-..."],
+    "case_ids": ["CASE-..."]
+  }
+}
+```
+
+- `goal_ids`: 이 작업이 실제 완료 조건에 기여하는 프로젝트·Slice 목표.
+- `system_ids`: 이 작업이 기획·데이터·자산·구현·검증하는 시스템.
+- `case_ids`: 이 작업이 처리하거나 검증하는 정상·경계·실패·충돌·복구·저장·UI 케이스.
+- 같은 사실을 카드와 PDF에 다시 작성하지 않고 stable ID로 연결한다.
+- 연결되지 않은 ID, 존재하지 않는 owner, evidence 없는 PASS는 Blueprint 완료 수에 포함하지 않는다.
+
+### 12.2 Blueprint 투영 확인
+
+- [ ] `PROJECT_GOAL_STATUS_SUMMARY` — Goal/Slice 완료 수, 진행 중, 검증 대기, blocker, 사용자 결정, 다음 안전 작업을 표시했다.
+- [ ] `GOAL_LEVEL_CHECKLIST` — 목표별 player value, Acceptance, 관련 system/work item, 상태, evidence와 blocker를 표시했다.
+- [ ] `SYSTEM_LEVEL_CHECKLIST` — 시스템별 기획·데이터·자산·구현·검증 상태와 actual consumer를 표시했다.
+- [ ] `CASE_LEVEL_STATUS_MATRIX` — 필요한 case별 `DOCUMENTED / IMPLEMENTED / AUTOMATED_TEST_PASS / RUNTIME_VERIFIED / UX_VERIFIED / USER_APPROVED`를 분리했다.
+- [ ] `BLOCKERS_DECISIONS_AND_NEXT_SAFE_ACTION` — 실제 blocker, 결정 packet, resume condition과 다음 단일 안전 작업을 표시했다.
+- [ ] `PASS_ONLY_COUNTS_COMPLETE` — PASS/DONE만 완료 수에 넣고 N/A는 이유와 함께 분모에서 제외했다.
+- [ ] PDF의 `work_status_snapshot_at`이 receipt의 latest update보다 오래되지 않았는지 확인했다.
+- [ ] PDF에서 보이는 상태와 repository owner/evidence가 일치하는지 readback했다.
+
+PDF를 수동으로 고쳐 상태를 바꾸거나 동일 Goal·system·case의 병행 체크리스트를 만들지 않는다. 상태 차이는 repository owner와 receipt에서 먼저 교정한 뒤 Blueprint를 다시 생성한다.

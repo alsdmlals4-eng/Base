@@ -40,7 +40,7 @@ class NotionProjectWorkspaceContractTests(unittest.TestCase):
         active = json.loads(text("docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json"))
         self.assertEqual("ACTIVE_DEFAULT", active["status"])
         self.assertEqual(
-            "REPOSITORY_PRIMARY_CANON_WITH_DERIVED_HUMAN_PDF",
+            "FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER",
             active["authority_model"],
         )
 
@@ -48,7 +48,7 @@ class NotionProjectWorkspaceContractTests(unittest.TestCase):
         skill = text("skills/managing-design-documents/SKILL.md")
         for token in (
             "PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json", "REPOSITORY_PRIMARY_CANON",
-            "HUMAN_GDD_PDF_DERIVED_VIEW", "PROPOSED_LEGACY_CHANGE",
+            "APPROVED_HUMAN_BLUEPRINT_PDF_CANON", "PROPOSED_LEGACY_CHANGE",
             "SYNC_BEFORE_IMPLEMENTATION", "COMPATIBILITY_ONLY",
         ):
             self.assertIn(token, skill)
@@ -59,7 +59,7 @@ class NotionProjectWorkspaceContractTests(unittest.TestCase):
         policy = text("docs/CONFIRMED_DECISION_SYNC_POLICY.md")
         for token in (
             "PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json", "REPOSITORY_PRIMARY_CANON",
-            "HUMAN_GDD_PDF_DERIVED_VIEW", "PROPOSED_LEGACY_CHANGE",
+            "APPROVED_HUMAN_BLUEPRINT_PDF_CANON", "PROPOSED_LEGACY_CHANGE",
             "DERIVED_VIEW_UPDATED", "SYNC_BEFORE_IMPLEMENTATION",
             "COMPATIBILITY_ONLY",
         ):
@@ -71,7 +71,7 @@ class NotionProjectWorkspaceContractTests(unittest.TestCase):
         policy = text("docs/VISUAL_COLLABORATION_TOOL_POLICY.md")
         for token in (
             "DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE", "REPOSITORY_PRIMARY_CANON",
-            "HUMAN_GDD_PDF_DERIVED_VIEW", "V4_NOTION_EXCEPTION_ONLY",
+            "APPROVED_HUMAN_BLUEPRINT_PDF_CANON", "V4_NOTION_EXCEPTION_ONLY",
             "NO_NEW_NOTION_WRITE_BY_DEFAULT", "PROJECT_RELATION_REQUIRED",
             "ASSET_KNOWLEDGE_MASTER", "VISUAL_MAP_DERIVED", "Record Type",
             "ADOPT / ADAPT / TEST / REFERENCE_ONLY / AVOID / IGNORE",

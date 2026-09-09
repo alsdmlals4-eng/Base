@@ -1,0 +1,29 @@
+name: One-shot RED dual canon consumer contract
+
+on:
+  push:
+    branches:
+      - work/846-blueprint-progress-incremental-revision
+    paths:
+      - .github/workflows/one-shot-red-dual-canon-consumer.yml
+
+permissions:
+  contents: read
+
+jobs:
+  red:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact branch
+        uses: actions/checkout@v4
+        with:
+          ref: work/846-blueprint-progress-incremental-revision
+          fetch-depth: 0
+
+      - name: Verify expected regression failure
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/work/846-blueprint-progress-incremental-revision)"
+          python -m unittest tests.test_federated_dual_canon_contract -v

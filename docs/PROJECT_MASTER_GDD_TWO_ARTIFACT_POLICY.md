@@ -413,3 +413,156 @@ AI 명세는 별도 다운로드 링크를 제공하지 않고 다음 정보만 
 - Notion 신규 출력·동기화 0
 - PDF 렌더 오류 0
 - 검증 가능한 문서 생성 작업의 남은 작업 0
+
+## 11. Blueprint 작업 현황 투영과 증분 수정 무손실 Gate
+
+### 11.1 사람용 Blueprint 안의 작업 현황
+
+`BLUEPRINT_GOAL_SYSTEM_CASE_PROGRESS_PROJECTION`
+
+`PDF_PROGRESS_STATUS_IS_REPOSITORY_PROJECTION`
+
+`NO_SEPARATE_PM_PDF_OR_HTML`
+
+사람용 `HUMAN_MASTER_GDD_PDF`는 게임 Blueprint와 프로젝트 PM 현황을 한 파일에서 읽게 하되, 별도 PM PDF·HTML dashboard·세 번째 artifact 또는 병행 상태 정본을 만들지 않는다. 작업 현황은 프로젝트의 승인 Goal/Playable Slice, Active Context, `project_work_kanban`, AI production specification, 실제 implementation·test·runtime·UX·approval evidence에서 읽어 만든 read-only snapshot이다.
+
+필수 View:
+
+| View token | 필수 내용 |
+|---|---|
+| `PROJECT_GOAL_STATUS_SUMMARY` | 현재 프로젝트 목표와 Slice, 적용 목표 완료 수, 시스템·케이스 상태, 진행 중, 검증 대기, blocker, 사용자 결정, 다음 안전 작업 |
+| `GOAL_LEVEL_CHECKLIST` | 목표 ID, player value, Acceptance Criteria, 관련 system/work item, 상태와 evidence, blocker, 다음 행동 |
+| `SYSTEM_LEVEL_CHECKLIST` | 시스템 ID, 목적·player value, 입력·출력·owner·actual consumer·dependency, 기획·데이터·자산·구현·검증 체크리스트 |
+| `CASE_LEVEL_STATUS_MATRIX` | 정상·경계·실패·충돌·중단·복구·저장·UI·접근성·성능 중 실제 위험과 consumer에 필요한 case의 상태 |
+| `BLOCKERS_DECISIONS_AND_NEXT_SAFE_ACTION` | 해결되지 않은 blocker, 사용자 결정 packet, resume condition, 현재 작업과 다음 단일 안전 작업 |
+
+`PASS_ONLY_COUNTS_COMPLETE`: 적용 대상의 완료 수에는 해당 Acceptance와 요구 evidence가 실제 `PASS` 또는 work item `DONE`인 항목만 포함한다. `NOT_APPLICABLE`은 이유와 함께 분모에서 제외한다. 다음 차원은 하나의 초록색 완료나 평균 퍼센트로 합치지 않는다.
+
+```text
+DOCUMENTED
+IMPLEMENTED
+AUTOMATED_TEST_PASS
+RUNTIME_VERIFIED
+UX_VERIFIED
+USER_APPROVED
+```
+
+PDF에는 `work_status_snapshot_at`과 source branch/SHA를 기록한다. PDF 안의 체크 상태를 수동 변경해 정본 상태를 바꾸지 않고, 차이가 발견되면 repository owner·receipt·evidence를 먼저 교정한 뒤 PDF를 다시 발행한다.
+
+### 11.2 기존 Blueprint를 predecessor로 사용하는 증분 수정
+
+`EXISTING_BLUEPRINT_INCREMENTAL_REVISION_REQUIRED`
+
+`NO_BLANK_REBUILD_WHEN_VALID_PREDECESSOR_EXISTS`
+
+`PREDECESSOR_BLUEPRINT_AND_SOURCE_INVENTORY`
+
+유효한 기존 Blueprint가 있으면 새 Blueprint를 빈 문서에서 재작성하지 않는다. latest valid `HUMAN_MASTER_GDD_PDF`, 그 PDF를 만든 source commit과 source document, `AI_PRODUCTION_SPEC_MARKDOWN`, 승인 Decision, 실제 repository owner를 predecessor set으로 고정한 뒤 현재 변경 범위만 증분 수정한다.
+
+작업 시작 전에 최소 다음을 inventory한다.
+
+- predecessor Blueprint ref, source branch/SHA, 생성일, approval/evidence ceiling
+- project/goal/system/content/UI/UX/asset/audio/data/QA/decision ID
+- 목차와 section anchors, flow/system/content card와 cross-reference
+- 확정 규칙·수치·예외·용어와 미해결 결정
+- text-native diagram source, 승인 이미지·caption·provenance·actual consumer
+- 구현 owner, code/data/scene/resource path, test/runtime/UX evidence
+- 현재 blocker, next action, N/A 이유와 known risk
+
+`STABLE_ID_SECTION_AND_EVIDENCE_PRESERVATION`: successor는 touched scope 밖의 유효 ID·설명·규칙·section·도식·승인 시각자료·consumer·evidence를 기본 carry-forward한다. 레이아웃 개선이나 요약을 이유로 의미 있는 내용을 삭제하지 않는다. ID를 rename·split·merge할 때는 predecessor ID와 successor ID의 mapping을 남긴다.
+
+### 11.3 semantic delta와 손실 비교
+
+`SEMANTIC_DELTA_AND_CARRY_FORWARD_REQUIRED`
+
+`UNEXPLAINED_REMOVAL_OR_STATUS_DOWNGRADE_FORBIDDEN`
+
+successor 발행 전 predecessor inventory와 successor inventory를 비교하고 다음을 기록한다.
+
+```yaml
+predecessor_blueprint_ref:
+predecessor_source_commit:
+revision_mode: INCREMENTAL_WHEN_VALID_PREDECESSOR_EXISTS
+predecessor_inventory:
+successor_inventory:
+semantic_delta_summary:
+removal_or_downgrade_justifications:
+work_status_snapshot_at:
+```
+
+- 새 항목: 추가 이유, owner, ID, source와 consumer.
+- 변경 항목: 이전 값, 새 값, 변경 근거, 영향받는 system/case/evidence.
+- 삭제·대체 항목: 삭제 사유, supersession/replacement ID, consumer·migration·rollback 영향.
+- 상태 하향 항목: 반증 또는 stale evidence, 영향 범위, 재검증 계획.
+- 그대로 유지한 항목: `CARRIED_FORWARD_UNCHANGED`로 요약할 수 있으나 source locator를 보존한다.
+
+근거 없는 누락, 설명 없는 상태 하향, 승인된 이미지·도식·규칙·evidence의 유실은 편집으로 인정하지 않는다.
+
+`BLUEPRINT_LOSS_REGRESSION_GATE`: 다음을 successor 발행 전 검사한다.
+
+1. predecessor stable ID가 successor에 존재하거나 explicit mapping·removal justification이 있다.
+2. 이전 section·card·diagram·asset·consumer·evidence가 유지되거나 exact replacement가 있다.
+3. 목표→시스템→케이스→work item→evidence traceability가 끊기지 않았다.
+4. PDF와 AI Markdown의 source SHA·ID·semantic delta가 일치한다.
+5. 기존 구현·runtime·UX·user approval 상태를 새 policy 채택만으로 하향하지 않았다.
+6. page render와 text extraction 비교에서 잘림·누락·빈 페이지·깨진 glyph가 없다.
+
+Gate 실패 시 기존 predecessor를 보존하고 successor를 최종본으로 승격하지 않는다.
+
+### 11.4 predecessor를 읽지 못하는 경우와 최초 생성
+
+`PREDECESSOR_UNAVAILABLE_BLOCKED_UNVERIFIED`
+
+기존 Blueprint 존재가 확인됐지만 파일·source revision·embedded visual·AI spec을 신뢰성 있게 읽을 수 없으면 memory·과거 채팅·추정으로 대체 재작성하지 않는다. 읽지 못한 locator, 영향받는 ID/section, 복구 경로를 기록하고 `BLOCKED_UNVERIFIED`로 둔다. 접근 가능한 repository owner와 predecessor 일부만으로 안전하게 수정할 수 있으면 touched scope를 명시적으로 제한한다.
+
+정말 유효한 predecessor가 없는 최초 Blueprint만 `INITIAL_CREATION_NO_VALID_PREDECESSOR`로 생성할 수 있다. 이 판정에는 기존 PDF·repository design docs·Library/legacy migration source 검색 결과를 남기며, 최초 생성 뒤부터는 같은 두 artifact와 stable ID를 predecessor로 사용한다.
+
+이 Gate는 `EXACTLY_TWO_DELIVERABLES`, `NO_SEPARATE_BLUEPRINT_ARTIFACT`, `NO_MASS_BLUEPRINT_BACKFILL`, `RUNTIME_TRUTH_SEPARATE`, 이미지 승인·consumer 경계를 변경하지 않는다.
+
+
+<!-- FEDERATED_DUAL_CANON_PUBLICATION_CONTRACT -->
+
+## 12. GitHub·승인 PDF 연합 정본 Gate
+
+```text
+FEDERATED_DUAL_CANON_SINGLE_FACT_OWNER
+REPOSITORY_EXECUTION_DATA_CANON
+APPROVED_HUMAN_BLUEPRINT_PDF_CANON
+ONE_EDITABLE_OWNER_PER_ATOMIC_FACT
+```
+
+`HUMAN_MASTER_GDD_PDF`는 생성만으로 정본이 되지 않는다. `CANDIDATE_PDF_NOT_CANON`이며 다음을 모두 만족한 version만 `APPROVED_HUMAN_BLUEPRINT_PDF_CANON`으로 승격한다.
+
+```yaml
+source_commit:
+pdf_sha256:
+approval_ref:
+approved_at:
+canonical_status: CANON_ALIGNED
+supersedes_pdf_ref:
+pdf_canon_manifest_ref:
+included_scope:
+implementation_evidence_ceiling:
+```
+
+승격 token은 `USER_APPROVED_AND_MANIFEST_REGISTERED`다. 승인본은 `APPROVED_PDF_IMMUTABLE_NEW_VERSION_REQUIRED`; 수정은 새 version·hash를 만들고 `NEW_VERSION_NEW_HASH_KEEP_HISTORY`로 predecessor를 보존한다.
+
+### 12.1 단일 편집 owner
+
+- repository owner: 코드·데이터·ID·규칙·수치·상태·Decision source·작업현황·실제 implementation/test/runtime evidence.
+- 승인 PDF: 사용자가 승인한 읽기 구조, 프로젝트/플레이어 경험 지도, Flow·화면·정보 hierarchy, 시스템 카드 시각 표현, milestone 범위와 사람용 검수 baseline.
+- `PDF_STRUCTURED_CONTENT_IS_REPOSITORY_PROJECTION`.
+- `PDF_ANNOTATION_IS_CHANGE_REQUEST_NOT_CANON_MUTATION`.
+- `PROJECT_WORK_KANBAN_IS_PROGRESS_SOURCE`.
+- `PDF_PROGRESS_STATUS_IS_REPOSITORY_PROJECTION`.
+- `NO_PARALLEL_BLUEPRINT_STATUS_CANON`.
+
+### 12.2 충돌 처리
+
+- repository 구조화 값과 PDF 표시값이 다르면 repository 값을 유지하고 PDF를 `REPOSITORY_ADVANCED_PDF_REVIEW_REQUIRED`로 내려 새 candidate를 만든다.
+- 승인 PDF의 material visual flow/hierarchy와 구현이 다르면 구현을 교정하거나 새 candidate delta를 사용자에게 보여 다시 승인한다.
+- 반영되지 않은 PDF feedback은 `PDF_FEEDBACK_PENDING_REPOSITORY_REFLECTION`이다.
+- 해결되지 않은 동시 차이는 `CANON_CONFLICT`.
+- `CANON_CONFLICT_BLOCKS_COMPLETION_AND_RELEASE`.
+
+predecessor inventory, stable-ID carry-forward, semantic delta와 `BLUEPRINT_LOSS_REGRESSION_GATE`는 새 candidate를 승인 정본으로 승격하기 전 필수다. 기존 승인 PDF는 successor가 `USER_APPROVED_AND_MANIFEST_REGISTERED`가 되기 전까지 사람용 검수 baseline으로 유지한다.
