@@ -130,3 +130,11 @@ Base UX/UI 변경 main 병합
 - 기존 프로젝트 Skill·문서의 고유 기능이 보존된다.
 - 제품 경로 변경 여부와 검증·미검증이 명시된다.
 - 새 작업자가 프로젝트 저장소만으로 UX/UI 작업 시작점과 검증 경로를 찾을 수 있다.
+
+## 10. 제작 준비·모듈 조합 적용
+
+화면·페이지·탭·dialogue·system frame의 기획/시각/구현 인계에서는 [UI·게임 제작 준비와 모듈형 시각 자산](ui-surface-production-readiness.md)을 함께 읽는다. `UI-REFERENCE-FIRST`, `UI-INPUTS`, `UI-SURFACES`, `UI-MODULES`, `UI-ASSETS`, `UI-EVIDENCE`를 기존 프로젝트 UX 원본·Feature Spec·Asset Catalog·Traceability에 매핑하고 부족한 부분만 보완한다.
+
+외부 벤치마킹을 먼저 하라는 사용자 지시가 있으면 비교 기준을 먼저 수립하고, 실제 반영 전 프로젝트 정본을 fresh-read한다. 개별 이미지 원본 → 재사용 컴포넌트 → 화면 조합을 기본 제작 방식으로 한다. 부품 원본·조합 레시피·실제 인게임 캡처는 서로 대체하지 않는다.
+
+기존 어댑터 schema·프로젝트 pin·승인 경계와 다른 open PR은 보존한다. 이 companion의 문서·예제 검증을 프로젝트 구현·이미지 생성·runtime/Human PASS나 fleet adoption 완료로 보고하지 않는다.
