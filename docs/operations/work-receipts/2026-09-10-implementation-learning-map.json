@@ -1,0 +1,37 @@
+{
+  "work_level": "L1",
+  "approval_ref": "current-user-request:2026-09-10:use-project-node-maps-routinely-and-add-blueprint-implementation-images-with-explanations",
+  "source_main_sha": "18ab3b4ee5e1211e1bec730dd265fee5e39d406f",
+  "approved_scope": "Make source-backed Korean implementation learning maps part of existing project start/closeout and Blueprint publication. Extend current owners, no new UI runtime or automatic project adoption.",
+  "outcome_status": "PREMERGE_CHECKPOINT_NOT_CLOSEOUT",
+  "benchmark_preflight_receipt": {
+    "state": "PASS",
+    "entries": [
+      {"source_and_evidence": "Base@18ab3b4: Human Home policy, building-project-visual-dashboards, work start checklist, Master GDD policy", "observed_pattern": "Current owners support derived maps and implementation details, but no explicit every-task learning-map check/update and side-by-side implementation explanation.", "project_fit_and_difference": "One detail owner; existing start and Blueprint consumers link to it. Preserve project publication profile and evidence boundaries.", "disposition": "ADAPT"},
+      {"source_and_evidence": "https://mermaid.js.org/syntax/flowchart.html ; https://docs.godotengine.org/en/stable/classes/class_graphedit.html ; https://store.godotengine.org/asset/genery/scene-graphs/ (read 2026-09-10)", "observed_pattern": "Text-native flowcharts offer labeled relationships. GraphEdit is graph UI infrastructure, not automatic source analysis. Scene Graphs includes editing and is marked unstable with a minimum engine version.", "project_fit_and_difference": "Use rendered source-backed maps first; evaluate read-only editor integration separately, never infer compatibility or install everywhere.", "disposition": "ADAPT"}
+    ]
+  },
+  "alternatives": [
+    {"option": "Existing repository-derived maps and Blueprint", "disposition": "ADOPT", "reason": "Fits current owners, readable without coding knowledge; update affected map and bind source/evidence, lowest integration burden."},
+    {"option": "Godot graph addon viewer", "disposition": "DEFER", "reason": "Useful interactive drilldown but exact project version, edit restrictions and actual accuracy need a bounded pilot before adoption."},
+    {"option": "Visual scripting as production authoring", "disposition": "REJECT", "reason": "Changes the authoring workflow and existing code integration; unnecessary for the approved understanding/learning need."}
+  ],
+  "context_configuration_hygiene": {
+    "scope": "Learning map and Blueprint explanation routing",
+    "active_owners": ["docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md", "templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md", "docs/PROJECT_MASTER_GDD_TWO_ARTIFACT_POLICY.md"],
+    "preserved": ["Existing project source and version locks", "Locked historical PDFs", "Open PR845 and PR847", "Image generation and approval boundaries"],
+    "removed": [],
+    "reason": "No unreferenced obsolete file proved. Existing owners are reused, no independent dashboard or duplicate registry."
+  },
+  "verification_checkpoint": {
+    "full_validation": "IN_PROGRESS",
+    "independent_reviews": "Exactly two full-scope rounds requested; final results belong in current-task PR.",
+    "project_pilot": "NOT_RUN",
+    "godot_addon": "NOT_INSTALLED",
+    "project_blueprint_render": "NOT_RUN",
+    "human_learning_effect": "NOT_MEASURED"
+  },
+  "learning": "Always check does not mean always regenerate. Changed implementation needs source-backed visible explanations; untouched evidence may be reused with scope checks. Planned diagrams, static links and runtime observations are distinct.",
+  "remaining_work": ["Review/correct", "Local and exact-head remote validation", "Protected current-task PR merge and exact-main readback"],
+  "checkpoint_policy": "This receipt records a premerge checkpoint. Final checklist, reviews, CI and merge evidence are recorded in the current-task PR. Project-specific maps and actual runtime/learning tests are not claimed by this Base-only change."
+}

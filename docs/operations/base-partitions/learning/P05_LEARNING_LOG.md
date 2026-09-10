@@ -4,6 +4,15 @@
 
 ## 작업별 Learning Checkpoint
 
+### 2026-09-10 · Source-backed implementation learning maps
+
+- work_ref: `docs/operations/work-receipts/2026-09-10-implementation-learning-map.json`
+- baseline_and_result: `18ab3b4`의 기존 Human Home·시작 체크리스트·Blueprint owner에 매 작업 관계도 확인과 변경 부분 갱신을 연결한다.
+- reusable_lesson: 코딩을 모르는 사용자에게는 한글 기능 관계도와 입력/처리/출력·실제 사용/수정 안내를 함께 제공한다. 구현 근거와 계획을 구분하고 매번 재생성하지 않는다.
+- rejected: 별도 학습 대시보드, 일괄 addon 설치, 지도 생성만으로 runtime/Human PASS 주장, locked PDF 덮어쓰기.
+- evidence_ceiling: 공용 지침 교정과 지시 소비 검토; 특정 프로젝트 지도·PDF 생성 또는 사용자 학습 효과는 아직 검증하지 않았다.
+- revisit_condition: 첫 프로젝트 적용에서 가독성·실제 연결·변경 영향·업데이트 비용을 확인하고 필요한 최소 교정만 환류한다.
+
 ### 2026-09-10 · Conditional Aseprite capability routing
 
 - work_ref: `docs/operations/work-receipts/2026-09-10-aseprite-tool-routing.json`

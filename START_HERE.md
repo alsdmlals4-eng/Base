@@ -112,6 +112,7 @@ PC·Android Delivery Guide도 새 광역 Skill이 아니다. `analyzing-and-refi
 | 게임 사용자 연구 11영역 | `governing-game-user-research-coverage` |
 | 사용자 학습 자료 | `creating-user-learning-notes` |
 | 프로젝트 상태·사람용 시각화 | `building-project-visual-dashboards` — repository 정본에서 생성한 `HUMAN_GDD_PDF_DERIVED_VIEW`가 기본이며 외부 HTML/Notion workspace를 새 정본으로 만들지 않음 |
+| 매 프로젝트 작업의 한글 기능 관계도·구현 학습·Blueprint 그림과 설명 | 시작 체크리스트 → `building-project-visual-dashboards` 및 기존 분야 Skill → `docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md`의 `IMPLEMENTATION_LEARNING_MAP_EVERY_PROJECT_TASK`; 변경 부분 갱신, 영향 없으면 근거 있는 재사용 |
 | Godot·Unity 런타임 오류 | `diagnosing-game-engine-runtime-failures` |
 | Godot live Editor·MCP·addon·Scene·Resource 자동화 | HiGodot persistent authoring → GUT deterministic GDScript test → Hera live QA (`LIVE_QA_AND_OBSERVABILITY_ONLY`) |
 
