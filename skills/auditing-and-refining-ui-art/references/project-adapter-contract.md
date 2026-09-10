@@ -130,3 +130,19 @@ Base UX/UI 변경 main 병합
 - 기존 프로젝트 Skill·문서의 고유 기능이 보존된다.
 - 제품 경로 변경 여부와 검증·미검증이 명시된다.
 - 새 작업자가 프로젝트 저장소만으로 UX/UI 작업 시작점과 검증 경로를 찾을 수 있다.
+
+## 10. 화면·페이지·탭·스킨 제작 준비의 채택과 재개
+
+`UI_SURFACE_PRODUCTION_READINESS`
+
+화면·메뉴·페이지·탭·시스템 창·대화창·프레임·스킨을 기획, 제작, 구현 또는 검수할 때는
+[ui-surface-production-readiness.md](ui-surface-production-readiness.md)를 먼저 읽고
+외부 벤치마크 → 후보 구조 → 프로젝트 정합화 → 개별 모듈 제작·조합 순서로 진행하며
+기존 `flow-and-information-architecture / design-system-contract / godot-ui-contract / runtime-ui-audit`에 결합한다.
+새 Skill이나 두 번째 UI 정본을 만들지 않는다. 승인 목표의 미구현 surface도 준비·누락 검사에 포함한다.
+
+프로젝트 반영은 최신 AGENTS가 사용하는 existing owner/overlay에 채택 source commit,
+기존 UI·화면·자산·capture owner, 적용 scope, 보호된 고유 결정과 다음 실제 작업을 연결한다.
+기존 Base version lock과 generated adapter는 임의로 교체하지 않는다. 미병합 PR은 적용 완료가 아니다.
+새 채팅의 cold-start에서 entrypoint → 채택 reference → 실제 owner를 따라 readback한 뒤 적용 완료를 보고한다.
+문서·라우팅 검증과 실제 메뉴 동작·이미지 생성·사용자 승인·Godot capture는 별도 상태로 유지한다.
