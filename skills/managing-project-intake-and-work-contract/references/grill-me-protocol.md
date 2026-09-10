@@ -33,14 +33,15 @@ Grill Me는 `managing-project-intake-and-work-contract`의 `clarify` Skill Mode�
 → CURRENT_CONFIRMED_DECISIONS.md
 → 관련 분야 책임 원본
 → 실제 코드·데이터·Scene·Resource·자산·테스트
-→ 프로젝트 Google Sheets 최신 Decision 행
+→ 정확한 Project Notion Home과 관련 사람용 source/destination
+→ 알려진 unique legacy Sheet material의 migration 상태(있을 때만, `COMPATIBILITY_ONLY`)
 → 현재 대화
 → 질문 필요성 판정
 ```
 
 다음 질문 전 게이트를 모두 통과해야 한다.
 
-1. 저장소·책임 원본·현재 대화·Google Sheets에서 답을 찾을 수 없는가?
+1. 저장소·책임 원본·Project Notion Home·현재 대화에서 답을 찾을 수 없는가? legacy Sheet는 알려진 unique material의 migration 조사일 때만 비교한다.
 2. 사용자가 이미 같은 결정에 답하지 않았는가?
 3. 최신 Decision으로 대체·폐기·보류되지 않았는가?
 4. 실제로 프로젝트 방향·플레이 경험·범위·제작 가능성을 바꾸는가?
@@ -60,7 +61,7 @@ Grill Me는 `managing-project-intake-and-work-contract`의 `clarify` Skill Mode�
 - 이전 승인안을 표현만 바꿔 다시 제시함
 - `SUPERSEDED`, `REJECTED`, `DEFERRED`된 안을 새 안처럼 제시함
 - 정본에는 있으나 현재 대화에 없다는 이유로 다시 물음
-- GitHub에는 있으나 Sheets가 늦다는 이유로 다시 물음
+- GitHub 또는 Project Notion Home에 이미 확정된 답이 있는데 projection/readback이 늦다는 이유로 다시 물음
 - 단계 이름만 다르고 플레이어 결과와 범위가 같음
 
 기존 Decision이 유효하면 질문 없이 적용한다.
@@ -74,6 +75,8 @@ Grill Me는 `managing-project-intake-and-work-contract`의 `clarify` Skill Mode�
 ```
 
 기존 결정을 다시 논의할 때는 처음부터 같은 질문을 반복하지 않고 기존 Decision ID, 승인일, 기존 결정, 새 사실, 충돌, 유지·변경 영향과 GPT 권장안을 제시한다.
+
+승인 요청에서 사용자가 확정한 선택은 그대로 집행한다. 그 선택을 벤치마킹 결과만으로 되돌리거나 다른 기본값으로 바꾸지 않는다. 승인 외 변경만 벤치마킹·현업 비교·충돌·누락 조사와 적대적 검토를 거쳐 장기적으로 더 나은 안을 제안한다.
 
 ## 4. 사용자 결정과 권장 기본값 분리
 
@@ -121,7 +124,7 @@ validation:
 - 여러 결정이 필요하면 의존성이 높은 것부터 순차적으로 묻는다.
 - 질문 수를 채우기 위해 비차단 질문을 만들지 않는다.
 - 사용자가 `모두 권장안대로`라고 하면 남은 동등 유형 결정을 권장안으로 일괄 확정하고 질문을 계속 늘리지 않는다.
-- 이전 승인 건의 정본·main·Sheets 동기화가 완료되기 전에 다음 질문으로 넘어가지 않는다.
+- 이전 승인 건의 repository 정본·main·적용 가능한 Notion destination readback이 완료되기 전에 다음 질문으로 넘어가지 않는다.
 
 ## 6. GitHub 질문 기록
 
@@ -137,7 +140,7 @@ validation:
 - main HEAD:
 - 관련 열린 PR:
 - 최근 병합 PR:
-- Google Sheets 상태:
+- Notion destination / legacy migration 상태:
 - 질문:
 - 선택지:
 - GPT 권장안:
@@ -160,7 +163,7 @@ validation:
 - main HEAD:
 - 관련 열린 PR:
 - 최근 병합 PR:
-- Google Sheets 동기화:
+- Notion destination readback / legacy migration 상태:
 
 ### 질문
 
@@ -222,7 +225,7 @@ A / B / C / 직접 수정안 / 권장안대로
 
 ## 9. 나쁜 질문
 
-- 저장소·Google Sheets를 보면 알 수 있는 사실
+- 저장소·Project Notion Home을 보면 알 수 있는 사실
 - 파일 경로·기존 상태 확인
 - 사소한 명칭·수치·구현 세부
 - 이미 답한 질문
@@ -244,9 +247,9 @@ A / B / C / 직접 수정안 / 권장안대로
 6. 필요한 경우 `ACTIVE_CONTEXT.md`를 갱신한다.
 7. 승인 결정 문서가 직접 `main` 반영 허용 범위면 논리 Commit 하나로 반영한다.
 8. 새 `main` HEAD와 Commit SHA를 재조회한다.
-9. 프로젝트 Google Sheets의 확정 결정 행을 추가·수정한다.
-10. 해당 Sheet 행을 재조회해 Decision ID·결정·Commit·대체 관계를 비교한다.
-11. GitHub 댓글에 정본 경로, Commit SHA, Sheet tab·row와 동기화 판정을 기록한다.
+9. 적용 가능한 Project Notion destination에 사람용 Decision projection을 추가·수정한다.
+10. 해당 Notion destination을 재조회해 Decision ID·결정·Commit·대체 관계를 비교한다.
+11. GitHub 댓글에 정본 경로, Commit SHA, Notion destination과 readback 판정을 기록한다.
 12. `SYNCED`면 다음 질문 필요성을 재평가한다.
 
 직접 `main` 반영 허용 범위와 구현 PR 분리는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`를 따른다.
@@ -261,15 +264,16 @@ AWAITING_USER_DECISION
 APPROVED_PENDING_CANON
 CANON_UPDATED
 MAIN_UPDATED
-SHEET_UPDATED
+NOTION_UPDATED
 SYNCED
 SYNC_FAILED
 BLOCKED_UNVERIFIED
 ```
 
 - GitHub 쓰기 실패: 댓글에 실패·영향·재개 조건을 기록한다.
-- Google Sheets 쓰기 실패: GitHub 정본은 유지하고 `SYNC_FAILED`와 재동기화 Decision ID를 남긴다.
-- 권한·연결·tab을 확인할 수 없음: `BLOCKED_UNVERIFIED`로 남긴다.
+- Notion destination 쓰기 또는 readback 실패: repository 정본은 유지하고 `SYNC_FAILED`와 재동기화 Decision ID를 남긴다.
+- legacy Sheet가 unique material을 가진 경우에는 `COMPATIBILITY_ONLY`로 source·owner·이관 상태를 기록한다. legacy Sheet의 쓰기 실패는 current canon을 막지 않으며, unique material이 미이관이면 `BLOCKED_UNVERIFIED`로 남긴다.
+- 권한·연결·destination을 확인할 수 없음: `BLOCKED_UNVERIFIED`로 남긴다.
 - `SYNCED`가 아닌 승인 건이 있으면 비차단 질문을 계속 늘리지 않는다.
 
 ## 12. 적용 단계
@@ -291,7 +295,7 @@ BLOCKED_UNVERIFIED
 - 서로 충돌하는 사용자 답변이 없다.
 - 모든 승인 Decision이 `CURRENT_CONFIRMED_DECISIONS.md`와 분야 책임 원본에 반영됐다.
 - 승인 문서가 `main`에 반영되고 Commit SHA가 기록됐다.
-- Google Sheets 재조회 결과가 GitHub 정본과 일치한다.
+- 적용 가능한 Project Notion destination readback 결과가 repository 정본과 일치한다.
 - 모든 승인 건의 동기화 상태가 `SYNCED` 또는 명시적 `BLOCKED_UNVERIFIED`다.
 - 남은 질문이 구현 세부 또는 비차단 수준이다.
 
@@ -304,7 +308,7 @@ READY_FOR_IMPLEMENTATION_HANDOFF
 
 ## 14. 실패 조건
 
-- 저장소·정본·Google Sheets에서 확인할 사실을 질문함
+- 저장소·정본·Project Notion Home에서 확인할 사실을 질문함
 - 같은 Decision을 표현만 바꿔 다시 질문함
 - 한 번에 여러 결정을 질문함
 - 권장안과 영향 분석을 누락함
@@ -312,7 +316,7 @@ READY_FOR_IMPLEMENTATION_HANDOFF
 - 사용자 답변을 GitHub 추적 surface에 기록하지 않음
 - 승인 답변을 checkpoint까지 임시 누적함
 - `CURRENT_CONFIRMED_DECISIONS.md`만 갱신하고 분야 책임 원본을 누락함
-- GitHub 또는 Sheets 한쪽만 갱신하고 `SYNCED`로 보고함
+- repository 또는 적용 가능한 Notion destination 한쪽만 갱신하고 `SYNCED`로 보고함
 - 승인 전 `CORE_CONFIRMED` 사용
 - 제거·보류·기각 항목을 누락으로 재제안함
 - `모두 권장안대로` 승인 뒤 불필요한 질문을 계속함

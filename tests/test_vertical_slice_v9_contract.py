@@ -22,7 +22,7 @@ class VerticalSliceV9ContractTests(unittest.TestCase):
             'release_line: "Base v9.3"',
             "active_authority: true",
             "SINGLE_ATTACHMENT_RECONCILIATION_AWARE_INTEGRATED_EXECUTION",
-            "이 파일 하나만 첨부하면 저장소 우선 인터뷰부터 기획·Codex 인계·구현·검수·병합 후 동기화까지",
+            "이 파일 하나만 첨부하면 저장소 우선 인터뷰부터 기획·Codex 인계·구현·검수·병합 후 Notion/repository readback까지",
             "APPLICATION_BINDING",
             "REPOSITORY_FIRST_INTERVIEW",
             "INTEGRATED_DELIVERY_PROFILE",
@@ -34,7 +34,9 @@ class VerticalSliceV9ContractTests(unittest.TestCase):
             "MERGE_AND_SYNC",
             "병합된 main을 기준으로만",
             "금지: 게임 코드·Scene·데이터·에셋 수정",
-            "Google Sheet 쓰기",
+            "NOTION_HUMAN_FACING_CANON",
+            "REPOSITORY_STRUCTURED_CANON",
+            "LEGACY_SHEET_COMPATIBILITY_MIGRATION",
             "요청·승인·Issue/Goal 없이 제품 범위를 발명하는 구현",
         ):
             self.assertIn(term, prompt)
@@ -176,14 +178,28 @@ class VerticalSliceV9ContractTests(unittest.TestCase):
         for term in ("`intermediate-visual-checkpoint`", "Screen Interpretation Review", "사용자 Decision 없이"):
             self.assertIn(term, skill)
 
-    def test_merged_main_sheet_sync_requires_exact_configured_destination_and_readback(self) -> None:
+    def test_merged_main_uses_notion_and_repository_readback_not_normal_sheet_sync(self) -> None:
         prompt = read("templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md")
         for term in (
-            "PROJECT_SHEET_CONFIGURED",
-            "spreadsheet URL·ID·쓰기 권한·대상 tab·변경 range",
-            "계약된 tab·range만",
-            "전후 값을 즉시 재조회",
+            "Project Notion Home",
+            "Notion destination readback",
+            "Google Sheets와 Figma는 migration-only historical surface",
             "병합된 **뒤에만**",
+        ):
+            self.assertIn(term, prompt)
+
+        for forbidden in (
+            "Google Sheet 쓰기",
+            "병합 후 Google Sheet 동기화",
+            "Google Sheet 구성·마지막 동기화 SHA·쓰기 권한",
+        ):
+            self.assertNotIn(forbidden, prompt)
+
+    def test_user_approval_is_binding_while_nonapproval_changes_use_review_loop(self) -> None:
+        prompt = read("templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md")
+        for term in (
+            "승인 요청에서 사용자가 확정한 선택은 그대로 집행한다",
+            "승인 외 변경은 벤치마킹·현업 비교·충돌·누락 조사와 적대적 검토",
         ):
             self.assertIn(term, prompt)
 

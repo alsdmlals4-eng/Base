@@ -205,6 +205,15 @@ class GameDesignDifficultyWorkflowTests(unittest.TestCase):
                 text,
             )
 
+        self.assertIn(
+            "templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md",
+            doc_map,
+        )
+        self.assertNotIn(
+            "docs/knowledge/game-development/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md",
+            doc_map,
+        )
+
         for term in (
             "게임 시스템 설계",
             "난이도 장벽 프로필",
