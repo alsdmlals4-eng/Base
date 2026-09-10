@@ -1,0 +1,38 @@
+{
+  "work_level": "L1",
+  "approval_ref": "current-user-request:2026-09-10:reflect-conditional-aseprite-tool-selection",
+  "source_main_sha": "b0638b12797f4bab09055309595bcd49fc072d6f",
+  "approved_scope": "Connect conditional Aseprite selection to existing art owner and start router. No new server, skill, installation, project adoption or asset replacement.",
+  "outcome_status": "PREMERGE_VERIFICATION_CHECKPOINT_NOT_CLOSEOUT",
+  "benchmark_preflight_receipt": {
+    "state": "PASS",
+    "entries": [
+      {"source_and_evidence": "Base main b0638b1: START_HERE and ART_DIRECTION_AND_ASSET_PLANNING_GUIDE; open PR869 files read-only", "observed_pattern": "Existing art owner and candidate promotion boundaries exist; no current Aseprite discovery/call distinction. Separate CLI implementation is in an open PR.", "project_fit_and_difference": "Extend existing owner; do not depend on or mutate the open bridge PR.", "disposition": "ADAPT"},
+      {"source_and_evidence": "https://github.com/diivi/aseprite-mcp ; https://www.aseprite.org/docs/cli/ (read 2026-09-10)", "observed_pattern": "MCP offers API operations while CLI provides batch/export. Neither proves current client discovery or local safety configuration.", "project_fit_and_difference": "Choose an available approved transport and verify actual output; do not impose a universal installation or creative style.", "disposition": "ADAPT"}
+    ]
+  },
+  "alternatives": [
+    {"option": "Existing connected MCP", "disposition": "ADAPT", "reason": "Granular layer/frame operations when currently exposed and approved; inspect actual capability."},
+    {"option": "Existing approved local CLI", "disposition": "ADAPT", "reason": "Repeatable batch export when supported and bounded; explicitly distinguish transport."},
+    {"option": "User-operated Aseprite editing", "disposition": "ADOPT", "reason": "Viable manual fallback for unsupported automation, not an automatic execution or completion claim."}
+  ],
+  "context_configuration_hygiene": {
+    "scope": "Art production routing only",
+    "active_owners": ["START_HERE.md", "docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md"],
+    "preserved": ["PR869 implementation", "project version locks", "existing assets", "installed server configuration"],
+    "removed": [],
+    "reason": "No obsolete duplicate with zero consumers found; do not delete by age or name."
+  },
+  "verification": {
+    "document_change": "Conditional route implemented; no runtime executor added.",
+    "consumer_scenarios": "Independent review requested: disconnected configuration, supported native export, unsupported input, new illustration, canon replacement, unknown-permission fallback.",
+    "full_validation": "IN_PROGRESS",
+    "review_rounds": "Round 1 found unsupported-format fallback omission; corrected with no-security-bypass and partial-output checks. Round 2 pending.",
+    "project_runtime": "NOT_RUN",
+    "human": "NOT_RUN",
+    "project_adoption": "NOT_RUN"
+  },
+  "remaining_work": ["Complete full validation", "Exactly two full-scope independent reviews", "Exact-head CI and protected current-task merge/readback"],
+  "checkpoint_policy": "Final validation, review and delivery evidence belongs in the current-task PR; this receipt is not a future merge claim.",
+  "learning": "Installed/configured, native discovery, direct transport call, task output and project/runtime adoption are different facts. Reuse existing owner and verify the actual current route rather than infer availability from Base fresh-read."
+}
