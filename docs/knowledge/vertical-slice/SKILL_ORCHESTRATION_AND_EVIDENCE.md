@@ -218,6 +218,30 @@ exact build/commit + run identity 고정
 
 이 Gate의 목적은 과거 screenshot·log·report가 남아 있어 현재 run이 실패했는데도 완료로 오인하는 `STALE_ARTIFACT_FALSE_PASS`를 줄이는 것이다. 실제 프로젝트에 capture producer가 연결되지 않았다면 기능이 구현됐다고 추정하지 않고 해당 runtime/render evidence를 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`로 유지한다.
 
+### 5.2 `EXECUTABLE_COVERAGE_OR_EXPLICIT_ENV_GATE`
+
+테스트·sweep·runtime QA·플랫폼 검증 항목이 문서나 suite에 존재한다는 사실만으로 coverage를 주장하지 않는다.
+
+- `UNRUNNABLE_COVERAGE_IS_A_COVERAGE_BUG`: 지원되는 실행 계층 어디에서도 실제로 구동할 수 없는 검증 항목은 `SKIP`으로 정상화하지 않는다. 필요한 driver/fixture/adapter를 만들어 실행 가능하게 하거나, 실제 owner 계층으로 옮기거나, 근거 없는 coverage claim을 제거하고 coverage count에서 제외한다.
+- 현재 환경에서는 실행할 수 없지만 **실행 가능한 legitimate environment**가 명확한 항목은 `ENV_GATED_EXPECTED_SKIP`으로 분류한다. **필요한 environment·version·device·tool을 명시**하고 해당 환경에서 재실행하기 전에는 **현재 환경에서 PASS로 승격하지 않는다**.
+- `ENV_GATED_SKIP_IS_NOT_COVERAGE_PASS`: expected skip은 “이번 환경에서 의도대로 실행하지 않았다”는 상태일 뿐 기능·플랫폼·플레이어 검증 성공 증거가 아니다.
+- 실행 owner·실행 환경·재현 가능한 driver가 없는 **반복되는 영구 SKIP**은 `UNRUNNABLE_COVERAGE_GAP`으로 승격해 해결한다. 영구 SKIP 수를 coverage에 포함해 완료율을 부풀리지 않는다.
+- 결정적 regression과 비결정적·LLM 기반 probing이 둘 다 있으면 서로 대체품으로 취급하지 않는다. deterministic regression은 알려진 계약의 재현 가능한 회귀를, exploratory probe는 새로운 조합·접근 경로를 찾는 역할을 맡는다.
+
+기본 순서:
+
+```text
+coverage item 고정
+→ 실행 owner와 legitimate environment 확인
+→ 현재 환경에서 실행 가능하면 실제 실행
+→ 환경 의존이면 ENV_GATED_EXPECTED_SKIP + 요구조건 기록
+→ 어떤 지원 경로에서도 비구동이면 UNRUNNABLE_COVERAGE_GAP
+→ 실행 가능화 / owner 이동 / claim 제거
+→ 실제 실행 증거가 생긴 뒤 판정
+```
+
+이 Gate는 coverage accounting과 Evidence 무결성을 강화할 뿐, skip이 있다는 이유만으로 프로젝트 runtime·player acceptance를 실패로 단정하지 않는다. 반대로 skip 자체를 PASS로 세탁하는 것도 금지한다.
+
 ## 6. Gate별 Skill Coverage
 
 ### Gate 1
