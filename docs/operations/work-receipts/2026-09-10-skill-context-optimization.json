@@ -1,0 +1,55 @@
+{
+  "work_level": "L1",
+  "approval_ref": "current-user-request:2026-09-10:optimize-correct-existing-work-structure-and-stale-context",
+  "approved_scope": "Correct existing repository-first routing contradictions and extract the intact intake receipt fixture for conditional loading. Preserve safety gates, installed plugin files, projects, other PRs, frozen releases and compatibility history. No new workflow or model deployment.",
+  "outcome_status": "PREMERGE_VERIFICATION_CHECKPOINT_NOT_CLOSEOUT",
+  "benchmark_preflight_receipt": {
+    "state": "PASS",
+    "entries": [
+      {"source_and_evidence": "Base@580a362db07b4b1a91a87300402969793784acff: AGENTS.md; handoff Skill, Registry, intake and V4 authority; user-provided Astra article", "observed_pattern": "Current owner already supports progressive disclosure and repository-first handoff; discovery metadata still requires GitHub+Notion and excludes non-Godot state handoff.", "project_fit_and_difference": "Correct existing consumers, not replace authority or assume model-quality improvements remove verification.", "disposition": "ADAPT"},
+      {"source_and_evidence": "https://developers.openai.com/api/docs/guides/latest-model ; https://learn.chatgpt.com/docs/build-skills ; https://learn.chatgpt.com/guides/best-practices (read 2026-09-10)", "observed_pattern": "Concise discriminating skill metadata, clear autonomy boundaries and on-demand detail avoid contradictory instructions; verification still matters.", "project_fit_and_difference": "Keep mandatory constraints, move a concrete fixture one reference hop away; no model-specific hardcoded execution shortcut.", "disposition": "ADAPT"},
+      {"source_and_evidence": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents (read 2026-09-10)", "observed_pattern": "Vendor engineering practice combines a small initial context with just-in-time retrieval; smallest high-signal context is not indiscriminate deletion.", "project_fit_and_difference": "Use the existing simplifying-skill-bodies method; vendor practice is not measured Base productivity evidence.", "disposition": "ADAPT"}
+    ]
+  },
+  "alternatives": [
+    {"option": "Correct routing while keeping the full receipt inline", "disposition": "REJECT", "reason": "Lowest migration risk and no extra lookup, but still loads an authoring fixture during request classification."},
+    {"option": "Correct routing and extract only the intact receipt fixture", "disposition": "ADOPT", "reason": "One bounded lookup during authoring, executable fixture preserved, smallest useful loading reduction with existing tests."},
+    {"option": "Correct routing and extract multiple preflight/detail sections", "disposition": "REJECT", "reason": "Larger potential loading reduction, but more lookup edges and gate-discovery risk without demonstrated consumer need; defer until task evidence justifies it."}
+  ],
+  "context_configuration_hygiene": {
+    "scope": "Handoff selection, intake fixture and directly read repository-first consumers; no bulk file deletion.",
+    "inventory": [
+      {"path": "skills/SKILL_REGISTRY.json", "classification": "ACTIVE_OWNER", "owner_or_provenance": "CP0 coordinator routing authority", "references_and_consumers": "active skill generator and agent selection; handoff entry only", "removal_proposed": false},
+      {"path": "skills/managing-project-intake-and-work-contract/SKILL.md", "classification": "ACTIVE_OWNER", "owner_or_provenance": "L1 intake owner", "references_and_consumers": "root AGENTS and executable receipt regression", "removal_proposed": false},
+      {"path": "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json", "classification": "COMPATIBILITY", "owner_or_provenance": "V3 historical contract", "references_and_consumers": "historical consumers; preserve unchanged", "removal_proposed": false}
+    ]
+  },
+  "project_work_kanban": {
+    "goal_or_slice_issue_ref": "current-user-request:2026-09-10:skill-context-optimization",
+    "source_main_sha": "580a362db07b4b1a91a87300402969793784acff",
+    "work_item_refs": ["ROUTING-DISCLOSURE"],
+    "active_work_item_ref": "ROUTING-DISCLOSURE",
+    "next_action": "Complete round 2, whole/exact-head CI and protected delivery readback.",
+    "work_items": [{
+      "work_item_id": "ROUTING-DISCLOSURE",
+      "title": "Align skill discovery and preserve conditional receipt behavior",
+      "status": "VERIFY_REVIEW",
+      "canon_owner": "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json",
+      "actual_consumers": ["skills/SKILL_REGISTRY.json", "skills/managing-project-intake-and-work-contract/SKILL.md", "skills/maintaining-project-context-and-handoff/SKILL.md", "docs/operations/BASE_PARTITION_OPERATING_MODEL.md"],
+      "depends_on": [],
+      "acceptance_criteria": ["CORRECT", "VERIFY", "DELIVER"],
+      "required_evidence": ["E0_CONTRACT", "E2_TEST"],
+      "checklist": [
+        {"id": "CORRECT", "text": "Match repository-first selection and preserve executable fixture", "status": "PASS", "evidence": ["Independent baseline and candidate four-scenario retrieval; round 1 found no remaining routing/fixture defect. Full JSON content matches baseline."]},
+        {"id": "VERIFY", "text": "Behavioral retrieval, regressions and exactly two whole-scope reviews", "status": "IN_PROGRESS"},
+        {"id": "DELIVER", "text": "Protected current-task publication and exact-main readback", "status": "NOT_RUN"}
+      ],
+      "verification": [{"level": "E0_CONTRACT", "status": "PASS", "evidence": ["Start receipt validated before production edit; round 1 alternatives finding corrected and independently closed."]}, {"level": "E2_TEST", "status": "PARTIAL", "evidence": ["30 focused tests PASS, including actual start execution and missing-field rejection; full and remote checks pending."]}],
+      "next_action": "Complete round 2 and exact-head delivery gates."
+    }]
+  },
+  "open_pr_overlap": "PR 844/837 touch intake, 847/803/802 root, 713 another registry entry; read-only, no adoption. Limit changes to independently observed main defects and fixture extraction.",
+  "evidence_ceiling": "Static/retrieval evidence only; no game runtime, user UX, project adoption, token billing or productivity measurement.",
+  "review_checkpoint": {"full_scope_rounds_completed": 1, "round_1": "Independent full-scope review: four routing probes, fixture preservation, generated view, scope/safety/consumer checks. MUST_FIX alternatives were not three viable options; corrected to three scoped implementation choices and independently closed. Round 2 remains required."},
+  "checkpoint_policy": "Committed receipt is a checkpoint, not future merge evidence. Final round 2, exact-head CI and postmerge results belong to this task PR."
+}

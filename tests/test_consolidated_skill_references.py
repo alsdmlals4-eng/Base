@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import json
+import re
 import unittest
 from pathlib import Path
+
+from tools.validate_work_contract_receipt import validate_execution_receipt
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -31,6 +35,19 @@ def skill_package_text(skill_id: str) -> str:
 
 
 class ConsolidatedSkillReferenceTests(unittest.TestCase):
+    def test_conditional_intake_fixture_rejects_missing_start_evidence(self) -> None:
+        package = skill_package_text("managing-project-intake-and-work-contract")
+        match = re.search(r"WORK_CONTRACT_RECEIPT_ROOT_JSON_EXAMPLE\s*```json\s*(\{.*?\})\s*```", package, re.DOTALL)
+        self.assertIsNotNone(match)
+        assert match is not None
+        receipt = json.loads(match.group(1))
+        trusted_source = "0123456789abcdef0123456789abcdef01234567"
+        self.assertEqual([], validate_execution_receipt(receipt, phase="start", expected_source_sha=trusted_source))
+        for field in ("benchmark_preflight_receipt", "context_configuration_hygiene", "project_work_kanban"):
+            with self.subTest(missing=field):
+                incomplete = {key: value for key, value in receipt.items() if key != field}
+                self.assertTrue(validate_execution_receipt(incomplete, phase="start", expected_source_sha=trusted_source), "moving the fixture must not make required start evidence optional")
+
     def test_action_direction_is_consumed_by_existing_art_package(self) -> None:
         root = ROOT / 'skills/designing-art-prompts-and-technique-cards'
         owner = (root / 'SKILL.md').read_text(encoding='utf-8')
