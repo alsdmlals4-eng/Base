@@ -47,6 +47,64 @@ GitHub Actions: ZERO_INCREMENTAL_COST_QUEUE_PREP
 
 **Queue preparation**은 외부 조사가 아니다. 자동화가 Due Source를 선정했다는 사실만으로 Source를 확인했다고 기록하거나 `NO_CHANGE`를 선언하지 않는다.
 
+## `SOURCE_REVIEW_FULL_CYCLE`
+
+이 실행 경로는 요즘IT만의 예외가 아니라 기존 Watchlist의 일일·주간 기사, 영상, 공식 업데이트와 P01–P09 Source review에 공통 적용한다. 사용자의 2026-08-31 지시는 조사 목록에서 멈추지 않고 역공학·모듈화·적대적 검토·교정·허용된 병합까지 이어가는 같은 범위의 작업 계약이다. 새 유료 실행기, 보안/권한 확대, 다른 open PR 인수, 프로젝트 코어 변경을 승인한 것은 아니다.
+
+### 저장소·Queue identity
+
+- canonical repository: `https://github.com/alsdmlals4-eng/Base`
+- repository full name: `alsdmlals4-eng/Base`; verified repository ID: `1295870270`
+- 현재 Queue는 고정 Issue 번호가 아니라 **OPEN + 정확한 제목 `[Periodic Source Scan Queue]` + 본문 첫 stable marker `<!-- periodic-source-scan-queue -->`**로 찾는다. 과거 번호는 history locator일 뿐 active destination이 아니다.
+- 연결된 GitHub의 `get_repo`/file/branch/Issue capabilities를 먼저 사용한다. local DNS 실패나 missing `gh`만으로 connector read/write를 불가능하다고 판정하지 않는다. 쓰기 지원 여부는 현재 schema와 실제 결과로 확인한다.
+- 일일 wrapper는 주소를 정규화하고 repository ID를 다시 확인한 뒤 Issue를 찾는다. 오타는 다른 저장소로 추정 보정하지 않는다. 중복·marker/title 불일치·100개 cap에 닿은 불완전 목록은 fail closed한다. 필요하면 완전한 paginated listing으로 조사하고, 임의의 첫 Issue를 수정하거나 새 중복 Queue를 만들지 않는다.
+- Queue 게시 뒤 title/body/open state를 readback한 경우에만 준비 성공을 기록한다. 재실행 실패는 `BLOCKED_QUEUE_PREPARATION`으로 남겨 이전 성공 receipt가 이번 실행의 성공처럼 잔류하지 않게 한다. 이 검사는 게시 전달 검증이지 원문 조사·역공학·병합 검증이 아니다.
+
+### 실제 review 실행 계약
+
+```text
+1. FRESH_READ
+   Base identity → latest AGENTS.md → WORKSPACE authority/read order
+   → latest completed main → same-goal open/recent PR read-only → current owner/consumer
+2. ORIGINAL_SOURCE_REVIEW
+   현재 목록/기간/게시·수정일/실제 본문·원자료 → SOURCE_CONTEXT_PACKET
+3. REVERSE_ENGINEERING_AND_REUSE
+   문제 → 작동 원리 → 입력/조건 → 절차/출력 → 실패/반례
+   → 기존 module/owner 대조 → consumer·falsification·rollback 지정
+4. ADVERSARIAL_REVIEW_AND_CORRECTION
+   FULL_LOOP_COUNT_MINIMUM: 5
+   FULL_LOOP_IS_NOT_A_REVIEW_LENS
+   각 full-scope 회차: 공격 → 비판 검증 → 승인 finding 교정 → 회귀/실행검증
+   → 더 나은 대안·장기 적합성 재검사 → 전체 결과 재공격 → clean까지
+5. EXACT_HEAD_INTEGRATION
+   실제 material change만 current-task branch/PR → exact HEAD 검증
+   → 독립 검토 → required checks/review/ruleset/thread/concurrency Gate
+   → SOURCE_SCAN_AUTO_MERGE_GATE가 허용하는 안전한 병합
+6. POSTMERGE_READBACK
+   새 main SHA → 유지된 diff·owner·untouched consumer·회귀·잔여작업
+   → 필요하면 latest main에서 최소 후속 교정 → 실제 완료 증거 기록
+```
+
+역공학 owner는 `docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md`, 기존 module catalog는 `docs/knowledge/game-development/reuse/REUSABLE_MODULE_REGISTRY.md`다. 입력·출력·적용 조건·실패·검증·rollback 경계가 독립적이지 않으면 새 Skill을 만들지 않는다. 실제 원리 재사용은 기존 Skill의 reference/checklist/test 보강을 우선한다.
+
+검토 횟수는 서식 채우기나 같은 테스트 5회 실행으로 충족되지 않는다. `skills/running-adversarial-review-and-refinement/SKILL.md`의 전체 회차 evidence와 독립 검토를 보존한다. 실행하지 않은 검토·테스트·runtime을 PASS로 바꾸지 않는다. 필수 원문 접근 실패 시 최신 사용자 지시와 상위 `AGENTS.md` 중단·복구 경계를 따르고, 다른 글로 원문 내용을 추정 대체하지 않는다.
+
+`NO_CHANGE`는 실제 원문·기존 owner·역공학 적용성·반례를 검토했으나 material delta가 없을 때의 정상 종료다. 그 경우 correction/PR/merge는 이유 있는 `NOT_APPLICABLE`이며 억지 변경을 만들지 않는다. 교정은 됐지만 CI·독립 검토·병합·postmerge 중 하나가 미완료면 **그 단계에서 미완료**다. `reviewed_head_sha`와 current head가 다르면 이전 PASS로 병합하지 않는다. pre-existing open/draft/ready PR은 read-only이며 current-task continuation 예외는 최신 `AGENTS.md`가 정한 범위만 적용한다.
+
+### 예약 실행 연결과 증거 상한
+
+GitHub Actions의 Queue 준비와 실제 review executor를 분리한다. 이 문서·Queue에 전체 실행 요청이 존재한다는 사실만으로 ChatGPT 예약 작업의 prompt, 웹 접근, 저장소 쓰기, 병합 권한 또는 실행 성공이 증명되지 않는다. 외부 예약 작업을 감사할 때는 실제 task ID·enabled 상태·schedule/timezone·prompt·tool capability·last run/result를 읽고 이 owner와 비교한다. 설정을 읽을 수 없으면 `SCHEDULER_CONFIG_NOT_EXPOSED`이며 “다른 예약 글도 모두 교정됨”으로 보고하지 않는다. 같은 목적의 새 예약을 중복 생성하거나 paid API를 우회 연결하지 않는다.
+
+기존 `ACTUAL_SOURCE_REVIEW_RECEIPT`에 연결되는 실제 work evidence에는 source/context, reuse disposition, full-scope review, correction diff, exact-head validation, independent review, integration, postmerge readback, 남은 blocker를 단계별 locator로 남긴다. historical receipt는 삭제·재작성하지 않는다. weekly batch는 active Queue뿐 아니라 기존 receipt가 남은 이전 Queue의 실제 기록도 보수적으로 따라가며, source_id별 관측만 반영한다.
+
+```text
+QUEUE_PREPARED != REVIEW_EXECUTED
+REVIEW_EXECUTED != CORRECTION_VERIFIED
+PR_CREATED != MERGED
+MERGED != POSTMERGE_READBACK
+FULL_CYCLE_COMPLETE requires each applicable stage's actual evidence
+```
+
 ## `ZERO_INCREMENTAL_COST_REQUIRED`
 
 Source 운영도 Base 공용 비용 Gate를 따른다.
@@ -85,7 +143,7 @@ Issue 갱신 != Ledger timestamp 갱신
 
 ## `ACTUAL_SOURCE_REVIEW_RECEIPT`
 
-실제 ChatGPT Source review가 원출처를 확인한 뒤에는 Issue #334의 comment/receipt에 사람용 설명과 함께 다음 machine-readable block을 남긴다. 이 블록은 Queue 준비 상태와 실제 조사 상태가 서로 덮어쓰지 않도록 하는 **운영 관측 receipt**이며 Evidence tier나 프로젝트 Canon을 자동 승격하지 않는다.
+실제 ChatGPT Source review가 원출처를 확인한 뒤에는 위 stable-marker identity로 확인한 현재 Queue Issue의 comment/receipt에 사람용 설명과 함께 다음 machine-readable block을 남긴다. 이 블록은 Queue 준비 상태와 실제 조사 상태가 서로 덮어쓰지 않도록 하는 **운영 관측 receipt**이며 Evidence tier나 프로젝트 Canon을 자동 승격하지 않는다.
 
 ```yaml
 actual_source_review_receipt:
@@ -310,7 +368,7 @@ NO_CHANGE != research 미실행
 ACTUAL_SOURCE_REVIEW_RECEIPT != WEEKLY_SCAN_STATE_BATCH 완료
 ```
 
-신규 Source는 실제 research 전까지 `UNVERIFIED_DISCOVERY`다. 검색 결과·제목·snippet만으로 Active Source·Evidence·정책 권위를 부여하지 않는다.
+신규 Source는 실제 research 전까지 `UNVERIFIED_DISCOVERY`다. 사용자 지정 discovery Source의 Ledger `ACTIVE`는 Queue 운영 대상이라는 뜻이며 원문 검증 상태가 아니다. 검색 결과·제목·snippet만으로 Evidence·정책 권위를 부여하지 않는다.
 
 ## 지속성·Rollback
 
