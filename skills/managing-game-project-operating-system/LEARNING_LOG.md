@@ -1,5 +1,16 @@
 # Managing Game Project Operating System Learning Log
 
+## 2026-09-01 — Protected online operations require denial-path proof
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** 사용자 제공 보안 영상의 인증·인가 문제를 기존 Base backend capability와 대조한 결과, 로그인 성공·양성 경로·UI 숨김만으로는 타 사용자 객체 접근과 관리자 기능 호출의 실제 거절을 증명하지 못했다.
+- **Finding:** 기존 Guide는 `authenticate -> authorize`, least privilege, server-side secrets를 가졌지만 object/action/property/context 단위 인가와 거절 뒤 state·external effect·private data·privilege·audit readback을 프로젝트 계약과 회귀 테스트에 연결하지 않았다.
+- **Decision:** 새 Skill이나 두 번째 보안 정본을 만들지 않고 기존 `GAME_BACKEND_CLOUD_RUN` Guide·`GAME_BACKEND_SERVICE_CONTRACT`·capability test에 `DENY_BY_DEFAULT`, `SERVER_SIDE_AUTHORIZATION_EVERY_REQUEST`, `AUTHORIZATION_NEGATIVE_MATRIX_REQUIRED`, `DENIAL_HAS_NO_PROTECTED_SIDE_EFFECT`, session/WebSocket/storage/TLS/privileged-credential/password 경계를 흡수한다. 오프라인 프로젝트는 `ONLINE_IDENTITY_NOT_REQUIRED`다.
+- **Evidence boundary:** 영상 원문과 권위 있는 자막은 현재 세션에서 직접 검증하지 못했으며 exact-video-ID 2차 정리본은 discovery로만 사용했다. 기술 결정은 OWASP·NIST 공식 1차 자료로 재검증했다. Base 정적 GREEN은 재사용 계약 존재만 증명하고 실제 backend runtime/security는 `NOT_RUN`이다.
+- **Reusable lesson:** `POSITIVE_PATH_IS_NOT_AUTHORIZATION_PROOF`; 권한 없는 요청을 실제 실행하고 거절 응답뿐 아니라 authoritative state, external effect, private data, privilege, redacted audit readback까지 확인해야 한다.
+- **Propagation lesson:** Guide·Contract 변경은 capability test, Evidence Pack, Learning Log, CHANGELOG를 함께 갱신하고 reference-freshness Gate를 통과해야 한다.
+- **Next trigger:** 프로젝트가 protected online operation을 채택할 때 exact revision·configured policy의 executable negative matrix와 runtime readback을 요구한다.
+
 ## 2026-08-21 — Merge is followed by GitHub/Notion adversarial progress closure
 
 - **상태:** `PATTERN_CANDIDATE`
