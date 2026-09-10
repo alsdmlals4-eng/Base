@@ -221,6 +221,14 @@ PLAN
 
 ### 2.5 필수 시각자료
 
+#### 구현 학습 자료의 지속 갱신
+
+`docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md`의 `IMPLEMENTATION_LEARNING_MAP_EVERY_PROJECT_TASK`를 이 profile에도 적용한다. 현재 작업의 기능별 **한글 node/flow 관계도 렌더 + 쉬운 구현 설명 + 실제 사용/수정 안내 + 검증 상태**를 같은 system/flow ID의 기존 PDF와 AI Markdown에 통합한다. 시각 기능은 실제 build capture와 설명을 포함하고 비시각 기능은 데이터·테스트 근거를 사용한다. 구조 source만 코드 블록으로 보여주거나 이미지 링크만 달아 학습 자료 전달을 끝내지 않는다.
+
+구현 전에는 계획으로, 구현 후에는 실제 확인된 구조와 증거로 갱신한다. 이 사후 갱신은 기존 승인 기획을 소급 변경하거나 새 기능 구현을 승인하는 절차가 아니다. 변경 시 작업용 source를 갱신하고 기존 publication Gate에서 같은 source-bound PDF를 렌더·검수한다. 그 전의 PDF가 관련 구현보다 오래됐으면 현재 구현본으로 보고하지 않는다. 세 번째 Blueprint/학습 부록·별도 이미지 묶음을 발행하지 않으며, locked/승인된 역사 PDF는 프로젝트의 보존·개정 정책을 따른다. 다른 profile에는 두 산출물을 강제하지 않고 그 프로젝트의 현행 owner 안에 같은 학습 내용을 제공한다.
+
+Gate 사이 작업은 위 owner의 embedded preview 경로로 동일 원본의 변경 부분 그림·설명을 기존 Human Home 또는 현재 응답에서 보여준다. 이는 세 번째 별도 발행물이 아니며 `작업 미리보기 완료`와 `전체 PDF 개정 대기/STALE`를 구분한다. PDF 발행 자체가 현재 완료 조건이면 실제 PDF 갱신·렌더 검수까지 수행한다.
+
 프로젝트에 해당하는 범위에서 다음을 PDF 내부에 포함한다.
 
 - 승인 대표 이미지 또는 실제 플레이 화면

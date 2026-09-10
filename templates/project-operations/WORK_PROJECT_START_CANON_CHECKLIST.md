@@ -68,6 +68,14 @@ NO_NEW_NOTION_WRITE_BY_DEFAULT
 
 ## 3. 필수 source와 권위
 
+### 매 작업의 구현 학습 지도 연결
+
+모든 프로젝트 작업의 시작·재개·종료에서 `docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md`의 `IMPLEMENTATION_LEARNING_MAP_EVERY_PROJECT_TASK`를 적용한다. 기존 `building-project-visual-dashboards`와 분야 Skill로 현재 기능의 한글 관계도·구현 설명을 확인하고, 변경 부분은 기존 Human Home/Blueprint 안에서 갱신한다. 영향 없는 작업은 기존 자료와 `UNCHANGED_REUSED` 근거를 사용한다. 최초 지도 부재는 현재 작업 범위의 준비 항목으로 계산하고, 범위 밖 전체 시스템 backfill은 하지 않는다.
+
+순수 정비로 관련 기능 변화도 기존 지도도 없을 때만 owner의 이유 있는 `NOT_APPLICABLE`을 사용한다. 변경 부분의 당일 전달은 같은 원본의 embedded preview 경로를 사용할 수 있으며, 전체 PDF는 기존 발행 Gate와 `STALE` 상태를 별도로 관리한다.
+
+기존 작업 카드의 acceptance/checklist에 필요한 `관계도·구현 설명 갱신`, `실제 화면/데이터 증거`, `Blueprint 렌더·source readback`을 연결한다. 별도 JSON schema나 원장을 만들지 않는다. 종료 보고는 갱신·재사용·미확인, 사용자가 배울 핵심 원리와 수정/검수 방법을 포함한다. 필수 자료 미완료는 남은 작업이며, 사용자 Human 검수 선언을 기계 검증으로 대신하지 않는다.
+
 현재 owner를 과거 경로로 추측하지 않는다. 다음을 fresh-read한다.
 
 ```text
