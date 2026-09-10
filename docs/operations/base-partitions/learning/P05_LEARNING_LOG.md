@@ -4,6 +4,15 @@
 
 ## 작업별 Learning Checkpoint
 
+### 2026-09-10 · Conditional Aseprite capability routing
+
+- work_ref: `docs/operations/work-receipts/2026-09-10-aseprite-tool-routing.json`
+- baseline_and_result: `b0638b1`의 기존 Art Guide와 START_HERE에 조건부 선택을 연결했다. 새 Skill·bridge·프로젝트 일괄 설치는 추가하지 않았다.
+- reusable_lesson: 설치/설정, 현재 native discovery, 실제 transport 호출, 파일 검증, 프로젝트 채택·runtime은 별도 증거다. fresh-read 자체는 도구 설치나 가용성 증거가 아니다.
+- what_failed_or_was_rejected: 미노출만 다룬 최초 fallback 문구는 입력/출력 미지원도 포함하도록 교정했다. 대안 transport로 보안 거부를 우회하지 않는다.
+- evidence_ceiling: 공용 지침과 읽기/검사 증거; 모든 프로젝트 자동 적용·실행 성공·Human 검수를 주장하지 않는다. 최종 검사·병합 증거는 work_ref가 가리키는 작업 PR에서 확인한다.
+- revisit_condition: 현재 client 노출, 서버 허용 범위, 입력 규격 또는 프로젝트 consumer가 달라질 때 재검증한다.
+
 각 완료 작업마다 아래 형식으로 하나의 checkpoint를 추가한다. 새 재사용 교훈이 없으면 `reusable_lesson: NO_NEW_REUSABLE_LESSON`로 명시하고 억지 교훈을 만들지 않는다.
 
 ```yaml
