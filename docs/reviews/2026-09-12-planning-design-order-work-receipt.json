@@ -1,7 +1,7 @@
 {
   "work_level": "L1",
-  "approval_reference": "Current conversation: 좋아 권장안대로 규칙파일 변경해줘 — planning/basic design before approval, detailed design and implementation after approval.",
-  "scope": "Clarify existing planning policy and its direct routing consumers; no project mutation, new skill, registry migration or other PR absorption.",
+  "approval_reference": "Current conversation: 좋아 권장안대로 규칙파일 변경해줘; 진행해; approved Blueprint whole-scope Godot implementation, image wiring, review/merge and recoverable Desktop cleanup clarification.",
+  "scope": "Clarify planning approval and continuous delivery owners and direct consumers; no game project mutation, new skill, registry migration or other PR absorption. Cleanup here is policy only, not a bulk file move.",
   "validation_results": {
     "baseline_planning_tests": "PASS: 5 tests before edits",
     "candidate_planning_tests": "PASS: 8 tests after edits, including 3 new boundary/routing regressions",
@@ -11,7 +11,7 @@
     "base_v9_integrity": "PASS against trusted main 2f93e872d9ed4fa18018ac759b01acd7d34e9b58",
     "skill_system_coverage": "PASS",
     "diff_whitespace": "PASS",
-    "full_local_validation": "CANCELLED: stopped owned unittest process after about 7 minutes; not a full-suite PASS. Re-run with PYTHONUTF8=1 before integration.",
+    "full_local_validation": "UNVERIFIED: first run cancelled; UTF-8 repeat on 7fd872f progressed through v9 fixtures but final output was lost at context boundary. No full-suite PASS claimed; final remote CI required.",
     "runtime_and_human": "NOT_APPLICABLE: Base document/routing correction, no game files changed",
     "remote_ci_and_merge": "NOT_RUN"
   },
@@ -35,7 +35,7 @@
         "long_term_fit": "Single existing owner with two direct routes; no registry/schema changes, no duplicate Blueprint, no blanket approval or game-specific UI"
       }
     ],
-    "remaining_work": "Full local validation with UTF-8, exact-head remote CI and independent review if publishing/merging. No third full review; only targeted findings and verification."
+    "remaining_work": "Exact-head remote CI and independent delta review after latest user clarification. Reviewer found no issues on 7fd872f; final amendment still needs targeted review. No third full review; only targeted findings and verification."
   },
   "benchmark_preflight_receipt": {
     "state": "REUSED_EVIDENCE",

@@ -3,6 +3,7 @@
 ## Unreleased — Base v9.5 focused maintenance candidate
 
 - Clarified basic design before user approval and detailed design after approval in the existing planning owner; routed the planning sequence and startup checklist to it. Preserved small-task approval reuse, bounded technical experiments, Codex Godot implementation ownership, and source-backed Blueprint learning/evidence separation. No new Skill or project contract migration.
+- Clarified approved Blueprint end-to-end delivery: slices do not shrink approved scope, planning handoff is not whole-task completion, actual asset consumers and user-runnable Godot evidence precede delivery, and eligible cleanup is recoverable Desktop storage under existing retention gates. Preserved real decision/tool blockers, visual approval, the two-round review budget and normal merge protections.
 
 - Corrected active Human Home and completion consumers to repository-first delivery/readback with explicitly scoped V4 Notion exceptions; preserved V3 migration history and existing visual approval/runtime boundaries. Postmerge consumers now explicitly reuse the same-work two-round budget and continue only targeted correction/verification after it is exhausted. No new Skill, schema, runtime or external workspace was added.
 

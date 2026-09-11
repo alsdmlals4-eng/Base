@@ -222,6 +222,8 @@ Slice의 최소 기획이 만들어지면 적대적 검토·IRG를 수행한다.
 
 이 Gate 이후 GPT는 구현 방법을 더 세분화하며 문서를 계속 키우지 않는다. 실제 구현에서 새 사실이 나오면 Codex의 `CHANGE_PROPOSAL` 또는 구현 후 검수 결과로 다시 진입한다.
 
+`HANDOFF_IS_NOT_DELIVERY`: 이 기획 종료는 전체 승인 작업의 종료가 아니다. `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md` §8 `APPROVED_BLUEPRINT_END_TO_END_DELIVERY`에 따라 현재 허용된 실행 경로에서 Codex의 실제 구현·자산 연결·검증·병합·사용자 실행 가능 인도까지 이어간다. 전체 블루프린트가 승인됐다면 한 Slice의 완료를 전체 완료로 보고하지 않는다. 실행 경로가 없는 경우 정확한 blocker와 재개 정보를 보고하며 `GPT_LOCAL_CODEX_ORCHESTRATION_RETIRED`를 우회하지 않는다.
+
 ## 2. GPT 책임
 
 ### 2.1 기획·비코딩 작업
