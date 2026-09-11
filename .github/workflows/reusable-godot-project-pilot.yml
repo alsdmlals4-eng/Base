@@ -23,6 +23,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      - name: Verify reusable workflow source identity
+        env:
+          WORKFLOW_SOURCE_SHA: ${{ job.workflow_sha }}
+          EXPECTED_BASE_PILOT_COMMIT: ${{ inputs.base_pilot_commit }}
+        run: |
+          if [ "$WORKFLOW_SOURCE_SHA" != "$EXPECTED_BASE_PILOT_COMMIT" ]; then
+            echo "REUSABLE_WORKFLOW_SOURCE_SHA_MISMATCH: workflow=$WORKFLOW_SOURCE_SHA expected=$EXPECTED_BASE_PILOT_COMMIT" >&2
+            exit 1
+          fi
       - name: Check out caller project
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
