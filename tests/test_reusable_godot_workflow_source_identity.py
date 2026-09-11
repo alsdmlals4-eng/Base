@@ -17,7 +17,7 @@ class ReusableGodotWorkflowSourceIdentityTests(unittest.TestCase):
         for marker in (
             "WORKFLOW_SOURCE_SHA: ${{ job.workflow_sha }}",
             "EXPECTED_BASE_PILOT_COMMIT: ${{ inputs.base_pilot_commit }}",
-            'os.environ["WORKFLOW_SOURCE_SHA"] != os.environ["EXPECTED_BASE_PILOT_COMMIT"]',
+            'if [ "$WORKFLOW_SOURCE_SHA" != "$EXPECTED_BASE_PILOT_COMMIT" ]; then',
             "REUSABLE_WORKFLOW_SOURCE_SHA_MISMATCH",
         ):
             self.assertIn(marker, workflow)
