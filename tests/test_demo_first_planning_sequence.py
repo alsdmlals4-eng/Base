@@ -11,6 +11,63 @@ def read(path: str) -> str:
 
 
 class DemoFirstPlanningSequenceTests(unittest.TestCase):
+    def test_approved_blueprint_delivery_is_complete_and_evidence_bound(self) -> None:
+        policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
+        section = policy.split("### `APPROVED_BLUEPRINT_END_TO_END_DELIVERY`", 1)[1].split("### `CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE`", 1)[0]
+        for term in ("ALL_APPROVED_REQUIREMENTS_COVERED", "HANDOFF_IS_NOT_DELIVERY",
+                     "USER_TESTABLE_DELIVERY", "USER_TESTABLE_NOT_HUMAN_PASS",
+                     "모든 필수 항목", "이미지 파일 생성", "실제 씬·노드·리소스·상태",
+                     "Godot 실행", "병합 후 readback", "2회", "정확한 blocker",
+                     "새 후보 이미지의 최종 승인은 아니다"):
+            with self.subTest(term=term):
+                self.assertIn(term, section)
+
+    def test_delivery_cleanup_preserves_runtime_and_recoverability(self) -> None:
+        policy = read("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md")
+        for term in ("RECOVERABLE_DESKTOP_CLEANUP", "governing-legacy-retention-and-archives/SKILL.md",
+                     "실제 바탕화면 경로", "SHA-256", "복원 방법", "소유권 불명",
+                     "실행에 필요한 파일", "영구 삭제는 별도 권한 없이 하지 않는다",
+                     "대상이 없으면 폴더를 만들지 않고 0건으로 보고한다"):
+            with self.subTest(term=term):
+                self.assertIn(term, policy)
+
+    def test_delivery_routes_do_not_reduce_whole_blueprint_to_one_slice(self) -> None:
+        for path in ("docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md",
+                     "docs/GPT_CODEX_WORKFLOW_POLICY.md",
+                     "templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md"):
+            with self.subTest(path=path):
+                policy = read(path)
+                self.assertIn("APPROVED_BLUEPRINT_END_TO_END_DELIVERY", policy)
+                self.assertIn("docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md", policy)
+        self.assertNotIn("승인 단위는 게임 전체 일괄 확정이 아니라", read("docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md"))
+
+    def test_basic_design_precedes_approval_and_detail_follows_it(self) -> None:
+        policy = read("docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md")
+        section = policy.split("### 1.1 기본 설계와 상세 설계의 승인 경계", 1)[1].split("## 2.", 1)[0]
+        order = ("기획 + 기본 설계", "→ 검토·보완", "→ 사용자 승인 또는 유효한 기존 승인 재사용",
+                 "→ 상세 설계", "→ 구현", "→ 실제 실행 검증·교정", "→ 결과 설명과 블루프린트 갱신")
+        positions = [section.index(term) for term in order]
+        self.assertEqual(positions, sorted(positions))
+
+    def test_design_boundary_preserves_scope_authority_and_evidence(self) -> None:
+        policy = read("docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md")
+        for term in ("와이어프레임·플로우맵", "구현 가능성·위험", "완료 기준·검증·롤백",
+                     "별도로 승인된 제한 범위", "영향받는 결정만 재승인", "저장 호환성",
+                     "PLAY_MEANINGFUL_WORK_SLICE", "모든 최종 자산을 먼저 제작하지 않는다",
+                     "실제 Godot 제품의 상세 구현 설계와 구현은 Codex", "명시적인 사용자 선언",
+                     "무엇이 바뀌었는가 / 어떤 연결로 작동하는가 / 사용자가 어떻게 확인하는가",
+                     "사용자 기획 승인은 Human/Player 검증 PASS가 아니다"):
+            with self.subTest(term=term):
+                self.assertIn(term, policy)
+
+    def test_design_boundary_routes_existing_consumers_to_single_owner(self) -> None:
+        for path in ("docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md",
+                     "templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md"):
+            with self.subTest(path=path):
+                text = read(path)
+                self.assertIn("BASIC_DESIGN_BEFORE_APPROVAL_DETAILED_DESIGN_AFTER_APPROVAL", text)
+                self.assertIn("docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md", text)
+
     def test_policy_declares_current_workspace_scope_and_prework_audit(self) -> None:
         policy = read("docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md")
         for term in (
