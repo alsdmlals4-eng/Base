@@ -191,6 +191,8 @@ MIGRATION_COMPLETE | MIGRATION_NOT_APPLICABLE | MIGRATION_PENDING
 
 ## 5. GPT planning / Codex Godot product implementation boundary
 
+기획·설계의 승인 전후 경계는 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md` §1.1 `BASIC_DESIGN_BEFORE_APPROVAL_DETAILED_DESIGN_AFTER_APPROVAL`을 따른다. 승인 전 기본 설계로 방향·타당성을 확인하고, 승인 후 실제 구현 owner가 상세 설계를 구체화한다. 아래 인계 흐름은 이 구분을 생략하거나 승인된 작은 작업의 전체 기획을 반복시키지 않는다.
+
 기획·근거조사·대안 비교·UI/UX·아트 방향·시각 후보 검수·최종 판정은 `GPT_FIRST_PLANNING_AND_REVIEW`와 `GPT_PRIMARY_REVIEWER`가 기본이다. 프로젝트 작업은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`의 `PLAY_MEANINGFUL_WORK_SLICE`를 기본 작업 단위로 삼고, 실제 구현 전에 승인된 기획 의미와 실행 계약을 `PLANNING_CANON_BEFORE_HANDOFF`로 정본화한다.
 
 실제 Godot 제품 구현이 남지 않은 계획은 GPT가 비코딩 결과와 정본 readback을 닫고 종료한다. 실제 Godot 제품 구현이 남아 있으면 GPT가 `PRE_HANDOFF_GPT_STOP`을 통과한 뒤 구현 방법을 더 세분화하지 않고 다음 current boundary를 따른다.

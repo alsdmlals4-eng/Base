@@ -1,0 +1,79 @@
+{
+  "work_level": "L1",
+  "approval_reference": "Current conversation: 좋아 권장안대로 규칙파일 변경해줘 — planning/basic design before approval, detailed design and implementation after approval.",
+  "scope": "Clarify existing planning policy and its direct routing consumers; no project mutation, new skill, registry migration or other PR absorption.",
+  "validation_results": {
+    "baseline_planning_tests": "PASS: 5 tests before edits",
+    "candidate_planning_tests": "PASS: 8 tests after edits, including 3 new boundary/routing regressions",
+    "pm_review_regressions": "PASS: 18 tests with PYTHONUTF8=1; initial unconfigured full run showed failures in this test group",
+    "required_gate_topology": "PASS",
+    "generated_artifacts": "PASS: current",
+    "base_v9_integrity": "PASS against trusted main 2f93e872d9ed4fa18018ac759b01acd7d34e9b58",
+    "skill_system_coverage": "PASS",
+    "diff_whitespace": "PASS",
+    "full_local_validation": "CANCELLED: stopped owned unittest process after about 7 minutes; not a full-suite PASS. Re-run with PYTHONUTF8=1 before integration.",
+    "runtime_and_human": "NOT_APPLICABLE: Base document/routing correction, no game files changed",
+    "remote_ci_and_merge": "NOT_RUN"
+  },
+  "adversarial_review": {
+    "reviewer": "Author self-review, not independent approval",
+    "rounds": [
+      {
+        "round": 1,
+        "input_revision": "2f93e872d9ed4fa18018ac759b01acd7d34e9b58 plus current bounded policy/consumer/test diff",
+        "coverage": "Full changed policy, sequence, startup route, regression tests, approval and spike safety, cost/scope, unchanged GPT/Codex owner and Human Home, PR 844/748 overlap, no new framework",
+        "finding": "CONFLICT: unconditional runtime wording could require game execution for document-only work",
+        "correction": "Scope verification to applicable change; distinguish NOT_APPLICABLE from NOT_RUN",
+        "verification": "8 planning tests re-passed; actual owner and both consumers read back; alternative split retained over approval without feasibility or full detail before approval"
+      },
+      {
+        "round": 2,
+        "input_revision": "Same candidate lineage after applicable-verification correction",
+        "coverage": "Entire final policy/consumer/test diff plus untouched Human Home learning map, GPT/Codex ownership, approval reuse, small changes, bounded spikes, protected paths, open PRs and unchanged remote main",
+        "finding": "No additional policy acceptance defect found; full-suite verification and publication remain incomplete",
+        "verification": "8 planning and 18 UTF-8 PM regression tests; topology/artifact/integrity/Skill checks passed. No independent approval or full-suite PASS claimed.",
+        "long_term_fit": "Single existing owner with two direct routes; no registry/schema changes, no duplicate Blueprint, no blanket approval or game-specific UI"
+      }
+    ],
+    "remaining_work": "Full local validation with UTF-8, exact-head remote CI and independent review if publishing/merging. No third full review; only targeted findings and verification."
+  },
+  "benchmark_preflight_receipt": {
+    "state": "REUSED_EVIDENCE",
+    "entries": [{
+      "source_and_evidence": "Base main 2f93e872d9ed4fa18018ac759b01acd7d34e9b58 planning policies; prior-turn official GOV.UK alpha guidance https://www.gov.uk/service-manual/agile-delivery/how-the-alpha-phase-works",
+      "observed_pattern": "Resolve direction and risky assumptions before production detail; prototypes are not production proof.",
+      "project_fit_and_difference": "ADAPT split basic/detailed design inside existing PLAN/BUILD/REVIEW; REJECT direction approval without feasibility; REJECT all detailed design before approval. Keep bounded approved spikes and existing Godot ownership, not a new mandatory prototype stage.",
+      "disposition": "ADAPT"
+    }]
+  },
+  "context_configuration_hygiene": {
+    "scope": "Planning approval owner, planning sequence, startup checklist and regression tests only",
+    "inventory": [{
+      "path": "docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md",
+      "classification": "ACTIVE_OWNER",
+      "owner_or_provenance": "Fresh-read main planning approval policy",
+      "references_and_consumers": "PLANNING_SEQUENCE_AND_EVIDENCE_POLICY and WORK_PROJECT_START_CANON_CHECKLIST; original old worktree and output preserved; PR 844 overlaps checklist but stays read-only; PR 748 owns a separate unmerged proposal",
+      "removal_proposed": false
+    }]
+  },
+  "project_work_kanban": {
+    "goal_or_slice_issue_ref": "Current conversation approved planning-design-order rule correction, 2026-09-12",
+    "source_main_sha": "2f93e872d9ed4fa18018ac759b01acd7d34e9b58",
+    "work_item_refs": ["PLAN-ORDER"],
+    "active_work_item_ref": "PLAN-ORDER",
+    "next_action": "Re-run full validation with UTF-8 before remote integration",
+    "work_items": [{
+      "work_item_id": "PLAN-ORDER",
+      "title": "Clarify approved basic and detailed design boundary",
+      "status": "VERIFY_REVIEW",
+      "canon_owner": "docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md",
+      "actual_consumers": ["docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md", "templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md"],
+      "depends_on": [],
+      "acceptance_criteria": ["ORDER-01"],
+      "required_evidence": ["E2_TEST"],
+      "checklist": [{"id": "ORDER-01", "text": "Policy splits design around approval, preserves authority and routes consumers; regression tests pass", "status": "PASS", "evidence": ["tests/test_demo_first_planning_sequence.py: 8 tests PASS after final policy edit"]}],
+      "verification": [{"level": "E2_TEST", "status": "PASS", "evidence": ["8 planning tests and 18 UTF-8 PM regression tests PASS; full suite not completed"]}],
+      "next_action": "Full UTF-8 validation and integration gates remain pending"
+    }]
+  }
+}

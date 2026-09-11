@@ -31,6 +31,8 @@ NO_NEW_NOTION_WRITE_BY_DEFAULT
 
 ## 1. 목적
 
+시작 시 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md` §1.1 `BASIC_DESIGN_BEFORE_APPROVAL_DETAILED_DESIGN_AFTER_APPROVAL`을 확인한다. 현재 작업이 승인 전 기본 설계인지, 유효한 승인 범위의 상세 설계·구현인지 기존 receipt에 구분하고 승인 참조와 변경된 전제를 확인한다. 기본 설계의 필수 공백이나 의미 변경을 승인 후 기술 선택으로 숨기지 않으며, 작은 승인 작업에는 기존 설계·검증을 재사용한다.
+
 새 Work·새 채팅·작업 재개에서 바로 새 기획이나 제작으로 들어가지 않는다.
 
 ```text
