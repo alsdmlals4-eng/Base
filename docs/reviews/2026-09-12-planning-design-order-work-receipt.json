@@ -2,9 +2,13 @@
   "work_level": "L1",
   "approval_reference": "Current conversation: 좋아 권장안대로 규칙파일 변경해줘; 진행해; approved Blueprint whole-scope Godot implementation, image wiring, review/merge and recoverable Desktop cleanup clarification.",
   "scope": "Clarify planning approval and continuous delivery owners and direct consumers; no game project mutation, new skill, registry migration or other PR absorption. Cleanup here is policy only, not a bulk file move.",
+  "checkpoint": "Pre-merge candidate verification snapshot, not a second live task board. Final exact-head CI, merge SHA and postmerge readback are authoritative in https://github.com/alsdmlals4-eng/Base/pull/879.",
+  "verified_subject_head": "c0ca12cba81d6ee91edb582d0ca191ebc45b0528",
+  "tail_classification": "RECEIPT_ONLY_TAIL_COMMIT",
   "validation_results": {
     "baseline_planning_tests": "PASS: 5 tests before edits",
-    "candidate_planning_tests": "PASS: 8 tests after edits, including 3 new boundary/routing regressions",
+    "candidate_planning_tests": "PASS at c0ca12c: 11 planning tests, 16 long-horizon tests and 19 GPT/Codex tests (46 total), independently re-run by reviewer",
+    "reference_freshness": "PASS: 1442 files scanned, 8 changed files against source main; existing owner and direct routes discoverable without chat history",
     "pm_review_regressions": "PASS: 18 tests with PYTHONUTF8=1; initial unconfigured full run showed failures in this test group",
     "required_gate_topology": "PASS",
     "generated_artifacts": "PASS: current",
@@ -13,7 +17,7 @@
     "diff_whitespace": "PASS",
     "full_local_validation": "UNVERIFIED: first run cancelled; UTF-8 repeat on 7fd872f progressed through v9 fixtures but final output was lost at context boundary. No full-suite PASS claimed; final remote CI required.",
     "runtime_and_human": "NOT_APPLICABLE: Base document/routing correction, no game files changed",
-    "remote_ci_and_merge": "NOT_RUN"
+    "remote_ci_and_merge": "PENDING at snapshot: PR 879 created; final exact-head checks and merge/readback are recorded on that PR, not inferred from this receipt"
   },
   "adversarial_review": {
     "reviewer": "Author self-review, not independent approval",
@@ -35,7 +39,8 @@
         "long_term_fit": "Single existing owner with two direct routes; no registry/schema changes, no duplicate Blueprint, no blanket approval or game-specific UI"
       }
     ],
-    "remaining_work": "Exact-head remote CI and independent delta review after latest user clarification. Reviewer found no issues on 7fd872f; final amendment still needs targeted review. No third full review; only targeted findings and verification."
+    "independent_delta_review": "Reviewer approval_order_review checked exact c0ca12c over previously reviewed 7fd872f: no policy/code findings, 46 tests PASS. One receipt-drift finding corrected in this receipt-only tail: test counts, new owner/consumer inventory and delivery acceptance. Final tail readback required.",
+    "remaining_work": "Final receipt-only tail readback and exact-head remote CI, normal merge and postmerge readback on PR 879. No third full review; only targeted findings and verification."
   },
   "benchmark_preflight_receipt": {
     "state": "REUSED_EVIDENCE",
@@ -47,33 +52,43 @@
     }]
   },
   "context_configuration_hygiene": {
-    "scope": "Planning approval owner, planning sequence, startup checklist and regression tests only",
+    "scope": "Planning approval and LONG_HORIZON delivery owners; planning sequence, GPT/Codex handoff, startup checklist consumers; regression tests, changelog and this receipt",
     "inventory": [{
       "path": "docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md",
       "classification": "ACTIVE_OWNER",
       "owner_or_provenance": "Fresh-read main planning approval policy",
       "references_and_consumers": "PLANNING_SEQUENCE_AND_EVIDENCE_POLICY and WORK_PROJECT_START_CANON_CHECKLIST; original old worktree and output preserved; PR 844 overlaps checklist but stays read-only; PR 748 owns a separate unmerged proposal",
       "removal_proposed": false
+    }, {
+      "path": "docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md",
+      "classification": "ACTIVE_OWNER",
+      "owner_or_provenance": "Existing approved continuous execution policy, latest user whole-Blueprint delivery clarification",
+      "references_and_consumers": "PLANNING_FIRST_GRILL_ME_BATCH_POLICY, GPT_CODEX_WORKFLOW_POLICY section 1.7, WORK_PROJECT_START_CANON_CHECKLIST; existing retention skill reused without modification",
+      "removal_proposed": false
     }]
   },
   "project_work_kanban": {
-    "goal_or_slice_issue_ref": "Current conversation approved planning-design-order rule correction, 2026-09-12",
+    "goal_or_slice_issue_ref": "https://github.com/alsdmlals4-eng/Base/pull/879",
     "source_main_sha": "2f93e872d9ed4fa18018ac759b01acd7d34e9b58",
     "work_item_refs": ["PLAN-ORDER"],
     "active_work_item_ref": "PLAN-ORDER",
-    "next_action": "Re-run full validation with UTF-8 before remote integration",
+    "next_action": "Final tail readback, exact-head CI, normal squash merge and postmerge readback in PR 879",
     "work_items": [{
       "work_item_id": "PLAN-ORDER",
-      "title": "Clarify approved basic and detailed design boundary",
+      "title": "Clarify design approval and whole-Blueprint user-testable delivery",
       "status": "VERIFY_REVIEW",
       "canon_owner": "docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md",
-      "actual_consumers": ["docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md", "templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md"],
+      "actual_consumers": ["docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md", "docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md", "docs/GPT_CODEX_WORKFLOW_POLICY.md", "templates/project-operations/WORK_PROJECT_START_CANON_CHECKLIST.md"],
       "depends_on": [],
-      "acceptance_criteria": ["ORDER-01"],
+      "acceptance_criteria": ["ORDER-01", "DELIVERY-01", "CLEANUP-01"],
       "required_evidence": ["E2_TEST"],
-      "checklist": [{"id": "ORDER-01", "text": "Policy splits design around approval, preserves authority and routes consumers; regression tests pass", "status": "PASS", "evidence": ["tests/test_demo_first_planning_sequence.py: 8 tests PASS after final policy edit"]}],
-      "verification": [{"level": "E2_TEST", "status": "PASS", "evidence": ["8 planning tests and 18 UTF-8 PM regression tests PASS; full suite not completed"]}],
-      "next_action": "Full UTF-8 validation and integration gates remain pending"
+      "checklist": [
+        {"id": "ORDER-01", "text": "Basic design precedes approval; detailed design follows it without repeated routine approval", "status": "PASS", "evidence": ["11 planning contract tests PASS at c0ca12c"]},
+        {"id": "DELIVERY-01", "text": "LONG_HORIZON owner covers all approved requirements and real asset consumers through Godot verification and user-testable merge delivery; handoff and slice do not reduce scope", "status": "PASS", "evidence": ["11 planning, 16 long-horizon and 19 GPT/Codex tests PASS; independent exact-c0ca12c delta review; policy-only evidence, no game implementation claimed"]},
+        {"id": "CLEANUP-01", "text": "Existing retention gates require recoverable Desktop cleanup with hashes, restore map, real paths and protected-consumer exclusions", "status": "PASS", "evidence": ["test_delivery_cleanup_preserves_runtime_and_recoverability PASS; independent policy readback; no files moved in this Base policy task"]}
+      ],
+      "verification": [{"level": "E2_TEST", "status": "PASS", "evidence": ["46 direct contract tests independently PASS at c0ca12c; reference freshness, Base integrity and Skill coverage PASS; full local suite not claimed"]}],
+      "next_action": "See PR 879 for final tail verification, CI and publication closeout"
     }]
   }
 }
