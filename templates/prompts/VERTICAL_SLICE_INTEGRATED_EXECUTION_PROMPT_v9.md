@@ -6,7 +6,7 @@ active_authority: true
 status: ACTIVE_EXECUTION_CONTRACT
 language: ko-KR
 base_repository: "https://github.com/alsdmlals4-eng/Base"
-usage: "이 파일 하나만 첨부하면 저장소 우선 인터뷰부터 기획·Codex 인계·구현·검수·병합 후 동기화까지 현재 작업에 필요한 절차를 실행한다."
+usage: "이 파일 하나만 첨부하면 저장소 우선 인터뷰부터 기획·Codex 인계·구현·검수·병합 후 Notion/repository readback까지 현재 작업에 필요한 절차를 실행한다."
 execution_model: SINGLE_ATTACHMENT_RECONCILIATION_AWARE_INTEGRATED_EXECUTION
 legacy_contracts:
   - templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v8.md
@@ -23,8 +23,9 @@ core_policies:
   - SOURCE_CONSUMER_PROPAGATION_AUDIT
   - EVIDENCE_BEFORE_COMPLETION
   - INTERMEDIATE_VISUAL_CHECKPOINT
-  - PROJECT_SHEET_SEMANTIC_TABS
-  - VISUAL_WORKSPACE_NON_CANONICAL
+  - LEGACY_SHEET_COMPATIBILITY_MIGRATION
+  - NOTION_HUMAN_FACING_CANON
+  - REPOSITORY_STRUCTURED_CANON
   - AGENT_MERGE_REQUIRED
 ---
 
@@ -32,9 +33,11 @@ core_policies:
 
 ## 0. 사용 범위와 권한 순서
 
-이 파일은 **상세 정본과 실행 지시를 합친 단일 첨부용 통합 실행문**이다. 이 파일 하나만 첨부해도 저장소 우선 인터뷰를 시작하고, 현재 요청·프로젝트 Gate·승인 범위에 맞춰 기획, Codex 인계와 구현, 검수, GitHub 병합, 병합 후 Google Sheet 동기화까지 필요한 단계를 연결한다.
+이 파일은 **상세 정본과 실행 지시를 합친 단일 첨부용 통합 실행문**이다. 이 파일 하나만 첨부해도 저장소 우선 인터뷰를 시작하고, 현재 요청·프로젝트 Gate·승인 범위에 맞춰 기획, Codex 인계와 구현, 검수, GitHub 병합, 병합 후 repository와 적용 가능한 Notion destination readback까지 필요한 단계를 연결한다.
 
 기존 기획을 폐기하거나 새 게임을 백지에서 설계하지 않는다. 먼저 이미 진행된 프로젝트의 정본·실제 구현·결정·증거를 복원하고, 누락·부족·중복·충돌·구형 참조만 영향도에 맞게 보완한다. **첨부 사실만으로 제품 범위나 사용자 Decision을 추정·승인하지 않는다.** 현재 사용자 요청이 감사·검토만이면 그 경계에서 끝내고, 구현을 요청·승인한 경우에만 아래의 Codex 인계와 구현 단계를 연다.
+
+**승인 요청에서 사용자가 확정한 선택은 그대로 집행한다.** 그 선택을 사후 벤치마킹으로 되돌리거나 묵시적으로 대체하지 않는다. 반대로 **승인 외 변경은 벤치마킹·현업 비교·충돌·누락 조사와 적대적 검토**를 거쳐, 현재 증거와 장기 비용을 비교한 뒤에만 더 나은 안을 채택한다.
 
 권한은 아래 순서로 해석한다. 하위 자료가 상위 자료를 자동으로 덮어쓰지 않는다.
 
@@ -60,7 +63,7 @@ core_policies:
 2. `skills/PROJECT_BASE_ADAPTER.json`, `skills/PROJECT_SKILL_SNAPSHOT.json`, `.agents/skills/<project>-workflow-router/SKILL.md`.
 3. 프로젝트의 Active Context, Decision Log/Registry, 설계 문서 지도, 구현 상태, 열린 Issue/PR.
 4. 보호 경로와 실제 Godot 프로젝트 경로. 읽기·감사 단계에서는 보호된 코드·Scene·데이터·에셋을 수정하지 않는다. 후속 구현은 승인된 Issue/Goal·범위·검증 계약이 있을 때에만 보호 정책을 통과해 수행한다.
-5. Google Sheet 구성·마지막 동기화 SHA·쓰기 권한. Sheet가 없거나 읽을 수 없으면 내용을 추정하지 않고 `NOT_CONFIGURED` 또는 접근 상태만 기록한다.
+5. 정확한 `Project Notion Home`, Project relation, 관련 사람용 Flow/Visual/표와 마지막 destination readback. legacy Sheet가 **알려진 unique unmigrated material**을 가진 migration scope일 때만 source ID·상태를 읽고 `COMPATIBILITY_ONLY`로 기록한다. Sheet가 없거나 읽을 수 없어도 정상 계획·구현·Decision sync를 차단하지 않는다.
 6. 고정된 Base `release_commit`, `release_evidence_commit`, Registry raw-byte hash, 프로젝트 로컬 Registry hash.
 
 어댑터·스냅샷·router·실제 로컬 Skill 경로가 맞지 않거나 Base 핀이 검증되지 않으면 추측 실행하지 말고 실패 종료한다. `PROJECT_BASE_SKILL_ADAPTER.json`, `PROJECT_PATH_ADAPTER.json`, `BASE_V9_ADAPTER`는 생성된 호환 뷰일 뿐 수동 정본이 아니다.
@@ -69,13 +72,13 @@ core_policies:
 
 ### 기본: REPOSITORY_FIRST_INTERVIEW + INTEGRATED_DELIVERY_PROFILE
 
-첨부 직후 `APPLICATION_BINDING`을 완료하면, 기본으로 `REPOSITORY_FIRST_INTERVIEW`를 실행한다. 이 인터뷰는 프로젝트 정본·실제 구현·열린 Issue/PR·GDD Sheet 상태를 먼저 읽고, 이미 확정된 질문을 되묻지 않으며, 현재 요청을 다음 네 가지로 분류한다.
+첨부 직후 `APPLICATION_BINDING`을 완료하면, 기본으로 `REPOSITORY_FIRST_INTERVIEW`를 실행한다. 이 인터뷰는 프로젝트 정본·실제 구현·열린 Issue/PR·Project Notion Home과 관련 사람용 source를 먼저 읽고, 이미 확정된 질문을 되묻지 않으며, 현재 요청을 다음 네 가지로 분류한다.
 
 ```text
 AUDIT_ONLY                 → 읽기·감사·시각 점검·Change Plan
 PLAN_OR_DECISION           → 기획·Approval Bundle·책임 정본 갱신 제안
 IMPLEMENTATION_REQUESTED   → Issue → /plan(필요 시) → /goal → Codex 인계·구현·검수
-SYNC_OR_RELEASE_FOLLOWUP   → merged main 재조회 → 허용된 Sheet 동기화 → Gate Close
+SYNC_OR_RELEASE_FOLLOWUP   → merged main 재조회 → 적용 가능한 Notion destination readback → Gate Close
 ```
 
 `INTEGRATED_DELIVERY_PROFILE`은 `PLAN_OR_DECISION` 또는 `IMPLEMENTATION_REQUESTED`에 쓰는 기본 실행 경로다. 필요한 최소 Skill을 현재 Registry와 프로젝트 Snapshot에서 선택하고, 해당 Skill이 이후 추가·교체되어도 route·입력 정본·검증 증거가 유효하면 그대로 선택할 수 있다. 고정된 Skill 이름 목록이나 과거 Prompt의 절차 목록으로 제한하지 않는다.
@@ -83,9 +86,10 @@ SYNC_OR_RELEASE_FOLLOWUP   → merged main 재조회 → 허용된 Sheet 동기�
 ```text
 허용: 저장소 우선 인터뷰, 기획, Approval Bundle, GitHub Issue, /plan(필요 시),
       /goal, Codex 구현 인계, 승인된 범위의 정본/제품 변경, 테스트·Godot 검증,
-      독립 리뷰·적대적 검토, 필수 Gate 통과 뒤 병합, merged main 기준 Sheet 동기화와 재조회
+      독립 리뷰·적대적 검토, 필수 Gate 통과 뒤 병합, merged main 기준 repository·Notion readback
 금지: 요청·승인·Issue/Goal 없이 제품 범위를 발명하는 구현, 보호 경로 우회,
-      브랜치 SHA를 CURRENT로 기록하는 Sheet 쓰기, Sheet 단독 변경의 자동 정본 승격,
+      legacy Sheet/Figma를 새 default workspace·write target·동기화 Gate로 복원,
+      legacy Sheet 단독 변경의 자동 정본 승격,
       실제 증거 없는 런타임·사람·기기 검증 완료 주장
 ```
 
@@ -96,7 +100,7 @@ SYNC_OR_RELEASE_FOLLOWUP   → merged main 재조회 → 허용된 Sheet 동기�
 3. GitHub Issue와 `/goal Implement GitHub Issue #[NUMBER] exactly as specified.`가 있으며, 다중 파일·고위험·모호한 작업은 그 전에 `/plan`을 작성했다.
 4. 영향받는 소비처, 보호 경로, 수용 기준, 자동·Godot 수동 검증과 문서 갱신 책임이 구현 계약에 있다.
 
-구현 PR이 main에 병합된 **뒤에만** GitHub main SHA와 실제 구현을 다시 읽는다. Sheet 쓰기는 `PROJECT_SHEET_CONFIGURED`이고 정확한 spreadsheet URL·ID·쓰기 권한·대상 tab·변경 range를 구현 직전에 재확인한 경우에만 허용한다. 이때 `00_프로젝트_허브`, `04_누락_충돌_감사`, `05_GDD_요약`, `99_변경이력` 같은 해당 프로젝트의 **계약된 tab·range만** 갱신하고 전후 값을 즉시 재조회한다. Sheet 단독 편집은 언제나 `PROPOSED_SHEET_CHANGE`이며 GitHub 정본을 자동으로 덮어쓰지 않는다.
+구현 PR이 main에 병합된 **뒤에만** GitHub main SHA와 실제 구현을 다시 읽고, 사람이 봐야 하는 변화는 적용 가능한 Project Notion destination에 반영한 뒤 `Notion destination readback`으로 확인한다. legacy Sheet 단독 변경은 언제나 `PROPOSED_SHEET_CHANGE`이며, unique material이 실제로 남아 있을 때만 repository 또는 Notion owner로 이관 → destination readback → `UNIQUE / DUPLICATE / OBSOLETE` 수명주기 판정을 한다. Sheet가 존재한다는 사실만으로 새 write나 active sync를 요구하지 않는다.
 
 ### RECONCILIATION_PLANNING_PROFILE
 
@@ -110,7 +114,8 @@ SYNC_OR_RELEASE_FOLLOWUP   → merged main 재조회 → 허용된 Sheet 동기�
 ```text
 허용: 정본 복원, 비교, 무결성 검사, 시각 시뮬레이션, Finding/Change Plan/Issue 초안
 금지: 게임 코드·Scene·데이터·에셋 수정, 승인 Decision 변경, 정본 덮어쓰기,
-      Google Sheet 쓰기, 제품 범위 PR 병합, 성숙도/런타임 증거의 근거 없는 상승
+      legacy Sheet/Figma의 normal write 또는 active authority 복원, 제품 범위 PR 병합,
+      성숙도/런타임 증거의 근거 없는 상승
 ```
 
 이 프로필 자체를 담는 문서·계약·감사 산출물의 PR은 허용된다. 구현·정본 변경은 사용자 Decision과 별도 승인 묶음의 후속 Change Plan으로 분리한다. 감사 결과가 구현 조건을 충족하면 같은 단일 첨부 계약 안에서 `INTEGRATED_DELIVERY_PROFILE`로 전환할 수 있으며, 새 첨부나 별도 축약 Prompt를 요구하지 않는다.
@@ -121,17 +126,17 @@ SYNC_OR_RELEASE_FOLLOWUP   → merged main 재조회 → 허용된 Sheet 동기�
 
 ## 3. 단일 첨부 통합 실행 루프
 
-1. `APPLICATION_BINDING` — 적용 대상, Base 핀, 보호 경계, Sheet 상태를 확정한다.
+1. `APPLICATION_BINDING` — 적용 대상, Base 핀, 보호 경계, Project Notion Home/repository owner와 필요한 legacy compatibility 상태를 확정한다.
 2. `REPOSITORY_FIRST_INTERVIEW` — 요청을 정본·실제 구현·진행 상태에 대조하고, 범위·결정·다음 Gate를 확인한다. 필요한 질문만 한 번에 묻는다.
 3. `PROFILE_SELECTION` — 감사만 필요한 경우 `RECONCILIATION_PLANNING_PROFILE`, 그 밖에는 `INTEGRATED_DELIVERY_PROFILE`을 선택한다.
 4. `BASELINE_RECOVERY` + `DUPLICATE_OMISSION_CONFLICT_AUDIT` — 필요한 깊이만큼 기존 정본·실제 파일·결정·증거를 복원하고 Finding Ledger를 만든다.
 5. `EVIDENCE_PACK` + `APPROVAL_BUNDLE` — Git SHA, 검증 상태, 소스 링크, 가정·미결정과 변경 책임·범위·수용 기준을 묶는다. 이미 확정된 질문은 다시 묻지 않는다.
 6. `PLAN_AND_CODEX_HANDOFF` — 구현이 요청·승인되면 Issue → `/plan`(필요 시) → `/goal` → 구현 계약을 만든다. 요청이 감사뿐이면 Change Plan과 다음 사용자 Decision으로 끝낸다.
 7. `CANONICAL_UPDATE_AND_IMPLEMENTATION` — 승인된 Issue/Goal 범위에서만 책임 정본과 Godot 구현을 최소 변경한다. 첫 감사 파동에서는 Change Plan만 만든다.
-8. `PROPAGATION_AUDIT` — 변경된 정본의 Sheet, 시각 자료, Skill, Issue, 구현 계약, 테스트 소비처를 재조회한다.
+8. `PROPAGATION_AUDIT` — 변경된 repository/Notion 정본, 시각 자료, Skill, Issue, 구현 계약, 테스트 소비처를 재조회한다.
 9. `VALIDATION` — 정적 검사, 관련 테스트, Godot headless/사람/기기 증거를 분리해 실행 또는 `NOT_RUN`으로 기록한다.
-10. `INDEPENDENT_REVIEW` — 코드리뷰와 적대적 검토로 권한 원본 중복, Base/프로젝트 책임 침범, 보호 경로 변경, Sheet 무단 덮어쓰기, 근거 없는 성숙도 상승을 확인한다.
-11. `MERGE_AND_SYNC` — 필수 Gate가 통과하면 병합하고, 병합된 main을 기준으로만 허용된 Sheet 동기화와 재조회를 실행한다.
+10. `INDEPENDENT_REVIEW` — 코드리뷰와 적대적 검토로 권한 원본 중복, Base/프로젝트 책임 침범, 보호 경로 변경, legacy surface 부활, 근거 없는 성숙도 상승을 확인한다.
+11. `MERGE_AND_SYNC` — 필수 Gate가 통과하면 병합하고, 병합된 main을 기준으로만 repository와 적용 가능한 Notion destination을 재조회한다.
 12. `GATE_CLOSE` — Critical Gate와 P0/P1을 별도로 판정하고, 다음 작업·미검증·보류를 남긴다. 평균 점수로 차단 문제를 가리지 않는다.
 
 ## 4. 필수 복원·감사 산출물
@@ -147,7 +152,7 @@ SYNC_OR_RELEASE_FOLLOWUP   → merged main 재조회 → 허용된 Sheet 동기�
 | Vertical Slice Readiness + Critical Gate | 플레이어 경험, 대표 화면, 검증 증거, 차단 Gate | 준비도 판정 |
 | Approval Bundle + Change Plan | 승인 질문, 최소 변경, 제외 범위, 수용 기준, rollback | 후속 구현 계약 |
 
-`P0`/`P1`, 보호 경로 변경, Sheet 무단 덮어쓰기, 근거 없는 성숙도 상승은 병합 후보가 아니다. `P2`/`P3`는 영향·소유자·다음 Gate를 남긴다.
+`P0`/`P1`, 보호 경로 변경, legacy surface의 무단 활성화, 근거 없는 성숙도 상승은 병합 후보가 아니다. `P2`/`P3`는 영향·소유자·다음 Gate를 남긴다.
 
 ## 5. Skill 선택과 책임 경계
 
@@ -173,7 +178,7 @@ Skill을 고정 이름 목록으로 실행하지 않는다. 현재 Registry와 �
 UI를 포함한 화면으로 보여줘
 ```
 
-현재 정본만 입력으로 사용해 **한 화면 흐름**의 예상 플레이 화면을 시뮬레이션한다. 이미지 생성 도구와 생성 권한이 있으면 `DRAFT_VISUAL` 이미지를 만들고, 없으면 같은 정보의 Screen Brief·텍스트 와이어프레임·Mermaid·Figma 대체안을 만든다. 도구 부재는 실패가 아니다.
+현재 정본만 입력으로 사용해 **한 화면 흐름**의 예상 플레이 화면을 시뮬레이션한다. 이미지 생성 도구와 생성 권한이 있으면 `DRAFT_VISUAL` 이미지를 만들고, 없으면 같은 정보의 Screen Brief·텍스트 와이어프레임·Mermaid·Notion visual/flow 대체안을 만든다. 도구 부재는 실패가 아니다.
 
 ### Screen Brief 필수 입력
 
@@ -188,7 +193,7 @@ UI를 포함한 화면으로 보여줘
 
 ### 결과의 권한과 검토
 
-생성물은 `DRAFT_VISUAL` 기획 검토 자료다. 그것은 최종 게임 리소스, 저작권·라이선스 승인, Figma 구현 명세, Godot 구현 완료, 런타임/사람 검증 증거를 의미하지 않는다.
+생성물은 `DRAFT_VISUAL` 기획 검토 자료다. 그것은 최종 게임 리소스, 저작권·라이선스 승인, 구현 명세 확정, Godot 구현 완료, 런타임/사람 검증 증거를 의미하지 않는다.
 
 직후 `Screen Interpretation Review`를 작성한다.
 
@@ -200,19 +205,18 @@ UI를 포함한 화면으로 보여줘
 
 사용자 Decision 없이는 이미지를 정본으로 승격하거나 구현 범위를 바꾸지 않는다. 사용자가 고른 결과만 Visual Artifact Registry에 책임 문서·Decision ID·스냅샷·링크와 함께 `APPROVED_VISUAL_REFERENCE` **후보**로 기록한다.
 
-## 7. Figma·Whimsical·Mermaid·Sheets의 다중 작업면
+## 7. Notion·Mermaid와 legacy compatibility surface의 경계
 
-이 도구들은 GDD 내부와 외부 협업 모두에서 쓸 수 있다. 용도를 GDD 안으로 제한하지 않으며, 필요 없는 도구를 강제하지도 않는다.
+현재 사람용 작업면은 `NOTION_HUMAN_FACING_CANON`, 구조화·구현 사실은 `REPOSITORY_STRUCTURED_CANON`/runtime owner다. Mermaid 같은 source-derived flow는 Project Notion Home에서 사람에게 직접 보이는 흐름/시스템 표현을 지원할 수 있지만, 규칙·수치·runtime proof를 소유하지 않는다.
 
 ```text
-Whimsical / Mermaid → 루프, 관계, 분기, 여정, 작업 의존성
-Figma → 화면, 정보 위계, 컴포넌트 상태, 프로토타입, 구현 기준 스냅샷
-Google Sheets → 사람이 읽는 요약, 링크, 상태, 검토/수정 작업면
-GitHub Markdown·JSON → 규칙, 승인 결정, 구현 계약, 변경 이력의 정본
+Notion Project Home / Flow / Visual / human table → 사람이 읽고 비교·수정하는 현재 표현
+Mermaid / source-derived flow → 루프, 관계, 분기, 여정, 시스템 맵의 보조 표현
+GitHub Markdown·JSON → 규칙, 승인 결정, 구현 계약, 변경 이력의 structured canon
 Godot + tests → 실제 구현과 검증 증거
 ```
 
-Sheet에는 요약·링크·상태만 기록한다. 상세 규칙·수치·스키마·승인 결정·테스트 결과를 시각 도구나 Sheet에만 남기지 않는다. Sheet 단독 편집은 `PROPOSED_SHEET_CHANGE`이다. `RECONCILIATION_PLANNING_PROFILE`에서는 읽기 전용이며, `INTEGRATED_DELIVERY_PROFILE`에서는 병합된 main 재조회 뒤에만 계약된 범위를 동기화한다.
+Google Sheets와 Figma는 migration-only historical surface다. 기존 Figma·Whimsical·Google Sheets에 unique material이나 사용자가 제공한 reference가 있을 때만 `COMPATIBILITY_ONLY` / `REFERENCE_ONLY`로 분류하고, 올바른 Notion 또는 repository owner에 이관한 뒤 destination readback한다. 새로 생성·작성·동기화·필수 Gate로 요구하지 않으며, legacy Sheet 단독 변경은 언제나 `PROPOSED_SHEET_CHANGE`다.
 
 ## 8. Vertical Slice 계약과 검증 증거
 
@@ -240,7 +244,7 @@ Intent → Player Experience → Scope → Implementation Contract → Verificat
 
 ## 10. 완료 보고와 후속 Change Plan
 
-감사 전용 파동의 완료는 “감사 결과, 중간 시각화 검토, 승인 가능한 보완 계획이 책임 정본에 연결됨”이다. `INTEGRATED_DELIVERY_PROFILE`의 완료는 이보다 더 나아가 승인된 기획·Codex 인계·구현·검수·병합 후 동기화까지, **이번 요청에 실제로 포함된 단계**의 증거를 남긴 상태다. 실행하지 않은 게임 구현·런타임·사람 검증을 주장하지 않는다.
+감사 전용 파동의 완료는 “감사 결과, 중간 시각화 검토, 승인 가능한 보완 계획이 책임 정본에 연결됨”이다. `INTEGRATED_DELIVERY_PROFILE`의 완료는 이보다 더 나아가 승인된 기획·Codex 인계·구현·검수·병합 후 repository와 적용 가능한 Notion destination readback까지, **이번 요청에 실제로 포함된 단계**의 증거를 남긴 상태다. 실행하지 않은 게임 구현·런타임·사람 검증을 주장하지 않는다.
 
 완료 보고는 다음을 구분한다.
 
@@ -250,4 +254,4 @@ Intent → Player Experience → Scope → Implementation Contract → Verificat
 - **Assumed / Undecided:** 사용자 Decision 또는 외부 증거가 필요한 항목.
 - **Recommended next action:** P0/P1 해소, 별도 Issue, 다음 Gate.
 
-모든 후속 Change Plan은 변경 대상·제외 범위·소비처·테스트·Godot 수동 검증·Sheet 후속 동기화 조건을 포함한다.
+모든 후속 Change Plan은 변경 대상·제외 범위·소비처·테스트·Godot 수동 검증·repository/Notion readback 조건과, 적용 시 legacy migration 경계를 포함한다.

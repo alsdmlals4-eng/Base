@@ -92,7 +92,7 @@ Google Sheets는 `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL` source다. Figma·
 | UI/UX 설계·폴리싱·감사 | `skills/auditing-and-refining-ui-art/SKILL.md` | `auditing-and-refining-ui-art`가 UI 설계·폴리싱·실제 화면 감사를 소유하고 `ui-motion-and-interaction-principles.md`를 조건부 reference로 사용 |
 | AI instruction/context | `docs/knowledge/ai/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md` | instruction authority·context curation·example/fixture·HARD_CONSTRAINT 설계 |
 | AI model/prompt cost | `skills/optimizing-ai-model-and-prompt-costs/SKILL.md` | `optimizing-ai-model-and-prompt-costs`가 model recommendation·effort routing·prompt caching·provider/cost boundary를 소유 |
-| 게임 시스템·난이도·전투 AI | `skills/analyzing-and-refining-game-concepts/SKILL.md`, `docs/knowledge/game-development/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md` | `system-design` / `difficulty-and-combat-ai` mode, 난이도 장벽·공정성·attack/threat budget |
+| 게임 시스템·난이도·전투 AI | `skills/analyzing-and-refining-game-concepts/SKILL.md`, `templates/planning/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md` | `system-design` / `difficulty-and-combat-ai` mode, 난이도 장벽·공정성·attack/threat budget |
 | creative benchmark / reuse | `docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md`, `docs/knowledge/game-development/reuse/REUSABLE_MODULE_REGISTRY.md` | multi-source 원리 추출, originality/fun/creativity hypothesis, module contract와 project-specific synthesis |
 | 게임 개발 knowledge hub | `docs/knowledge/game-development/README.md` | 기획·아트·개발·AI·research·release Guide routing |
 | 게임 개발 Evidence Pack | `templates/research/GAME_DEVELOPMENT_EVIDENCE_PACK.md` | 외부 근거·범위·검증 상태의 공용 조사 packet |

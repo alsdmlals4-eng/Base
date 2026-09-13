@@ -19,7 +19,9 @@ unresolved_thread_count:
 p0_p1_finding_count:
 merge_commit:
 merged_main_readback: NOT_RUN | PASS | FAIL
-sheet_status: NOT_CONFIGURED | APPROVED_PENDING_MERGE | SYNCED_TO_MAIN | BLOCKED_UNVERIFIED
+notion_sync_status: NOT_CONFIGURED | APPROVED_PENDING_MERGE | NOTION_UPDATED | SYNCED_TO_MAIN | BLOCKED_UNVERIFIED
+notion_readback: NOT_CONFIGURED | NOT_RUN | PASS | FAIL | BLOCKED_UNVERIFIED
+legacy_sheet_migration_status: NOT_PRESENT | UNMIGRATED_UNIQUE_MATERIAL | MIGRATED_READBACK_VERIFIED | ARCHIVED_APPROVED | BLOCKED_UNVERIFIED
 updated_at:
 ```
 
@@ -34,7 +36,7 @@ updated_at:
 
 ## 결정 분류
 
-| Decision ID | 질문·항목 | 분류 | GPT 권장안 | 사용자 승인 | Branch Commit | 정본 위치 | Sheet 상태 |
+| Decision ID | 질문·항목 | 분류 | GPT 권장안 | 사용자 승인 | Branch Commit | 정본 위치 | Notion 상태 |
 |---|---|---|---|---|---|---|---|
 
 분류:
@@ -57,7 +59,8 @@ PLANNING_CONFLICT / USER_DECISION_REQUIRED / GRILL_ME_REQUIRED
 - [ ] 사용자 답변 원문과 동일 Decision ID를 GitHub 추적 surface에 기록했다.
 - [ ] 활성 배치 Branch의 `CURRENT_CONFIRMED_DECISIONS`와 분야 책임 원본을 갱신했다.
 - [ ] Decision별 논리 Commit을 만들었다.
-- [ ] 구성된 Sheet를 `APPROVED_PENDING_MERGE`로 갱신하고 재조회했다.
+- [ ] 적용 가능한 Notion destination을 `APPROVED_PENDING_MERGE`로 갱신하고 readback했다.
+- [ ] legacy Sheet가 unique material을 가질 때만 `COMPATIBILITY_ONLY` migration 상태를 기록했다.
 - [ ] 병합 전 main 동기화 완료를 주장하지 않았다.
 
 ## 체크포인트 판정
@@ -105,7 +108,8 @@ MUST_FIX / SHOULD_FIX / OPTIONAL / REJECTED_CRITIQUE / BLOCKED_UNVERIFIED
 - [ ] 저장소로 답할 사실을 사용자에게 묻지 않았는가?
 - [ ] 배치가 자기완결 검토 단위를 넘지 않았는가?
 - [ ] 승인 내용이 대화 메모리에만 남지 않았는가?
-- [ ] Sheet가 병합 전 main 동기화를 주장하지 않았는가?
+- [ ] Notion destination이 병합 전 main 동기화를 주장하지 않았는가?
+- [ ] legacy Sheet가 `COMPATIBILITY_ONLY`를 벗어나 active authority로 복원되지 않았는가?
 - [ ] 같은 Goal에 여러 활성 PR이 생기지 않았는가?
 - [ ] 적대적 검토가 반대를 위한 반대가 되지 않았는가?
 
@@ -124,15 +128,17 @@ MUST_FIX / SHOULD_FIX / OPTIONAL / REJECTED_CRITIQUE / BLOCKED_UNVERIFIED
 merge_commit:
 merged_main_readback:
 canonical_readback:
-sheet_readback:
+notion_readback:
+legacy_sheet_migration_status:
 final_state: SYNCED_TO_MAIN | BLOCKED_UNVERIFIED
 ```
 
 - [ ] squash merge 결과와 merged main SHA를 재조회했다.
 - [ ] GitHub 정본의 Decision ID·결정·대체 관계를 재조회했다.
-- [ ] Sheet의 `APPROVED_PENDING_MERGE` 행을 merge Commit으로 갱신했다.
-- [ ] Sheet 행을 재조회했다.
-- [ ] GitHub main과 Sheet가 일치할 때만 `SYNCED_TO_MAIN`으로 판정했다.
+- [ ] 적용 가능한 Notion destination의 `APPROVED_PENDING_MERGE` projection을 merge Commit으로 갱신했다.
+- [ ] Notion destination을 재조회했다.
+- [ ] GitHub main과 Notion destination이 일치할 때만 `SYNCED_TO_MAIN`으로 판정했다.
+- [ ] legacy Sheet가 unique material을 가진 경우에만 `COMPATIBILITY_ONLY` 이관·readback 상태를 남겼다.
 
 ## 증거 한계
 
