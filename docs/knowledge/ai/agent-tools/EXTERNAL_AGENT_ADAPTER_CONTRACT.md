@@ -10,6 +10,7 @@
 - `RAW_OUTPUT_FALLBACK_REQUIRED`
 - `SOURCE_MODEL_VERSION_RECEIPT`
 - `A_B_EVIDENCE_REQUIRED`
+- `EVAL_RESOURCE_ENVELOPE_REQUIRED`
 - `NO_HIDDEN_BILLING`
 - `NO_PLAINTEXT_SECRET_OR_PROMPT_LOGGING`
 - `BOUNDED_RETRY`
@@ -103,9 +104,12 @@ Each invocation that can affect a decision or change must record, when applicabl
 - repository and project revision;
 - permission policy and telemetry state;
 - start/end timestamps, child and adapter exit statuses, retries, and output locator;
-- deterministic verification command, expected coverage, and result.
+- deterministic verification command, expected coverage, and result;
+- for a resource-sensitive evaluation, the runner/hardware identity, guaranteed CPU/RAM, hard limit / kill threshold, wall-clock timeout, concurrency, egress/network policy, and relevant cache/warm-state conditions.
 
 `MODEL_NOT_APPLICABLE_FOR_DETERMINISTIC_TOOL`: a local deterministic output filter has no inference model. Record `model: NOT_APPLICABLE` with the reason instead of inventing a model or treating its absence as unknown. Apply the same explicit not-applicable distinction to endpoints or accounts that the operation genuinely does not use.
+
+`RESOURCE_ENVELOPE_NOT_APPLICABLE`: an operation may record the evaluation resource envelope as `NOT_APPLICABLE` only when its completion, correctness, fidelity, and comparison outcome cannot materially depend on runtime resource headroom under the tested workload. Determinism of the algorithm does not by itself establish resource insensitivity; a deterministic transform over a large capture can still OOM, time out, or truncate under a tighter envelope. Record the sensitivity rationale, and do not invent CPU/RAM or network values that were not observable.
 
 An unknown tool/version or an unknown model/provider that the operation actually uses permits disposable exploration only. It blocks promotion, mutation, approval, and completion claims until the required identity is established.
 
@@ -145,17 +149,21 @@ Ambiguous retention, auth, or telemetry blocks mutation and canon-impacting use.
 
 `A_B_ISOLATED_EQUIVALENT_STATE`: record a `starting_state_hash` or equivalent immutable input identity for both arms. Use separate disposable workspaces, resettable external fixtures, and equivalent model/configuration/permission budgets so one arm's mutations, learned context, or warm cache cannot silently become the other's starting state. Keep one intentional treatment difference: the evaluated adapter/package. Declare order and cache conditions, control or counterbalance them when material, and use predeclared acceptance criteria. For a pure deterministic text filter, two copies of the same captured immutable input may replace separate workspaces; record why no mutable environment exists. Neither arm may modify canonical project state to obtain the comparison.
 
+`RESOURCE_ENVELOPE_IS_EVAL_IDENTITY`: for resource-sensitive agentic evaluations, runtime infrastructure is part of the test identity rather than neutral background. Match or explicitly record both arms' runner/hardware identity, guaranteed CPU/RAM and separate hard limit / kill threshold, wall-clock timeout, concurrency, egress/network policy, and cache/warm-state conditions. Comparative attribution to the adapter requires materially equivalent resource envelopes or a predeclared counterbalanced/randomized assignment that lets the resource effect be separated from the adapter effect. If that is unavailable, the result is `ENVIRONMENT_CONDITIONED_NON_COMPARATIVE`: it may describe that exact environment but cannot establish an adapter win. `FIXED_RESOURCE_CONFOUNDING_IS_NOT_CURED_BY_REPEATS`: repeating the same consistently confounded assignment only measures that confounded setup more precisely. `NO_BENCHMARK_SPECIFIC_RESOURCE_THRESHOLDS`: do not promote an upstream benchmark's numeric resource multiplier, infrastructure-error cutoff, score-difference threshold, or similar benchmark-specific tuning rule into a Base-wide constant.
+
+`FAILURE_CLASSIFICATION_IS_CAUSAL` / `INFRA_FAILURE_IS_NOT_TASK_FAILURE`: classify by cause, not termination signature. OOM, container/pod termination, timeout, runner loss, dependency/network outage, and comparable events count as infrastructure failures only when the harness/provider failed to deliver the declared envelope or an external infrastructure fault caused the termination. If the declared envelope was delivered and the agent's chosen strategy exceeded its predeclared hard limit or wall-clock budget, record a valid task/resource-efficiency failure. When cause cannot be established, record `FAILURE_CAUSE_UNVERIFIED` and keep the event out of capability-success attribution until it is resolved or the uncertainty is explicitly bounded. A reduced infra failure count/rate can improve observed success without proving the model or adapter itself became more capable. Conversely, extra headroom can change which solution strategies are feasible, so resource changes that alter the effective task are a treatment change, not a reliability-only correction.
+
 Compare the raw Base-owned path against the adapter on representative bounded tasks. Record:
 
 - equivalent input and exact revision;
 - task success and deterministic verification;
 - total input/output tokens where measurable and the measurement method;
 - elapsed time and operator interventions;
-- retries, crashes, and fallback frequency;
+- retries, crashes, fallback frequency, and infra failure count/rate separated causally from task/resource-efficiency failures and `FAILURE_CAUSE_UNVERIFIED`;
 - false positives, false negatives, omissions, and altered evidence;
 - marginal cost and exposed data classes.
 
-`TRIAL_EVIDENCE_PRECEDES_ACTIVATION`: only repeated meaningful net benefit, no authority drift or material information loss, and the existing project adoption decision permit `ADOPTED_ACTIVE`. A failed or incomplete trial remains deferred/rejected or trial-scoped; installation or a successful smoke test is not activation. Keep the baseline path operational after promotion.
+`TRIAL_EVIDENCE_PRECEDES_ACTIVATION`: only repeated meaningful net benefit under a valid comparative design, no authority drift or material information loss, and the existing project adoption decision permit `ADOPTED_ACTIVE`. Environment-conditioned non-comparative observations cannot by themselves establish adapter benefit. A failed or incomplete trial remains deferred/rejected or trial-scoped; installation or a successful smoke test is not activation. Keep the baseline path operational after promotion.
 
 ## 10. Kill switch and rollback
 
@@ -234,6 +242,7 @@ Before a bounded trial, confirm:
 - proposed argument-array/no-shell, timeout, output cap, retry, exit-status, capture, and task-owned termination controls;
 - source/model/version applicability, measurement kinds, cost limits, and secret/telemetry policy;
 - isolated equivalent starting states, predeclared criteria, a disposable safety test plan, raw fallback, kill switch, and provider-independent rollback;
+- for resource-sensitive evaluations, an explicit resource envelope, causal infra-vs-task/resource-efficiency failure classification, and a valid comparative design; if resource assignment is fixed/confounded, keep evidence environment-conditioned and non-comparative;
 - valid existing authorization, or new approval only where scope/risk actually changes.
 
 Before project activation, require actual safety/fallback/rollback results, representative A/B evidence, implemented applicable receipts, and the project's recorded adoption decision. Documentation checks do not prove these runtime controls are implemented. Do not require completed A/B measurements as a prerequisite to the very trial that will obtain them.
