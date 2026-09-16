@@ -215,6 +215,18 @@ def expected_results(cases: list[dict]) -> list[dict]:
 
 
 class SkillBehaviorCoverageTests(unittest.TestCase):
+    def test_lettering_ui_and_reuse_cases_have_distinct_actual_coverage(self) -> None:
+        checker = load_checker()
+        registry = checker.load_json(ROOT / "skills/SKILL_REGISTRY.json")
+        entries = {entry["skill_id"]: entry for entry in registry["skills"] if entry["status"] == "ACTIVE"}
+        cases = checker.load_eval_set(ROOT)["cases"]
+        coverage = checker.behavior_coverage(entries, cases)
+        self.assertGreaterEqual(coverage["designing-game-lettering"]["primary"], 2)
+        self.assertGreaterEqual(coverage["designing-game-lettering"]["forbidden"], 1)
+        indexed = {case["case_id"]: case for case in cases}
+        self.assertEqual("auditing-and-refining-ui-art", indexed["SBE-961"]["expected_primary_skill"])
+        self.assertEqual("evolving-project-discipline-skills", indexed["SBE-962"]["expected_primary_skill"])
+
     def setUp(self) -> None:
         self.checker = load_checker()
         self.builder = load_builder()

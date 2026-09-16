@@ -9,6 +9,18 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class SkillBehaviorGovernanceIntegrationTests(unittest.TestCase):
+    def test_lettering_regression_is_a_recognized_skill_change_companion(self) -> None:
+        config = json.loads((ROOT / ".github/reference-freshness.json").read_text(encoding="utf-8"))
+        rules = {rule["name"]: rule for rule in config["coupled_change_rules"]}
+        for name in (
+            "local-skill-contract-learning-test-sync",
+            "skill-identity-registry-sync",
+            "skill-description-learning-test-sync",
+            "registry-structure-test-sync",
+        ):
+            with self.subTest(rule=name):
+                self.assertIn("tests/test_skill_creator_lettering.py", rules[name]["require_any_changed"])
+
     def test_skill_behavior_eval_contract_names_complete_evidence_surfaces(self) -> None:
         skill = (ROOT / "skills/evolving-project-discipline-skills/SKILL.md").read_text(encoding="utf-8")
         for token in (

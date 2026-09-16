@@ -77,6 +77,16 @@ def behavior_case(case_id: str, primary: str, forbidden: str) -> dict:
 
 
 class SkillImplementationEvidenceTests(unittest.TestCase):
+    def test_lettering_and_creator_bridge_have_current_executable_evidence(self) -> None:
+        builder = load_builder()
+        self.assertEqual([], builder.validate_evidence_index(ROOT))
+        markdown = builder.build_evidence_markdown(ROOT)
+        for skill_id in ("designing-game-lettering", "evolving-project-discipline-skills"):
+            row = next(line for line in markdown.splitlines() if line.startswith(f"| `{skill_id}`"))
+            self.assertIn("EXECUTABLE_EVIDENCE", row)
+            self.assertIn("tests/test_skill_creator_lettering.py", row)
+        self.assertIn("External model behavior run: `NOT_RUN`", markdown)
+
     def test_builder_and_generated_evidence_exist(self) -> None:
         self.assertTrue(BUILDER_PATH.is_file())
         self.assertTrue(GENERATED_PATH.is_file())

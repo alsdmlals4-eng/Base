@@ -10,6 +10,7 @@
 - 근거: 내장 `skill-creator`, OpenAI Build skills, SIL OFL FAQ, Adobe kerning/tracking, 사용자 제공 레터링 강의. 강의의 OFL 제한 일반화는 채택하지 않았다.
 - 보호: immutable release artifacts, 다른 PR/worktree, 개별 게임 자산·버전·설정. 게임 Pilot/새 로고 제작/runtime/사용자 최종 아트 승인은 `NOT_RUN`.
 - 다음 trigger: 일반 UI 오선택, creator 미제공 fallback 실패, native 설치와 Base 등록 혼동, 편집 원본 허위 주장 또는 프로젝트가 실제 레터링 제작을 시작할 때.
+- 검토 교정: 평가 mode 변경 후 파생 digest를 재생성했다. 원격 CI에서 발견한 새 test의 companion 등록 누락·focused learning 연결을 보완하고, 무관한 활성 Skill 수 30 고정 검사는 기존 claim owner의 유일성 검사로 교체한다. 2회차의 creator 미제공 시 필수 검사 모순은 수동 경로의 Base 검사와 creator NOT_RUN을 분리해 교정한다. 회차별 exact revision·실행 결과는 current-task PR #882에 기록한다.
 
 ## 2026-09-16 — Visible approval brief and file-based context selection
 

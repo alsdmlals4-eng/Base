@@ -22,7 +22,7 @@
 2. 승인된 목적, trigger/비사용 조건, 기존 owner, 실제 입력/산출물, consumer, 검증/복구와 보호 범위를 제작 입력으로 준다. 이름만 다른 creator를 Base에 만들지 않는다.
 3. 미제공이면 `CREATOR_UNAVAILABLE`로 명시하고 이 Skill의 수동 패키지 작성·등록 경로를 사용한다. 설치/유료 API/외부 plugin을 자동 추가하지 않는다. creator 사용 여부와 패키지 구현 여부를 따로 보고한다.
 4. 반복 코드는 실행 가능한 helper로, 상세 제작법은 직접 연결된 조건부 reference로 둔다. 기존 책임 문서를 복제하거나 설명문을 모든 프로젝트에 배포하지 않는다.
-5. creator의 구조 검사와 Base의 Registry·coverage·구현 증거·참조 검사를 모두 실행한다. 실제 모델 행동, 도구 실행, 프로젝트 Pilot, runtime은 별도 증거다.
+5. creator가 제공되면 그 구조 검사를 실행하고, 모든 경로에서 Base의 Registry·coverage·구현 증거·참조 검사를 실행한다. 미제공이면 `CREATOR_UNAVAILABLE`, creator 검사 `NOT_RUN`을 기록하고 수동 작성 패키지를 Base 검사로 검증한다. creator 검사를 통과했다고 주장하지 않는다. 실제 모델 행동, 도구 실행, 프로젝트 Pilot, runtime은 별도 증거다.
 
 ## 범위·발견·배포
 

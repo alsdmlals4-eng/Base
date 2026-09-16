@@ -1,5 +1,12 @@
 # Evolving Project Discipline Skills — Focused Learning Log
 
+## 2026-09-16 — Reuse the available creator without duplicate installation
+
+- 상태: `OBSERVATION`; 승인 범위·대안·RED evidence와 아트 경계는 `skills/SKILL_LEARNING_LOG.md`의 같은 날짜 Creator reuse and game lettering 항목이 소유한다.
+- 새 경로: [반복 작업과 Skill Creator](references/repeated-work-and-skill-creator.md). 절차·모듈·설정·독립 Skill을 분리하고, host의 실제 creator를 재사용한다. 미제공 수동 경로에서 creator 검사만 `NOT_RUN`이며 Base 검사는 유지한다.
+- 검증 교훈: 새 전용 회귀 파일도 reference-freshness companion에 연결해야 한다. 평가/구현 증거 변경은 기존 hardening·governance·boundary·generated evidence consumer와 함께 확인한다.
+- 다음 확인: 프로젝트 최초 적용과 실제 모델 행동은 별도 증거이며, 구조 검사만으로 native 자동 설치·사용량 절감·프로젝트 품질을 주장하지 않는다.
+
 ## 2026-08-22 — Verified fixes need recurrence and negative cases before proactive promotion
 
 - **Trigger:** high-nutrient Source scan에서 `leigest519/OpenGame/agent-test/debug-skill`의 living debug protocol을 확인했다. 외부 구현은 관찰된 오류의 signature·root cause·verified fix를 누적하고 반복 패턴을 proactive validation으로 일반화한다.
