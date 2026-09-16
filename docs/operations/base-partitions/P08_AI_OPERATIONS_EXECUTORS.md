@@ -2,95 +2,46 @@
 
 ## 목적
 
-P08은 AI instruction/context, model/cost routing, 외부 executor, Codex handoff, worktree 격리와 실행 재수화의 semantic owner다.
+P08은 AI instruction/context, model/cost routing, 선택적 외부 executor, worktree 격리와 실행 재수화의 semantic owner다. 역할 판단은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`의 통합 실행 계약을 따른다.
 
 ## 현재 역할 계약
 
 ```text
-GPT_NONCODING_PROJECT_OWNER
-GPT_BASE_NOTION_GOVERNANCE_OWNER
-CODEX_GAME_PRODUCT_IMPLEMENTATION_OWNER
-CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER
-CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR
+UNIFIED_WORK_EXECUTION
+CAPABILITY_BASED_EXECUTOR_SELECTION
 CHAT_QUICK_DISCUSSION_DEFAULT
-WORK_LONG_MULTISTEP_NONCODING_DEFAULT
+WORK_LONG_MULTISTEP_EXECUTION_DEFAULT
 ENGINE_ADAPTER_SELECTED_FROM_PROJECT_CANON
 ```
 
-`CODEX_GAME_PRODUCT_IMPLEMENTATION_OWNER`는 엔진 중립 상위 역할이다. 현재 기존 게임 프로젝트에서는 `ENGINE_ADAPTER_SELECTED_FROM_PROJECT_CANON → GODOT_DEFAULT_ACTIVE_ENGINE_ADAPTER`이므로 `CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER`가 compatibility vocabulary이자 실제 Godot adapter specialization으로 계속 유효하다.
+현재 승인된 Work 세션은 보유 capability에 따라 기획·조사·벤치마킹·상세 설계·코딩·테스트·검토·정본 갱신·PR 통합까지 수행한다. 제품 코드, Python/JSON 또는 Base 운영 인프라라는 파일 종류만으로 다른 실행자로 전환하지 않는다. capability는 사용자 승인·저장소 권한·보호 경로를 대체하지 않는다.
 
-### GPT
+- 기획·대안 비교·적대적 검토·IRG와 실제 구현의 연결을 같은 승인 계약에서 유지한다.
+- Base 정책·Skill·Guide·Template·Learning·허용된 CI/test contract도 승인 범위와 보호 규칙에 따라 처리한다.
+- 게임 제품은 project canon이 선택한 engine adapter의 code / Scene / Resource / runtime data / save-load / UI / shader / VFX / build / test를 연결한다.
+- 기존 Godot 프로젝트는 `GODOT_DEFAULT_ACTIVE_ENGINE_ADAPTER`와 프로젝트가 채택한 버전·저작 권위를 유지한다. 통합 실행은 엔진 변경 권한이 아니다.
+- runtime이 없으면 해당 검증은 `NOT_RUN`으로 남긴다. 구현·정적 검사 등 독립적으로 준비된 승인 작업은 계속하며, 필수 runtime 증거가 없는 완료·release 주장은 막는다.
 
-- 기획·조사·벤치마킹·대안 비교
-- 적대적 검토·IRG
-- Base 정책·Skill·Guide·Template·Learning
-- Base Registry/generated/CI/test contract
-- Notion Home/Domain/AI System
-- 문서·표·Flow·Storyboard
-- 이미지 생성·편집·검수
-- 프로젝트별 Codex 제품 구현지시문
-- Codex 구현 결과 최종 검수
-
-### Codex
-
-- 실제 게임 프로젝트의 제품 구현만 담당
-- project canon이 선택한 engine adapter의 product code / Scene / Resource / runtime wiring
-- runtime game data integration
-- save/load product implementation
-- UI runtime wiring
-- shader/VFX/code-driven feedback
-- build/export
-- implementation/runtime/headless/play tests
-
-현재 Godot 프로젝트에서는 위 항목이 기존과 동일하게 다음 compatibility surface를 뜻한다.
-
-- `GDScript/product code`
-- `Scene/Resource/Autoload/runtime wiring`
-- Godot build/export
-- Godot implementation/runtime/headless/play tests
-
-Codex는 Base repository의 일반 maintenance executor가 아니다. Base Python test·CI contract·Registry/generated checker처럼 코드 형식인 운영 인프라도 GPT 작업이다.
-
-## Chat / Work / Codex 기본 라우팅
-
-2026-08-26 current product guidance 기준으로 ChatGPT의 작업면은 작업의 길이와 산출물 성격에 따라 나눈다.
+## Chat / Work / 선택적 executor 라우팅
 
 ### `CHAT_QUICK_DISCUSSION_DEFAULT`
 
-다음은 Chat을 기본으로 한다.
+빠른 질문·설명, 짧은 브레인스토밍·선택지 비교, 사용자 결정이 필요한 단일 쟁점 정리와 실행 전 탐색에 사용한다.
 
-- 빠른 질문과 설명;
-- 짧은 브레인스토밍·선택지 비교;
-- 사용자 결정이 필요한 단일 쟁점 정리;
-- 긴 실행 전에 방향을 잡는 대화.
+### `WORK_LONG_MULTISTEP_EXECUTION_DEFAULT`
 
-### `WORK_LONG_MULTISTEP_NONCODING_DEFAULT`
-
-다음은 Work를 기본으로 한다.
-
-- 여러 단계의 프로젝트 기획·조사·분석·감사;
-- GitHub/Notion/파일 등 연결된 자료를 넘나드는 GPT-owned 작업;
-- Base·Notion·문서·표·보고서·검수·인수인계;
-- 완료까지 긴 실행 흐름과 readback이 필요한 작업;
-- 반복 또는 예약 작업이 실제로 유용한 프로젝트 운영 작업.
-
-Work는 GPT-owned 작업을 더 오래 수행하는 **실행 작업면**이며 새 정본 저장소가 아니다. Work의 대화/중간 산출물만으로 canon을 만들지 않고, 승인된 결과는 기존 Notion/GitHub owner에 기록하고 readback한다.
-
-### `CODEX_GAME_PRODUCT_IMPLEMENTATION_OWNER`
-
-실제 software/game product implementation boundary에 들어가면 Codex가 담당한다. Codex는 해당 프로젝트의 GitHub + Notion을 fresh-read하고 `ENGINE_ADAPTER_SELECTED_FROM_PROJECT_CANON`에 따라 현재 엔진 adapter를 사용한다.
+여러 단계의 기획·구현·검증·교정·정본 readback이 필요한 작업은 Work에서 이어간다. Work는 실행 작업면이며 새 정본 저장소가 아니다. 승인 결과와 상태는 current repository owner에 기록하고 readback한다. Notion은 명시된 V4 exception 또는 고유 자료가 남은 legacy migration scope에서만 사용한다.
 
 ```text
-Chat · quick discussion / decision shaping
-→ Work · long multi-step GPT-owned planning/review/Base/Notion execution
-→ approved implementation handoff
-→ Codex · actual game product implementation
-→ selected engine adapter
-→ runtime/play evidence
-→ GPT final review
+current repository + approved work contract
+→ planning / detailed design
+→ implementation with available authorized tools
+→ tests / runtime evidence / correction
+→ review / canon / permitted PR integration
+→ remaining work and evidence readback
 ```
 
-Work를 사용하더라도 `GPT_NONCODING_PROJECT_OWNER`, `GPT_BASE_NOTION_GOVERNANCE_OWNER`, `CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR` 경계는 바뀌지 않는다.
+다른 executor는 사용자 요청, 현재 세션에 실제로 없는 capability, 또는 격리 실행의 구체적인 이점이 있을 때만 선택한다. Codex도 이 조건으로 선택할 수 있는 실행면이며 코드가 있다는 이유로 필수 전환하지 않는다. 별도 handoff 파일을 매 작업 만들지 않는다.
 
 ## Shared Work project instruction
 
@@ -101,98 +52,72 @@ templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md
 templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9_COMPATIBILITY_APPENDIX.md
 ```
 
-정상적인 기본 입력은 **`프로젝트명 + 공용 작업지시문`만**이다. 별도 Goal은 사용자가 특정 작업을 우선하고 싶을 때만 선택적으로 줄 수 있다. Goal이 없으면 Work가 current Project GitHub/Notion canon에서 `current stage → active/approved current work → blockers/dependencies → roadmap/accepted frontier → next safe playable slice → current work contract`를 복원한다. 단순히 Goal 문장이 없다는 이유로 사용자의 작업 목표를 다시 묻지 않는다.
+기본 입력은 **`프로젝트명 + 공용 작업지시문`**이며 Goal은 선택 사항이다. Goal이 없으면 current repository에서 `current stage → active/approved current work → blockers/dependencies → roadmap/accepted frontier → next safe playable slice → current work contract`를 복원한다. 사용자에게 이미 정본에 있는 목표를 다시 묻지 않는다.
 
-본체와 Compatibility appendix는 r5.4의 planning/reuse/verification 기능 및 execution-scope, external process, toolchain freshness, local Godot/Fresh Shell, retired-surface, prompt-efficiency 경계를 함께 보존한다. 두 파일은 서로 다른 정본이 아니라 하나의 실행 bundle이다.
+본체와 appendix는 planning/reuse/verification, execution-scope, toolchain freshness, local Godot/Fresh Shell, retired-surface, prompt-efficiency 경계를 보존하는 하나의 실행 bundle이다. 다운로드 파일로 결합할 수 있으나 독립 정본을 만들지 않는다.
 
-사용자에게 전달하는 단일 다운로드 파일은 본체와 appendix를 결합할 수 있다.
+Default memory는 discovery-only 후보로 사용한다. `skills/SKILL_REGISTRY.json` trigger와 current work contract에 맞는 Skill만 progressive-load하며 최신 Base의 상세 owner와 프로젝트 채택 계약을 구분한다.
 
-Work 대화를 정본으로 만들지 않고 current Project GitHub/Notion과 Base current owner를 다시 읽으며 Default memory는 discovery-only 후보로만 사용한다. 이 bundle은 P08·Base 상세 절차의 두 번째 정본이 아니다. 현재 `skills/SKILL_REGISTRY.json`을 inventory하고 복원된 current work contract 또는 사용자가 명시한 특정 작업에 맞는 Skill만 progressive-load하며, 실제 세부 owner가 최신 Base에서 바뀌면 current Base owner가 우선한다.
-
-## Handoff
+## 조건부 Handoff
 
 ```text
-GPT 기획·검수·비코딩 작업 완료
-→ 실제 게임 제품 구현 필요 여부 판정
-→ 필요하면 프로젝트별 Codex Work Instruction
-→ Codex가 해당 프로젝트 GitHub + Notion 재수화
-→ project canon의 engine adapter 확인
-→ 구현 방향 결정
-→ 구현·코딩·runtime/play test
-→ READY_FOR_GPT_REVIEW
-→ GPT 최종 검수
+explicit user request / missing capability / justified isolated executor
+→ exact repository SHA + approved scope + actual remaining work
+→ selected executor fresh-read
+→ project engine adapter / approved asset / permission checks
+→ bounded implementation or verification
+→ actual evidence returned and reviewed
 ```
 
-현재 Godot 프로젝트의 handoff는 기존 `CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER`와 Godot-specific implementation contract를 그대로 사용한다.
-
-Base Template:
-
-`templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md`
-
-Engine baseline/adapter owner:
-
-`docs/knowledge/game-development/ENGINE_BASELINE_AND_ADAPTER_POLICY.md`
+기존 파일명 `templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md`는 Codex가 선택된 경우의 호환 Template로 유지한다. 같은 세션에서 실행할 수 있으면 기존 Plan·Acceptance·checkpoint를 재사용한다. 엔진 baseline/adapter owner는 `docs/knowledge/game-development/ENGINE_BASELINE_AND_ADAPTER_POLICY.md`다.
 
 ## 외부 AI
 
-DeepSeek 등 외부 AI는 대량 초안·분류·비교·독립 반례에 선택적으로 사용할 수 있다. 외부 AI 결과는 항상 `REVIEW_PENDING`이며 GPT가 검수한다.
-
-외부 AI optionality와 Codex 제품 구현 ownership을 혼동하지 않는다.
-
-- 외부 AI: optional assistant
-- Codex: 실제 게임 제품 구현이 있을 때 product implementation owner
+DeepSeek 등 외부 AI는 대량 초안·분류·비교·독립 반례에 선택적으로 사용할 수 있다. 결과는 `REVIEW_PENDING`이며 current canon과 실제 산출물에 대조해 검수한다. 외부 AI를 선택했다는 사실은 권한·비용·검증의 자동 승인이 아니다.
 
 ## Rehydration
 
-Codex는 제품 구현 전에:
+현재 또는 인계받은 executor는 변경 전에 다음을 fresh-read한다.
 
-1. exact project/repository/worktree
-2. project AGENTS/Active Context
-3. current GitHub product paths
-4. relevant repository human projection/Domain/AI-System surface; explicitly scoped V4 Notion exception only when applicable
-5. approved Visual
-6. current open workstream
-7. actual runtime/test evidence
+1. exact project/repository/worktree와 source SHA
+2. project AGENTS/Active Context와 승인 계약
+3. current GitHub product/operation paths와 실제 consumer
+4. relevant repository human projection/Domain/AI-System surface; 명시된 V4 Notion exception은 적용 범위만
+5. 승인 Visual의 repository path / SHA-256 / manifest
+6. current open workstream과 보호 범위
+7. 실제 runtime/test evidence와 `NOT_RUN`
 8. selected engine adapter / stable engine baseline
-
-를 fresh-read한다.
 
 ## 이미지
 
 ```text
-CODEX_IMAGE_GENERATION_FORBIDDEN
-CODEX_VISUAL_INPUT_NOTION_APPROVED_ONLY
+IMAGE_TOOL_REQUIRED_FOR_GENERATION_AND_EDITING
+GENERATED_CANDIDATE_IS_NOT_APPROVED_ASSET
+APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST
 ```
 
-Codex는 이미지를 만들거나 생성형 편집하지 않는다. 필요한 자산이 없으면 `GPT_VISUAL_REQUEST`로 GPT에 반환한다.
+이미지 생성·생성형 편집은 실제 이미지 도구로 수행한다. 필요한 후보는 consumer·brief·현재 승인 범위에 맞게 만들며, 사용자 승인 전에는 후보로 유지한다. 승인 뒤 repository binary·SHA-256·consumer·provenance·manifest를 확인하고 runtime에 연결한다. 실행자 이름만으로 생성 기능을 금지하지 않는다. 이미지 도구나 승인이 없으면 해당 의존 작업을 보류하고 독립 작업은 계속한다.
 
-## 비용
+## 비용과 Open PR 보호
 
-```text
-ZERO_INCREMENTAL_COST_REQUIRED
-CURRENT_PAID_PLANS: GPT_PRO
-```
+`ZERO_INCREMENTAL_COST_REQUIRED`, `CURRENT_PAID_PLANS: GPT_PRO`를 유지한다. 별도 API/SaaS/compute 비용은 사용자 승인 없이 기본 경로로 만들지 않는다.
 
-별도 API/SaaS/compute 비용은 사용자 승인 없이 기본 경로로 만들지 않는다.
-
-## Open PR 보호
-
-다른 open/draft/ready PR은 기본 read-only다. exact branch/head를 fresh-read하고 force push/history rewrite/destructive reset을 하지 않는다.
+다른 open/draft/ready PR은 기본 read-only다. current-task continuation의 허용 범위에서도 exact HEAD, required checks, review, unresolved thread, ruleset과 postmerge readback을 확인한다. force push, direct main push, admin/ruleset bypass, history rewrite, destructive reset을 하지 않는다.
 
 ## 실패 조건
 
-- Base/Notion 작업을 Codex로 넘김
-- Python/JSON이라는 이유로 Base 운영 인프라를 Codex에 넘김
-- 실제 게임 제품 구현을 GPT/Work가 누적 수행
-- Work 대화 상태를 Notion/GitHub 정본 대신 사용
-- project canon을 무시하고 engine adapter를 임의 변경
-- Codex가 이미지 생성
-- stale GitHub/Notion만 보고 구현
-- external AI 결과를 current canon으로 승격
-- 별도 Goal이 없다는 이유만으로 current canon 조회 전에 사용자의 목표를 다시 질문
+- 앱 이름이나 코드 파일 종류만으로 필수 인계 또는 실행 금지를 만듦
+- capability를 사용자 승인·저장소 권한으로 오인함
+- runtime `NOT_RUN`을 PASS로 표시하거나 독립 구현 전체를 자동 중단함
+- Work 대화 상태를 repository 정본 대신 사용함
+- project canon의 engine adapter 또는 승인 자산을 임의 변경함
+- 이미지 도구 없이 생성하거나 candidate를 승인 자산으로 승격함
+- stale repository/asset/권한 정보로 실행함
+- external AI 결과를 검수 없이 current canon으로 승격함
+- 별도 Goal이 없다는 이유로 current canon 조회 전 사용자의 목표를 다시 질문함
 
 ## 완료 기준
 
-P08 역할이 다음 한 줄과 일치해야 한다.
+같은 승인 후보 계보의 공유 검토 예산은 전체 정확히 2회다. Part·Final Integration별로 초기화하지 않는다. 이후 결함별 교정·검증만 계속한다. 정본: `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`.
 
-> **Chat은 빠른 논의, Work는 프로젝트명+공용 지시문만으로도 current canon에서 작업 계약을 복원해 긴 multi-step GPT-owned 기획·검수·Base·Notion 작업을 수행하고, Codex는 실제 게임 프로젝트의 제품 구현을 담당하며 현재 기존 게임은 Godot adapter를 사용한다.**
+> **현재 승인된 Work는 보유 capability로 기획부터 구현·검증·검토·허용된 통합까지 이어가며, 실제로 필요한 경우에만 다른 실행자로 인계한다. 완료 상태는 실행자 이름이 아니라 실제 증거로 판정한다.**

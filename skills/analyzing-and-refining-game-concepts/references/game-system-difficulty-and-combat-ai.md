@@ -73,7 +73,7 @@ evidence_needed:
 | 실패 | 입력 누락·충돌·저장 불일치 때 무엇을 하는가? |
 | 검증 | 정상·실패·경계 상태를 어떻게 관찰하는가? |
 
-Godot 구현을 계획할 때는 Scene·Node·Resource·Autoload를 기능 목록처럼 배치하지 않는다. 기획 책임과 데이터 수명, 저장·복구, 테스트 경계를 먼저 정하고 Codex 구현 패키지로 넘긴다.
+Godot 구현을 계획할 때는 Scene·Node·Resource·Autoload를 기능 목록처럼 배치하지 않는다. 기획 책임과 데이터 수명, 저장·복구, 테스트 경계를 먼저 정하고 승인된 구현 능력이 있는 현재 Work에서 구현한다. 실제 capability gap·사용자 지정 등 조건부 인계가 필요할 때만 구현 패키지를 전달한다. 실행자 선택 정본은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`다.
 
 ## 4. 시스템 가치 판정
 

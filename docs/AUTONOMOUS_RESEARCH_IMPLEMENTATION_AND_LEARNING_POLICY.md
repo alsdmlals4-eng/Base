@@ -4,7 +4,7 @@
 status: CURRENT_ACTIVE
 scope: Base 및 이를 채택한 프로젝트의 L1 이상 실질 작업
 owner_role: docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md의 실행 세분화
-updated_at: 2026-08-29
+updated_at: 2026-09-16
 ```
 
 이 문서는 사용자의 반복 개입을 줄이면서도 조사·설계·실제 구현·검증·학습의 품질을 낮추지 않는 공용 실행 계약이다. 가장 빠른 국소 완료보다 **장기 총비용이 낮고 유지·검증·재사용이 쉬운 완성도 높은 결과**를 우선한다.
@@ -67,6 +67,7 @@ latest user instruction
 - 중요한 결정은 현행 유지, 기존 해법 재사용·수정, 대체 구조 등 최소 3개의 실질 대안을 같은 기준으로 비교한다.
 - 벤치마크는 표면을 복제하지 않고 `ADOPT / ADAPT / REJECT`로 흡수한다.
 - 외부 조사가 결과에 영향을 주지 않는 순수 기계 작업이면 범위와 이유를 기록한 `NOT_APPLICABLE`을 허용한다.
+- 같은 승인 범위의 비교·benchmark가 여전히 유효하면 `REUSED_EVIDENCE`로 연결한다. 새 사실·실패·범위 변화 없이 같은 조사와 승인 절차를 반복하지 않는다.
 
 ### 2.2 Implementation Feasibility Packet
 
@@ -99,8 +100,8 @@ Godot 프로젝트에서는 실제 SceneTree, Node 책임, Resource·data owner,
 
 조사의 목표는 권장안 작성이 아니라 **현재 프로젝트에서 안전하게 구현 가능한 최적 구조를 확정하는 것**이다.
 
-- 현재 승인 범위 안에서 GPT가 직접 수행할 수 있는 문서·데이터·검증 인프라·repository 작업은 실제로 수행한다.
-- 실제 Godot 제품 구현은 프로젝트 역할 경계에 따라 Codex가 exact repository revision을 fresh-read해 수행할 수 있도록 파일·경로·작업 순서·acceptance·test·rollback이 있는 handoff를 만든다.
+- `UNIFIED_WORK_EXECUTION`: 현재 Work가 승인 범위 안에서 실제로 수행할 수 있는 문서·데이터·제품 코드·Scene·Resource·검증·repository 작업은 같은 세션에서 직접 수행한다. 실제 권한과 도구 능력은 각각 확인한다.
+- `docs/GPT_CODEX_WORKFLOW_POLICY.md`의 조건부 인계 기준을 따른다. 실제 부족한 실행 능력·사용자 지정·정당한 격리가 있을 때만 파일·경로·exact revision·acceptance·test·rollback을 전달한다. 앱 이름이나 Godot 코드라는 이유만으로 handoff를 만들지 않는다.
 - 구현 권한이 이미 존재하면 조사나 명세에서 멈추지 않고 구현·검증·교정·정본 반영까지 이어간다.
 - 새 핵심 제품 의미, Blueprint 최종 승인 전 제품 구현, 위험한 migration, 비용·권한 증가는 자동 승인하지 않는다.
 

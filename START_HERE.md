@@ -8,23 +8,20 @@
 
 ## 사용자가 기억할 최소 요청
 
-> `https://github.com/alsdmlals4-eng/Base 를 전부 살펴보고 참고해서 이 프로젝트를 작업해줘.`
+공용 원본: [Base GitHub repository](https://github.com/alsdmlals4-eng/Base). 최신 main의 발견과 프로젝트가 채택한 계약의 적용을 구분한다.
+
+> `프로젝트와 Base의 current-authority read order를 적용하고, 승인된 범위를 현재 Work의 실제 도구로 기획·구현·검증·교정·허용 병합까지 진행해줘. 기존 승인과 유효한 근거를 재사용하고, 실제 능력 부족일 때만 필요한 범위를 인계해줘.`
 
 `전부 살펴본다`는 모든 파일과 Skill을 무작정 읽는 뜻이 아니다. 현재 요청에 필요한 책임 원본과 최소 Skill만 `skills/SKILL_REGISTRY.json`과 `docs/generated/BASE_ACTIVE_SKILLS.md`에서 선별한다. 저장소 접근 없이 설치·마이그레이션·검수 완료를 주장하지 않는다.
 
 ## 최초 읽기 순서
 
 ```text
-Base START_HERE.md·AGENTS.md
-→ docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md
-→ docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json
-→ docs/OPERATING_MODEL.md
-→ docs/WORK_MODE_AND_SKILL_ROUTING.md
-→ docs/DOCUMENTATION_MAP.md
-→ skills/SKILL_REGISTRY.json
-→ 대상 프로젝트 AGENTS.md·프로젝트 START_HERE
+대상 프로젝트 AGENTS.md·프로젝트 START_HERE
+→ 채택 계약·Base 최신 AGENTS/START_HERE와 관련 drift
 → ACTIVE_CONTEXT·승인 Decision·AI production spec·asset manifest·현재 handoff
-→ 현재 책임 원본·실제 코드·데이터·자산·테스트
+→ 프로젝트/main·관련 PR·현재 책임 원본·실제 코드·데이터·자산·테스트
+→ DOCUMENTATION_MAP/Registry에서 필요한 owner·Skill만 선택
 → 실제 migration scope일 때만 legacy Notion/Google Sheets 고유 자료
 ```
 
@@ -79,7 +76,7 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 | 기획 책임 원본 작성·구조 변경·발행 | `managing-design-documents` | `skills/managing-design-documents/SKILL.md` |
 | 프로젝트 Skill 생성·통합·학습 | `evolving-project-discipline-skills` | `skills/evolving-project-discipline-skills/SKILL.md` |
 | 현재 상태·다음 작업·Handoff | `maintaining-project-context-and-handoff` | `skills/maintaining-project-context-and-handoff/SKILL.md` |
-| 실제 게임 프로젝트 Godot 제품 구현·Codex 인계 | `maintaining-project-context-and-handoff: codex-godot-implementation-handoff` | `docs/GPT_CODEX_WORKFLOW_POLICY.md` + `templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md` |
+| Work 통합 구현·조건부 인계 | 현재 Work의 승인된 능력으로 제품 구현; 실제 경계에서만 `maintaining-project-context-and-handoff` | `docs/GPT_CODEX_WORKFLOW_POLICY.md`; 인계가 필요할 때만 `templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md` |
 | 프로젝트 교훈의 Base 제안·승인 구현 | `managing-base-change-proposals` | `skills/managing-base-change-proposals/SKILL.md` |
 | Vertical Slice 품질·플레이·제작 파이프라인 | `designing-vertical-slices` | `skills/designing-vertical-slices/SKILL.md` |
 | 프로젝트별 필요 이미지·시각 자산·UI 컴포넌트 선정·우선순위·제작 방식 | 기존 아트·UX·자산 평가 Skill 조합 | `docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md`의 `Visual Requirement Gate` |

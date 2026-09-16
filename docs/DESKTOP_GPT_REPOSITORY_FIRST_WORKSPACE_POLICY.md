@@ -9,7 +9,7 @@
 - 발행 계약: `docs/PROJECT_MASTER_GDD_TWO_ARTIFACT_POLICY.md`
 - 이관 체크리스트: `templates/project-operations/NOTION_TO_REPOSITORY_MIGRATION_CHECKLIST.md`
 
-이 정책은 Desktop GPT Work를 중심으로 프로젝트 기획·조사·검수·시각자료 제작을 수행하는 1인 개발 흐름에서 불필요한 Notion 중간 복제와 이중 readback을 제거한다.
+이 정책은 현재 Work를 중심으로 승인된 기획·조사·제품 구현·검증·시각자료 제작을 이어가는 1인 개발 흐름에서 불필요한 중간 복제와 인계를 제거한다. 실행자 선택의 단일 owner는 `docs/GPT_CODEX_WORKFLOW_POLICY.md`이며 앱 이름 대신 현재 권한·도구·검증 능력으로 판단한다.
 
 현재 프로젝트 기본값은 다음이다.
 
@@ -19,13 +19,17 @@ HUMAN_GDD_PDF_DERIVED_VIEW
 AI_PRODUCTION_SPEC_MARKDOWN
 CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON
 CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON
-CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA
+UNIFIED_WORK_EXECUTION
+CAPABILITY_BASED_EXECUTOR_SELECTION
+HANDOFF_ONLY_FOR_CAPABILITY_GAP_OR_EXPLICIT_REQUEST
 APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST
 NO_NEW_NOTION_WRITE_BY_DEFAULT
 NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
 ```
 
 사용자의 최신 지시와 대상 프로젝트의 최신 `AGENTS.md`·승인 Decision·실제 구현 사실이 이 공용 정책보다 우선한다. 다만 프로젝트별 예외가 없다면 이 문서와 V4 machine contract가 새 작업의 기본 route다.
+
+Base 운영 정책 채택은 승인된 운영 범위에 한정한다. 프로젝트가 채택한 engine/version·저장 호환성·제품 의미·자산 승인·보안 계약까지 최신 Base에 맞춰 조용히 교체하지 않는다. 해당 계약의 변경이 필요하면 별도 영향과 승인 범위를 확인한다.
 
 기존 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json` V3와 과거 Notion 운영 문서는 삭제하지 않는다. 해당 자료는 `V3_COMPATIBILITY_AND_HISTORY_ONLY`이며 새 작업의 active authority가 아니다.
 
@@ -37,8 +41,8 @@ NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
 |---|---|---:|---:|
 | 프로젝트 GitHub repository | 기획·결정·데이터·승인 runtime asset·코드·Scene·Resource·Test·Evidence | **Primary canon** | 예 |
 | 사용자용 상세 기획서 PDF | 사람이 전체 기획·핵심 시스템·콘텐츠·구현 원리를 검토하는 시각 snapshot | 파생뷰 | 의미 있는 Gate에서 |
-| AI용 상세 기획·구현 명세 Markdown | GPT/Codex가 이어받는 구조화 production spec | repository canon | 예 |
-| Desktop GPT Work | 기획·조사·검수·문서·시각자료 제작 실행면 | 아님 | 기본 실행면 |
+| AI용 상세 기획·구현 명세 Markdown | 현재·후속 실행자가 소비하는 구조화 production spec | repository canon | 예 |
+| 현재 Work | 승인된 기획·제품 구현·검증·문서·시각자료 제작 실행면 | 아님 | 실제 권한·도구가 충족되면 기본 실행면 |
 | ChatGPT Library | 시안·참고자료·원본 템플릿·PDF 보관 | 아님 | 선택 |
 | Notion | 기존 고유 자료 발견·이관·감사를 위한 legacy source | 아님 | 기존 자료가 있을 때만 |
 | Google Sheets | 미이관 고유 자료용 migration compatibility source | 아님 | 선택 |
@@ -56,13 +60,13 @@ repository가 소유하는 범위:
 - 승인된 실제 runtime asset과 asset manifest
 - GDScript, Scene, Resource, runtime configuration
 - automated test, runtime/play evidence, QA receipt
-- Codex handoff와 구현 결과 readback
+- 구현·검증 결과 readback과 실제 인계가 있을 때의 handoff
 
 채팅, memory, Library, PDF, Notion preview에만 존재하는 정보는 current project canon으로 승격하지 않는다.
 
 ### 1.2 `CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON`
 
-Desktop GPT Work는 로컬·연결 저장소 파일을 읽고 기획·검수·제작을 수행하는 실행면이다. Work 결과는 다음 중 하나로 materialize해야 지속 가능한 결과가 된다.
+현재 Work는 로컬·연결 저장소와 허용된 도구를 사용해 승인된 기획·제품 구현·검증·제작을 수행하는 실행면이다. `CAPABILITY_IS_NOT_AUTHORIZATION`: 도구가 있어도 승인 범위를 확대하지 않는다. 일부 runtime·기기 검증을 할 수 없으면 독립 구현과 가능한 검사는 계속하고 해당 증거만 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`로 남긴다. Work 결과는 다음 중 하나로 materialize해야 지속 가능한 결과가 된다.
 
 - repository의 Markdown·JSON·CSV·SVG·asset·test·evidence
 - repository 정본에서 생성된 사용자용 PDF
@@ -83,7 +87,7 @@ Library에 적합한 항목:
 Library에만 두면 안 되는 항목:
 
 - 현재 승인 Decision의 유일한 사본
-- Codex가 구현에 소비할 runtime binary
+- 구현자가 소비할 runtime binary
 - diff·rollback이 필요한 기획 정본
 - 현재 구현 완료를 판정하는 유일한 evidence
 
@@ -92,19 +96,20 @@ Library에만 두면 안 되는 항목:
 ## 2. 기본 작업 흐름
 
 ```text
-Desktop GPT Work
+현재 Work
 → targeted fresh-read: Project AGENTS / Active Context / Decisions / actual implementation
 → 최소 기획·필요한 benchmark·재사용 조사
-→ 적대적 검토·IRG
+→ 적대적 검토·IRG·승인 또는 기존 승인 재사용
 → repository 기획 정본과 구현 계약 갱신
+→ 현재 Work의 실제 권한·도구로 제품 구현·test·runtime/play evidence 확보
+→ 같은 승인 범위의 교정·검증과 미검증 항목 재대조
 → PR·diff·test·readback
 → 필요 Gate에서 사용자용 상세 PDF 생성
 → 사용자 검토 결과를 repository 정본에 반영
-→ exact repository SHA로 Codex 인계
-→ Godot 구현·test·runtime/play evidence
-→ GPT 최종 검수
 → repository 정본 상태 승격
 ```
+
+앱 이름 때문에 구현 전에 멈추거나 담당을 바꾸지 않는다. 실제 capability gap·사용자 지정 인계 등 owner의 조건을 충족할 때만 §5로 연결하고, 현재 작업에서 얻은 승인·구현·검증과 남은 범위를 전달한다.
 
 삭제되는 기본 단계:
 
@@ -126,12 +131,13 @@ docs/START_HERE.md
 docs/ACTIVE_CONTEXT.md
 docs/canon/CURRENT_CONFIRMED_DECISIONS.md
 docs/design/PROJECT_AI_PRODUCTION_SPEC.md
-docs/handoffs/CURRENT_CODEX_HANDOFF.md
 
 assets/ASSET_MANIFEST.json
 ```
 
 경로가 다르면 `AGENTS.md` 또는 `START_HERE.md`에서 actual owner를 명시한다. 빈 형식을 맞추기 위해 파일을 억지로 복제하지 않는다.
+
+`docs/handoffs/CURRENT_CODEX_HANDOFF.md`는 실제 인계가 있을 때만 사용하는 조건부 경로다. 같은 Work에서 계속 실행하면 기존 Active Context와 작업 계약으로 재개 정보를 유지하고 별도 handoff 파일을 필수 생성하지 않는다.
 
 ### 2.2 권장 repository 구조
 
@@ -148,7 +154,7 @@ project-root/
 │  │  ├─ PROJECT_AI_PRODUCTION_SPEC.md
 │  │  └─ ...
 │  ├─ handoffs/
-│  │  └─ CURRENT_CODEX_HANDOFF.md
+│  │  └─ CURRENT_CODEX_HANDOFF.md  # 실제 인계 시에만
 │  ├─ research/
 │  ├─ reviews/
 │  └─ exports/
@@ -206,7 +212,7 @@ approval_status:
 권장 생성 Gate:
 
 - 코어 방향과 핵심 시스템 확정
-- Codex 구현 인계 직전
+- 실제 구현 인계가 있고 통합 사용자 검토가 필요한 때
 - 의미 있는 Vertical Slice 또는 milestone 완료
 - Release Candidate 점검
 
@@ -241,7 +247,7 @@ Flow map·Visual Bible·관계도·설명용 diagram은 제작/AI용 시각자�
 
 ### 4.2 `APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST`
 
-Codex가 소비하는 승인 이미지는 다음을 만족해야 한다.
+현재·후속 실행자가 소비하는 승인 이미지는 다음을 만족해야 한다.
 
 ```text
 actual approved binary
@@ -291,11 +297,11 @@ Git LFS나 별도 storage는 실제 크기·clone·build·협업 문제를 확�
 
 ---
 
-## 5. Codex 인계
+## 5. 필요한 경우의 실행자 인계
 
-`CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA`
+`HANDOFF_ONLY_FOR_CAPABILITY_GAP_OR_EXPLICIT_REQUEST`: 실제 권한·환경·도구 부족, 사용자 지정 인계 또는 정당한 독립 작업 격리 조건은 `docs/GPT_CODEX_WORKFLOW_POLICY.md` §4를 따른다. 현재 Work가 수행할 수 있는 승인 작업은 직접 계속하며, 인계가 필요하다는 판단이 새 작업 생성·외부 실행 권한을 부여하지 않는다.
 
-Codex 작업지시문은 최소 다음을 포함한다.
+`CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA`는 이름 호환성을 유지하되 exact repository·worktree·source SHA·현재 구현·도구를 다시 확인하는 안전 의미는 모든 실행자에게 적용한다. 실제 인계 지시문은 최소 다음을 포함한다.
 
 ```yaml
 repository:
@@ -305,7 +311,7 @@ project_agents:
 active_context:
 confirmed_decisions:
 ai_production_spec:
-current_handoff:
+current_handoff: # 기존 Active Context/작업 계약 참조 또는 실제 인계 문서
 asset_manifest:
 approved_scope:
 explicit_non_scope:
@@ -314,15 +320,15 @@ acceptance:
 required_runtime_evidence:
 ```
 
-Codex는 다음을 하지 않는다.
+현재·후속 실행자는 다음을 하지 않는다.
 
 - 채팅 기억을 repository보다 최신 정본으로 가정
 - PDF만 읽고 구현 의미를 확정
 - Library·Notion preview 이미지를 runtime asset으로 직접 소비
-- missing asset을 임의 생성·대체
+- missing asset을 임의로 승인 자산으로 승격·대체
 - exact SHA가 이동했는데 stale handoff로 구현 지속
 
-필요한 시각물이 없으면 `GPT_VISUAL_REQUEST`로 반환한다. GPT가 제작·검수·사용자 승인 후 repository binary와 manifest를 materialize한 다음 Codex가 다시 소비한다.
+필요한 시각물이 없고 현재 Work에 이미지 도구가 있으면 실제 consumer와 프로젝트 승인 범위에 맞는 후보를 제작·검수한다. 사용자 승인 전 정식 runtime 자산으로 사용하지 않는다. 도구가 없을 때의 `GPT_VISUAL_REQUEST`는 조건부 호환 상태명이며, 승인 후 repository binary·hash·manifest를 materialize하고 구현자가 소비한다.
 
 ---
 
@@ -332,7 +338,7 @@ Codex는 다음을 하지 않는다.
 
 `NO_NEW_NOTION_WRITE_BY_DEFAULT`
 
-발효일 이후 신규 기획·결정·이미지 승인·Codex handoff를 완료하기 위해 Notion에 중간 복제하지 않는다.
+발효일 이후 신규 기획·결정·이미지 승인·실제 구현 인계를 완료하기 위해 Notion에 중간 복제하지 않는다.
 
 `NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE`
 
@@ -430,7 +436,7 @@ V3_COMPATIBILITY_AND_HISTORY_ONLY
 - merged repository exact SHA
 - 정본 경로·Decision·asset manifest readback
 - 파생 PDF의 source SHA와 evidence ceiling
-- Codex handoff freshness
+- 실제 handoff가 있을 때의 freshness
 - runtime/test/UX evidence의 실제 상한
 - Notion migration counter와 남은 고유 자료
 
@@ -447,7 +453,7 @@ Base 정책 교정 완료와 프로젝트별 이관 완료를 분리한다.
 - Base 정책 교정: V4 owner·root routing·test·PR·postmerge readback
 - 프로젝트 이관: 프로젝트별 inventory·binary/hash·canon/path·counter readback
 - PDF 점검: exact source SHA·시각 검토·수정 반영
-- 구현 완료: Codex exact SHA·test·runtime/play/UX evidence
+- 구현 완료: 실제 실행자의 exact SHA·test·runtime/play/UX evidence
 
 하나의 PASS를 다른 층의 PASS로 확대하지 않는다.
 
@@ -456,7 +462,7 @@ Base 정책 교정 완료와 프로젝트별 이관 완료를 분리한다.
 - Work→Notion→repository 이중 작성 제거
 - 최신성 판정 surface 감소
 - exact SHA·diff·rollback 강화
-- Codex 인계의 경로·asset 회수 안정화
+- 필요한 인계의 경로·asset 회수 안정화
 - 새 채팅 재개 시 memory 의존 감소
 - 사람용 시각 검토는 PDF milestone로 집중
 - 기존 자료는 read-only migration gate로 손실 방지

@@ -34,7 +34,7 @@ Grill Me와 적대적 검토는 전체 파이프라인의 일부다. 최고의 �
 
 ### `PLANNING_ONLY_PROFILE`
 
-GPT가 총기획·조사·Grill Me·문서·검수를 수행한다.
+현재 Work가 기획만 요청된 범위의 총기획·조사·Grill Me·문서·검수를 수행한다. 이 프로필은 사용자 요청 범위이지 앱 이름에 따른 구현 금지가 아니다.
 
 허용:
 
@@ -56,18 +56,20 @@ GPT가 총기획·조사·Grill Me·문서·검수를 수행한다.
 과거 `VERTICAL_SLICE_FULL_PROFILE`은 호환 이름이며 새 작업에서는 `DEMO_FIRST_FULL_PROFILE`로 해석한다.
 
 ```text
-GPT PLAN
-→ 사용자 승인
-→ Codex PLAN 재검수
-→ Codex BUILD
-→ GPT REVIEW
+현재 Work PLAN
+→ 사용자 승인 또는 유효한 기존 승인 재사용
+→ 필요한 상세 설계
+→ 승인된 도구 능력이 있는 현재 Work BUILD
+→ 자동·runtime 검증 + 필요한 독립 REVIEW
 → 기술 검수안과 기획 충돌 분리
 → 승인 수정
 → 통합 QA·내부 플레이테스트
-→ 외부 플레이테스트·반응 조사
+→ 사용자 선언 시 외부 플레이테스트·반응 조사
 → DEMO_VALIDATION
 → Gate 판정
 ```
+
+실행자 선택·실제 부족한 능력의 조건부 인계는 `docs/GPT_CODEX_WORKFLOW_POLICY.md`가 소유한다. 사용자 검증이 필요한 Gate는 실행 전까지 `NOT_RUN`으로 남기며 machine PASS로 대체하지 않는다.
 
 ### `REVIEW_ONLY_PROFILE`
 
@@ -137,7 +139,7 @@ brainstorming
 → finishing-a-development-branch
 ```
 
-Base Work Mode·프로젝트 규칙·승인 계약이 Superpowers보다 상위다.
+위 목록은 관련 trigger별 선택 지도이지 모든 Skill을 순서대로 실행하는 의무가 아니다. 같은 승인·계획·검토를 중복 실행하지 않는다. 시스템·개발자 지시와 실제 Skill 제약을 유지하면서 Base Work Mode·프로젝트 규칙·현재 승인 범위를 적용한다.
 
 ### G. 검수·런타임
 
@@ -281,6 +283,8 @@ Grill Me는 `managing-project-intake-and-work-contract: clarify`의 의사결정
 
 큰 Gate에서는 다음 렌즈를 모두 적용하되 같은 검사를 횟수만 채우기 위해 반복하지 않는다.
 
+다섯 렌즈는 다섯 회차가 아니다. 같은 승인 후보 계보의 정확히 2회 전체 검토 예산을 공유하며 Gate·Skill·인계·병합별로 초기화하지 않는다. 이후에는 결함별 교정과 표적 검증만 계속한다.
+
 1. 대화·요구·정체성·정본
 2. 논리·Core Loop·판정 가능성
 3. 경계·데이터·저장·호환성
@@ -308,8 +312,8 @@ Finding은 다음으로 라우팅한다.
 
 - 기본 Branch 직접 수정 금지
 - 결과·검증 단위 Commit
-- 기획 PR과 구현 PR 분리
-- 사용자가 명시하지 않으면 병합 금지
+- 기획·구현의 승인 범위를 구분하되 같은 승인 작업에 별도 기획 PR을 강제하지 않음
+- 동일 승인 current-task PR은 필수 검사·독립 검토·ruleset을 충족하면 정상 병합; 무관한 PR은 read-only
 - Push·원격 HEAD·PR·Actions를 실제 확인
 - PDF는 Registry 발행 정책이 요구할 때만 생성
 - PDF 생성 후 전 페이지 렌더·한글·표·이미지·링크·최신성 검수

@@ -99,7 +99,7 @@ class ApprovedSliceContinuousHandoffTests(unittest.TestCase):
 
     def test_visual_and_final_review_authorities_are_preserved(self) -> None:
         self.assert_terms(
-            "GPT_VISUAL_REQUEST", "CHANGE_PROPOSAL", "GPT 최종 검수",
+            "GPT_VISUAL_REQUEST", "CHANGE_PROPOSAL", "공유 2회 검토 예산",
             "승인 자산을 임의 교체하지 않는다.", "사용자 승인이나 출시 PASS가 아니다.",
         )
 

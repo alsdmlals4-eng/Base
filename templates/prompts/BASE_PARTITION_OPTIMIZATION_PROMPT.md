@@ -1,6 +1,6 @@
-# Base P01~P09 순차 최적화 — 단일 Coordinator GPT 작업지시문
+# Base P01~P09 순차 최적화 — 단일 Work Coordinator 작업지시문
 
-이 지시문은 Base의 P01~P09를 **한 GPT coordinator 채팅에서 순서대로** 감사·최적화하기 위한 공용 계약이다.
+이 지시문은 Base의 P01~P09를 **현재 Work의 한 coordinator가 순서대로** 감사·최적화하기 위한 공용 계약이다.
 
 ## 0. 핵심 실행 모델
 
@@ -21,24 +21,15 @@ P01 → P02 → P03 → P04 → P05 → P06 → P07 → P08 → P09
 - 새 Part 채팅을 만들지 않는다.
 - 한 Part 완료/병합 뒤 latest `main`을 다시 pin한다.
 - Part는 semantic responsibility / learning / validation checkpoint다.
-- Base 작업은 **전부 GPT maintenance 영역**이다.
+- Base 작업의 실행자는 현재 Work의 승인 범위와 실제 도구 능력으로 선택한다.
 
-## 0A. Codex 사용 금지 경계 — Base 자체
+## 0A. 현재 Work 실행 능력과 인계 경계
 
-```text
-BASE_GOVERNANCE = GPT
-BASE_POLICY_SKILL_GUIDE_TEMPLATE = GPT
-BASE_REGISTRY_GENERATED_MANIFEST = GPT
-BASE_PYTHON_TEST_CI_CHECKER = GPT
-BASE_NOTION = GPT
-CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR
-```
+단일 owner는 `docs/GPT_CODEX_WORKFLOW_POLICY.md`의 `UNIFIED_WORK_EXECUTION` / `CAPABILITY_BASED_EXECUTOR_SELECTION`이다. Base 문서·Registry/generated·Python test·CI와 게임 프로젝트의 제품 구현을 앱 이름이나 파일 형식으로 나누지 않는다.
 
-Base 내부에 `.py`, `.json`, workflow, checker가 있어도 Codex 작업으로 넘기지 않는다.
+`CAPABILITY_IS_NOT_AUTHORIZATION`: 현재 도구 능력이 사용자 승인·프로젝트 권한을 확대하지 않는다. 승인된 수정·검증을 현재 Work에서 계속하고, 실제 capability gap·사용자 지정 인계 등 owner의 조건이 있을 때만 해당 범위를 인계한다. 일부 검증을 실행하지 못하면 해당 증거를 `NOT_RUN` / `BLOCKED_UNVERIFIED`로 남긴다.
 
-`Base Python contract test·Registry/generated·CI policy` 역시 GPT-owned Base maintenance다.
-
-Codex는 이 Prompt가 다루는 Base repository 자체를 구현하는 worker가 아니다. 별도의 **게임 프로젝트에 실제 Godot 제품 구현이 필요해졌을 때만** 그 프로젝트용 Codex Godot Work Instruction을 작성한다.
+별도 게임 프로젝트 구현은 그 프로젝트의 최신 정본·승인 범위·exact SHA와 실제 도구를 먼저 확인한다. 현재 Work가 실행할 수 있으면 별도 Codex 지시문을 필수로 만들지 않는다.
 
 ## 1. Part 시작 절차
 
@@ -48,7 +39,7 @@ Codex는 이 Prompt가 다루는 Base repository 자체를 구현하는 worker�
 2. `AGENTS.md`, `START_HERE.md`, `BASE_PARTITION_MANIFEST.json`, 해당 Context Pack 확인
 3. 해당 Part의 Skill/Mode/Module/Guide/Template/Tool/Schema/Test 읽기
 4. 같은 Goal의 open/recent merged PR 비교
-5. 관련 Notion human-facing 상태 readback
+5. repository current owner readback; Notion은 V4의 명시적 예외·미이관 자료가 실제 관련될 때만 확인
 6. 이전 Part finding 재검증
 
 과거 completion packet의 SHA를 current truth로 가정하지 않는다.
@@ -57,13 +48,13 @@ Codex는 이 Prompt가 다루는 Base repository 자체를 구현하는 worker�
 
 `PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER`
 
-**다른 Part라는 이유만으로 수정 보류 금지.** Base의 다른 Part/CP0 finding도 현재 GPT coordinator가 증거·권한·검증경로를 확보하면 직접 교정한다.
+**다른 Part라는 이유만으로 수정 보류 금지.** Base의 다른 Part/CP0 finding도 현재 coordinator가 승인 범위 안에서 증거·권한·검증경로를 확보하면 직접 교정한다.
 
 ```yaml
 CROSS_PART_CHANGE:
   discovered_while: Pxx
   semantic_owner: Pyy | CP0
-  execution_owner: GPT_BASE_MAINTENANCE
+  execution_owner: <현재 권한을 확인한 실행자>
   affected_paths: []
   problem:
   evidence:
@@ -112,12 +103,9 @@ FOLLOW_UP_TARGET_IS_MERGED_MAIN
 - 실제 실행 증거 없는 PASS
 - 사용자 결정 누락
 - 동일 Goal 중복 PR/구현
-- GPT/Codex owner drift
+- semantic owner와 실제 실행자의 승인·도구 능력 혼동
 
-Base의 owner drift 기준:
-
-- Base/Notion/문서/Registry/generated/CI/test → GPT
-- 실제 게임 프로젝트 Godot runtime 구현 → 별도 프로젝트 Codex handoff
+실행자 drift는 §0A의 단일 owner와 대조한다. 앱 이름으로 구현을 금지하거나 강제 인계하는 중복 역할표를 만들지 않는다.
 
 ## 6. Skill / Mode 감사
 
@@ -159,7 +147,7 @@ BETTER_ALTERNATIVE_SEARCH
 LONG_TERM_PLAN_FIT_REQUIRED
 ```
 
-최소 3개 materially distinct 대안을 같은 기준으로 비교한다.
+실질적 구조 선택에는 최소 3개 materially distinct 대안을 같은 기준으로 비교한다. 같은 승인 범위의 유효한 비교는 재사용하고, 기계적 교정에 허수 대안이나 중복 재조사를 만들지 않는다.
 
 - 사용자/플레이어 가치
 - 정확성
@@ -173,29 +161,29 @@ LONG_TERM_PLAN_FIT_REQUIRED
 
 ## 9. Notion human-facing 작업
 
+`NO_NEW_NOTION_WRITE_BY_DEFAULT`: 아래는 V4의 명시적 예외로 승인된 Notion 작업에만 적용한다. 기본 사람용 문서·정본은 repository owner와 필요한 파생본이며 매 Part마다 Notion을 만들거나 동기화하지 않는다.
+
 `HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`
 
 Base Home에는 목적·authority split·lifecycle·규칙·Skill/Module·P01~P09·상태·검증을 직접 보여준다.
 
 Project Home에는 프로젝트 정의·player value·확정 방향·Core Loop·Flow·핵심 시스템·표·UX/UI/Visual·구현상태·검증·blocker·결정을 직접 보여준다.
 
-Notion 작업은 GPT가 수행하고 destination readback한다.
+Notion 작업이 승인된 범위이면 현재 Work의 권한 있는 실행자가 수행하고 destination readback한다.
 
 ## 10. Visual
 
-Base/Project Visual 기획·생성·편집·검수·Notion 배치는 GPT 역할이다.
+Base/Project Visual 작업은 앱 이름 대신 실제 이미지 도구·consumer·승인 상태로 실행자를 판단한다. 이미지 후보 제작과 runtime 승격의 권한 경계는 `docs/GPT_CODEX_WORKFLOW_POLICY.md` §5를 따른다.
 
 ```text
-GPT 기획
+현재 Work의 승인된 기획
 → Visual Requirement
-→ GPT image/mock/diagram
-→ Project Notion upload/attach/readback
+→ 실제 도구로 image/mock/diagram 제작
+→ project-controlled candidate 저장·readback
 → 승인
 ```
 
-그 Visual을 실제 게임 runtime에 연결하는 별도 Godot 구현이 생기면 그때 **해당 게임 프로젝트** Codex Work Instruction을 만든다.
-
-Codex가 Base 작업 안에서 이미지를 만들거나 Base 문서를 구현하는 흐름을 만들지 않는다.
+그 Visual을 게임 runtime에 연결할 때는 해당 프로젝트의 승인 자산과 구현 계약을 확인한다. 현재 Work에서 연결·검증할 수 있으면 직접 진행하고, 실제 인계가 필요한 경우에만 해당 범위를 전달한다.
 
 ## 11. Legacy
 
@@ -205,7 +193,7 @@ Figma, Google Sheets, external HTML workspace, retired custom local Tool/Hub를 
 UNIQUE / DUPLICATE / OBSOLETE
 ```
 
-UNIQUE만 현행 Notion/repository owner로 이관하고 readback 후 retirement한다.
+UNIQUE만 현행 repository owner 또는 V4 명시 예외 owner로 이관하고 readback 후 retirement한다. DUPLICATE/OBSOLETE는 참조·consumer·보존할 고유 자료를 확인한 뒤 Git 이력 등 복구 경로와 함께 제거한다. 파일명이나 나이만으로 삭제하지 않는다.
 
 ## 12. Learning + Source
 
@@ -242,13 +230,13 @@ CURRENT STATE / CANON / ACTUAL IMPLEMENTATION READBACK
 → RE-ATTACK THE WHOLE RESULTING STATE
 ```
 
-전체 검토는 정확히 2회다. 2회 뒤에는 오류·충돌·누락·blocker별 수정·검증만 계속하며 전체 회차를 추가하지 않는다. 회차 정본은 `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`다.
+같은 승인 후보 계보의 전체 검토는 정확히 2회다. Part checkpoint와 Final Integration이 그 예산을 공유하며 단계마다 초기화하지 않는다. 2회 뒤에는 오류·충돌·누락·blocker별 수정·검증만 계속하며 전체 회차를 추가하지 않는다. 회차 정본은 `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`다.
 
 ## 14. Git / PR
 
 기본은 Part checkpoint당 coordinator-owned PR 하나다.
 
-- 다른 Part/CP0 Base finding은 `CROSS_PART_CHANGE` attribution으로 같은 GPT workstream에서 수정 가능
+- 다른 Part/CP0 Base finding은 `CROSS_PART_CHANGE` attribution으로 같은 승인 workstream에서 수정 가능
 - independent open PR은 직접 수정하지 않음
 - Scope checker:
 
@@ -275,19 +263,19 @@ python tools/check_base_partition_scope.py --coordinator --base <BASELINE_SHA> -
 11. revisit conditions
 12. full adversarial loop evidence
 
-병합 후 latest main과 Notion을 readback하고 다음 Part로 간다.
+병합 후 latest main과 실제 변경한 owner를 readback하고 다음 Part로 간다. Notion readback은 승인된 V4 예외 작업에만 해당한다.
 
 ## 16. P09 이후 Final Integration
 
-같은 GPT coordinator가:
+같은 Work coordinator가:
 
 1. latest main repin
 2. P01~P09 결과/학습/finding 재검증
-3. CP0·Registry·generated·Notion 정합성 **직접 마감**
+3. CP0·Registry·generated·실제 변경 owner 정합성 **직접 마감**
 4. whole-Base regression/Required CI
-5. 정확히 2회 full-scope adversarial loop, 이후 결함별 수정·검증으로 오류 0 확인
+5. 공유 예산에서 남은 full-scope adversarial loop를 완료해 총 2회, 이후 결함별 수정·검증으로 오류 0 확인
 6. exact-head merge
-7. post-merge main + Base/Project Home readback
+7. post-merge main + 실제 변경한 Base/Project owner readback
 8. 사용자 학습형 최종보고
 
 까지 수행한다.
@@ -302,4 +290,4 @@ python tools/check_base_partition_scope.py --coordinator --base <BASELINE_SHA> -
 
 ## 현재 역할 한 줄
 
-> **Base 최적화는 GPT가 끝까지 수행한다. Codex는 Base 작업자가 아니라 실제 게임 프로젝트의 Godot 제품 구현자다.**
+> 현재 Work의 승인된 실행 능력으로 Base 최적화를 이어가고, 실제 인계 조건은 §0A의 단일 owner를 따른다.

@@ -2,6 +2,8 @@
 
 ## Unreleased — Base v9.5 focused maintenance candidate
 
+- Replaced app-name-based Work/Codex role separation with capability-based unified execution. Corrected current policy, mode router, Skill discovery/body/reference, workspace contract and Work/Codex consumers together; actual handoff is conditional. Preserved permissions, independent review, exact-head merge, visual approval, runtime evidence and project adoption boundaries. Reused approval/research, two shared full-review rounds, impact-bounded checks and milestone PDFs reduce repeated procedure without skipping required gates. Added JSON-owned tunable content with code modules/native Resources and simple controls with inspectable system depth. Policy validation is not measured usage reduction or project fleet adoption.
+
 - Clarified basic design before user approval and detailed design after approval in the existing planning owner; routed the planning sequence and startup checklist to it. Preserved small-task approval reuse, bounded technical experiments, Codex Godot implementation ownership, and source-backed Blueprint learning/evidence separation. No new Skill or project contract migration.
 - Clarified approved Blueprint end-to-end delivery: slices do not shrink approved scope, planning handoff is not whole-task completion, actual asset consumers and user-runnable Godot evidence precede delivery, and eligible cleanup is recoverable Desktop storage under existing retention gates. Preserved real decision/tool blockers, visual approval, the two-round review budget and normal merge protections.
 

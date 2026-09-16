@@ -74,7 +74,7 @@ legacy_google_sheets: COMPATIBILITY_ONLY
 - 기본 실행 단위는 현재 `PLAY_MEANINGFUL_WORK_SLICE` 또는 범위가 명확한 변경이다. 사용자가 블루프린트 전체 구현을 승인하면 그 승인 범위를 여러 Slice로 분해해 모두 완료한다. 실행 단위 분해를 승인 범위 축소로 해석하지 않는다. 이미 승인된 작은 수정은 관련 기존 기획·설계·검증을 재사용하며 전체 문서와 승인 절차를 매번 다시 만들지 않는다.
 - 승인 후 전체 범위의 연속 구현·이미지 연결·검증·병합·사용자 실행 가능 인도는 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md` §8 `APPROVED_BLUEPRINT_END_TO_END_DELIVERY`를 따른다. 담당 전환이나 한 Slice 종료만으로 전체 작업을 완료 처리하지 않는다.
 - 상세 설계에서 승인 의미·범위가 유지되는 가역적 기술 선택은 §2.1에 따라 진행한다. 핵심 경험·중요 UX·비용·보안·저장 호환성·범위 또는 승인 정본의 의미를 바꾸면 §2.2에 따라 **영향받는 결정만 재승인**받는다. 상세 설계 완료를 포괄적인 추가 권한으로 해석하지 않는다.
-- GPT/Codex 역할은 `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` §5와 `docs/GPT_CODEX_WORKFLOW_POLICY.md`를 유지한다. 실제 Godot 제품의 상세 구현 설계와 구현은 Codex가 담당하며, GPT가 인계 뒤 다시 구현 방법을 끝없이 세분화하지 않는다.
+- 실행자 판단은 `docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md` §5와 `docs/GPT_CODEX_WORKFLOW_POLICY.md`의 `UNIFIED_WORK_EXECUTION` / `CAPABILITY_BASED_EXECUTOR_SELECTION`을 따른다. 현재 승인된 capable Work가 상세 설계·구현·검증을 이어간다. 사용자 요청·실제 capability 부족·격리 필요 때만 인계하며, 인계 준비를 위해 이미 승인된 구현 방법을 반복 세분화하지 않는다. capability는 권한이 아니며 runtime 부족은 해당 검증의 `NOT_RUN`과 완료 상한으로 기록하고 독립적으로 준비된 작업은 계속한다.
 - 블루프린트의 승인 전 설계·후보 이미지와 구현 후 실제 연결도·인게임 캡처를 명확히 구분한다. 기존 `docs/operations/HUMAN_HOME_SELF_CONTAINED_POLICY.md`의 학습용 연결도에 **무엇이 바뀌었는가 / 어떤 연결로 작동하는가 / 사용자가 어떻게 확인하는가**를 설명한다. 새 정본이나 매 작업 전체 PDF 생성을 강제하지 않는다.
 - 사용자 기획 승인은 Human/Player 검증 PASS가 아니다. 변경 범위에 적용되는 자동·런타임·화면 검증을 수행하되 사용자 직접 검증은 명시적인 사용자 선언 때만 진행한다. 비대상 검증은 이유와 함께 `NOT_APPLICABLE`, 실행하지 않은 대상 검증은 `NOT_RUN`으로 남기고 PASS로 표시하지 않는다.
 

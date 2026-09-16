@@ -2,7 +2,7 @@
 
 > 이 appendix는 `CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md`와 함께 하나의 Work 실행 bundle을 구성한다. 본체가 current Base owner로 위임한 r5.4 호환 경계를 보존하지만 독립적인 두 번째 정본은 아니다.
 >
-> Current authority는 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`와 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`이다. 과거 Notion-first 표현은 legacy migration provenance를 보존할 때만 해석한다.
+> Current workspace authority는 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`와 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`이며 실행자 판단은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`의 `UNIFIED_WORK_EXECUTION` / `CAPABILITY_BASED_EXECUTOR_SELECTION`을 따른다. 과거 Notion-first·고정 Work/Codex 분리 표현은 compatibility/history로만 해석한다.
 
 ## 1. Default Project Entry — No Separate Goal Required
 
@@ -121,7 +121,7 @@ LOCATION: exact repository/worktree/project
 - shared exact engine/tool pin 또는 session isolation 상세는 current P06/HiGodot owner가 소유한다.
 - 프로젝트마다 Godot binary/port를 이유 없이 증식시키지 않는다.
 - Fresh PowerShell은 local Codex launcher가 아니다.
-- 로컬 접근이 없으면 `NOT_RUN / BLOCKED_NO_LOCAL_ACCESS`를 유지한다.
+- 로컬 접근이 없으면 해당 runtime/기기 검증은 `NOT_RUN / BLOCKED_NO_LOCAL_ACCESS`로 유지한다. 원격 repository 구현·정적 검사처럼 독립적으로 가능한 승인 작업은 계속한다. capability 부족과 repository 권한 부족을 구분하며, 전자는 전체 코딩 금지나 필수 Codex 전환을 뜻하지 않는다.
 
 ## 6. Retired / Migration-only Surfaces
 
@@ -171,14 +171,14 @@ templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9_COM
 
 사용자에게 전달하는 다운로드용 단일 파일은 본체 뒤에 이 appendix 내용을 합쳐 제공할 수 있다.
 
-## 9. Explicit Delegated Minimum-Transition Profile
+## 9. Explicit Handoff Compatibility Profile
 
 ```text
 EXPLICIT_USER_DELEGATION_REQUIRED
 DELEGATED_RECOMMENDED_DEFAULT_APPROVAL
 ```
 
-사용자가 routine 권장안 자동 승인, 중간 승인·중단 최소화, Work에서 실제 인게임 production input 일괄 준비, Codex 단일 구현 구간, machine QA 우선, Human QA 후속 보류를 명시한 경우 다음 opt-in profile을 함께 사용한다.
+현재 기본 경로는 capable Work가 기획·구현·검증·검토·통합을 이어가는 것이다. 사용자가 Work 준비와 Codex 단일 구현 구간을 **명시적으로 선택한 경우에만** 다음 기존 opt-in profile을 조건부 인계 adapter로 사용한다. routine 권장안 진행이나 중간 중단 최소화라는 요청만으로 고정 실행자 전환을 추론하지 않는다.
 
 ```text
 templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFILE.md
@@ -191,7 +191,7 @@ Work planning/review/visual/audio/data preparation
 → user vertical-slice validation
 ```
 
-이 profile은 direct main·force·admin/ruleset bypass 또는 Human/Player evidence 과장을 허용하지 않는다. Notion을 구현 인계의 필수 경로로 복원하지 않으며, current repository exact SHA와 asset manifest를 사용한다.
+이 compatibility profile은 통합 Work 기본 경로를 덮어쓰지 않는다. direct main·force·admin/ruleset bypass 또는 Human/Player evidence 과장을 허용하지 않는다. Notion을 구현 인계의 필수 경로로 복원하지 않으며, current repository exact SHA와 asset manifest를 사용한다. 인계가 없으면 새 handoff 문서를 만들 필요가 없다.
 
 ## 10. Project-local Visual Binary Is Now the Default
 
@@ -213,7 +213,7 @@ actual runtime consumer
 → project-controlled repository path
 → ASSET_MANIFEST
 → exact commit/remote readback
-→ Codex/runtime consumer
+→ current executor/runtime consumer
 ```
 
 `templates/project-operations/WORK_PROJECT_LOCAL_VISUAL_ASSET_DELIVERY_PROFILE.md`는 기존 프로젝트가 해당 좁은 adapter를 이미 참조할 때의 compatibility 문서다. 새 프로젝트는 별도 opt-in 없이 active V4 workspace contract를 따른다.
@@ -224,7 +224,7 @@ NOTION_UPLOAD_NOT_RUN
 NO_FALSE_NOTION_UPLOAD_CLAIM
 ```
 
-Library/local-only candidate를 durable Codex input으로 가장하지 않는다. 실제 current-Slice 구현에 사용할 승인 Visual은 tracked repository path와 manifest로 승격하고 exact SHA를 전달한다.
+Library/local-only candidate를 durable runtime input으로 가장하지 않는다. 모든 실행면에서 생성·생성형 편집은 실제 이미지 도구를 사용하며 candidate와 사용자 승인 자산을 구분한다. 실제 current-Slice 구현에 사용할 승인 Visual은 tracked repository path와 manifest로 승격하고 exact SHA를 전달한다.
 
 ## 11. Retired dual-canon compatibility
 

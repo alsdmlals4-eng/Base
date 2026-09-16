@@ -5,30 +5,26 @@ Base는 게임·연재소설 등 등록 프로젝트가 공유하는 **[학습�
 ## 1. 최소 시작 경로
 
 ```text
-START_HERE.md
-→ AGENTS.md
-→ docs/OPERATING_MODEL.md
-→ docs/WORK_MODE_AND_SKILL_ROUTING.md
-→ docs/DOCUMENTATION_MAP.md
-→ skills/SKILL_REGISTRY.json
-→ docs/generated/BASE_ACTIVE_SKILLS.md
-→ 현재 작업에 필요한 최소 Skill / reference / Template / Test
-→ 대상 프로젝트 Project Home + repository truth
+대상 프로젝트 AGENTS.md·START_HERE·채택 계약
+→ Base 최신 AGENTS.md·START_HERE와 적용 범위 drift
+→ 프로젝트 결정·Active Context·main·관련 PR·actual consumer
+→ 이 문서와 skills/SKILL_REGISTRY.json의 필요한 경로
+→ 현재 작업에 필요한 최소 owner / Skill / reference / Template / Test
 ```
 
 `SKILL_REGISTRY.json`이 active routing machine authority이고 `BASE_ACTIVE_SKILLS.md`는 생성된 사람용 view다. Archive·백업·보류·폐기 구현은 감사나 복구 요청이 없는 한 기본 읽기 대상이 아니다.
 
 ## 2. 권한 경계
 
-### GPT / Codex 작업 책임
+### Work 통합 실행 책임
 
 ```text
-GPT = Base·Notion·기획·검수·문서·표·이미지·운영 인프라
-Codex = 실제 게임 프로젝트의 Godot 제품 구현·GDScript·Scene·Resource·runtime/play test
-CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR
+UNIFIED_WORK_EXECUTION
+CAPABILITY_BASED_EXECUTOR_SELECTION
+CAPABILITY_IS_NOT_AUTHORIZATION
 ```
 
-Base Python test·Registry/generated·CI contract는 코드 형식이어도 GPT governance 작업이다. Codex handoff는 `ACTUAL_GODOT_PRODUCT_IMPLEMENTATION_EXISTS`일 때만 프로젝트별로 만든다.
+기획·코딩·검증은 현재 Work의 승인된 능력으로 이어간다. 단일 owner는 `docs/GPT_CODEX_WORKFLOW_POLICY.md`이며, 실제 능력 부족·사용자 지정 때만 필요한 범위를 인계한다. Base 변경만으로 프로젝트 adopted contract를 몰래 교체하지 않는다.
 
 ### Base
 
@@ -382,7 +378,7 @@ Notion 전환은 기존 Base의 공용 능력을 삭제하거나 숨기는 작�
 - 승인 Decision 복원: `→ CURRENT_CONFIRMED_DECISIONS.md`를 거쳐 분야 정본과 repository human projection을 교차검증한다. 명시된 V4 exception이 있으면 해당 Notion 표현도 범위 내에서 확인한다.
 - 저장소 전체 감사: `repository-wide-audit`는 별도 신규 Skill이 아니라 기존 REVIEW/검증 능력의 통합 mode로 라우팅한다.
 - 프로젝트 설치 템플릿: **프로젝트 설치 템플릿을 활성 상태 문서로 오인하지 않는다**. Template은 소비될 때만 프로젝트 상태가 된다.
-- Codex handoff: **GPT→Codex 단계별 Godot 구현 인계**는 기존 `implementation-package-handoff` mode를 사용하며, `USER_REQUESTED_CODEX_HANDOFF`가 있을 때만 생성한다. 계획/검토 작업은 자동으로 Codex 구현 승인이 되지 않는다.
+- 조건부 handoff: 기존 `implementation-package-handoff` mode와 **GPT→Codex 단계별 Godot 구현 인계** 경로명은 호환용이다. `docs/GPT_CODEX_WORKFLOW_POLICY.md`의 실제 capability gap·사용자 지정·승인된 격리 조건에서만 필요한 범위를 전달한다. `USER_REQUESTED_CODEX_HANDOFF`는 가능한 사유 하나이며 유일한 사유는 아니다. 계획/검토나 도구 능력이 구현 승인 자체를 만들지는 않는다.
 - Codex preflight: `CODEX_PREFLIGHT_OPTIONAL`; 명시적 handoff가 없으면 계획/검토 단계에서 별도 구현 preflight를 강제하지 않는다.
 - GitHub governance: **GitHub Pro 저장소 운영**과 **GitHub Pro 보호·Ruleset·자동 병합**은 기존 GitHub governance owner로 라우팅하며 `GITHUB_REPOSITORY_GOVERNANCE_PROFILE.md`, `GITHUB_USAGE_BUDGET.md`를 호환 발견 경로로 유지한다.
 - 기획 인터뷰: **Grill Me 핵심 의사결정 인터뷰**는 `clarify` + `references/grill-me-protocol.md`로 라우팅하고 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`의 승인 배치 정책을 함께 적용한다.

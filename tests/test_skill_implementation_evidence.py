@@ -186,6 +186,18 @@ class SkillImplementationEvidenceTests(unittest.TestCase):
             f"> Behavior evaluation source SHA-256: `{builder.behavior_source_digest(root)}`",
             markdown,
         )
+        # Updating a policy fixture without changing its count must invalidate
+        # generated provenance, not reuse an older model/evidence claim.
+        previous_digest = builder.behavior_source_digest(root)
+        evaluation_path = root / "skills/SKILL_BEHAVIOR_EVALS.json"
+        evaluation = json.loads(evaluation_path.read_text(encoding="utf-8"))
+        evaluation["cases"][0]["required_evidence"] = ["same candidate shared two-round budget"]
+        write_json(evaluation_path, evaluation)
+        self.assertNotEqual(previous_digest, builder.behavior_source_digest(root))
+        refreshed = builder.build_evidence_markdown(root)
+        self.assertNotEqual(markdown, refreshed)
+        self.assertIn("> Behavior evaluation case count: `2`", refreshed)
+        self.assertIn("External model behavior run: `NOT_RUN`", refreshed)
 
     def test_behavior_source_digest_is_newline_invariant(self) -> None:
         builder = load_builder()

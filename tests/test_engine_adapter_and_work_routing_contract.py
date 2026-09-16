@@ -39,9 +39,8 @@ class EngineAdapterAndWorkRoutingContractTests(unittest.TestCase):
         text = (ROOT / "docs/operations/base-partitions/P08_AI_OPERATIONS_EXECUTORS.md").read_text(encoding="utf-8")
         for term in (
             "CHAT_QUICK_DISCUSSION_DEFAULT",
-            "WORK_LONG_MULTISTEP_NONCODING_DEFAULT",
-            "CODEX_GAME_PRODUCT_IMPLEMENTATION_OWNER",
-            "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
+            "WORK_LONG_MULTISTEP_EXECUTION_DEFAULT",
+            "CAPABILITY_BASED_EXECUTOR_SELECTION",
             "ENGINE_ADAPTER_SELECTED_FROM_PROJECT_CANON",
         ):
             self.assertIn(term, text)

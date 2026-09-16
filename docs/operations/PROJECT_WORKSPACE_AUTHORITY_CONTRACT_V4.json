@@ -9,6 +9,11 @@
   "pdf_policy": "PDF_IS_DERIVED_SNAPSHOT_NOT_CANON",
   "ai_design_spec": "AI_PRODUCTION_SPEC_MARKDOWN",
   "work_surface": "CHATGPT_WORK_EXECUTION_SURFACE_NOT_CANON",
+  "execution_policy": "docs/GPT_CODEX_WORKFLOW_POLICY.md",
+  "execution_model": "UNIFIED_WORK_EXECUTION",
+  "executor_selection": "CAPABILITY_BASED_EXECUTOR_SELECTION",
+  "handoff_policy": "HANDOFF_ONLY_FOR_CAPABILITY_GAP_OR_EXPLICIT_REQUEST",
+  "capability_is_not_authorization": true,
   "library_surface": "CHATGPT_LIBRARY_REFERENCE_STORAGE_NOT_CANON",
   "notion": "LEGACY_OPTIONAL_READ_ONLY_MIGRATION_SOURCE",
   "no_new_notion_write_by_default": true,
@@ -17,7 +22,8 @@
   "runtime_truth": "REPOSITORY_RUNTIME_TRUTH",
   "codex_rehydration": "CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA",
   "codex_visual_input": "APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST",
-  "missing_visual_route": "GPT_CREATE_REVIEW_APPROVE_THEN_REPOSITORY_MANIFEST",
+  "missing_visual_route": "CAPABLE_WORK_CANDIDATE_THEN_USER_APPROVAL_AND_REPOSITORY_MANIFEST",
+  "legacy_executor_field_semantics": "codex_rehydration and codex_visual_input are compatibility field names; execution_policy applies their safety checks to every selected executor, not a mandatory app handoff",
   "base_revision_lifecycle": {
     "latest_discovery": "LATEST_BASE_DISCOVERY_REQUIRED",
     "pin_semantics": "PIN_IS_EVIDENCE_NOT_FRESHNESS_BYPASS",
@@ -60,9 +66,11 @@
     "docs/ACTIVE_CONTEXT.md",
     "docs/canon/CURRENT_CONFIRMED_DECISIONS.md",
     "docs/design/PROJECT_AI_PRODUCTION_SPEC.md",
-    "docs/handoffs/CURRENT_CODEX_HANDOFF.md",
     "assets/ASSET_MANIFEST.json"
   ],
+  "conditional_project_entrypoints": {
+    "docs/handoffs/CURRENT_CODEX_HANDOFF.md": "ONLY_WHEN_ACTUAL_HANDOFF_IS_NEEDED"
+  },
   "required_asset_manifest_fields": [
     "asset_id",
     "consumer",

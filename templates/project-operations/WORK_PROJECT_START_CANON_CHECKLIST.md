@@ -35,6 +35,8 @@ NO_NEW_NOTION_WRITE_BY_DEFAULT
 
 구현 승인 후에는 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md` §8 `APPROVED_BLUEPRINT_END_TO_END_DELIVERY`를 적용한다. 기존 작업 카드에 전체 승인 요구사항·자산 consumer·검증 대응을 복원하고, 남은 필수 항목을 모두 실행 큐로 연결한다. 단계·담당 전환마다 재승인을 요구하지 않으며 사용자 실행 방법과 실제 증거, 병합·readback, 복구 가능한 정리까지 같은 승인 범위에서 닫는다.
 
+실행자는 `docs/GPT_CODEX_WORKFLOW_POLICY.md`의 `CAPABILITY_BASED_EXECUTOR_SELECTION`으로 선택한다. 현재 Work에 승인된 수정·실행·검증 도구가 있으면 직접 계속한다. 실제 capability gap 또는 명시된 인계 조건이 있을 때만 전환하며, 일부 runtime 검증 부재를 모든 구현의 중단이나 PASS로 바꾸지 않는다. `CURRENT_CODEX_HANDOFF.md`와 handoff readback은 실제 인계 때만 필요하고 같은 Work에서는 기존 Active Context·작업 계약을 사용한다.
+
 새 Work·새 채팅·작업 재개에서 바로 새 기획이나 제작으로 들어가지 않는다.
 
 ```text
@@ -46,12 +48,12 @@ NO_NEW_NOTION_WRITE_BY_DEFAULT
 → 핵심 재미·핵심 시스템·SWOT·남은 작업·작업순서 체크리스트 작성
 → 정본 상태 분류
 → 현재 승인 범위의 누락·충돌·stale 상태 선교정
-→ repository Decision/spec/data/asset manifest/handoff destination readback
+→ repository Decision/spec/data/asset manifest와 실제 인계가 있을 때의 handoff readback
 → 필요 Gate에서 source-SHA-bound Human GDD PDF freshness 확인
 → legacy Notion/Sheet 고유 자료가 있을 때만 migration receipt 확인
 → 체크리스트 재평가
 → READY_AFTER_CORRECTION
-→ 새 기획·제작·Codex 구현
+→ 현재 Work의 승인된 기획·제작·제품 구현
 ```
 
 이 순서는 안전한 `fetch`, metadata read, open PR inventory 같은 read-only bootstrap을 막지 않는다. 아직 정본 확인이 끝나지 않았다는 이유로 오래된 local state에서 작업하라는 뜻도 아니다.
@@ -86,7 +88,7 @@ NO_NEW_NOTION_WRITE_BY_DEFAULT
 current user instruction
 → Base latest completed main / root AGENTS / current routing owners
 → Project default branch / exact SHA / AGENTS / START_HERE / Active Context / confirmed decisions
-→ AI production spec / current handoff / ASSET_MANIFEST
+→ AI production spec / 실제 인계가 있을 때의 current handoff / ASSET_MANIFEST
 → actual code·data·Scene·Resource·asset·test·runtime evidence
 → open/draft/ready PR and protected other workstreams
 → 필요하면 source-SHA-bound Human GDD PDF
@@ -94,6 +96,8 @@ current user instruction
 ```
 
 material source를 읽지 못하면 snippet·Memory·과거 대화로 대체하지 않는다.
+
+최신 Base 관찰과 프로젝트 정책 채택을 구분한다. 승인된 운영 규칙만 동기화하고, 프로젝트가 채택한 engine/version·저장 호환성·제품 의미·자산 승인·보안 계약은 별도 변경 근거와 승인 없이 교체하지 않는다.
 
 ```text
 REQUIRED_SOURCE_UNREADABLE
@@ -226,7 +230,7 @@ PROJECT_START_CANON_CHECKLIST:
     repository_canon_readback:
     decision_spec_data_readback:
     asset_manifest_readback:
-    handoff_readback:
+    handoff_readback: # 실제 인계가 없으면 NOT_APPLICABLE
     human_pdf_freshness_readback:
 
   context_configuration_hygiene:
@@ -376,7 +380,7 @@ confirmed requirement
 
 `STARTUP_CANON_RECONCILIATION_AND_CORRECTION_FIRST`
 
-새 기획·새 에셋 production·Codex mutation 전에 다음을 분류한다.
+새 기획·새 에셋 production·제품 수정 전에 다음을 분류한다.
 
 ```text
 CURRENT / HISTORICAL / SUPERSEDED / CONFLICT / UNKNOWN_UNVERIFIED
@@ -396,7 +400,7 @@ CURRENT / HISTORICAL / SUPERSEDED / CONFLICT / UNKNOWN_UNVERIFIED
 ```text
 validated finding
 → smallest safe correction
-→ repository Decision/spec/data/manifest/handoff
+→ repository Decision/spec/data/manifest와 필요한 handoff
 → exact destination readback
 → 필요한 경우 source-SHA-bound Human GDD PDF 재생성
 → checklist recalculation
@@ -456,7 +460,7 @@ AND unresolved product-meaning decisions explicitly deferred
 | Reuse First / benchmark / 3 alternatives / long-term fit | PRESERVED |
 | Visual Delete Test / actual consumer / image approval | IMPROVED · repository path/SHA/manifest |
 | 사람용 전체 시각 점검 | IMPROVED · exact source SHA의 derived PDF |
-| Work↔Codex role / engine adapter / Implementation Ready | IMPROVED · exact repository SHA rehydrate |
+| capability 기반 실행자 / engine adapter / Implementation Ready | IMPROVED · 현재 Work 기본 실행·실제 인계만 조건부·exact repository SHA 확인 |
 | automatic safe Git fetch·pull·push / PR·merge readback | PRESERVED |
 | project-scoped Godot·computer operation | PRESERVED |
 | user-downloadable build / machine QA / Human evidence ceiling | PRESERVED |
@@ -482,6 +486,7 @@ templates/project-operations/WORK_CODEX_MINIMUM_TRANSITION_VERTICAL_SLICE_PROFIL
 GitHub structured canon = repository structured/runtime canon
 Notion human canon = retired legacy human surface
 GitHub structured canon / Notion human canon destination readback = retired dual-write route
+Work↔Codex role = retired app-name-based role split; current capability-based execution
 ```
 
 위 문자열은 역사·구형 test 탐색용이며 active completion condition이 아니다.
@@ -582,9 +587,9 @@ active_playable_slice 또는 next_playable_slice_candidate
 
 `BLOCKED_DECISION`은 `BLOCKED_UNVERIFIED`, `USER_DECISION_REQUIRED`, `DEFERRED`를 한눈에 보는 파생 View다. 실제 work item 상태는 원래 분류를 유지한다. 모든 작업이 차단되면 실행은 nonzero로 유지하면서 형식이 검증된 PM 목록·실제 blocker·재개 조건은 `INFORMATION ONLY; EXECUTION BLOCKED`로 표시한다.
 
-### 12.3 GPT PM 갱신 책임
+### 12.3 현재 작업의 PM 갱신 책임
 
-GPT는 현재 승인 범위에서 다음을 연속 수행한다.
+현재 Work의 실행자는 승인 범위에서 다음을 연속 수행한다.
 
 1. dependency와 player/user value를 기준으로 `READY` 순서를 정한다.
 2. 기본 WIP에 따라 `IN_PROGRESS` 하나와 `VERIFY_REVIEW` 하나를 넘지 않게 한다.

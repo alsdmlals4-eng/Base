@@ -174,7 +174,7 @@ class DeliberateWorkRoutingRecoveryTests(unittest.TestCase):
             "인터넷 원출처",
             "최소 3개",
             "Tool 실행",
-            "5회",
+            "정확히 2회",
             "NOT_RUN",
             "중간보고",
         ):

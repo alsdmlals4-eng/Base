@@ -294,8 +294,8 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
             "godot-product-implementation-handoff",
             "godot-work-instruction",
             "godot-package-handoff",
-            "gdscripting",
-            "godot-runtime-test",
+            "actual-capability-gap",
+            "explicit-executor-handoff",
             "ci-cost-optimization",
             "ci-gate",
         ):

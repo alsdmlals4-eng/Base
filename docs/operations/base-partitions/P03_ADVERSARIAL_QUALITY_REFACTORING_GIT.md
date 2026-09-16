@@ -25,7 +25,9 @@ Part 경계는 수정 금지선이 아니라 semantic owner 지도다. 다른 Pa
 2회를 checklist/lens로 축소, 2회 뒤 미해결 blocker를 무시한 완료, 3회 이상 전체 검토 자동 추가, 가짜 finding, 동일 finding 중복 수정, unrelated branch/worktree 변경, evidence ceiling 위반.
 
 ## 검증/완료
-focused adversarial/Git tests와 Part scope 검사. 정확히 2회 전체 검토 뒤에는 finding별 수정·검증만 수행한다. 전체 회차를 추가하지 않는다. `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`를 따른다.
+focused adversarial/Git tests와 Part scope 검사. 유효 finding을 교정하며 전체 회차를 추가하지 않는다.
+
+같은 승인 후보 계보의 공유 검토 예산은 전체 정확히 2회다. Part·Final Integration별로 초기화하지 않는다. 이후 결함별 교정·검증만 계속한다. 정본: `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`.
 ## 학습 루프
 - 작업마다 `docs/operations/base-partitions/learning/P03_LEARNING_LOG.md`에 Learning Checkpoint를 남긴다.
 - 새 공용 교훈이 없으면 `NO_NEW_REUSABLE_LESSON`; 프로젝트 전용이면 `PROJECT_ONLY`; Base 승격 후보면 `BASE_PROMOTION_CANDIDATE`.
