@@ -11,6 +11,18 @@ FRONT_NAME = re.compile(r"^name:\s*([^\n]+)$", re.MULTILINE)
 
 
 class BaseSharedSkillRouteTests(unittest.TestCase):
+    def test_godot_route_requires_an_actual_godot_consumer(self) -> None:
+        registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+        item = next(
+            entry for entry in registry["shared_skills"]
+            if entry["skill_id"] == "evaluating-godot-assets-and-plugins-before-creation"
+        )
+        self.assertIn("실제 Godot 엔진·저작·씬·리소스 consumer", " ".join(item["use_when"]))
+        exclusions = " ".join(item["do_not_use_when"])
+        self.assertIn("Godot consumer가 없는", exclusions)
+        self.assertIn("일반 Base 문서·Skill·비-Godot 도구", exclusions)
+        self.assertFalse(item["load_by_default"])
+
     def test_shared_skill_routes_are_registered_and_adapter_only(self) -> None:
         registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
 

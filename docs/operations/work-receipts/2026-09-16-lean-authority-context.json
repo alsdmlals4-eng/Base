@@ -172,6 +172,7 @@
     "correction": "Consumers now follow existing read_skill_contract modules; no assertions or permission checks removed. Targeted 96 tests PASS; additional entry/CLI/loading set 53 PASS.",
     "final_full_run": "PASS: run_local_validation.py with trusted e3f960b2a1dd108af5c1a6fcdbc675415ee1ccdf; 2705 tests / 2650 passed / 55 skipped; CI topology, generated artifacts, integrity, skill coverage, diff check and fsck passed. Final commit CI/merge/readback recorded in PR.",
     "environment": "PYTHONUTF8=1 required for Unicode CLI child processes on this Windows environment; default cp949 failure reproduced in unchanged baseline",
+    "ci_propagation_correction": "Run 35113194136 on 27ff377112c609cc7ee7a61695b6c37d7278d05e failed canonical-reference freshness: restore conditional Sheets owner link and shared-route/learning/test companions. Shared-route regression RED then 47 targeted tests PASS; final candidate CI remains required.",
     "auxiliary_skill_creator_quick_validate": "NOT_RUN_DEPENDENCY_MISSING: PyYAML absent in both available Python runtimes; Base native skill/coverage validation PASS; no new dependency installed",
     "runtime_human_project_adoption": "NOT_APPLICABLE_TO_BASE_POLICY_CHANGE"
   },
@@ -191,8 +192,8 @@
       {
         "path": "skills/managing-project-intake-and-work-contract/SKILL.md",
         "normalized_utf8_bytes_before": 39579,
-        "after": 18818,
-        "reduction_pct": 52.5
+        "after": 19085,
+        "reduction_pct": 51.8
       }
     ]
   }

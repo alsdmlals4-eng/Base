@@ -80,6 +80,8 @@ Registry의 승인된 작은 작업 비사용 조건은 이미 승인·정의된
 
 Godot authority·Godot addon 평가는 **실제 Godot 엔진·저작·씬·리소스 consumer가 있는 도구 작업**에만 추가한다. 일반 Base 문서·Skill·비-Godot 도구 요청에는 분야 owner와 Existing Solution First를 사용한다.
 
+Google Sheets legacy 이관·명시적 workspace 예외는 [기획서·Sheets 책임 정책](../../docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md)과 workspace reference를 확인한다. 정상 repository-only 작업에 Sheets 생성·동기화를 추가하지 않는다.
+
 새 기능·공개 계약·상태 소유권·consumer 변경은 작업 분해가 필요하지 않은 작은 기능을 포함해 [work-decomposition-and-sequencing.md](references/work-decomposition-and-sequencing.md)를 읽는다. 단일 파일이라는 이유로 기능 계약을 생략하지 않는다.
 
 `contract-module`은 저장소 검증용 합집합이다. 실행 시 모든 reference를 읽는 지시가 아니다.

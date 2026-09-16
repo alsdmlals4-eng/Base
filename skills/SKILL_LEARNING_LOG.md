@@ -1,5 +1,13 @@
 # Base Skill Learning Log
 
+## 2026-09-17 — Lean intake and consumer-scoped routing
+
+- **State:** `OBSERVATION`; current-task PR #883, approved Base correction only. No project-fleet, installed-plugin or global-settings migration.
+- **Finding/correction:** Move conditional intake detail behind explicit reference selectors while preserving approval reuse, feature-contract ownership and dependency-scoped source blockers. The shared Godot route must match the corrected entrypoints: require a real Godot consumer, not merely a generic Skill/MCP/tool request.
+- **Propagation failure:** Exact-head CI at `27ff377112c609cc7ee7a61695b6c37d7278d05e` exposed a missing direct Sheets policy link and omitted shared-route/learning companions. Restore the conditional canonical link and update this existing log, the shared route and its regression test; do not weaken freshness gates or create another always-loaded owner.
+- **Evidence:** Two independent review rounds closed three findings; local full validation ran 2705 tests (55 skipped). The added shared-route scope test failed before correction. Final exact-head CI and merge/readback evidence belong to PR #883. These checks do not prove model-routing accuracy, gameplay, billing-token savings or runtime speed.
+- **Recheck trigger:** Moved reference becomes unreachable, raw-body consumer misses modular contracts, a non-Godot task requests a Godot adapter, or a Skill change fails its canonical-reference/companion checks. Run the baseline-to-candidate freshness checker before push as well as the local full suite.
+
 ## 2026-09-16 — Creator reuse and game lettering
 
 - 상태: `OBSERVATION`; 사용자 승인: 현재 대화의 두 기능 승인안에 대한 “좋아 작업진행해줘”.
