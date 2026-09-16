@@ -145,7 +145,7 @@ RESEARCH
 
 ## 4. `DEEP_WORK_PREANSWER_GATE`
 
-L1 이상 또는 조사·벤치마킹·검토·구현·검증을 명시한 요청은 `REQUIRED_EVIDENCE_BEFORE_FINAL`이다. 현재 정본·실제 상태·필요한 외부 원출처·최소 3개 실질 대안·구현 현실성·적대적 검토·검증을 수행하기 전에 substantive final로 종료하지 않는다.
+L1 이상 또는 조사·벤치마킹·검토·구현·검증을 명시한 요청은 `REQUIRED_EVIDENCE_BEFORE_FINAL`이다. 현재 정본·실제 상태와 요청에 적용되는 조사·구현 현실성·검토·검증을 수행하기 전에 substantive final로 종료하지 않는다. `IMPORTANT_DECISION_ALTERNATIVES_ONLY`: 최소 3개 실질 대안 비교는 중요한 새 설계·정책 결정에 적용한다. 이미 승인된 해법의 계속 구현·단일 정답의 결함 수정·읽기 전용 사실 확인에는 기존 근거를 재사용하고 허수 대안·새 승인·불필요한 산출물을 만들지 않는다. 읽기 전용 요청은 실행 receipt나 저장소 쓰기를 요구하지 않는다.
 
 `INTERMEDIATE_REPORT_SUPPRESSION_IS_NOT_WORK_REDUCTION`: 중간보고 생략은 작업 생략이 아니다.
 

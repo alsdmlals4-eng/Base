@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from tools.skill_context import read_skill_contract
+
 import json
 import unittest
 from pathlib import Path
@@ -11,6 +13,8 @@ EXPECTED_REGISTRY_SHA256 = "693a0dff3f054ecdd653079909e044211473838e73dd9aff0773
 
 
 def read(relative: str) -> str:
+    if relative == "skills/managing-project-intake-and-work-contract/SKILL.md":
+        return read_skill_contract(ROOT / relative)
     return (ROOT / relative).read_text(encoding="utf-8")
 
 

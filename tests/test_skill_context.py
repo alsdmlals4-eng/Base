@@ -80,8 +80,43 @@ class SkillContextTests(unittest.TestCase):
         for name in ('first-prompt-direction-anchoring', 'continuous-work-execution', 'work-decomposition-and-sequencing', 'grill-me-protocol'):
             with self.subTest(reference=name):
                 selected = f'references/{name}.md'
+                self.assertTrue((source.parent / selected).is_file(), selected)
                 pack = load_skill_context(source, [selected])
                 self.assertEqual({source.resolve(), (source.parent / selected).resolve()}, set(pack))
+
+    def test_compatibility_and_decision_details_are_conditional_not_eager(self):
+        source = Path(__file__).resolve().parents[1] / 'skills/managing-project-intake-and-work-contract/SKILL.md'
+        plain = load_skill_context(source)
+        self.assertEqual([source.resolve()], list(plain))
+        for name, detail in (
+            ('routing-and-decision-details', 'neutral-recommendation-gate'),
+            ('workspace-and-compatibility', 'V3_COMPATIBILITY_AND_HISTORY_ONLY'),
+        ):
+            with self.subTest(reference=name):
+                selected = f'references/{name}.md'
+                self.assertTrue((source.parent / selected).is_file(), selected)
+                pack = load_skill_context(source, [selected])
+                self.assertEqual({source.resolve(), (source.parent / selected).resolve()}, set(pack))
+                self.assertIn(detail, pack[(source.parent / selected).resolve()])
+                self.assertNotIn(detail, plain[source.resolve()])
+
+    def test_l2_traceability_route_exposes_the_actual_contract(self):
+        source = Path(__file__).resolve().parents[1] / 'skills/managing-project-intake-and-work-contract/SKILL.md'
+        selected = 'references/routing-and-decision-details.md'
+        body = load_skill_context(source)[source.resolve()]
+        route = next(line for line in body.splitlines() if line.startswith('|') and selected in line)
+        self.assertIn('L2+', route)
+        pack = load_skill_context(source, [selected])
+        self.assertEqual({source.resolve(), (source.parent / selected).resolve()}, set(pack))
+        self.assertIn('FEATURE_SPEC_TRACEABILITY_PACKET.md', pack[(source.parent / selected).resolve()])
+
+    def test_compiled_intake_keeps_moved_safety_and_aliases(self):
+        source = Path(__file__).resolve().parents[1] / 'skills/managing-project-intake-and-work-contract/SKILL.md'
+        compiled = read_skill_contract(source)
+        for invariant in ('EXPLICIT_USER_ABSORPTION_AUTHORIZATION',
+                          'V3_COMPATIBILITY_AND_HISTORY_ONLY',
+                          'neutral-recommendation-gate'):
+            self.assertIn(invariant, compiled)
 
     def test_production_coverage_suite_imports_in_an_isolated_process(self):
         result = subprocess.run([sys.executable, '-m', 'unittest', 'tests.test_skill_system_coverage', '-q'],

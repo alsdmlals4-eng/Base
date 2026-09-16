@@ -90,6 +90,35 @@ class ProjectWorkTrackingCLITests(unittest.TestCase):
         for token in ("0 / 1", "PM-01", "IN_PROGRESS"): self.assertIn(token, result.stdout)
         self.assertNotIn("[x]", result.stdout)
 
+    def test_independent_resume_preserves_unreadable_source_and_blocks_closeout(self):
+        value = tracked_receipt()
+        board = value["project_work_kanban"]
+        blocked = copy.deepcopy(board["work_items"][0])
+        blocked.update(
+            work_item_id="SOURCE-DEPENDENT", title="Required unreadable source",
+            status="BLOCKED_UNVERIFIED", blocker="Original source unavailable: example/source",
+            resume_condition="Read the original source before dependent work",
+            next_action="Request accessible original",
+        )
+        board["work_item_refs"].append("SOURCE-DEPENDENT")
+        board["work_items"].append(blocked)
+        # Root preflight retains only independently verified active-task evidence.
+        result = run_cli(value, "--phase", "resume", "--render-markdown")
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        self.assertIn("example/source", result.stdout)
+        self.assertIn("BLOCKED_UNVERIFIED", result.stdout)
+        self.assert_rejected(value, "closeout", "--phase", "closeout")
+        board["work_items"][0]["depends_on"] = ["SOURCE-DEPENDENT"]
+        self.assert_rejected(value, "dependency", "--phase", "resume")
+
+    def test_unchanged_blocked_root_preflight_cannot_resume_independent_task(self):
+        value = tracked_receipt()
+        value["benchmark_preflight_receipt"] = {
+            "state": "BLOCKED_UNVERIFIED",
+            "blocked_sources": ["required original source"],
+        }
+        self.assert_rejected(value, "BLOCKED_UNVERIFIED", "--phase", "resume")
+
     def test_closeout_requires_all_work_done(self):
         self.assert_rejected(tracked_receipt(), "closeout", "--phase", "closeout")
 

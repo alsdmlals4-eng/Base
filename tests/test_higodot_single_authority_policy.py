@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from tools.skill_context import read_skill_contract
+
 import json
 import tempfile
 import unittest
@@ -89,7 +91,7 @@ class HiGodotSingleAuthorityPolicyTests(unittest.TestCase):
     def test_existing_solution_gate_is_owned_by_existing_skills(self) -> None:
         for path in OWNER_PATHS:
             self.assertTrue(path.is_file(), str(path))
-            body = path.read_text(encoding="utf-8")
+            body = read_skill_contract(path) if path.name == "SKILL.md" else path.read_text(encoding="utf-8")
             self.assertIn(POLICY_RELATIVE, body, str(path))
 
         evaluation = OWNER_PATHS[0].read_text(encoding="utf-8")
@@ -101,7 +103,7 @@ class HiGodotSingleAuthorityPolicyTests(unittest.TestCase):
         ):
             self.assertIn(marker, evaluation)
 
-        intake = OWNER_PATHS[1].read_text(encoding="utf-8")
+        intake = read_skill_contract(OWNER_PATHS[1])
         self.assertIn("existing_solution_disposition", intake)
         self.assertIn("BUILD_NEW", intake)
 

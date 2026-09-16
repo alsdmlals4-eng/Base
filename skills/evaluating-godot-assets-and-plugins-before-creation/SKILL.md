@@ -9,7 +9,7 @@ description: Use when a Godot feature, tool, pipeline, UI, integration, asset, s
 
 새로 만들기 전에 **현재 환경에서 이미 사용 중인 도구와 검증 가능한 기존 구현으로 안전하게 해결할 수 있는지** 조사한다. 발견했다는 이유만으로 설치하지 않으며, 프로젝트 코어·데이터 소유권·라이선스·제거 가능성을 확인한다.
 
-새 MCP·addon·CLI·framework·Skill·Mode·실행 계층에는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`의 Existing Solution First Gate가 의무다. 현재 환경·내부 구현·관련 PR·외부 대안을 조사하고 `REUSE / ABSORB / REFACTOR / ARCHIVE / BUILD_NEW` disposition을 기록하기 전에는 설계·구현으로 진행하지 않는다.
+실제 Godot 엔진·저작·씬·리소스 consumer가 있는 새 MCP·addon·CLI·framework·Skill·Mode·실행 계층에는 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`의 Existing Solution First Gate가 의무다. 현재 환경·내부 구현·관련 PR·외부 대안을 조사하고 `REUSE / ABSORB / REFACTOR / ARCHIVE / BUILD_NEW` disposition을 기록하기 전에는 설계·구현으로 진행하지 않는다.
 
 ## Skill Modes
 
@@ -305,6 +305,8 @@ BUILD_CUSTOM
 - 실행하지 않은 플랫폼·성능·보안·법률 검증을 통과로 보고하지 않았다.
 
 ## Do not use
+
+- Godot consumer가 없는 Base 문서·Skill·일반 도구 요청. intake와 해당 분야 Existing Solution First owner를 사용하며 Godot adapter를 요구하지 않는다.
 
 - 이미 승인·고정된 자산의 단순 경로 변경.
 - 외부 도구와 무관한 오탈자나 단일 수치 수정.

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from tools.skill_context import read_skill_contract
+
 import json
 import unittest
 from pathlib import Path
@@ -14,7 +16,7 @@ MIGRATION_CHECKLIST = ROOT / "templates/project-operations/NOTION_TO_REPOSITORY_
 
 def text(path: str | Path) -> str:
     candidate = path if isinstance(path, Path) else ROOT / path
-    return candidate.read_text(encoding="utf-8")
+    return read_skill_contract(candidate) if path == "skills/managing-project-intake-and-work-contract/SKILL.md" else candidate.read_text(encoding="utf-8")
 
 
 class RepositoryFirstWorkspaceContractTests(unittest.TestCase):

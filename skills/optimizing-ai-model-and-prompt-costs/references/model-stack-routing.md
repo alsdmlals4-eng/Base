@@ -157,7 +157,7 @@ continue_without_change_risk:
 | 정본·권한·의미 결정 부족 | 필수 source를 복원하고 권한·비용 gate 또는 `USER_DECISION_REQUIRED`로 연결 | 추론 강화로 승인·정본을 대체하거나 비용 경로 우회 |
 | 외부 효과 불명·중단 | [기존 복구 owner](../../managing-project-intake-and-work-contract/references/task-recovery-protocol.md)의 RESUME으로 대상·request/result identity·postcondition을 확인 | Git 상태만으로 외부 성공을 판단하거나 timeout 뒤 blind replay |
 
-필수 사용자 제공 source를 읽을 수 없는 경우 root `AGENTS.md`의 즉시 중단·검증 가능한 원문 요청 경계가 우선한다. 그 외 국소 blocker의 복구·보류·독립 작업은 [기존 연속작업 owner](../../managing-project-intake-and-work-contract/references/continuous-work-execution.md)에 위임한다. source 접근 불가와 읽은 source 간 충돌을 구분한다.
+필수 사용자 제공 source를 읽을 수 없으면 root `AGENTS.md`의 `SOURCE_DEPENDENCY_SCOPED_BLOCKER`에 따라 해당 의존 작업을 보류하고 검증 가능한 원문을 요청한다. 별도 근거·승인이 있는 독립 작업의 계속 여부는 [기존 연속작업 owner](../../managing-project-intake-and-work-contract/references/continuous-work-execution.md)를 따른다. 전체 중단 지시 또는 모든 필수 작업의 source 의존은 전역 중단이다. source 접근 불가와 읽은 source 간 충돌을 구분한다.
 
 취소·검증 실패 시 후보를 완료 결과로 적용·병합하지 않는다. 이미 수정된 격리 작업본은 미검증 상태로 보존하고 기존 사용자 변경을 reset/discard하지 않는다. 외부 부작용이 발생했을 가능성은 위 복구 owner로 재조회한다. 이 문서는 원자적 patch 적용이나 exactly-once 실행을 구현했다는 증거가 아니다.
 

@@ -87,7 +87,7 @@ Google Sheets는 `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL` source다. Figma·
 | Pixel art system | `docs/knowledge/game-development/PIXEL_ART_STYLE_SYSTEM.md` | 재현 가능한 스타일 축·preset·검토 원칙 |
 | Pixel visual reference gallery | `docs/knowledge/game-development/PIXEL_ART_VISUAL_REFERENCE_GALLERY.md` | `REFERENCE_ONLY` pixel preset image examples, provenance, license, observation data |
 | UI/UX 설계·폴리싱·감사 | `skills/auditing-and-refining-ui-art/SKILL.md` | `auditing-and-refining-ui-art`가 UI 설계·폴리싱·실제 화면 감사를 소유하고 `ui-motion-and-interaction-principles.md`를 조건부 reference로 사용 |
-| AI instruction/context | `docs/knowledge/ai/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md` | instruction authority·context curation·example/fixture·HARD_CONSTRAINT 설계 |
+| AI instruction/context | `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md` | instruction authority·context curation·example/fixture·HARD_CONSTRAINT·검증/관찰/학습 적용 경계; 구 `knowledge/ai/` 경로는 compatibility alias |
 | AI model/prompt cost | `skills/optimizing-ai-model-and-prompt-costs/SKILL.md` | `optimizing-ai-model-and-prompt-costs`가 model recommendation·effort routing·prompt caching·provider/cost boundary를 소유 |
 | 게임 시스템·난이도·전투 AI | `skills/analyzing-and-refining-game-concepts/SKILL.md`, `docs/knowledge/game-development/GAME_SYSTEM_DIFFICULTY_AND_COMBAT_AI_CONTRACT.md` | `system-design` / `difficulty-and-combat-ai` mode, 난이도 장벽·공정성·attack/threat budget |
 | creative benchmark / reuse | `docs/knowledge/research/REVERSE_ENGINEERING_REUSE_PIPELINE.md`, `docs/knowledge/game-development/reuse/REUSABLE_MODULE_REGISTRY.md` | multi-source 원리 추출, originality/fun/creativity hypothesis, module contract와 project-specific synthesis |

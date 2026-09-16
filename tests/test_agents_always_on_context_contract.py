@@ -9,6 +9,30 @@ AGENTS = ROOT / "AGENTS.md"
 
 
 class AgentsAlwaysOnContextContractTests(unittest.TestCase):
+    def test_source_blocker_is_dependency_scoped_not_blanket_stop(self) -> None:
+        self.assertIn("SOURCE_DEPENDENCY_SCOPED_BLOCKER", self.agents)
+        self.assertNotIn("다른 독립 작업으로 임의 전환하지 않는다", self.agents)
+        self.assertIn("사용자가 전체 중단", self.agents)
+
+    def test_proportionate_research_and_tool_routing_are_explicit(self) -> None:
+        owner = (ROOT / "docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md").read_text(encoding="utf-8")
+        self.assertIn("IMPORTANT_DECISION_ALTERNATIVES_ONLY", owner)
+        self.assertIn("이미 승인된", owner)
+        routing = (ROOT / "skills/managing-project-intake-and-work-contract/references/external-source-and-tool-routing.md").read_text(encoding="utf-8")
+        self.assertIn("GODOT_CONSUMER_SCOPED_TOOL_ROUTE", routing)
+        self.assertIn("비-Godot", routing)
+
+    def test_start_and_godot_evaluator_keep_consumer_scoped_entrypoints(self) -> None:
+        start = (ROOT / "START_HERE.md").read_text(encoding="utf-8")
+        evaluation = (ROOT / "skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("GODOT_CONSUMER_SCOPED_TOOL_ROUTE", start)
+        for body in (start, evaluation):
+            self.assertIn("Godot consumer가 없는", body)
+            self.assertIn("실제 Godot 엔진·저작·씬·리소스 consumer가 있는", body)
+        route = next(line for line in start.splitlines() if line.startswith('|') and 'inventory-current-environment / disposition' in line)
+        self.assertIn("Godot consumer가 있는", route.split('|')[1])
+        self.assertNotIn("요청은 설계보다 먼저", start)
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.agents = AGENTS.read_text(encoding="utf-8")
