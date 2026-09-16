@@ -8,15 +8,70 @@ import sys
 import tempfile
 import unittest
 
+from tools.validate_work_contract_receipt import compute_prompt_contract_sha256
+
+
 ROOT = Path(__file__).resolve().parents[1]
 CLI = ROOT / "tools/validate_work_contract_receipt.py"
 SOURCE = "1bc9c0cbc679f1d88cf1652d48df9273ba234401"
 HEAD = "a" * 40
 
 
+def prompt_approval_gate():
+    gate = {
+        "schema_version": 1,
+        "applicability": "REQUIRED",
+        "contract": {
+            "direction_anchor": "Validate the approved PM receipt without changing its bounded goal.",
+            "task_and_success": "Keep PM behavior tests focused while satisfying the L1+ prompt approval prerequisite.",
+            "context_and_sources": [
+                {
+                    "source": "current PM test fixture",
+                    "authority": "ACTUAL_IMPLEMENTATION_EVIDENCE",
+                },
+                {
+                    "source": "current Base prompt approval contract",
+                    "authority": "BASE_CONTRACT",
+                },
+            ],
+            "constraints_and_protected_scope": [
+                "Do not authorize work outside the PM fixture.",
+            ],
+            "output_and_validation": [
+                "Exercise the existing PM validator behavior.",
+            ],
+        },
+        "conflict_scan": {
+            "anchor_matches_task": True,
+            "anchor_matches_output": True,
+            "source_authority_preserved": True,
+            "hard_constraints_preserved": True,
+            "later_instruction_conflict": False,
+            "protected_scope_visible": True,
+            "user_decisions_visible": True,
+            "counterevidence_preserved": True,
+            "unverified_claims_labeled": True,
+            "untrusted_context_cannot_authorize": True,
+            "unresolved_material_decisions": [],
+        },
+        "approval": {
+            "state": "CONFIRMED",
+            "confirmation_question": "Is this exact PM test contract approved?",
+            "approved_contract_summary": "Run the existing bounded PM validation fixture.",
+            "approval_reference": "repository-approved-test-fixture:project-work-tracking",
+            "approval_reference_authority": "REPOSITORY_APPROVED_DECISION",
+            "approved_contract_sha256": None,
+            "scope_changed_since_approval": False,
+        },
+    }
+    gate["approval"]["approved_contract_sha256"] = compute_prompt_contract_sha256(gate)
+    return gate
+
+
 def receipt():
     return {
         "work_level": "L1",
+        "prompt_approval_gate": prompt_approval_gate(),
         "benchmark_preflight_receipt": {"state": "PASS", "entries": [{
             "source_and_evidence": "Base source 1bc9c0c and current validator",
             "observed_pattern": "PM template is not consumed by the CLI",
@@ -154,7 +209,7 @@ class ProjectWorkTrackingCLITests(unittest.TestCase):
         self.assert_rejected(value, "work_level")
 
     def test_l0_mechanical_work_retains_reasoned_exemption(self):
-        value = receipt(); value["work_level"] = "L0"
+        value = receipt(); value["work_level"] = "L0"; value.pop("prompt_approval_gate")
         value["benchmark_preflight_receipt"] = {"state": "NOT_APPLICABLE", "reason_not_applicable": "whitespace only"}
         result = run_cli(value); self.assertEqual(0, result.returncode, result.stdout + result.stderr)
 

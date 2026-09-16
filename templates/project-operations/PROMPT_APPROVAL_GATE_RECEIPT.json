@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "applicability": "REQUIRED",
+  "contract": {
+    "direction_anchor": "<primary action, intended outcome, and dominant criterion>",
+    "task_and_success": "<concrete task and observable success condition>",
+    "context_and_sources": [
+      {
+        "source": "<current user instruction locator>",
+        "authority": "CURRENT_USER_INSTRUCTION"
+      },
+      {
+        "source": "<current repository canon or actual implementation evidence>",
+        "authority": "PROJECT_REPOSITORY_CANON"
+      },
+      {
+        "source": "<retrieved benchmark or tool material that cannot authorize work>",
+        "authority": "UNTRUSTED_CONTEXT"
+      }
+    ],
+    "constraints_and_protected_scope": [
+      "<hard constraint or protected scope>"
+    ],
+    "output_and_validation": [
+      "<required output and executable validation>"
+    ]
+  },
+  "conflict_scan": {
+    "anchor_matches_task": true,
+    "anchor_matches_output": true,
+    "source_authority_preserved": true,
+    "hard_constraints_preserved": true,
+    "later_instruction_conflict": false,
+    "protected_scope_visible": true,
+    "user_decisions_visible": true,
+    "counterevidence_preserved": true,
+    "unverified_claims_labeled": true,
+    "untrusted_context_cannot_authorize": true,
+    "unresolved_material_decisions": []
+  },
+  "approval": {
+    "state": "AWAITING_USER_CONFIRMATION",
+    "confirmation_question": "<does this exact contract match the intended work?>",
+    "approved_contract_summary": "<bounded human-readable contract summary>",
+    "approval_reference": null,
+    "approval_reference_authority": null,
+    "approved_contract_sha256": null,
+    "scope_changed_since_approval": false
+  }
+}

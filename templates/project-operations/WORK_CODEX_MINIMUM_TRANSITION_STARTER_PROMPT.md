@@ -302,3 +302,7 @@ DO_NOT_AUTO_ADVANCE_TO_NEXT_SLICE_BEFORE_USER_VALIDATION
 ```
 
 사용자가 실제 빌드를 플레이하기 전에는 다음 Slice로 자동 진입하지 마. 마지막 보고에 변경 전→후→기대효과, 사용 Skill, reuse/benchmark/대안, Work 제작물, Codex 구현, Git SHA/PR/merge, GUT/Hera/runtime/build evidence, 다운로드 링크, NOT_RUN, high-risk deferred, migration counters, 남은 machine work와 사용자 실행 방법을 포함해.
+
+## Prompt approval execution gate
+
+`PROMPT_APPROVAL_EXECUTION_GATE_REQUIRED`: 새롭거나 의미가 바뀐 L1+ 작업은 기존 root receipt에 `templates/project-operations/PROMPT_APPROVAL_GATE_RECEIPT.json`의 `prompt_approval_gate` sibling을 구성하고, mutation·Codex handoff·외부 agent 위임 전에 `--phase prepare --expected-source-sha <fresh-read-source-sha> --render-markdown`을 실행한다. `prepare`는 exact contract와 digest를 보여 주지만 `EXECUTION AUTHORIZED: NO`다. 사용자가 그 exact contract를 확인한 뒤 `CONFIRMED` 또는 동일 digest의 `REUSED_APPROVAL`을 기록하고 기존 `--phase start` 또는 `--phase resume` 명령을 실행한다. read-only 조사, L0 기계 작업, 동일 validation 재실행, exact approved continuation은 중복 질문하지 않는다. 필드·권위·digest·material drift의 단일 owner는 `skills/managing-project-intake-and-work-contract/references/prompt-approval-execution-gate.md`다.
