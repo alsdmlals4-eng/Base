@@ -6,19 +6,19 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class OneShotLocalExecutorBootstrapContractTests(unittest.TestCase):
-    def test_policy_scopes_execution_freshness_to_godot_product_codex(self) -> None:
+    def test_policy_preserves_execution_freshness_for_all_capable_executors(self) -> None:
         policy = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
         for term in (
-            "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
-            "CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR",
+            "UNIFIED_WORK_EXECUTION",
+            "CAPABILITY_BASED_EXECUTOR_SELECTION",
             "CODEX_EXECUTION_ENVIRONMENT_FRESHNESS_REQUIRED",
-            "actual game-project Godot product implementation",
-            "exact project/repository/worktree identity",
+            "CAPABILITY_IS_NOT_AUTHORIZATION",
+            "exact project/repository/worktree",
             "stale PID/session",
             "project.godot",
         ):
             self.assertIn(term, policy)
-        self.assertIn("GPT→PowerShell→local Codex one-shot launcher", policy)
+        self.assertIn("GPT_LOCAL_CODEX_ORCHESTRATION_RETIRED", policy)
         self.assertNotIn("ONE_SHOT_LOCAL_EXECUTOR_BOOTSTRAP", policy)
 
     def test_godot_template_preserves_project_authoring_and_live_qa_safety(self) -> None:
@@ -41,7 +41,7 @@ class OneShotLocalExecutorBootstrapContractTests(unittest.TestCase):
             ROOT / "templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md"
         ).read_text(encoding="utf-8")
         self.assertIn("Base Python test, CI contract, Registry/generated checker", policy)
-        self.assertIn("Base/Notion work not Codex trigger", policy)
+        self.assertIn("HANDOFF_ONLY_FOR_CAPABILITY_GAP_OR_EXPLICIT_REQUEST", policy)
         for forbidden_project_literal in (
             "GRIMOIRE-",
             "8001",

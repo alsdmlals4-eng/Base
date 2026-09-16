@@ -102,7 +102,7 @@ class BasePartitionContractTests(unittest.TestCase):
         branches = []
         for part in manifest["parts"]:
             self.assertEqual("CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT", part["chat_ownership"])
-            self.assertEqual("COORDINATOR_CURRENT_OR_AFFECTED_PART", part["notion_write_authority"])
+            self.assertEqual("V4_EXPLICIT_EXCEPTION_SCOPE_ONLY", part["notion_write_authority"])
             urls.append(part["notion_page_url"])
             branches.append(part["branch_template"])
         self.assertEqual(9, len(set(urls)))
@@ -144,8 +144,8 @@ class BasePartitionContractTests(unittest.TestCase):
             self.assertIn("MINIMUM_FULL_LOOPS_BEFORE_CLEAN_EXIT: 2", text)
             self.assertIn("CLEAN_REVIEW_EXIT", text)
             self.assertIn("CROSS_PART_CHANGE_REQUEST", text)
-        self.assertIn("BASE_GOVERNANCE = GPT", worker)
-        self.assertIn("CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR", worker)
+        self.assertIn("CAPABILITY_BASED_EXECUTOR_SELECTION", worker)
+        self.assertIn("CAPABILITY_IS_NOT_AUTHORIZATION", worker)
         self.assertIn("사용자 학습형 완료보고", worker)
         self.assertIn("CURRENT_COORDINATOR_CHAT", integration)
 

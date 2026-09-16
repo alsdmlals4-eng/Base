@@ -1,5 +1,15 @@
 # Maintaining Project Context and Handoff Learning Log
 
+## 2026-09-16 — Current capability, not application name, determines execution
+
+- **State:** `OBSERVATION`; unified routing is an approved operating decision, while productivity effects remain unmeasured.
+- **Baseline:** At `d830c0f6967678eed3c208ac6b24f9cd1b262ec3`, an isolated reader given an ordinary approved implementation request and capable Work tools still selected mandatory Codex handoff. A stronger explicit Work-only user override avoided this, showing a default policy defect rather than missing tools.
+- **Correction:** Existing role owner now uses `UNIFIED_WORK_EXECUTION` and `CAPABILITY_BASED_EXECUTOR_SELECTION`. Registry no longer triggers handoff merely for GDScript/Scene/runtime tests. Active Context remains a compact state router; detailed handoff references load only for an actual boundary. Generated discovery is rebuilt, not hand-edited; frozen V3/release history remains intact.
+- **Safety:** Capability does not authorize new costs, scope, permissions or semantic changes. Missing runtime limits evidence, not independent coding. Image tools produce candidates; only approved manifest-backed assets become canon. Whole approved delivery, two shared review rounds, required CI and normal merge remain intact.
+- **Learning:** A policy-only correction is insufficient if Registry, templates and conditional workspace entrypoints still force the retired route. Correct owner and consumers together, then use fresh-reader scenarios plus parsed contract/link tests; token checks alone do not prove agent behavior.
+- **Evidence/ceiling:** Baseline focused 29 tests passed under the old policy; the behavioral default failed. Current candidate tests, two independent reviews and exact-head/main readback are recorded in the current-task PR. Game runtime, plugin A/B consumption, real project adoption and measured savings are `NOT_RUN`, not implied by documentation.
+- **Scope/rollback:** Revert the bounded current-task commit through a normal PR. Project engine/save/asset rules and installed plugins/automations are unchanged. Older entries below are historical observations, not current role restrictions.
+
 ## 2026-09-10 — Discovery exclusions must match state-handoff modes
 
 - **State:** `OBSERVATION` from bounded independent retrieval, not game runtime or productivity proof.

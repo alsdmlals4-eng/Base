@@ -92,7 +92,8 @@ class Pr530SelectiveIntegrationContractTests(unittest.TestCase):
 
         handoff = rows["maintaining-project-context-and-handoff"]
         self.assertIn("godot-product-implementation-handoff", handoff["trigger_tags"])
-        self.assertTrue(any("Base 정책" in text for text in handoff["do_not_use_when"]))
+        self.assertIn("actual-capability-gap", handoff["trigger_tags"])
+        self.assertNotIn("gdscripting", handoff["trigger_tags"])
 
     def test_dashboard_skill_is_repository_projection_visual_map_owner_not_html_builder(self) -> None:
         text = DASHBOARD.read_text(encoding="utf-8")

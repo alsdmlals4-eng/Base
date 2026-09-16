@@ -1,729 +1,121 @@
-# GPT–Codex 역할·구현 인계 정책
+# Work 통합 실행·조건부 인계 정책
 
-> Active workspace authority: `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`
+> Workspace: `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`
 > Machine contract: `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`
+> Approval: 2026-09-16 사용자 승인 — Work에서 기획·코딩·구현을 통합하고 최적화 권장안을 Base에 반영.
 
-이 문서는 Base를 사용하는 게임 프로젝트에서 GPT와 Codex의 책임 경계를 정의하는 공용 정본이다.
+## 1. 단일 책임과 실행 능력
 
-핵심은 **Codex를 일반 GitHub 수정자나 모든 코드 파일의 담당자로 사용하지 않는 것**이다. GPT는 기획·조사·검수·시각자료·Base·repository 기획 정본과 구현 인계를 담당하고, Codex는 실제 게임 프로젝트의 Godot 제품 구현을 담당한다. Notion은 새 작업의 필수 중간 작업면이 아니며, 고유 자료가 남은 기존 프로젝트에서만 GPT가 `LEGACY_READ_ONLY` migration source로 다룬다.
+`UNIFIED_WORK_EXECUTION` / `CAPABILITY_BASED_EXECUTOR_SELECTION`
 
-## 0. 현재 역할 계약
+현재 Work 세션이 승인 범위에 필요한 저장소 접근·수정·명령·엔진 도구를 실제로 사용할 수 있으면 기획, 상세 설계, 제품 코딩, 데이터·Scene·Resource·자산 연결, 테스트, 검수, PR와 정상 병합까지 같은 작업에서 이어간다. GPT/Work/Codex라는 제품명이나 파일 확장자는 구현 금지 또는 강제 인계 사유가 아니다. Base Python test, CI contract, Registry/generated checker도 같은 원칙을 따른다.
 
-```text
-GPT_NONCODING_PROJECT_OWNER
-GPT_PLANNING_RESEARCH_REVIEW_VISUAL_OWNER
-GPT_BASE_REPOSITORY_GOVERNANCE_OWNER
-CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER
-CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR
-PRODUCT_IMPLEMENTATION_HANDOFF_ONLY
-CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA
-CODEX_VISUAL_INPUT_REPOSITORY_MANIFEST_ONLY
-APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST
-NO_NEW_NOTION_WRITE_BY_DEFAULT
-GPT_VISUAL_REQUEST_REQUIRED_WHEN_ASSET_MISSING
-CODEX_IMAGE_GENERATION_FORBIDDEN
-GPT_LOCAL_CODEX_ORCHESTRATION_RETIRED
-CODEX_EXECUTION_ENVIRONMENT_FRESHNESS_REQUIRED
-GPT_FINAL_IMPLEMENTATION_REVIEW
-PLAY_MEANINGFUL_WORK_SLICE
-TARGETED_CONTEXT_RECOVERY_NOT_FULL_PROJECT_REAUDIT
-GPT_MINIMUM_IMPLEMENTATION_READY_PLANNING
-EXISTING_SOLUTION_FIRST
-PLANNING_CANON_BEFORE_HANDOFF
-PRE_HANDOFF_GPT_STOP
-DIRECT_RUN_OR_VERIFIED_EVIDENCE
-WORK_DIRECT_GODOT_VERIFICATION_WHEN_MATERIAL
-TASK_LAUNCHED_GODOT_PROCESS_OWNERSHIP
-STOP_TASK_OWNED_GODOT_WHEN_NO_LONGER_NEEDED
-PRESERVE_PREEXISTING_AND_UNRELATED_GODOT_INSTANCES
-PROCESS_OWNERSHIP_UNVERIFIED
-GODOT_VERIFICATION_AND_SHUTDOWN_REPORT
-IMPACT_BOUNDED_REVALIDATION
-CANON_SYNC_AFTER_VALIDATION
-```
+`CAPABILITY_IS_NOT_AUTHORIZATION`: 도구가 있다는 사실은 사용자 승인·보안·프로젝트 보호 경계·외부 행위 권한을 확대하지 않는다. 시스템/개발자 지시와 실제 도구 제약을 repository 정책으로 우회하지 않는다. Work는 실행 작업면이지 정본이 아니며 `REPOSITORY_PRIMARY_CANON`을 유지한다.
 
-### 가장 중요한 구분
+| 관측한 능력 | 현재 작업의 처리 |
+|---|---|
+| 승인 범위 + repository 수정 + 테스트/엔진 실행 가능 | 현재 세션에서 직접 구현·검증·교정 |
+| 수정 가능, 일부 runtime/기기 검증 불가 | 독립 구현·가능한 검사 계속; 해당 증거만 `NOT_RUN` / `BLOCKED_UNVERIFIED` |
+| 읽기만 가능 | 사실 확인·구체 blocker·재개 정보; 구현·write 완료 주장 금지 |
+| 사용자 지정 executor 또는 실제 부족한 실행 능력 | 해당 범위만 조건부 인계; 도구 가용성·권한 확인 후 실행 |
+| 새 비용·권한·핵심 의미·승인 범위 변경 필요 | `USER_DECISION_REQUIRED`; 독립된 승인 작업은 계속 |
 
-**GPT가 맡는다.**
+runtime MCP가 없다고 엔진 실행 전체가 불가능하다고 가정하지 않는다. 허용된 기존 CLI·테스트·정확한 build 증거 경로를 확인한다. 반대로 connector로 파일을 수정할 수 있다는 사실만으로 Godot 실행도 가능하다고 주장하지 않는다.
 
-- 게임 기획·조사·벤치마킹·시장/현업 비교
-- 적대적 검토·Implementation Reality Gate
-- 시스템·밸런스·데이터 설계와 사람용 표
-- UI/UX·Flow·Storyboard·Art Direction
-- 이미지 생성·편집·검수
-- 프로젝트 repository의 Decision·AI production spec·asset manifest·handoff·비제품 문서 정리
-- 사람용 상세 기획서 PDF 생성·검수와 source SHA 관리
-- Base 정책·Skill·Guide·Template·Learning·문서 교정
-- Base의 Registry/generated/계약 테스트/CI 정책 등 **공용 운영·검증 인프라** 교정
-- Codex용 프로젝트 구현 작업지시문 작성
-- Codex 결과 최종 검수와 repository 정본 반영
-- 기존 Notion-only 자료의 inventory·이관·readback. 신규 Notion 쓰기는 기본 수행하지 않음
-
-**Codex가 맡는다.**
-
-- 실제 게임 프로젝트의 Godot 제품 구현
-- GDScript 및 게임 실행 코드
-- 실제 플레이에 사용되는 Scene / Resource / Autoload / runtime config
-- 코드와 연결되는 runtime game data
-- 저장·불러오기·migration의 제품 구현
-- UI runtime wiring
-- shader/VFX/code-driven feedback
-- Godot build/export 설정
-- 실제 게임 구현을 검증하는 automated/runtime/headless/play tests
-- 구현 중 필요한 기술 리팩터링·오류 수정·성능/안정성 개선
-
-`CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR`: **파일이 코드라는 이유만으로 Codex 담당이 되지 않는다.** Base Python test, CI contract, Registry/generated checker, 문서 자동화 같은 공용 운영 인프라는 이 작업 분담에서 GPT 책임이다. Codex는 게임 프로젝트의 제품/Godot 구현에만 기본 진입한다.
-
-## 1. 기본 작업 흐름
+## 2. 기획부터 사용자 실행 가능 결과까지
 
 ```text
-GPT
-→ 현재 PLAY_MEANINGFUL_WORK_SLICE 정의
-→ TARGETED_CONTEXT_RECOVERY_NOT_FULL_PROJECT_REAUDIT
-→ GPT_MINIMUM_IMPLEMENTATION_READY_PLANNING
-→ EXISTING_SOLUTION_FIRST
-→ 필요한 범위 벤치마킹·재사용 조사
-→ 적대적 검토·IRG
-→ Player Outcome / Scope / Non-Scope / Acceptance / Evidence 확정
-→ 필요한 이미지·사운드·Visual 요구를 실제 소비처 기준으로 확정
-→ repository Decision·AI production spec·asset manifest 갱신
-→ PLANNING_CANON_BEFORE_HANDOFF
-→ PRE_HANDOFF_GPT_STOP
-
-실제 Godot 제품 구현이 없음
-→ GPT가 검증 가능한 비코딩 결과를 repository에서 readback
-→ 필요 Gate에서 HUMAN_GDD_PDF_DERIVED_VIEW 생성
-→ CANON_SYNC_AFTER_VALIDATION
-→ 종료
-
-실제 Godot 제품 구현이 있음
-→ GPT가 프로젝트별 Codex 구현 작업지시문 작성
-→ CODEX_GODOT_PRODUCT_IMPLEMENTATION_HANDOFF
-→ Codex가 exact repository SHA와 프로젝트 진입점을 fresh-read
-→ 승인 asset의 repository path + SHA-256 + manifest 확인
-→ 실제 Godot 구조에 맞는 구현 방향·기술 방법 결정
-→ Godot 제품 구현·코딩·테스트·runtime/play evidence
-→ READY_FOR_GPT_REVIEW
-→ GPT가 구현 일치·runtime·play/UX/Visual/Audio evidence를 검수
-→ finding을 FIX | TUNE | REDESIGN으로 분류
-→ 필요한 수정 후 IMPACT_BOUNDED_REVALIDATION
-→ 승인 후 병합
-→ CANON_SYNC_AFTER_VALIDATION
+current authority + actual implementation + related PR fresh-read
+→ 기존 승인·재사용/벤치마크 근거 복원
+→ 기획 + 기본 설계 → 검토·보완 → 승인 또는 기존 승인 재사용
+→ 필요한 상세 설계
+→ 현재 세션의 승인된 실행 능력으로 구현
+→ 자동 검사 + 필요한 실제 엔진·화면·플레이 경로 검증
+→ FIX | TUNE | REDESIGN 판정 및 범위 안 교정
+→ 전체 승인 항목·consumer·미검증 재대조
+→ 정확한 HEAD의 필수 CI·독립 검토·정상 병합
+→ main readback + 실행 방법 + 필요한 Blueprint 갱신
 ```
 
-### 1.1 `PLAY_MEANINGFUL_WORK_SLICE` — GPT의 기본 작업 단위
+`PLAY_MEANINGFUL_WORK_SLICE`는 플레이어 행동·의미 있는 선택·결과를 검증하는 내부 실행 단위다. 전체 승인 블루프린트를 한 Slice로 임의 축소하지 않는다. `explicit_non_scope` / 제외 범위는 미승인 미래 아이디어를 제외하는 경계이지 승인 항목을 버리는 수단이 아니다.
 
-프로젝트 작업은 기본적으로 **플레이어가 구분 가능한 결과·선택·피드백을 한 번에 검증할 수 있는 가장 작은 의미 단위**로 자른다. 기능 파일 수나 문서 장 수가 아니라 플레이 의미를 기준으로 한다.
+`GPT_MINIMUM_IMPLEMENTATION_READY_PLANNING`: 필요한 데이터, 상태·입출력, UI/UX flow, 필요한 이미지·사운드, 실제 consumer, 정상·실패·경계 Acceptance가 구현 가능한 만큼 준비되면 상세 설계와 구현으로 이동한다. 이미 승인된 결과를 다시 인터뷰하거나 계획 문서를 계속 늘리지 않는다.
 
-- 예: 소환 선택 → 배치 → 전투 결과 → 보상 피드백처럼 하나의 판단이 닫히는 범위.
-- 여러 시스템이 필요하더라도 이번 플레이 결과에 직접 필요하지 않으면 `explicit_non_scope`로 둔다.
-- 먼 미래 콘텐츠, 전체 장기 경제, 아직 소비되지 않을 설정을 구현 준비 명목으로 미리 완성하지 않는다.
-- 이 `work slice`는 항상 release-near Vertical Slice라는 뜻이 아니다. 전체 대표 경험·판매력·제작 파이프라인까지 증명해야 하는 마일스톤은 `designing-vertical-slices`의 별도 shipping-intent 품질 Gate를 적용한다.
+`PLANNING_CANON_BEFORE_HANDOFF`의 안전 의미는 유지한다: 승인된 의미·범위·보호·Acceptance를 기존 repository owner에 기록한다. 같은 세션이면 별도 handoff 문서나 기획 전용 PR을 반드시 만들 필요는 없다. `PRE_HANDOFF_GPT_STOP`은 **기획 과잉을 멈추고 구현으로 넘어가는 과거 호환 이름**이며 Work 종료·Codex 전환 명령이 아니다.
 
-### 1.2 `TARGETED_CONTEXT_RECOVERY_NOT_FULL_PROJECT_REAUDIT`
+`HANDOFF_IS_NOT_DELIVERY`: 인계 문서·코드 파일·이미지 생성은 사용자 실행 가능 결과와 다르다. 전체 완료 기준은 `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md`의 `APPROVED_BLUEPRINT_END_TO_END_DELIVERY` / `USER_TESTABLE_DELIVERY`가 소유한다.
 
-매 작업마다 프로젝트 전체를 다시 전수검사하지 않는다. 현재 Slice의 판단과 구현에 영향을 주는 정본·구현·증거만 targeted recovery한다.
+## 3. 경량 실행: 한 계약, 한 판단, 필요한 검증
 
-기본 읽기 범위:
+`TARGETED_CONTEXT_RECOVERY_NOT_FULL_PROJECT_REAUDIT`
 
-1. 최신 사용자 지시와 Project `AGENTS.md` / Active Context.
-2. 현재 Slice에 관련된 승인 Decision·AI production spec·분야별 정본.
-3. 현재 Slice와 직접 연결된 실제 code/data/Scene/Resource/assets/tests.
-4. 승인 runtime asset의 repository path·SHA-256·consumer·manifest 상태.
-5. 같은 Goal의 open/recent PR read-only reconciliation.
-6. 직접 의존하는 인접 시스템과 기존 runtime/play evidence.
-7. 사람이 전체를 검토해야 할 때 exact source SHA의 상세 PDF.
-8. `NOTION_UNIQUE_CANON_COUNT > 0`인 실제 migration scope에서만 관련 legacy Notion source.
+- 시작에는 최신 AGENTS·main·결정/Active Context·실제 대상/consumer·같은 Goal PR을 확인한다. 같은 작업 안에서는 바뀐 owner와 직접 의존성을 다시 읽고, cross-system 충돌·공용 schema·새 권한·사용자 전수감사 요청이 있을 때 범위를 넓힌다.
+- `EXISTING_SOLUTION_FIRST`: 프로젝트 구현·승인 자산 → 관련 Base 축적 근거 → 필요한 외부 자료. 같은 승인 범위의 유효한 benchmark는 `REUSED_EVIDENCE`로 재사용한다. benchmark **확인**은 매 작업, 신규 인터넷 **재조사**는 판단에 필요한 근거가 부족하거나 바뀐 경우다.
+- Base intake와 플러그인이 같은 요구 정리·승인·계획·검토를 중복 실행하지 않게 현재 owner와 승인 참조를 한 번 연결한다. 스킬 존재만으로 전체 본문·모든 reference를 읽지 않는다. 선택한 지침은 빠짐없이 읽되 관련 없는 지침은 선택하지 않는다.
+- 현재 계획·검증 진입점으로 충분하면 새 Skill·프레임워크·대시보드·추적표를 만들지 않는다. 플러그인 설치 수를 실제 호출량·비용과 동일시하지 않는다.
+- `IMPACT_BOUNDED_REVALIDATION`: 중간 변경은 영향 범위 테스트, 통합 경계에서는 관련 회귀검사, 병합 전에는 repository 필수 검사. 필수 CI·보안·저장 호환성·runtime Acceptance를 비용 명목으로 생략하지 않는다.
+- 같은 승인 후보 계보의 전체 적대 검토는 정확히 2회다. 기획·구현·인계·병합 때마다 초기화하지 않는다. 2회 뒤 결함별 수정·표적 검증만 계속하고 미해결 blocker를 PASS로 바꾸지 않는다. 상세: `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`.
+- `CANON_SYNC_AFTER_VALIDATION`: 구현 상태·결정·다음 작업은 같은 작업에서 갱신한다. 전체 PDF는 사용자 검토·의미 있는 마일스톤·최종 인도에 생성한다. 중간 코드 수정마다 재생성하지 않고 기존 PDF의 source SHA와 stale 상태를 정직하게 유지한다.
+- 반복 실패에 새 증거가 없으면 맹목 재시도 대신 원인 분류·대안·복구 또는 국소 defer를 적용한다. 사용량 절감률은 실측 전 `NOT_RUN`이며 모델/플러그인 자동 변경·새 과금은 별도 승인 없이는 하지 않는다.
 
-다음 때만 범위를 넓힌다.
+## 4. 조건부 인계
 
-- 증거가 cross-system 회귀나 정본 충돌을 가리킴.
-- 공용 schema/interface/경제/저장 호환성처럼 실제 영향 범위가 프로젝트 전반임.
-- 사용자가 명시적으로 프로젝트 전체 감사·전수검사를 요청함.
+`HANDOFF_ONLY_FOR_CAPABILITY_GAP_OR_EXPLICIT_REQUEST`
 
-즉, 기존 선행 감사 의무는 유지하되 **현재 Slice의 영향 범위 안에서 수행**한다. 근거 없이 매 Slice마다 Base·repository 전체와 legacy Notion을 처음부터 다시 읽는 것은 검증이 아니라 중복 작업이다.
+실제로 필요한 권한/엔진/환경이 없거나 사용자가 다른 executor를 지정하거나 독립된 작업의 격리가 정당화될 때만 인계한다. 인계가 합리적이라는 판단만으로 새 작업 생성·외부 서비스 실행 권한을 얻지 않는다. 허용된 도구로만 수행한다.
 
-### 1.3 `GPT_MINIMUM_IMPLEMENTATION_READY_PLANNING`
+기존 Template `templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md`와 Skill mode `codex-godot-implementation-handoff`는 경로 호환성을 유지한다. `CODEX_GODOT_PRODUCT_IMPLEMENTATION_HANDOFF`는 Codex를 실제로 선택했을 때의 값이지 모든 게임 구현의 선행 Gate가 아니다.
 
-GPT는 Codex가 실제 구현을 시작하고, 구현 후 플레이 결과를 판정할 수 있을 만큼만 기획한다. 최소 산출물은 다음이다.
+필요한 인계에는 project/repository/worktree, exact source SHA, current owners, work_slice_id, player outcome, approved_scope / explicit_non_scope / protected_scope, required_data_and_inputs, ui_ux_flow, asset_audio_dependencies, acceptance_criteria, review_evidence_expected, actual commands, remaining work를 기존 owner 참조로 전달한다. 받는 실행자는 current main과 drift를 재확인한다. 새 source에 오래된 승인·검증을 자동 승격하지 않는다.
+기존 Template의 `exact_source_sha`와 `asset_manifest`는 실제 경로·검증한 revision으로 채우며, 인계하지 않는 작업에 빈 양식을 추가하지 않는다.
 
-- 플레이어 행동: 무엇을 입력·선택·조작하는가.
-- 목적과 기대 감정: 왜 이 행동을 하며 무엇을 느끼게 하려는가.
-- 의미 있는 선택: 선택지와 trade-off가 무엇인가.
-- 결과·실패·보상·피드백: 선택이 어떻게 되돌아오는가.
-- 기존 시스템 의존성과 보호해야 할 규칙.
-- UI/UX Flow와 플레이어가 알아야 할 정보.
-- 필요한 데이터, 상태, 입력·출력의 의미.
-- 필요한 이미지·사운드·Visual/VFX와 실제 게임 소비처.
-- 주요 edge case와 실패 조건.
-- Acceptance Criteria와 구현 후 runtime/play 검증법.
-- 이번 Slice의 명시적 제외 범위.
+`CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA` / `CODEX_EXECUTION_ENVIRONMENT_FRESHNESS_REQUIRED`의 안전 의미는 **모든 실행자**에게 적용된다. exact project/repository/worktree, source SHA, dirty/diverged, project.godot, 채택 engine/authoring authority, actual tool/session을 확인한다. stale PID/session/port를 신뢰하지 않는다.
 
-구현 방법의 Node/Scene/함수 구조까지 GPT가 선행 고정하지 않는다. 그것은 current project truth를 읽는 Codex의 기술 자율 영역이다.
+## 5. 제품 의미·이미지·권리
 
-### 1.4 `EXISTING_SOLUTION_FIRST`
+`CHANGE_PROPOSAL`: 코어·주요 UX·경제/성장 의미·서사·Art Direction·저장 호환성·비용·범위가 달라지면 사용자 결정으로 올린다. 같은 세션의 역할 전환은 새 승인의 이유가 아니다.
 
-새 설계·에셋·모듈·도구를 만들기 전에 Base의 `REUSE_FIRST_PREFLIGHT_REQUIRED` evidence를 소비한다. 별도 중복 조사 파이프라인을 만들지 않는다.
+`FIX | TUNE | REDESIGN`은 다음 경계를 유지한다.
 
-```text
-현재 프로젝트 구현/데이터/Scene/Resource
-→ 현재 용도로 승인된 Asset / Reference
-→ 검증된 Base module / knowledge / case
-→ 직접 관련된 다른 프로젝트의 검증 evidence
-→ 현재 결정에 필요한 외부 benchmark
-→ 마지막에 BUILD_NEW
-```
-
-외부 사례는 표면 복사가 아니라 `ADOPT / ADAPT / REJECT`로 판정한다. 동일 Slice에 이미 유효한 benchmark/reuse evidence가 있으면 재사용하고, 새 uncertainty가 생긴 부분만 추가 조사한다.
-
-### 1.5 적대적 검토와 구현 준비 판정
-
-Slice의 최소 기획이 만들어지면 적대적 검토·IRG를 수행한다. root의 `ADVERSARIAL_REVIEW_UNTIL_CLEAN` 최소 반복 요구는 유지하지만, 각 반복에서 프로젝트 전체 기획을 다시 시작하지 않고 **현재 Slice 산출물과 직접 영향 범위**를 공격·수정·회귀검사한다.
+- `FIX`: 승인 의미는 유지되지만 구현 결함·회귀가 있으면 같은 실행자가 교정한다.
+- `TUNE`: **기존 승인 tuning envelope 안에서만** 수치·타이밍·배치·가독성·피드백을 조정한다. 허용 범위를 확인할 수 없거나 경제·성장·난이도 의미/선택 구조를 바꾸면 `REDESIGN` 또는 `USER_DECISION_REQUIRED`이지 임의의 소규모 조정이 아니다.
+- `REDESIGN`: 실제 증거가 기획 가설·선택·보상·UX 의미를 부정하면 영향받는 Slice와 의존성의 기본 설계로 돌아간다. 핵심 의미·범위 변경은 사용자 결정이며 프로젝트 전체 재기획을 자동 시작하지 않는다.
 
-최소 공격 질문:
+이미지 제작은 실행자 이름이 아니라 **실제 이미지 도구·현재 소비처·프로젝트 승인**으로 결정한다. 기존 승인 자산을 우선 재사용하고, 필요한 후보는 이미지 도구로 제작·검수한다. 승인 전 후보를 정식 자산으로 자동 승격하지 않는다. 생성할 도구가 없으면 `GPT_VISUAL_REQUEST_REQUIRED_WHEN_ASSET_MISSING` / `GPT_VISUAL_REQUEST` / `WAITING_GPT_VISUAL`은 호환 상태명으로 사용 가능하지만 같은 Work에 이미지 도구가 있으면 강제 담당 전환 없이 후보 제작을 수행한다.
 
-- 플레이어의 의미 있는 선택이 실제로 존재하는가, 정답 하나로 수렴하지 않는가.
-- 기능 존재가 플레이어 가치·재미의 대리 지표가 되고 있지 않은가.
-- 설명 없이 이해해야 할 정보와 피드백이 충분한가.
-- 기존 시스템·정본·에셋을 재사용할 수 있는데 새로 만들고 있지 않은가.
-- 구현 비용 대비 체감 가치가 낮은 요소가 포함됐는가.
-- UI/UX·데이터·Visual·Audio requirement가 실제 소비처와 연결되는가.
-- Acceptance가 automated test와 실제 runtime/play 증거를 구분하는가.
-- 이번 Slice와 무관한 미래 범위를 끌어오고 있지 않은가.
+`APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST`: runtime 자산은 project-controlled binary, SHA-256, consumer, provenance, approval/implementation status가 확인되어야 한다. Library·PDF·Notion preview는 runtime binary가 아니다. `CODEX_IMAGE_GENERATION_FORBIDDEN`이라는 일괄 역할 금지는 폐기하고 미승인 이미지 사용 금지와 이미지 도구 사용 요건을 유지한다.
+`CODEX_VISUAL_INPUT_REPOSITORY_MANIFEST_ONLY`는 이 runtime 자산 입력 계약의 호환 이름이며, 실제 이미지 도구를 가진 실행자의 후보 생성까지 금지하지 않는다.
 
-### 1.6 `PLANNING_CANON_BEFORE_HANDOFF`
-
-승인된 **기획 의미와 구현 계약**은 Codex가 재수화할 수 있도록 구현 인계 전에 repository 정본에 기록한다. 이것은 구현 완료를 미리 주장하는 것이 아니다.
+기능 원리·일반적 UI 관습·이용 허락된 템플릿은 재사용할 수 있다. 상용 성공작의 아트·문구·레벨·특징적 표현 조합을 그대로 복제한 뒤 reskin하면 안전하다는 가정은 금지한다. 권리 owner는 `docs/knowledge/game-development/PLATFORM_REVIEW_ASSET_RIGHTS_AND_REFERENCE_PRODUCTION_GUIDE.md`다.
 
-인계 전 동기화 대상:
+## 6. 실제 검증과 프로세스 안전
 
-- 승인된 player outcome / meaningful choice / 규칙 의미.
-- approved scope / explicit non-scope / protected scope.
-- UI/UX Flow와 data 의미, Acceptance Criteria.
-- 실제 소비처가 확정된 Visual/Audio requirement와 승인 상태.
-- 필요한 Decision ID와 repository owner·path.
-- exact source SHA와 asset manifest locator.
-
-상태 표기는 `PLANNED` / `APPROVED_FOR_IMPLEMENTATION` / `IMPLEMENTATION_PENDING`처럼 **기획 상태**로 둔다. runtime/play PASS, 구현 완료, UX 검증 완료 상태는 아직 올리지 않는다.
-
-`docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md`의 `CANONICAL_UPDATE`와 충돌하지 않는다. 그 단계는 승인된 기획 정본을 책임지고, 여기의 `CANON_SYNC_AFTER_VALIDATION`은 실제 구현·검증 상태 승격을 책임진다.
+`DIRECT_RUN_OR_VERIFIED_EVIDENCE` / `WORK_DIRECT_GODOT_VERIFICATION_WHEN_MATERIAL`
 
-### 1.7 `PRE_HANDOFF_GPT_STOP`
+필요한 runtime·입력·UI·리소스 연결은 실제 Godot 실행 또는 현재 변경에 유효한 exact-build 증거로 판정한다. 문서 변경에 불필요한 엔진 실행은 하지 않는다. 자동 검사·runtime·화면·기기·Human·출시 증거는 분리하고 `NOT_RUN`, `SKIPPED`, `BLOCKED_UNVERIFIED`를 PASS로 바꾸지 않는다. Human 검증은 사용자 선언·요청 시 수행하며 machine PASS로 대신하지 않는다.
 
-다음이 충족되면 GPT의 **구현 전 기획 작업은 종료**한다.
+`TASK_LAUNCHED_GODOT_PROCESS_OWNERSHIP`: 실행 전 project path, 실행 대상, 기존 Editor/game/server, launch time과 parent-child/PID/session 식별자를 확인한다.
 
-- 현재 Slice의 player outcome과 의미 있는 선택이 명확함.
-- approved scope와 explicit non-scope가 분리됨.
-- 관련 정본·재사용·benchmark·적대적 검토가 현재 Slice 수준에서 닫힘.
-- 필요한 data/UI/UX/asset/audio requirement와 Acceptance가 있음.
-- `PLANNING_CANON_BEFORE_HANDOFF` readback이 완료됨.
-- 사용자 결정이 필요한 core/UX/경제/서사/Art Direction 충돌이 남지 않음.
-- 구현 방법을 Codex가 current repository truth에서 선택할 수 있을 만큼 실행 계약이 명확함.
-
-이 Gate 이후 GPT는 구현 방법을 더 세분화하며 문서를 계속 키우지 않는다. 실제 구현에서 새 사실이 나오면 Codex의 `CHANGE_PROPOSAL` 또는 구현 후 검수 결과로 다시 진입한다.
-
-`HANDOFF_IS_NOT_DELIVERY`: 이 기획 종료는 전체 승인 작업의 종료가 아니다. `docs/LONG_HORIZON_WORK_EXECUTION_POLICY.md` §8 `APPROVED_BLUEPRINT_END_TO_END_DELIVERY`에 따라 현재 허용된 실행 경로에서 Codex의 실제 구현·자산 연결·검증·병합·사용자 실행 가능 인도까지 이어간다. 전체 블루프린트가 승인됐다면 한 Slice의 완료를 전체 완료로 보고하지 않는다. 실행 경로가 없는 경우 정확한 blocker와 재개 정보를 보고하며 `GPT_LOCAL_CODEX_ORCHESTRATION_RETIRED`를 우회하지 않는다.
-
-## 2. GPT 책임
-
-### 2.1 기획·비코딩 작업
-
-GPT는 다음을 직접 수행하고 Codex에 넘기지 않는다.
-
-- Base와 프로젝트의 Markdown 기획·정책·운영 문서
-- repository Decision·AI production spec·표·데이터·Flow·Visual 요구 정리
-- Base Skill/Guide/Template/Learning Log 교정
-- Base Registry/generated/검증 계약·CI 정책과 그 paired test 유지보수
-- 프로젝트 GDD·밸런스표·테크트리·병종·예산표·서사/설정·UX 명세
-- 프로젝트의 비런타임 JSON/표/참고자료를 정본화하는 작업
-- 사람용 상세 기획서 PDF 생성·검수와 repository source 반영
-- 문제→교훈 추출과 Base 승격
-- 재사용 가능한 모듈/레퍼런스 조사와 채택 판단
-- 이미지 제작·편집·검수와 승인 상태 관리
-- 기존 Notion 고유 자료의 read-only inventory·repository 이관. 신규 Notion 페이지·DB·중간 복제는 기본 작업이 아님
-
-### 2.2 구현 준비
-
-실제 게임 구현이 필요하면 GPT가 Codex에 다음을 전달한다.
-
-```yaml
-codex_work_instruction:
-  project:
-  repository:
-  base_branch:
-  exact_source_sha:
-  project_entrypoints: []
-  work_slice_id:
-  intended_player_outcome:
-  player_action_and_choice:
-  approved_scope: []
-  explicit_non_scope: []
-  protected_scope: []
-  required_data_and_inputs: []
-  ui_ux_flow: []
-  asset_audio_dependencies: []
-  ai_production_spec:
-  asset_manifest:
-  acceptance_criteria: []
-  review_evidence_expected: []
-  repository_sources: []
-  approved_visual_records: []
-  optional_legacy_migration_sources: []
-  required_runtime_or_play_checks: []
-  forbidden_changes: []
-  change_proposal_boundary: []
-```
-
-`optional_legacy_migration_sources`는 아직 이관되지 않은 고유 자료가 실제로 있고 GPT가 그 범위를 식별했을 때만 사용한다. Codex 구현 시작을 위해 Notion page/database/attachment를 필수 조회 경로로 만들지 않는다.
-
-이 지시문은 구현 방법을 강제하는 스크립트가 아니다. **목표·승인 범위·보호 범위·Acceptance Criteria·정본 위치를 전달하는 실행 계약**이다. `PLANNING_CANON_BEFORE_HANDOFF` 후 `PRE_HANDOFF_GPT_STOP`을 통과하면 Node/Scene/함수 수준의 기술 설계를 GPT가 계속 확장하지 않는다.
-
-## 3. Codex 책임 — 실제 Godot 제품 구현만
-
-### 3.1 인계 Trigger
-
-다음과 같이 **실제 게임이 돌아가는 구현 변경**이 필요할 때만 Codex로 인계한다.
-
-- GDScript 또는 게임 실행 코드
-- Scene / Resource / Autoload의 제품 변경
-- 런타임에 소비되는 game data/resource 연결
-- UI runtime wiring
-- 저장·불러오기·제품 migration
-- 실제 플레이에 영향을 주는 Godot config
-- build/export
-- Godot runtime/headless/play test를 위한 구현 변경
-
-다음은 Codex trigger가 아니다.
-
-- Base 문서/정책/Skill/Guide/Template 수정
-- repository 기획 정본·GDD·밸런스표·Flow 작성
-- 사람용 PDF 생성
-- Notion legacy inventory·이관
-- 이미지 작업
-- Base Registry/generated/CI/test contract 유지보수
-- GitHub 문서 정리
-- 조사·벤치마킹·검수·문제/교훈 승격
-
-## 4. Codex 시작 Gate — exact repository SHA 재수화
-
-`CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA`
-
-Codex는 GPT 작업지시문을 그대로 기계 실행하지 않는다.
-
-```text
-GPT-reviewed Work Instruction
-→ 정확한 게임 프로젝트/repository 확인
-→ exact source SHA / branch / worktree 확인
-→ Project AGENTS.md / START_HERE / Active Context 확인
-→ current Decision / AI production spec / handoff 확인
-→ 승인 Visual의 repository path / SHA-256 / consumer / manifest readback
-→ 실제 Godot code/Scene/Resource/runtime data/test 상태 조사
-→ Work Instruction과 current truth 대조
-→ 승인된 결과를 보존하는 구현 방향·기술 방법 결정
-→ IMPLEMENT
-```
-
-GPT가 예상 경로나 구조를 적었더라도 현재 Godot 프로젝트에 더 안전하고 단순한 방법이 있으면 Codex가 그 방법을 선택할 수 있다. 단, 프로젝트 방향을 바꿔서는 안 된다.
-
-다음은 구현 입력이 아니다.
-
-- 채팅 기억만으로 전달된 최신 상태
-- source SHA가 없는 오래된 PDF
-- Library preview나 Notion thumbnail
-- repository binary/hash/manifest readback이 없는 승인 주장
-
-## 5. Codex가 기술적으로 자율 결정할 수 있는 것
-
-승인된 플레이어 결과와 기획 의미를 유지하는 범위에서:
-
-- Node/Scene/Resource 구조
-- 함수·클래스·Signal·Autoload 구성
-- 구현 순서
-- 테스트 구조
-- 내부 데이터 연결 방법
-- 오류 처리와 edge case
-- 성능·메모리·안정성 개선
-- 동작 보존 리팩터링
-- 실제 repository convention에 맞는 파일/명명 구조
-
-## 6. `CHANGE_PROPOSAL` — GPT로 돌려보낼 것
-
-다음이 필요하면 Codex가 임의 변경하지 않는다.
-
-- 프로젝트 코어/Core Loop 변경
-- 플레이 규칙·보상·실패 결과 변경
-- 주요 UI/UX 흐름 변경
-- 경제·성장·밸런스 의미 변경
-- 서사·세계관·정사 변경
-- Art Direction 변경
-- 승인 기능의 추가/삭제나 범위 확대
-- 저장 호환성을 깨는 제품 결정
-- 새로운 비용·플랫폼·제품 경로 결정
-
-```text
-Codex finding
-→ CHANGE_PROPOSAL
-→ GPT 조사·기획·적대적 검토
-→ 필요한 사용자 결정
-→ repository 정본/작업지시문 갱신
-→ Codex 구현 재개
-```
-
-## 7. 이미지 책임
-
-### GPT
-
-- 실제 runtime consumer·상태 family inventory
-- 이미지 brief
-- 생성·편집
-- 정사/기획/스타일 검수
-- 사용자 current-use 승인 확인
-- 승인 원본 binary 확보
-- project-controlled repository path에 materialize
-- SHA-256·consumer·approval/implementation status·provenance 기록
-- `ASSET_MANIFEST.json` readback
-
-### Codex
-
-`CODEX_IMAGE_GENERATION_FORBIDDEN`:
-
-- AI 이미지 생성 금지
-- 생성형 이미지 편집 금지
-- 임의 AI placeholder 제작 금지
-- 미승인 이미지 사용 금지
-
-Codex가 사용할 수 있는 것은 현재 용도로 승인되고 `APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST`를 충족한 Visual뿐이다.
-
-이미지가 부족하면:
+`STOP_TASK_OWNED_GODOT_WHEN_NO_LONGER_NEEDED`: 필요한 evidence/readback 확보 → 이번 작업이 시작한 불필요한 game/debug/Editor/server 정상 종료 → child-process·project-lock·session 잔여 확인. 같은 검증 묶음 안에서 매 assertion마다 재시작하지 않는다.
 
-```text
-WAITING_GPT_VISUAL
-→ GPT_VISUAL_REQUEST
-→ GPT 제작·검수·사용자 승인
-→ repository binary + SHA-256 + ASSET_MANIFEST readback
-→ Codex exact SHA fresh-read
-→ Godot 구현 재개
-```
-
-Library·PDF·Notion preview에 이미지가 보이는 것만으로 `IMPLEMENTATION_READY`가 아니다.
-
-## 8. Base·기획 정본·Notion legacy migration 작업은 Codex 인계 대상이 아니다
-
-이 항목은 현재 역할 분리의 중요 불변식이다.
-
-```text
-BASE_GOVERNANCE_WORK = GPT
-REPOSITORY_PLANNING_AND_CANON_WORK = GPT
-NOTION_LEGACY_MIGRATION_WORK = GPT
-PROJECT_PLANNING_AND_REVIEW = GPT
-PROJECT_VISUAL_WORK = GPT
-GODOT_PRODUCT_IMPLEMENTATION = CODEX
-```
-
-예를 들어 Base의 역할 정책을 바꾸면서 Python contract test, Registry, generated index, CI validation을 함께 맞춰야 해도 **그 작업 전체는 GPT가 닫는다.** 이것을 “코드 파일이 있으므로 Codex 구현”으로 분류하지 않는다.
-
-Notion 자료를 읽고 repository로 이관하는 작업도 GPT 책임이다. 다만 `NO_NEW_NOTION_WRITE_BY_DEFAULT`이며 새 프로젝트의 일상 기획·승인·handoff를 Notion에 다시 복제하지 않는다.
-
-## 9. Codex 실행환경 freshness / wrong-target 안전성
-
-실제 Godot 구현을 시작할 때 Codex는 현재 환경을 fresh-read한다.
-
-```text
-exact project/repository/worktree identity
-→ exact source SHA / branch/main/dirty/diverged 확인
-→ project.godot 및 adopted authoring authority 확인
-→ editor/runtime/addon/test readiness 확인
-→ stale PID/session/port 불신
-→ exact target 확인
-→ persistent mutation
-→ test/runtime/play
-→ readback
-```
-
-보존 원칙:
-
-- stale PID/session을 current truth로 쓰지 않음
-- 다른 프로젝트 editor/server/process를 임의 조작하지 않음
-- force push/history rewrite/destructive reset 금지
-- 다른 open/draft/ready PR/worktree 기본 read-only
-- 실제 Godot/runtime을 실행하지 않았으면 runtime PASS 아님
-
-GPT→PowerShell→local Codex one-shot launcher는 기본 workflow가 아니다. Codex가 사용하는 shell/CLI/MCP/engine은 Codex 자신의 실제 Godot 구현 환경에 속한다.
-
-### 9.1 Work 직접 Godot 검증과 작업 소유 프로세스 수명주기
-
-#### `WORK_DIRECT_GODOT_VERIFICATION_WHEN_MATERIAL`
-
-GPT Work는 승인된 구현 결과를 `REVIEW`하는 과정에서 runtime·scene·input·UI·resource 연결·오류 로그·GUT/headless/live-QA를 직접 확인해야 하고 현재 도구로 실행할 수 있을 때 Godot을 실행한다. 문서·정적 diff·data schema·기존의 exact-build evidence만으로 현재 Acceptance를 충족할 수 있으면 Godot을 불필요하게 시작하지 않는다.
-
-이 권한은 **검수·기계검증**에 한정된다. GPT가 Godot 제품 코드를 직접 누적 구현하거나 persistent product authoring authority를 얻는다는 뜻이 아니다.
-
-#### `TASK_LAUNCHED_GODOT_PROCESS_OWNERSHIP`
-
-Godot 실행 전 다음을 fresh-read한다.
-
-1. exact repository, branch/worktree, `project.godot` 경로
-2. 실행 대상 Scene·test·build와 기대 증거
-3. Work 시작 전 이미 존재한 Editor, game, debug/test, addon/MCP/live-QA process 또는 session
-4. 현재 환경에서 사용할 수 있는 project path, launch time, parent-child relation, PID/session/port 식별자
-
-이번 Work가 직접 시작한 Editor, game window, headless/runtime, debug/test runner와 관련 local server만 task-owned 대상으로 기록한다. PID 하나나 오래된 session/port만으로 소유권을 단정하지 않는다.
-
-#### `STOP_TASK_OWNED_GODOT_WHEN_NO_LONGER_NEEDED`
-
-필요한 evidence와 readback을 확보했고 같은 작업에서 추가 Godot 검증이 남지 않았으면 완료 보고 전에 task-owned process를 정상 종료한다.
-
-```text
-verification complete
-→ evidence/readback capture
-→ graceful game/debug stop
-→ no-longer-needed task-owned Editor/server stop
-→ child-process, project-lock, session/port residual check
-→ completion report
-```
-
-같은 bounded verification group 안에서 재실행이 예정돼 있으면 매 assertion마다 Editor를 반복 종료하지 않는다. 정상 종료가 실패한 hung process를 강제 종료해야 할 때도 **task-owned임이 확인된 대상에 한정**하고 이유와 결과를 남긴다.
-
-#### `PRESERVE_PREEXISTING_AND_UNRELATED_GODOT_INSTANCES`
-
-사용자가 Work 시작 전에 열어 둔 pre-existing instance, 다른 프로젝트·repository·worktree의 Editor/game/server, 다른 승인 workstream의 debug session, 이번 작업이 시작했다는 증거가 없는 process는 종료하지 않는다. process-name 전체 종료나 port-wide destructive cleanup을 사용하지 않는다.
-
-소유권을 안전하게 구분할 수 없으면 broad kill을 하지 않고 `PROCESS_OWNERSHIP_UNVERIFIED`로 남긴다. 이때 잔여 process, project lock, 수동 확인 필요성과 다음 작업의 wrong-target 위험을 보고한다.
-
-#### `GODOT_VERIFICATION_AND_SHUTDOWN_REPORT`
-
-Godot 실행 검증과 process cleanup은 서로 다른 claim surface다. 완료 보고는 필요 시 다음을 분리한다.
-
-```yaml
-godot_verification:
-  status: PASS | FAIL | PARTIAL | NOT_RUN
-  project_identity:
-  scenes_or_behaviors_checked: []
-  evidence: []
-  unverified: []
-
-godot_process_cleanup:
-  status: PASS | PARTIAL | NOT_RUN | NOT_APPLICABLE
-  task_owned_processes_started: []
-  task_owned_processes_stopped: []
-  preexisting_or_unrelated_preserved: []
-  residual_check: PASS | PARTIAL | NOT_RUN | NOT_APPLICABLE
-  residual_risk: []
-```
-
-Godot을 실행하지 않은 작업은 verification `NOT_RUN`, cleanup `NOT_APPLICABLE`로 기록할 수 있다. 실행했지만 종료·잔여 확인 evidence가 없으면 cleanup PASS를 주장하지 않는다. cleanup PASS도 runtime/play PASS를 대신하지 않는다.
-
-## 10. Godot 구현 테스트·증거
+`PRESERVE_PREEXISTING_AND_UNRELATED_GODOT_INSTANCES`: 사용자 기존 instance·다른 프로젝트/worktree·소유권 불명 프로세스는 보존한다. broad kill 금지. 안전하게 구분할 수 없으면 `PROCESS_OWNERSHIP_UNVERIFIED`로 남긴다.
 
-Codex는 구현 범위에 맞게 다음을 실행한다.
+`GODOT_VERIFICATION_AND_SHUTDOWN_REPORT`: 실행 PASS와 cleanup PASS는 별도다. 실행하지 않았으면 verification `NOT_RUN`, cleanup `NOT_APPLICABLE`; 종료·잔여 확인을 못 했으면 cleanup `PARTIAL`이다.
 
-- 정적/구문 검사
-- Godot headless test
-- 프로젝트 test suite
-- 필요한 runtime smoke
-- 실제 플레이 가능한 Slice 확인
-- 성능/저장/입력/플랫폼 검증이 Acceptance에 있으면 해당 evidence
+## 7. Git와 완료 보고
 
-`NOT_RUN`, `SKIPPED`, `BLOCKED_UNVERIFIED`는 PASS가 아니다.
+- `CURRENT_TASK_CONTINUATION_AUTHORIZES_READY_MERGE` / `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`: 동일 승인 current-task PR은 required checks·독립 검토·unresolved thread 0·ruleset 통과 후 정상 병합할 수 있다. `AUTO_MERGE_AFTER_REQUIRED_CHECKS` / `AGENT_MERGE_REQUIRED`는 우회 권한이 아니다.
+- 다른 open/draft/ready PR은 read-only. force push/history rewrite/destructive reset, direct main push, admin/ruleset bypass 금지.
+- merge 뒤 exact main과 변경 owner·consumer readback. 실제 필요한 publication만 source SHA에 연결한다. 새 Notion write/readback은 기본 요구가 아니다.
+- 결과에는 changed files/reasons, tests_passed/failed/not_run, runtime_or_play_evidence, approved_repository_visuals_consumed, current revision, remaining scope/blocker, rollback, 실행 방법을 적는다. `READY_FOR_GPT_REVIEW`는 옛 인계 상태이며 독립 검토나 runtime PASS를 뜻하지 않는다.
+- 사용자 학습 설명은 무엇이 바뀌었는가 / 어떤 연결로 작동하는가 / 어떻게 확인하는가. 상세 정책 토큰·전체 스킬 목록을 매번 재출력하지 않는다.
 
-Base의 공용 문서/정책 validation suite는 GPT가 관리·실행한다. Codex의 이 섹션은 **게임 프로젝트 Godot 구현 증거**에 한정된다.
+## 8. 프로젝트 채택과 폐기된 역할명
 
-## 11. Codex 완료 반환
+Base 병합은 모든 프로젝트에 자동 적용된 증거가 아니다. 프로젝트 최신 AGENTS·adopted contract·결정·실제 consumer를 먼저 읽고 명시적으로 승인된 운영 규칙 범위만 adapter와 관련 owner에 동기화·검증한다. engine/version·제품 의미·자산 승인·보안·저장 계약은 교체하지 않는다. 적용된 프로젝트와 미적용 프로젝트를 구분한다.
 
-Codex는 게임 구현 완료 후 다음 형태로 GPT에 반환한다.
+`GPT_NONCODING_PROJECT_OWNER`, `GPT_BASE_NOTION_GOVERNANCE_OWNER`, `GPT_BASE_REPOSITORY_GOVERNANCE_OWNER`, `CODEX_GAME_PRODUCT_IMPLEMENTATION_OWNER`, `CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER`, `CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR`, `PRODUCT_IMPLEMENTATION_HANDOFF_ONLY`, `GODOT_PRODUCT_BUILD_IS_CODEX`, `WORK_LONG_MULTISTEP_NONCODING_DEFAULT`는 **RETIRED_ROLE_SPLIT_COMPATIBILITY**다. 과거 이름·파일 경로를 보존하는 것이 현재 역할 제한을 부활시키지 않는다.
 
-```yaml
-codex_result:
-  project:
-  repository:
-  baseline_commit:
-  final_commit:
-  changed_godot_files_and_reasons: []
-  tests_passed: []
-  tests_failed: []
-  tests_not_run: []
-  runtime_or_play_evidence: []
-  approved_repository_visuals_consumed: []
-  visual_requests_waiting: []
-  technical_improvements: []
-  change_proposals: []
-  remaining_risks: []
-  rollback:
-  status: READY_FOR_GPT_REVIEW | BLOCKED | WAITING_GPT_VISUAL
-```
-
-## 12. GPT 최종 검수
-
-GPT는 Codex 결과를 다음 기준으로 검수한다.
-
-- 승인 기획과 실제 구현 일치
-- 보호 범위 회귀 없음
-- manifest로 승인·회수 가능한 Visual만 사용
-- 이미지 생성 금지 준수
-- 정상/실패/경계/회귀 test
-- 실제 player outcome과 Acceptance 일치
-- `NOT_RUN` 과장 없음
-- 중복 구축·과설계·호환성 파괴 없음
-
-필요하면 `REVISE`를 Codex에 반환한다. 제품 구현이 승인되면 repository의 사람용/AI용 상태와 evidence를 GPT가 정리한다.
-
-### 12.1 구현 후 검수 순서
-
-GPT는 코드 존재나 자동 테스트 PASS만 보고 승인하지 않는다.
-
-```text
-IMPLEMENTATION_MATCH_REVIEW
-→ RUNTIME_REVIEW
-→ ACTUAL_PLAY_UX_VISUAL_AUDIO_REVIEW
-→ DIRECT_RUN_OR_VERIFIED_EVIDENCE
-→ FIX | TUNE | REDESIGN
-→ CORRECTION
-→ IMPACT_BOUNDED_REVALIDATION
-→ CANON_SYNC_AFTER_VALIDATION
-```
-
-1. **IMPLEMENTATION_MATCH_REVIEW**: 승인 규칙·데이터 의미·UI/UX Flow·Visual/Audio requirement와 실제 구현이 일치하는지 본다.
-2. **RUNTIME_REVIEW**: 실제 실행에서 입력·상태변화·실패·저장·경계 동작이 의도대로 작동하는지 본다. test PASS와 runtime PASS를 분리한다.
-3. **ACTUAL_PLAY_UX_VISUAL_AUDIO_REVIEW**: 플레이 evidence에서 선택이 전달되는지, 정보가 읽히는지, 피드백·타이밍·가독성·감정·이미지·사운드가 의도한 역할을 수행하는지 본다.
-
-`DIRECT_RUN_OR_VERIFIED_EVIDENCE`: GPT가 현재 도구로 직접 runtime/play를 실행·관찰할 수 있으면 직접 증거를 확보한다. 직접 실행할 수 없으면 Codex가 반환한 정확한 build/commit의 screenshot/video/log/test/play evidence를 검증하되 **보지 못한 플레이를 직접 플레이한 것으로 주장하지 않는다.** 인간의 재미·감정·첫인상처럼 별도 사람 playtest가 필요한 항목은 그 증거가 없으면 `NOT_RUN` 또는 `BLOCKED_UNVERIFIED`로 남기고 evidence ceiling을 넘지 않는다.
-
-GPT가 이 직접 실행 경로로 Godot을 시작했다면 제9.1절의 task-owned process cleanup과 `GODOT_VERIFICATION_AND_SHUTDOWN_REPORT`를 함께 적용한다.
-
-### 12.2 `FIX | TUNE | REDESIGN`
-
-모든 finding을 전체 재기획으로 돌리지 않는다.
-
-- `FIX`: 기획·승인 의미는 맞지만 구현이 잘못됐거나 결함·회귀가 있다. Codex 수정으로 반환한다.
-- `TUNE`: 구조와 의미는 맞지만 **기존 승인 tuning envelope 안에서** 수치·속도·타이밍·배치·크기·가독성·피드백 강도 조정이 필요하다. 작은 조정 후 재검증한다. tuning envelope를 벗어나 경제·성장·난이도 의미나 플레이어 선택 구조를 바꾸면 단순 `TUNE`이 아니라 `REDESIGN` 또는 `USER_DECISION_REQUIRED`다.
-- `REDESIGN`: 실제 플레이 증거가 현재 기획 가설·선택 구조·보상 구조·UX 의미 자체를 부정한다. **현재 Slice만** `GPT_MINIMUM_IMPLEMENTATION_READY_PLANNING`으로 되돌린다. 프로젝트 코어·주요 UX·경제 의미·서사·Art Direction을 바꾸면 기존 `USER_DECISION_REQUIRED` 경계를 적용한다.
-
-### 12.3 `IMPACT_BOUNDED_REVALIDATION`
-
-수정 뒤에는 **바뀐 Slice + 실제 영향받은 직접 의존성**을 재검증한다. 작은 FIX/TUNE 때문에 프로젝트 전체 벤치마킹·적대검토·repository/legacy migration 자료 전수검사를 처음부터 반복하지 않는다.
-
-범위를 넓히는 조건:
-
-- regression evidence가 인접 시스템 밖으로 전파됨.
-- 공용 schema/interface/save/economy 규칙이 바뀜.
-- REDESIGN이 core/player promise에 영향을 줌.
-- 사용자가 전체 재검증을 명시적으로 요청함.
-
-### 12.4 `CANON_SYNC_AFTER_VALIDATION`
-
-이 Gate는 **구현 상태와 검증 주장**을 정본에 승격하는 단계다. 승인된 기획 자체는 이미 `PLANNING_CANON_BEFORE_HANDOFF`에서 기록되어 있어야 한다.
-
-검증 뒤 갱신:
-
-- repository design canon: 사람이 이해·비교·수정해야 하는 시스템/Flow/UI/Visual/표의 현재 의미와 구현·검증 상태.
-- repository runtime truth: Markdown/JSON/game data와 실제 구현·test/runtime evidence.
-- AI production spec / handoff: 검증 기록, evidence ceiling, 실패 가설, 미해결 risk, 폐기한 대안.
-- 사람용 PDF: 의미 있는 Gate에서 current exact source SHA로 재생성하는 derived snapshot.
-- Library: 대형 원본·후보·PDF 보관이 필요할 때만 non-canon reference storage.
-- legacy Notion: 고유 자료 migration counter를 닫을 때만 read-only source로 사용하며 신규 상태 동기화 대상이 아님.
-- Base: 프로젝트에서 실제 검증된 뒤 여러 프로젝트에 재사용 가치가 있는 workflow/교훈만 일반화해 승격한다.
-
-`IMPLEMENTED`만 있고 runtime/play 검증이 없으면 플레이어 경험을 canon PASS로 올리지 않는다. 반대로 승인된 기획 Decision을 구현 검증 전이라는 이유로 숨기거나 미기록 상태로 두지도 않는다.
-
-## 13. 병합·동시작업 안전
-
-- 현재 task의 구현 PR만 수정
-- 다른 open/draft/ready PR은 기본 read-only
-- current reviewed HEAD와 PR HEAD 일치 확인
-- required checks와 review thread 확인
-- force push/history rewrite/destructive reset 금지
-- 병합 뒤 exact main readback
-- repository Decision·spec·asset manifest·handoff·evidence를 GPT가 후속 동기화
-- PDF가 필요한 Gate면 merged source SHA로 다시 생성
-- legacy Notion migration counter가 남아 있으면 별도 프로젝트 이관 작업으로 추적하고 일상 workflow에 신규 쓰기를 복원하지 않음
-
-## 14. 완료 조건
-
-- 현재 `PLAY_MEANINGFUL_WORK_SLICE`의 기획·검수·비코딩 작업이 필요한 범위에서 닫혔다.
-- 승인된 기획 Decision과 구현 계약이 `PLANNING_CANON_BEFORE_HANDOFF`로 repository에 정본화·readback됐다.
-- `PRE_HANDOFF_GPT_STOP`을 넘기기 전에 approved scope / explicit non-scope / Acceptance / evidence plan이 정리됐다.
-- 실제 Godot 제품 구현이 필요한 범위만 Codex에 전달됐다.
-- Codex가 exact repository SHA와 프로젝트 진입점을 fresh-read했다.
-- 승인 Visual이 repository path + SHA-256 + manifest로 회수됐다.
-- Codex가 승인 범위 안에서 기술 구현 방향을 결정했다.
-- Codex는 새 이미지를 만들지 않았다.
-- Godot 구현·테스트·runtime/play evidence가 반환됐다.
-- GPT가 `DIRECT_RUN_OR_VERIFIED_EVIDENCE` 범위 안에서 최종 구현을 검수하고 finding을 `FIX | TUNE | REDESIGN`으로 처리했다.
-- Work가 Godot을 직접 실행했다면 task-owned process 종료와 residual check를 완료하거나 미확인 위험을 정직하게 남겼다.
-- 필요한 수정 뒤 `IMPACT_BOUNDED_REVALIDATION`이 끝났다.
-- 검증된 구현 상태만 `CANON_SYNC_AFTER_VALIDATION`으로 repository에 반영됐다.
-- Base·repository 기획·문서·운영 교정과 Notion legacy migration은 GPT가 직접 닫았다.
-- 신규 Notion write가 구현 완료의 필수 조건으로 남지 않았다.
-
-## 15. 폐기된 잘못된 해석
-
-다음은 current workflow가 아니다.
-
-- Codex = 모든 코드 파일 담당
-- Codex = Base repository의 test/Registry/generated/CI 담당
-- Codex = 모든 GitHub implementation executor
-- Base·repository 기획·Notion legacy migration 교정을 Codex에 넘김
-- GPT가 Base 교정 중 Python test가 나온다는 이유로 Codex handoff
-- GPT가 Godot 제품 코드를 직접 누적 구현
-- Codex가 이미지 생성
-- Codex가 Library·PDF·Notion preview를 runtime asset으로 직접 소비
-- Codex 시작마다 GitHub와 Notion을 동등 current canon으로 재판정
-- 매 작은 Slice마다 프로젝트 전체 정본·벤치마킹·적대검토를 이유 없이 처음부터 반복
-- 구현 준비가 끝났는데도 GPT가 Node/Scene/함수 수준까지 계속 설계해 Codex 기술 자율성을 침범
-- 작은 FIX/TUNE를 전체 REDESIGN으로 확대
-- 승인된 기획 Decision을 구현 검증 뒤까지 정본에 기록하지 않음
-- 자동 테스트나 Codex 보고만으로 GPT가 직접 플레이했거나 플레이어 감정이 검증됐다고 과장
-- task ownership 확인 없이 모든 Godot process를 종료하거나 cleanup 확인 없이 작업 완료를 주장
-
-현재 정본은 **`GPT = 비코딩·기획·검수·Base·repository canon·Visual`, `Codex = 실제 게임 프로젝트의 Godot 제품 구현·코딩`**이다. Notion은 active project workspace가 아니라 고유 자료가 남은 경우의 `LEGACY_READ_ONLY` migration source다.
-
-## 16. Consumer compatibility vocabulary
-
-다음 구형 이름은 기존 consumer가 문자열을 참조할 때 의미 손실 없이 전환하도록 남기는 **retired compatibility alias**다. current behavior가 아니다.
-
-```text
-GPT_BASE_NOTION_GOVERNANCE_OWNER_RETIRED
-CODEX_REHYDRATE_PROJECT_GITHUB_AND_NOTION_RETIRED
-CODEX_VISUAL_INPUT_NOTION_APPROVED_ONLY_RETIRED
-NOTION_HUMAN_FACING_CANON_RETIRED
-Base/Notion work not Codex trigger
-```
-
-현재 vocabulary:
-
-```text
-Base Python test, CI contract, Registry/generated checker = GPT-owned Base governance
-Base/repository planning/Notion legacy migration work not Codex trigger
-actual game-project Godot product implementation = Codex product-build trigger
-CODEX_PREFLIGHT_OPTIONAL
-PLAN_REVIEW_ONLY
-CONTINUOUS_WORK_EXECUTOR_HANDOFF
-DEFERRED_EXTERNAL_EXECUTOR
-APPROVED_ITEM_INHERITS_MERGE_AUTHORITY
-AUTO_MERGE_AFTER_REQUIRED_CHECKS
-AGENT_MERGE_REQUIRED
-REPOSITORY_STRUCTURED_CANON
-REPOSITORY_PRIMARY_CANON
-HUMAN_GDD_PDF_DERIVED_VIEW
-CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA
-APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST
-PLAY_MEANINGFUL_WORK_SLICE
-TARGETED_CONTEXT_RECOVERY_NOT_FULL_PROJECT_REAUDIT
-GPT_MINIMUM_IMPLEMENTATION_READY_PLANNING
-EXISTING_SOLUTION_FIRST
-PLANNING_CANON_BEFORE_HANDOFF
-PRE_HANDOFF_GPT_STOP
-DIRECT_RUN_OR_VERIFIED_EVIDENCE
-WORK_DIRECT_GODOT_VERIFICATION_WHEN_MATERIAL
-TASK_LAUNCHED_GODOT_PROCESS_OWNERSHIP
-STOP_TASK_OWNED_GODOT_WHEN_NO_LONGER_NEEDED
-PRESERVE_PREEXISTING_AND_UNRELATED_GODOT_INSTANCES
-PROCESS_OWNERSHIP_UNVERIFIED
-GODOT_VERIFICATION_AND_SHUTDOWN_REPORT
-IMPACT_BOUNDED_REVALIDATION
-CANON_SYNC_AFTER_VALIDATION
-```
-
-이 vocabulary는 기존 consumer가 안전 의미를 잃지 않도록 유지하는 호환 계약이다. `CODEX_PREFLIGHT_OPTIONAL`은 고위험 Godot 제품 구현의 선택적 read-only technical preflight다. `CONTINUOUS_WORK_EXECUTOR_HANDOFF`와 `DEFERRED_EXTERNAL_EXECUTOR`는 실제 Godot product task에만 적용하며 Base·repository 기획·Notion legacy migration task를 Codex로 넘기는 뜻이 아니다. `APPROVED_ITEM_INHERITS_MERGE_AUTHORITY`, `AUTO_MERGE_AFTER_REQUIRED_CHECKS`, `AGENT_MERGE_REQUIRED`의 exact-head/review/ruleset 병합 안전성은 유지한다.
-
-완료 주장과 실행 evidence의 canonical owner는 `docs/knowledge/vertical-slice/SKILL_ORCHESTRATION_AND_EVIDENCE.md`다. 이 정책의 Godot verification·shutdown report는 해당 owner의 environment gate, fresh evidence, cleanup, residual readback 순서로 판정한다.
+`CODEX_REHYDRATE_PROJECT_GITHUB_AND_NOTION_RETIRED`, `CODEX_VISUAL_INPUT_NOTION_APPROVED_ONLY_RETIRED`, `NOTION_HUMAN_FACING_CANON_RETIRED`: V3 historical contract는 유지하지만 현재 기본 경로는 V4 repository-only다. `NO_NEW_NOTION_WRITE_BY_DEFAULT`.
+
+`GPT_LOCAL_CODEX_ORCHESTRATION_RETIRED`는 유지한다. Work 통합을 이유로 폐기한 local one-shot launcher를 되살리지 않는다. `CODEX_PREFLIGHT_OPTIONAL`, `PLAN_REVIEW_ONLY`, `CONTINUOUS_WORK_EXECUTOR_HANDOFF`, `DEFERRED_EXTERNAL_EXECUTOR`는 실제 필요와 사용자 범위에 따른 조건부 상태이며 강제 앱 전환이 아니다.

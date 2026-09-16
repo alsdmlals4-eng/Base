@@ -7,24 +7,26 @@ description: Use when a large drafting, classification, comparison, or repetitiv
 
 ## Core principle
 
-대용량 초안·분류·비교는 별도 worktree/branch에 격리하고 외부 AI 결과를 **REVIEW_PENDING 입력**으로 취급한다. GPT가 current canon·diff·근거를 검수한 뒤 필요한 범위만 반영한다.
+외부 AI가 실제로 유용한 대용량 초안·분류·비교는 별도 worktree/branch에 격리하고 결과를 **REVIEW_PENDING 입력**으로 취급한다. 현재 Work가 repository current canon·diff·근거를 검수한 뒤 승인 범위만 반영한다.
 
-이 Skill은 external-AI isolation을 담당하며 Codex의 제품 구현 ownership과는 별개다.
+이 Skill은 선택적 external-AI isolation을 담당한다. `docs/GPT_CODEX_WORKFLOW_POLICY.md`의 통합 Work 실행을 기본으로 하며 제품 구현을 이유로 별도 Codex 단계를 만들지 않는다.
 
 ## Authority contract
 
 ```text
-GPT_PRIMARY_REVIEWER
-GPT_NONCODING_PROJECT_OWNER
-CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER
-CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR
+UNIFIED_WORK_EXECUTION
+CAPABILITY_BASED_EXECUTOR_SELECTION
+CAPABILITY_IS_NOT_AUTHORIZATION
+REPOSITORY_PRIMARY_CANON
+ZERO_INCREMENTAL_COST_REQUIRED
 EXTERNAL_AI_RESULT: REVIEW_PENDING
 ```
 
 - 외부 AI 사용은 optional이다.
-- Base/Notion/문서/기획/표/분류 결과는 GPT가 검수·반영한다.
-- 외부 AI 결과가 Base Python test/Registry/generated/CI 같은 공용 운영 인프라를 바꾸더라도 GPT Base maintenance 영역이다.
-- 외부 AI 결과가 **실제 게임 프로젝트의 Godot 제품 구현**으로 이어질 때만 그 게임 프로젝트 Codex handoff를 만든다.
+- 현재 승인된 capable Work가 기획·상세 설계·제품 구현·테스트·검토·허용된 통합을 이어간다.
+- Base Python test/Registry/generated/CI와 게임 제품 코드 모두 승인 범위·보호 경로·실제 capability로 판단한다. 파일 종류는 실행자 변경 사유가 아니다.
+- 사용자 요청·실제 capability 부족·근거 있는 격리 필요 때만 필요한 범위를 다른 executor에 인계한다. 같은 세션에서 수행 가능하면 별도 handoff 파일을 강제하지 않는다.
+- 도구 가용성은 사용자 승인·repository 권한·외부 전송·비용 권한을 확대하지 않는다.
 
 ## Use when
 
@@ -36,7 +38,7 @@ EXTERNAL_AI_RESULT: REVIEW_PENDING
 ## Do not use when
 
 - 보안·결제·파괴적 저장 migration의 최종 판단
-- 실제 Godot 버그의 최종 구현을 외부 AI에 맡기려는 경우
+- 실제 제품 버그의 최종 판정·승인·통합을 검수 대기 외부 AI 결과에 맡기려는 경우
 - 사용자 승인 없이 제품 방향·정본 확정
 - 비밀값/권한 없는 비공개 자료를 외부 모델에 전달해야 하는 경우
 - 작은 작업인데 단지 외부 모델이 있다는 이유로 우회
@@ -49,8 +51,8 @@ EXTERNAL_AI_RESULT: REVIEW_PENDING
 - 산출물 스키마와 검수 기준
 - 기준 branch/commit
 - 외부 전송 허용 자료
-- 최종 검수 owner = GPT
-- 결과가 실제 Godot 제품 구현으로 이어지는지 여부
+- 최종 검수 owner와 승인·권한 경계
+- 결과의 실제 product/operation consumer와 필요한 capability·검증
 
 ## `EXECUTOR_REHYDRATION_GATE`
 
@@ -60,7 +62,8 @@ EXTERNAL_AI_RESULT: REVIEW_PENDING
 latest applicable user instruction
 → project/Base AGENTS.md
 → current Active Context / confirmed decisions
-→ relevant Notion current canon when configured
+→ repository current canon / exact source SHA / approved asset manifest
+→ explicitly scoped V4 Notion exception or required legacy migration source only
 → exact branch/commit
 → allowlist / protected paths
 → relevant canonical files/tests
@@ -95,32 +98,31 @@ branch: ai/deepseek-<topic>   격리 작업 branch
 6. `EXECUTOR_REHYDRATION_GATE`
 7. 고정 Markdown/JSON schema로 결과 회수
 8. 근거·가정·미확인·변경 후보 분리
-9. GPT가 current canon과 결과를 검수
-10. non-product/Base/Notion/document 결과 → GPT가 필요한 최소 변경 반영
-11. 실제 게임 프로젝트 Godot 구현 필요 → 별도 `CODEX_GODOT_PRODUCT_IMPLEMENTATION_HANDOFF`
-12. 검증/readback 후 worktree 정리
+9. current review owner가 repository canon·diff·근거와 결과를 검수
+10. 현재 승인된 capable Work가 product/operation 구분 없이 필요한 최소 변경 구현·검증
+11. 사용자 요청·실제 capability 부족·근거 있는 격리 필요 때만 해당 범위를 조건부 인계
+12. 검증/readback 후 소유권·미통합 변경을 확인하고 허용된 worktree 정리 또는 보존
 
-## Godot Codex boundary
+## Capability-based implementation boundary
 
-Codex로 넘기는 유일한 기본 조건:
+현재 Work가 project canon의 engine adapter와 실제 capability로 제품 구현을 이어간다. Godot 프로젝트의 예:
 
 ```text
 actual game-project Godot product implementation
 = GDScript / Scene / Resource / runtime wiring / build/export / implementation-runtime-play test
 ```
 
-다음은 Codex로 넘기지 않는다.
+인계는 다음 조건에서 필요한 범위만 선택한다.
 
 ```text
-Base governance
-Base tests / Registry / generated / CI
-Notion
-GDD / balance / Flow
-image generation/editing
-research / benchmark / review
+explicit user request
+real missing authoring / test / runtime capability
+justified isolated executor with authorized access
 ```
 
-Codex handoff가 발생하면 해당 **게임 프로젝트**의 GitHub+Notion을 다시 읽게 한다.
+Codex가 실제로 선택되면 기존 `CODEX_GODOT_PRODUCT_IMPLEMENTATION_HANDOFF`는 호환 값으로 사용할 수 있다. 받는 executor는 해당 repository exact SHA·current canon·승인 자산 manifest·engine/version·권한을 다시 읽는다. Notion은 기본 재수화 정본이 아니다.
+
+runtime capability가 없으면 해당 검증은 `NOT_RUN`으로 유지하며 독립적으로 준비된 승인 구현·정적 검사는 계속한다. 필수 runtime 증거가 없는 전체 완료·release PASS는 주장하지 않는다.
 
 ## Token/context efficiency
 
@@ -139,9 +141,10 @@ Codex handoff가 발생하면 해당 **게임 프로젝트**의 GitHub+Notion을
 - 후보 파일
 - 초안 산출물
 - 근거/가정/미확인
-- GPT 검수 포인트
+- current review owner의 검수 포인트
 - `godot_product_implementation_required: true | false`
-- true이면 해당 프로젝트 Codex handoff 위치
+- 조건부 인계가 실제로 필요하면 사유·선택 executor·범위·기존 계약 위치
+- actual validation / NOT_RUN / evidence ceiling / remaining work
 - worktree cleanup/preserve state
 
 ## Failure conditions
@@ -150,17 +153,20 @@ Codex handoff가 발생하면 해당 **게임 프로젝트**의 GitHub+Notion을
 - 초안과 승인 canon 혼합
 - 모델 보고만 믿고 diff/근거 미확인
 - `EXECUTOR_REHYDRATION_GATE` 생략
-- Base/Notion 결과를 Codex에 떠넘김
-- 실제 Godot product implementation을 외부 AI에 최종 맡김
+- 앱 이름이나 파일 종류만으로 필수 인계 또는 실행 금지
+- capability를 사용자 승인·repository 권한으로 오인
+- 외부 AI 결과에 실제 제품의 최종 승인·검증·통합을 위임
+- runtime NOT_RUN을 숨기거나 독립 구현 전체를 자동 중단
 - 미검증 변경 자동 push
 - 비용/보안/호환성 검증 생략
 
 ## Validation scenarios
 
-1. 기획서 통합: 외부 AI 후보 → GPT 검수/Notion 반영. Codex 없음.
-2. Base 데이터 카드/문서 분류: 외부 AI 후보 → GPT Base maintenance. Codex 없음.
-3. 실제 게임 버그: 외부 AI는 분석 메모 가능 → GPT 검수 → 실제 Godot 구현은 해당 프로젝트 Codex.
-4. main/Notion 변경: 결과 적용 전 fresh rehydration.
+1. 기획서 통합: 외부 AI 후보 → current Work 검수 → repository owner 반영·readback.
+2. Base 데이터 카드/문서 분류: 외부 AI 후보 → current Work의 승인된 최소 수정과 검증.
+3. 실제 게임 버그: 외부 AI 분석·후보 → current Work 검수 → capable Work가 구현·테스트. 별도 executor는 실제 필요 때만 선택.
+4. runtime 없는 Work: 독립 구현·정적 검사 계속, runtime은 NOT_RUN과 완료 상한으로 기록.
+5. repository 또는 명시된 V4 exception 변경: 결과 적용 전 exact SHA·권한·current canon fresh rehydration.
 
 Templates:
 

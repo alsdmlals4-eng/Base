@@ -1,5 +1,11 @@
 # Orchestrating DeepSeek Worktrees — Learning Log
 
+## 2026-09-16 · Unified Work execution supersedes fixed application ownership
+
+- Current role owner is `docs/GPT_CODEX_WORKFLOW_POLICY.md`: capable, authorized Work may implement product and Base changes directly. External AI remains optional, isolated and `REVIEW_PENDING`; it is not an app-name workaround.
+- Actual handoff needs missing capability, explicit user selection or justified authorized isolation. Preserve repository exact SHA, asset approval, permissions/cost and partial-evidence boundaries.
+- Older `CURRENT_CORRECTION` entries below describe their historical baseline, not current role restrictions. Paired consumer tests are `tests/test_p08_ai_operations_contract.py`; whole-scope verification belongs to the current-task PR. No external-model/runtime/savings result is claimed here.
+
 ## 2026-08-25 · Correction — code format is not Codex ownership
 
 ```yaml

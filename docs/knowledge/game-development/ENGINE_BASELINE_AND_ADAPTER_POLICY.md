@@ -57,7 +57,7 @@ ENGINE_NEUTRAL_PRODUCT_IMPLEMENTATION_CORE
 - 기존 프로젝트의 승인된 Godot baseline을 유지한다.
 - HiGodot를 채택한 프로젝트는 기존 single persistent authoring authority를 유지한다.
 - GUT/Hera 및 Godot-specific editor/runtime/build/export 계약은 Godot adapter 책임으로 유지한다.
-- `CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER`는 기존 Godot 프로젝트의 compatibility vocabulary로 계속 유효하다.
+- `CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER`는 과거 기록을 해석하는 compatibility vocabulary다. `RETIRED_ROLE_SPLIT_COMPATIBILITY`이며 현재 Work의 제품 구현을 금지하거나 Codex 전환을 강제하지 않는다.
 - 엔진 중립 Core를 만들었다는 이유로 Godot-specific 계약을 일괄 rename/rewrite하지 않는다.
 
 ## 2. Production Engine Version Policy
@@ -128,25 +128,18 @@ Unity/Cocos/기타 엔진의 MCP·CLI·Asset Store·LTS·AI 기능이 좋아졌�
 
 `MCP_IS_ADAPTER_CAPABILITY_NOT_ENGINE_SELECTION_AUTHORITY`: MCP 연결 성공이나 공식 MCP 존재만으로 엔진 채택을 결정하지 않는다. 실제 project identity → operation → persisted result → runtime/evidence까지 대표 E2E가 닫혀야 한다.
 
-## 4. Chat / Work / Codex 작업면
+## 4. 현재 Work의 실행 능력과 작업면
 
-Base의 역할 owner와 ChatGPT의 작업면을 구분한다.
+실행자 선택의 단일 owner는 `docs/GPT_CODEX_WORKFLOW_POLICY.md`의 `UNIFIED_WORK_EXECUTION` / `CAPABILITY_BASED_EXECUTOR_SELECTION`이다. 현재 Work의 실제 권한·도구·검증 가능 범위로 실행자를 정하며, 앱 이름이나 product implementation boundary 때문에 강제 인계하지 않는다.
 
 ```text
-Chat
-→ 빠른 질문 / 논의 / 선택지 비교 / 사용자 결정 정리
-
-Work
-→ 긴 multi-step 조사·분석·감사
-→ 연결된 project repository/derived view/파일을 넘나드는 비코딩 작업
-→ Base·repository 문서·표·보고서·검수·인수인계
-→ 실제 적용되는 V4 예외 또는 legacy migration source는 해당 scope에서만
-→ 완료까지 이어지는 장기 프로젝트 작업
-
-Codex
-→ 실제 게임 프로젝트의 code / Scene / Resource / runtime / build / test 구현
-→ project canon이 선택한 engine adapter를 사용
+current project canon / approved scope / actual tools
+→ 현재 Work에서 기획·제품 구현·검증·교정
+→ project canon이 선택한 engine adapter와 baseline 유지
+→ 실제 capability gap 또는 사용자 지정 인계 등 owner 조건에서만 해당 범위 전달
 ```
+
+`CAPABILITY_IS_NOT_AUTHORIZATION`: 도구 능력은 프로젝트 승인·보안·제품 의미·엔진 교체 권한을 확대하지 않는다. 일부 runtime·기기 검증을 할 수 없으면 독립 구현과 가능한 검사는 계속하고, 확보하지 못한 증거만 `NOT_RUN` / `BLOCKED_UNVERIFIED`로 남긴다.
 
 `Work는 실행 작업면이며 새 정본 저장소가 아니다`.
 
@@ -158,18 +151,18 @@ Codex
 
 ### 기본 선택
 
-- 짧은 질문·논의·판단: Chat.
-- 여러 단계의 프로젝트 기획·조사·검수·repository/Base 작업: Work 우선. Notion은 실제 적용되는 V4 예외·migration scope에서만 추가로 다룬다.
-- 실제 게임 구현: Codex.
+- 짧은 질문·논의·판단은 현재 대화에서 처리한다.
+- 승인된 여러 단계의 기획·repository/Base 작업·실제 게임 구현은 현재 Work의 권한·도구로 이어간다. Notion은 실제 적용되는 V4 예외·migration scope에서만 추가로 다룬다.
+- 실제 인계가 필요하면 같은 승인 범위·exact repository SHA·채택 engine adapter·남은 작업과 검증 상한을 전달한다. 인계 자체가 구현 완료 증거는 아니다.
 
-Work에서 시작했더라도 실제 product implementation boundary에 도달하면 기존 GPT→Codex handoff를 유지한다.
+기존 `DEFAULT_FOR_LONG_MULTISTEP_NONCODING_PROJECT_WORK`는 `RETIRED_ROLE_SPLIT_COMPATIBILITY`이며 현재 Work를 비코딩으로 제한하지 않는다. 이 역할 교정은 §§1~3의 엔진 선택·stable baseline·canary·별도 migration 승인 정책을 변경하지 않는다.
 
 ## 5. 현재 적용 판정
 
 - 현재 기존 게임 프로젝트: `KEEP_GODOT_CURRENT_BASELINE`.
 - Godot 최신 릴리스: `OBSERVE_ONLY_UNLESS_UPDATE_TRIGGER`.
 - Unity: `FUTURE_CANARY_CANDIDATE`, 현재 포트폴리오 migration authority 없음.
-- ChatGPT Work: `DEFAULT_FOR_LONG_MULTISTEP_NONCODING_PROJECT_WORK`.
+- 현재 Work: §4의 `UNIFIED_WORK_EXECUTION` / `CAPABILITY_BASED_EXECUTOR_SELECTION`.
 - Project authority: `REPOSITORY_PRIMARY_CANON` + `HUMAN_GDD_PDF_DERIVED_VIEW` 유지. Notion은 `V4_NOTION_EXCEPTION_ONLY` / `NO_NEW_NOTION_WRITE_BY_DEFAULT` 경계를 따른다.
 
 ## 6. 재검토 조건

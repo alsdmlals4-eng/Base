@@ -1,18 +1,18 @@
-# GPT–Codex Godot 제품 구현 인계
+# Work 통합 실행의 조건부 구현 인계
 
-이 reference는 `maintaining-project-context-and-handoff`의 **실제 게임 프로젝트 Godot 제품 구현 인계** 상세 절차다.
+이 reference는 `maintaining-project-context-and-handoff`의 **실제 실행 능력 부족 또는 사용자 지정 인계**가 있을 때만 읽는 상세 절차다. 같은 Work에서 승인된 구현과 검증이 가능하면 인계 파일을 만들지 않고 계속 실행한다. 기존 Codex 필드명은 호환 이름이며 역할 제한이 아니다.
 
 Canonical policy: `docs/GPT_CODEX_WORKFLOW_POLICY.md`
 Workspace authority: `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`
 
-## 1. 책임 분리
+## 1. 책임과 정본
 
 ```text
-GPT
-= 현재 PLAY_MEANINGFUL_WORK_SLICE의 기획·조사·벤치마킹·적대적 검수·Base·repository canon·문서·표·이미지·Godot Work Instruction·최종 검수
+Current Work
+= 승인된 기획·설계·제품 코딩·검증·교정·정본 갱신·정상 병합의 통합 실행
 
-Codex
-= 승인된 Slice 범위의 실제 게임 프로젝트 Godot 제품 구현·코딩·runtime/play test
+Selected executor (Codex 포함)
+= 현재 Work에 실제로 부족한 능력 또는 사용자가 지정한 범위의 조건부 구현
 
 Project repository
 = 기획·Decision·structured data·승인 runtime asset·code·Scene·Resource·test·evidence의 REPOSITORY_PRIMARY_CANON
@@ -21,14 +21,14 @@ Human Master GDD PDF
 = exact source SHA를 가진 HUMAN_GDD_PDF_DERIVED_VIEW
 
 Notion
-= 고유 자료가 남은 기존 프로젝트에서만 GPT-owned LEGACY_READ_ONLY migration source
+= 고유 자료가 남은 기존 프로젝트에서만 LEGACY_READ_ONLY migration source
 ```
 
-Codex는 일반 repository executor가 아니다. Base의 정책·Skill·Registry/generated·CI/test contract와 Notion legacy migration은 GPT가 담당한다.
+`UNIFIED_WORK_EXECUTION` / `CAPABILITY_BASED_EXECUTOR_SELECTION`을 따른다. 파일 확장자나 앱 이름으로 담당을 강제하지 않는다. 도구 능력은 새 비용·권한·제품 의미 변경 승인이 아니다. 독립 검토는 작성자 자체 검토와 구분한다.
 
 ## 2. 인계 조건
 
-`CODEX_GODOT_PRODUCT_IMPLEMENTATION_HANDOFF`는 다음이 실제로 남았을 때만 만든다.
+`CODEX_GODOT_PRODUCT_IMPLEMENTATION_HANDOFF`는 아래 작업이 남았다는 이유만으로 만들지 않는다. **실제 능력 부족 또는 명시적 executor 선택**을 먼저 확인하고 해당 부분만 전달한다.
 
 - GDScript / product code
 - Scene / Resource / Autoload
@@ -39,9 +39,9 @@ Codex는 일반 repository executor가 아니다. Base의 정책·Skill·Registr
 - Godot build/export
 - Godot implementation/runtime/headless/play tests
 
-repository 기획 정본, PDF, Notion migration, Base maintenance, GDD/표/Flow, 이미지, 조사/검수만 남았다면 인계하지 않는다.
+repository 기획 정본, PDF, Base maintenance, GDD/표/Flow, 이미지, 조사/검수도 같은 능력·권한 기준으로 처리한다. runtime만 불가능하면 가능한 코딩과 자동 검사를 계속하고 runtime 증거를 `NOT_RUN`으로 남긴다.
 
-인계 전 GPT는 current Slice에서 다음 Gate를 닫아야 한다.
+실제 인계 전 현재 owner는 current Slice에서 다음 정보의 유효성을 확인한다. 같은 승인·벤치마크·검토는 다시 수행하지 않고 참조를 재사용한다.
 
 ```text
 PLAY_MEANINGFUL_WORK_SLICE
@@ -50,15 +50,18 @@ PLAY_MEANINGFUL_WORK_SLICE
 → EXISTING_SOLUTION_FIRST
 → 필요한 benchmark / adversarial review / IRG
 → PLANNING_CANON_BEFORE_HANDOFF
-→ PRE_HANDOFF_GPT_STOP
+→ 구현 준비 완료 → 실행 또는 실제 필요한 인계
 ```
 
 `PLANNING_CANON_BEFORE_HANDOFF`는 승인된 기획 Decision과 구현 계약을 repository 정본에 기록하는 단계다. 구현·runtime·play PASS를 미리 주장하는 단계가 아니다.
 
-## 3. GPT 인계 계약
+## 3. 조건부 인계 계약
 
 ```yaml
 mode: CODEX_GODOT_PRODUCT_IMPLEMENTATION_HANDOFF
+handoff_reason: CAPABILITY_GAP | EXPLICIT_EXECUTOR_REQUEST
+observed_missing_capability:
+capability_is_not_authorization: true
 project:
 repository:
 base_branch:
@@ -91,9 +94,9 @@ optional_legacy_migration_context:
 required_runtime_or_play_checks: []
 forbidden_changes: []
 visual_policy:
-  generation_by_codex: FORBIDDEN
+  generation: ACTUAL_IMAGE_TOOL_AND_PROJECT_AUTHORITY_REQUIRED
   approved_repository_path_sha256_and_manifest_only: true
-  missing_visual_action: GPT_VISUAL_REQUEST
+  missing_visual_action: CREATE_CANDIDATE_IF_CAPABLE_ELSE_VISUAL_REQUEST
 change_proposal_boundary: []
 ```
 
@@ -101,7 +104,7 @@ change_proposal_boundary: []
 
 `explicit_non_scope`는 이번 Slice에서 의도적으로 제외한 미래 기능·콘텐츠·시스템을 Codex가 구현 편의상 끌어오지 못하게 하는 범위 계약이다.
 
-## 4. Codex 재수화 Gate
+## 4. 모든 실행자의 재수화 Gate
 
 `CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA`
 
@@ -120,20 +123,20 @@ exact game project/repository/base branch/source SHA/worktree
 
 과거 대화·stale handoff·로컬 캐시·source SHA 없는 PDF만으로 구현하지 않는다. 재수화는 current Slice와 직접 의존하는 구현 truth를 확인하는 것이며, Codex가 프로젝트 전체를 재기획하는 단계가 아니다.
 
-Notion page/database/attachment는 기본 Codex 입력이 아니다. 고유 자료가 남았다면 GPT가 이관하고 repository receipt를 전달한다.
+Notion page/database/attachment는 기본 구현 입력이 아니다. 고유 자료가 남았다면 허용된 migration owner가 이관하고 repository receipt를 전달한다.
 
 ## 5. Visual Gate
 
-Codex 금지:
+모든 실행자에게 금지:
 
-- 이미지 신규 생성
-- 생성형 이미지 편집
-- 임시 AI placeholder 생성
+- 이미지 도구 없이 raster 제작을 코드 그림으로 대체
+- 미승인 placeholder를 정식 자산으로 승격
 - 미승인 Visual 사용
 - Library·PDF·Notion preview를 runtime binary로 직접 사용
 
 허용:
 
+- 현재 이미지 정본·실제 consumer·필수 상태군을 확인한 뒤 이미지 도구로 필요한 후보 제작·검수
 - `APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST`를 충족한 Visual 소비
 - 코드 기반 UI layout / shader / VFX / primitive drawing / animation wiring
 
@@ -151,11 +154,11 @@ GPT_VISUAL_REQUEST:
   acceptance_criteria: []
 ```
 
-GPT가 제작·검수·사용자 승인 후 원본 binary를 repository에 저장하고 SHA-256·consumer·provenance·상태를 manifest에서 readback한 뒤 새 exact SHA로 Codex를 재개한다.
+같은 Work에 이미지 도구가 있으면 강제 인계하지 않는다. 후보는 사용자 승인 후에만 정본으로 승격하고 원본 binary·SHA-256·consumer·provenance·상태를 manifest에서 readback한다. 생성 성공, 사용자 승인, runtime 연결은 별도 상태다.
 
 ## 6. 기술 자율성과 `CHANGE_PROPOSAL`
 
-Codex가 자율 결정 가능:
+승인된 현재 실행자가 자율 결정 가능:
 
 - Node/Scene/Resource 구조
 - 함수/클래스/Signal/Autoload
@@ -166,7 +169,7 @@ Codex가 자율 결정 가능:
 - 성능·안정성 개선
 - 동작 보존 리팩터링
 
-GPT로 반환:
+사용자 결정으로 반환:
 
 - Core Loop / 플레이 규칙
 - 주요 UX 의미
@@ -231,8 +234,8 @@ exact project/approval/asset/consumer 재수화
 → 자동 검사 + 실제 입력·상태·캡처 확인
 → 실패 재현 → 범위 안 교정 → 영향받는 회귀검사
 → acceptance와 미완료 범위 재대조
-→ 요구된 evidence가 준비되면 READY_FOR_GPT_REVIEW
-→ GPT 최종 검수 + 기존 사용자 결정·merge/readback Gate
+→ 요구된 evidence가 준비되면 검토 (호환 상태 READY_FOR_GPT_REVIEW)
+→ 동일 승인 계보의 공유 2회 검토 예산 + 기존 사용자 결정·merge/readback Gate
 ```
 
 - 완료를 위해 acceptance나 테스트의 기대 결과를 낮추지 않는다. 잘못된 테스트는 정본·반례 근거를 남겨 교정하되 승인된 제품 의미를 바꾸지 않는다. 기존 실패와 새 회귀를 구분하고, 기존 실패라고 해서 필수 acceptance를 면제하지 않는다.
@@ -291,17 +294,16 @@ codex_result:
   status: READY_FOR_GPT_REVIEW | BLOCKED | WAITING_GPT_VISUAL
 ```
 
-GPT가 final review owner다. GPT는 구현 결과를 `FIX | TUNE | REDESIGN`으로 분류하고, 필요한 수정 뒤 current Slice와 실제 영향받은 직접 의존성만 재검증한다. 실제 구현·runtime/play PASS 상태는 검증 뒤에만 repository 정본으로 승격한다.
+현재 작업 owner는 구현 결과를 `FIX | TUNE | REDESIGN`으로 분류하고, 필요한 수정 뒤 current Slice와 실제 영향받은 직접 의존성만 재검증한다. 같은 세션에서 작성·자체 검토한 것은 독립 검토가 아니다. 실제 구현·runtime/play PASS 상태는 검증 뒤에만 repository 정본으로 승격한다.
 
 ## 11. 잘못된 라우팅
 
-- Base test/Registry/generated/CI를 Codex에 넘김
-- repository 기획·PDF·Notion migration 작업을 Codex에 넘김
-- 모든 code file을 Codex ownership으로 판단
-- 실제 Godot product work를 GPT가 누적 구현
-- Codex가 이미지 생성
+- 실행 능력이 있는 Work도 code file이라는 이유로 Codex에 강제 인계
+- 실행 능력 부족을 무시하고 구현·runtime 검증 완료 주장
+- 도구가 있다는 이유로 새 권한·비용·제품 의미 변경 승인 추정
+- 미승인 이미지 후보를 정식 runtime 자산으로 사용
 - current Slice와 무관한 미래 기능을 implementation convenience로 함께 구현
-- GPT가 구현 준비 완료 뒤 Node/Scene/함수 수준 구현법을 계속 강제
+- 구현 준비 완료 뒤 사용자 가치 없이 계획·승인·전체 검토를 반복
 - Notion을 Codex 구현의 dual canon으로 복원
 
 ## Retired compatibility vocabulary
@@ -312,4 +314,4 @@ notion_sources = retired handoff field
 approved_notion_visuals_consumed = retired result field
 ```
 
-> 인계 기준은 **코드 파일 존재 여부가 아니라 실제 Godot 제품 구현 필요 여부**다. 인계 범위는 프로젝트 전체가 아니라 승인된 `PLAY_MEANINGFUL_WORK_SLICE`와 그 직접 의존성이다.
+> 인계 기준은 **현재 Work의 실제 능력·권한과 명시된 executor 선택**이다. Slice는 실행 단위이지 전체 승인 Blueprint의 납품 범위를 축소하는 근거가 아니다.

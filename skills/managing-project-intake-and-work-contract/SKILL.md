@@ -17,6 +17,8 @@ description: Use when routing a project request, closing material ambiguity, def
 
 Registry의 승인된 작은 작업 비사용 조건은 이미 승인·정의된 기능 경계를 그대로 구현하는 continuation에만 적용한다. 새 기능 또는 공개 계약·상태 소유권·consumer 연결이 생기거나 바뀌면 작은 변경으로 intake를 우회하지 않는다.
 
+실행자 선택은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`의 `UNIFIED_WORK_EXECUTION` / `CAPABILITY_BASED_EXECUTOR_SELECTION`을 따른다. 현재 Work가 승인된 저장소 수정·명령·엔진·검증 도구를 실제 사용할 수 있으면 같은 계약으로 구현까지 진행한다. 앱 이름·코드 파일 때문에 역할을 나누거나 강제 인계하지 않는다. `CAPABILITY_IS_NOT_AUTHORIZATION`을 유지하며 부족한 증거만 `NOT_RUN` / `BLOCKED_UNVERIFIED`로 구분한다.
+
 ## Mandatory pre-build planning gate
 
 `FULL_CURRENT_STATE_AUDIT_BEFORE_PLAN`
@@ -181,7 +183,7 @@ legacy Google Sheets 해석·이관이 필요한 경우에만 `docs/PROJECT_GDD_
 - 사용자가 Skill을 지정해도 trigger·권한·비사용 조건과 충돌하면 그대로 실행하지 않고 이유를 설명한다.
 - 새 범위·실패·정본 변경이 생기면 Work Mode와 Skill 라우팅을 다시 계산한다.
 - Skill 파일을 읽은 것과 Skill 절차를 실제 실행한 것을 구분한다.
-- L1 이상 작업을 다른 에이전트·Codex·외부 AI에 넘기는 지시문도 먼저 이 Skill의 `first-prompt → contract → clarify`를 거친다.
+- 실제 capability gap·사용자 지정 인계 등 workflow owner의 조건으로 다른 실행자에게 넘길 때는 `first-prompt → contract → clarify`의 유효한 동일 계약과 승인 참조를 재사용한다. 인계 때문에 같은 질문·계획을 다시 만들지 않는다.
 - 신규 실행 기술 제작 압력이 감지되면 설계 Skill보다 기존 대안 평가 Skill을 먼저 호출하고 `existing_solution_disposition`을 계약 입력으로 요구한다.
 - 유효한 approval reference 또는 명확한 계속 실행 의도 중 하나라도 없으면 `CONTINUOUS_WORK_INACTIVE`로 유지하고 기존 승인·Grill Me 흐름을 바꾸지 않는다.
 
@@ -302,7 +304,7 @@ WORK_CONTRACT_RECEIPT_ROOT_JSON_EXAMPLE: root receipt를 작성·검증할 때 [
 → CONTINUOUS_WORK_ACTIVE | CONTINUOUS_WORK_INACTIVE 후보
 ```
 
-발행·검증·Handoff Skill은 해당 단계에 도달할 때까지 `deferred_skills`에 둔다. 연속작업 후보는 승인 상태가 확인되기 전 실행 권한이 아니다.
+발행·검증 Skill은 해당 단계에 도달할 때까지 `deferred_skills`에 둔다. Handoff Skill은 실제 인계가 필요할 때만 선택하며 같은 Work에서 직접 구현하는 경로의 필수 단계가 아니다. 연속작업 후보는 승인 상태가 확인되기 전 실행 권한이 아니다.
 
 ### 1.5 Existing Solution First Gate
 
@@ -544,6 +546,8 @@ google_sheet_compatibility_source: OPTIONAL_LEGACY_MIGRATION_INPUT
 ```
 
 - 최신 repository 정본·실제 파일을 현재 계획·결정·구조화·runtime truth로 읽고, 사람용 PDF에는 exact source SHA와 evidence ceiling을 기록한다.
+- `CURRENT_CODEX_HANDOFF.md`는 실제 인계가 있을 때만 사용하는 조건부 경로다. 같은 Work의 재개 정보는 기존 Active Context·작업 계약에 유지하며 별도 handoff 문서 생성을 요구하지 않는다.
+- Base 채택은 승인된 운영 규칙에 한정한다. 프로젝트의 engine/version·저장 호환성·제품 의미·자산 승인·보안 계약은 최신 Base를 관찰했다는 이유로 조용히 교체하지 않는다.
 - Base 자체 작업처럼 project-scoped migration surface가 적용되지 않으면 목적지를 발명하지 않는다.
 - 기존 Notion 또는 Google Sheet가 실제 존재하면 고유 사용자 자료를 `UNIQUE / DUPLICATE / OBSOLETE`로 판정한다. `UNIQUE`만 repository 또는 명시적 non-canon 보관소로 이관 → readback/Test → consumer/reference 확인한다.
 - Notion과 Sheet는 신규 입력·active Decision sync·완료 판정에 필요하지 않으며 신규 프로젝트에 생성하지 않는다. V4 예외는 explicit user approval, owner, scope, measurable value, revisit/exit 조건이 있을 때만 적용한다.

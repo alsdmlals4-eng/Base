@@ -1,5 +1,11 @@
 # Base Skill Learning Log
 
+## 2026-09-16 — Reuse the approved contract across unified Work stages
+
+- **State:** `OBSERVATION`. Repeated intake/handoff by application name is not a new user decision. Current workflow owner now selects the actual authorized capability and reuses the approved contract; new feature/public boundary meaning changes still trigger intake.
+- **Consumers:** Intake, handoff Registry/body/reference, Work/project templates and workspace V4 entrypoints are corrected together. Detailed evidence and recurrence conditions are in `skills/maintaining-project-context-and-handoff/LEARNING_LOG.md`; no new Skill or registry row was added.
+- **Boundary:** Project runtime/engine/save/art approval and installed plugins/automations are not migrated by this Base correction. Policy/contract tests do not prove measured resource savings or fleet adoption.
+
 ## 2026-09-01 — 기능별 코드·계약 경계의 소형 기능 라우팅
 
 - **상태:** `OBSERVATION`

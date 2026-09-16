@@ -4,7 +4,7 @@
   "design_baseline_sha": "f93016dbe90d3d1d906afaaaa75005b490220e90",
   "baseline_policy": "RESOLVE_LATEST_MAIN_AT_PART_START_AND_PIN_EXACT_SHA",
   "selected_strategy": "ONE_BASE_STABLE_PARTITIONS_SEQUENTIAL_COORDINATOR",
-  "worker_model": "GPT_BASE_MAINTENANCE_CODEX_GODOT_PRODUCT_ONLY",
+  "worker_model": "UNIFIED_WORK_EXECUTION",
   "notion_human_view": "Base · 작업 시스템 & Skill 지도",
   "path_state_model": [
     "PART_OWNED",
@@ -77,20 +77,20 @@
       "Follow-up changes start from latest completed main and target only behavior retained in merged main",
       "CROSS_PART_CHANGE_REQUEST is reserved for real authority/evidence/current-owner blockers",
       "Generated artifacts are rebuilt from authority rather than hand-edited",
-      "Exact-head CI and post-merge GitHub/Notion readback are required"
+      "Exact-head CI and post-merge repository readback are required; Notion readback only for an explicitly scoped V4 exception"
     ],
     "validation": [
       "python tools/check_base_partition_scope.py --validate-manifest",
       "python -m unittest tests.test_base_partition_contract -v",
       "python tools/build_base_v9_artifacts.py --check"
     ],
-    "execution_owner": "GPT_BASE_MAINTENANCE"
+    "execution_owner": "CURRENT_AUTHORIZED_CAPABLE_EXECUTOR"
   },
   "parts": [
     {
       "part_id": "P01",
       "name": "Project Planning, Operations & Notion",
-      "purpose": "요청 intake부터 작업계약, 프로젝트 운영, 설계문서, handoff, 장기 continuity, 사람용 학습/Notion 흐름을 최적화한다.",
+      "purpose": "요청 intake부터 작업계약, 통합 Work 실행, 설계문서, 조건부 handoff, 장기 continuity, repository 기반 사람용 학습과 legacy migration 흐름을 최적화한다.",
       "context_pack": "docs/operations/base-partitions/P01_PROJECT_PLANNING_OPERATIONS_NOTION.md",
       "owned_skill_ids": [
         "managing-project-intake-and-work-contract",
@@ -133,11 +133,12 @@
       ],
       "important_rules": [
         "DIRECTION_FIRST",
-        "GPT_NONCODING_PROJECT_OWNER",
-        "GPT_BASE_NOTION_GOVERNANCE_OWNER",
+        "UNIFIED_WORK_EXECUTION",
+        "CAPABILITY_BASED_EXECUTOR_SELECTION",
+        "CAPABILITY_IS_NOT_AUTHORIZATION",
         "REPOSITORY_PRIMARY_CANON",
         "NO_NEW_NOTION_WRITE_BY_DEFAULT",
-        "PROJECT_RELATION_REQUIRED",
+        "V4_NOTION_EXCEPTION_ONLY",
         "SINGLE_INITIAL_APPROVAL_THEN_CONTINUE"
       ],
       "modules": [
@@ -146,17 +147,18 @@
         "Design Document Lifecycle",
         "Context/Handoff",
         "Long-running Continuity",
-        "User Learning & Notion Human View"
+        "User Learning & Repository Human Projection"
       ],
       "validation": [
         "python tools/check_base_partition_scope.py --part P01 --base <BASELINE_SHA> --head HEAD",
         "python -m unittest tests.test_gpt_codex_workflow_contract tests.test_notion_project_isolation_core_system_contract -v"
       ],
       "acceptance_criteria": [
-        "intake→decision→Notion/GitHub→handoff 흐름에 중복 권위 0",
-        "Base/Notion/문서/Registry/generated/CI/test contract를 Codex에 넘기는 오라우팅 0",
-        "Codex handoff는 actual game-project Godot product implementation에만 생성",
-        "프로젝트별 Notion 격리 유지",
+        "intake→decision→repository→implementation→verification 흐름에 중복 권위 0",
+        "현재 승인된 capable Work가 기획·상세 설계·구현·검증·검토·허용된 통합까지 수행",
+        "다른 executor 인계는 사용자 요청·실제 capability 부족·근거 있는 격리 필요 때만 생성",
+        "runtime NOT_RUN과 완료 상한을 보존하며 독립적으로 준비된 승인 작업은 계속",
+        "repository 정본과 명시된 V4 Notion exception 또는 legacy migration 범위의 프로젝트 격리 유지",
         "사용자 학습형 완료보고 유지"
       ],
       "revisit_conditions": [
@@ -217,7 +219,7 @@
       "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P01-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c8179a4bff44ce3cd5316?pvs=204",
-      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_write_authority": "V4_EXPLICIT_EXCEPTION_SCOPE_ONLY",
       "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
@@ -357,7 +359,7 @@
       "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P02-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c8137888edd1e41745099?pvs=204",
-      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_write_authority": "V4_EXPLICIT_EXCEPTION_SCOPE_ONLY",
       "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
@@ -489,7 +491,7 @@
       "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P03-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c8122acffca50aed2c68f?pvs=204",
-      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_write_authority": "V4_EXPLICIT_EXCEPTION_SCOPE_ONLY",
       "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
@@ -629,7 +631,7 @@
       "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P04-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c81f2a6d7de82c0938277?pvs=204",
-      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_write_authority": "V4_EXPLICIT_EXCEPTION_SCOPE_ONLY",
       "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
@@ -771,7 +773,7 @@
       "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P05-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c81498eb5da3fea812390?pvs=204",
-      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_write_authority": "V4_EXPLICIT_EXCEPTION_SCOPE_ONLY",
       "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
@@ -903,7 +905,7 @@
       "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P06-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c817eb473ea7758a1999d?pvs=204",
-      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_write_authority": "V4_EXPLICIT_EXCEPTION_SCOPE_ONLY",
       "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
@@ -1040,7 +1042,7 @@
       "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P07-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c8110b3c3f659a7fe266e?pvs=204",
-      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_write_authority": "V4_EXPLICIT_EXCEPTION_SCOPE_ONLY",
       "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
@@ -1082,16 +1084,18 @@
         "tests/test_p08_*.py"
       ],
       "read_only_dependencies": [
-        "P01 GPT/Codex handoff authority",
+        "P01 unified Work and conditional executor handoff authority",
         "P02 skill routing/freshness",
         "P03 worktree isolation",
         "P07 evidence rules",
         "CP0 partition prompts protected first"
       ],
       "important_rules": [
-        "GPT_BASE_NOTION_GOVERNANCE_OWNER",
-        "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
-        "CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR",
+        "UNIFIED_WORK_EXECUTION",
+        "CAPABILITY_BASED_EXECUTOR_SELECTION",
+        "CAPABILITY_IS_NOT_AUTHORIZATION",
+        "REPOSITORY_PRIMARY_CANON",
+        "NO_NEW_NOTION_WRITE_BY_DEFAULT",
         "DEFAULT_SUPPORTING_SKILL_BUDGET: 1",
         "ZERO_INCREMENTAL_COST_REQUIRED",
         "CURRENT_PAID_PLANS: GPT_PRO"
@@ -1101,7 +1105,7 @@
         "Model/Cost Routing",
         "Source/Research Operations",
         "DeepSeek Worktree Orchestration",
-        "Godot Product Implementation Handoff Boundary"
+        "Capability-based Conditional Executor Handoff"
       ],
       "validation": [
         "python tools/check_base_partition_scope.py --part P08 --base <BASELINE_SHA> --head HEAD",
@@ -1110,8 +1114,10 @@
       "acceptance_criteria": [
         "불필요한 Skill/tool 호출 감소",
         "추가 유료 API/SaaS 기본 의존 0",
-        "Base/Notion/non-product work Codex routing 0",
-        "actual Godot product implementation에서만 Codex handoff",
+        "앱 이름이나 파일 종류에 따른 실행 금지·강제 인계 0",
+        "사용자 요청·실제 capability 부족·근거 있는 격리 필요 때만 executor 인계",
+        "현재 capability를 사용자 승인·repository 권한으로 오인하지 않음",
+        "runtime NOT_RUN을 PASS로 바꾸지 않고 독립적으로 준비된 구현·정적 검사는 계속",
         "외부 executor가 current project canon을 다시 읽음",
         "다른 worktree/프로젝트 혼입 0"
       ],
@@ -1174,7 +1180,7 @@
       "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P08-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c8169b55af5b2f27d9bb7?pvs=204",
-      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_write_authority": "V4_EXPLICIT_EXCEPTION_SCOPE_ONLY",
       "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
@@ -1303,7 +1309,7 @@
       "chat_ownership": "CURRENT_COORDINATOR_CHAT_SEQUENTIAL_CHECKPOINT",
       "branch_template": "opt/base-part-P09-<slug>",
       "notion_page_url": "https://app.notion.com/p/3c11b237eb1c812f9de1f7f5e2996d81?pvs=204",
-      "notion_write_authority": "COORDINATOR_CURRENT_OR_AFFECTED_PART",
+      "notion_write_authority": "V4_EXPLICIT_EXCEPTION_SCOPE_ONLY",
       "notion_related_pages": [
         "https://app.notion.com/p/3c11b237eb1c81748c9ce43831b4f55d?pvs=204",
         "https://app.notion.com/p/3c11b237eb1c81a6b773ed6726171561?pvs=204",
@@ -1375,11 +1381,11 @@
       "Record CROSS_PART_CHANGE semantic attribution",
       "Deduplicate only real CROSS_PART_CHANGE_REQUEST blockers",
       "Rebuild Registry/generated artifacts when affected",
-      "Reconcile self-contained Notion Base/Project Homes from merged facts",
+      "Reconcile repository human projections from merged facts; apply Notion only within an explicitly scoped V4 exception",
       "Run repository-wide regression and required CI",
-      "Run at least 5 true full-scope adversarial loops and continue until CLEAN_REVIEW_EXIT",
+      "Run exactly 2 true full-scope adversarial loops for the same candidate lineage; require CLEAN_REVIEW_EXIT without resetting the budget by phase",
       "Exact-head merge",
-      "Post-merge main and Notion readback"
+      "Post-merge main and repository projection readback; Notion readback only when explicitly scoped"
     ],
     "rollback": "Revert integration commit/PR; Part PRs remain independently auditable and can be reverted by Part boundary. Never roll back unrelated workstreams.",
     "integration_chat": "CURRENT_COORDINATOR_CHAT",
@@ -1518,9 +1524,14 @@
     "rule": "Open, draft, and ready PRs are read-only by default. Mutation requires the user to name the PR and the allowed action."
   },
   "role_ownership": {
-    "base_and_notion": "GPT_BASE_NOTION_GOVERNANCE_OWNER",
-    "godot_product_implementation": "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
-    "codex_general_repository_executor": false,
-    "owner_decision_basis": "PRODUCT_RESPONSIBILITY_NOT_FILE_EXTENSION"
+    "base_and_notion": "CURRENT_AUTHORIZED_CAPABLE_EXECUTOR",
+    "godot_product_implementation": "CURRENT_AUTHORIZED_CAPABLE_EXECUTOR",
+    "app_name_determines_execution_authority": false,
+    "owner_decision_basis": "CAPABILITY_BASED_EXECUTOR_SELECTION",
+    "capability_is_not_authorization": true,
+    "workspace_authority": "REPOSITORY_PRIMARY_CANON",
+    "notion_authority": "V4_NOTION_EXCEPTION_ONLY_OR_LEGACY_MIGRATION_SOURCE",
+    "handoff_condition": "USER_REQUEST_OR_MISSING_CAPABILITY_OR_JUSTIFIED_ISOLATION",
+    "runtime_unavailable_action": "NOT_RUN_WITH_INDEPENDENT_APPROVED_WORK_CONTINUATION"
   }
 }

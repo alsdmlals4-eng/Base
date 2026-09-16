@@ -9,16 +9,15 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class GptCodexWorkflowContractTests(unittest.TestCase):
-    def test_canonical_policy_scopes_codex_to_actual_godot_product_work(self) -> None:
+    def test_canonical_policy_uses_capability_not_application_name(self) -> None:
         text = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
         for term in (
-            "GPT_NONCODING_PROJECT_OWNER",
-            "GPT_BASE_NOTION_GOVERNANCE_OWNER",
-            "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
-            "CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR",
-            "CODEX_REHYDRATE_PROJECT_GITHUB_AND_NOTION",
-            "CODEX_IMAGE_GENERATION_FORBIDDEN",
-            "CODEX_VISUAL_INPUT_NOTION_APPROVED_ONLY",
+            "UNIFIED_WORK_EXECUTION",
+            "CAPABILITY_BASED_EXECUTOR_SELECTION",
+            "CAPABILITY_IS_NOT_AUTHORIZATION",
+            "HANDOFF_ONLY_FOR_CAPABILITY_GAP_OR_EXPLICIT_REQUEST",
+            "CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA",
+            "APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST",
             "GPT_VISUAL_REQUEST_REQUIRED_WHEN_ASSET_MISSING",
             "CHANGE_PROPOSAL",
             "Base Python test",
@@ -52,9 +51,9 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         text = (ROOT / "docs/PLANNING_SEQUENCE_AND_EVIDENCE_POLICY.md").read_text(encoding="utf-8")
         for term in (
             "PLAY_MEANINGFUL_WORK_SLICE",
-            "PLANNING_CANON_BEFORE_HANDOFF",
-            "PRE_HANDOFF_GPT_STOP",
-            "ACTUAL GODOT PRODUCT IMPLEMENTATION → Codex",
+            "CAPABILITY_BASED_EXECUTOR_SELECTION",
+            "docs/GPT_CODEX_WORKFLOW_POLICY.md",
+            "UNIFIED_WORK_EXECUTION",
         ):
             self.assertIn(term, text)
         self.assertNotIn("OPTIONAL_CODEX_EXECUTOR", text)
@@ -71,7 +70,7 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             "ui_ux_flow",
             "asset_audio_dependencies",
             "review_evidence_expected",
-            "PRE_HANDOFF_GPT_STOP",
+            "MISSING_CAPABILITY",
         ):
             self.assertIn(term, text)
         self.assertIn("구현 방향·기술 방법 결정", text)
@@ -82,7 +81,7 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
             "PLAY_MEANINGFUL_WORK_SLICE",
             "work_slice_id",
             "explicit_non_scope",
-            "PRE_HANDOFF_GPT_STOP",
+            "CAPABILITY_GAP",
             "PLANNING_CANON_BEFORE_HANDOFF",
         ):
             self.assertIn(term, text)
@@ -117,19 +116,19 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         for marker in ("UNIT_GUARD_ONLY", "NO_PRODUCTION_AUTHORIZATION_GATE", "TRANSFER_ACCEPTED_NOT_CLAIMED"):
             self.assertIn(marker, guide)
 
-    def test_work_mode_routes_base_notion_to_gpt_and_godot_product_to_codex(self) -> None:
+    def test_work_mode_preserves_modes_without_forcing_executor_change(self) -> None:
         routing = (ROOT / "docs/WORK_MODE_AND_SKILL_ROUTING.md").read_text(encoding="utf-8")
         for term in (
-            "BASE_GOVERNANCE_BUILD_IS_GPT",
-            "NOTION_BUILD_IS_GPT",
-            "GODOT_PRODUCT_BUILD_IS_CODEX",
-            "CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR",
-            "BASE / NOTION / PLANNING / DOC / VISUAL → GPT",
-            "ACTUAL GODOT PRODUCT IMPLEMENTATION → Codex",
+            "UNIFIED_WORK_EXECUTION",
+            "CAPABILITY_BASED_EXECUTOR_SELECTION",
+            "CAPABILITY_IS_NOT_AUTHORIZATION",
+            "NONCODING_BUILD",
+            "GODOT_PRODUCT_BUILD",
+            "REVIEW",
         ):
             self.assertIn(term, routing)
 
-    def test_registry_routes_only_actual_godot_product_handoff(self) -> None:
+    def test_registry_does_not_route_code_or_runtime_alone_to_handoff(self) -> None:
         registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
         entry = next(
             item for item in registry["skills"]
@@ -138,20 +137,14 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         for term in (
             "godot-product-implementation-handoff",
             "godot-work-instruction",
-            "gdscripting",
-            "godot-scene-resource-implementation",
-            "godot-runtime-test",
+            "actual-capability-gap",
+            "explicit-executor-handoff",
         ):
             self.assertIn(term, entry["trigger_tags"])
-        joined_use = "\n".join(entry["use_when"])
-        joined_no = "\n".join(entry["do_not_use_when"])
-        joined_review = "\n".join(entry["review_triggers"])
-        self.assertIn("실제 게임 프로젝트", joined_use)
-        self.assertIn("GDScript", joined_use)
-        self.assertIn("Base 정책", joined_no)
-        self.assertIn("Notion", joined_no)
-        self.assertIn("Base/Notion 작업을 Codex에 넘김", joined_review)
-        self.assertIn("코드 파일이라는 이유만으로 Codex owner로 분류", joined_review)
+        for tag in ("gdscripting", "godot-scene-resource-implementation", "godot-runtime-test"):
+            self.assertNotIn(tag, entry["trigger_tags"])
+        self.assertFalse(entry["load_by_default"])
+        self.assertTrue((ROOT / entry["path"]).is_file())
         self.assertEqual(
             entry["learning_log"],
             "skills/maintaining-project-context-and-handoff/LEARNING_LOG.md",
@@ -159,14 +152,13 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         generated = (ROOT / "docs/generated/BASE_ACTIVE_SKILLS.md").read_text(encoding="utf-8")
         self.assertIn("godot-product-implementation-handoff", generated)
 
-    def test_handoff_skill_excludes_base_notion_and_requires_project_rehydration(self) -> None:
+    def test_handoff_skill_is_conditional_and_requires_project_rehydration(self) -> None:
         text = (ROOT / "skills/maintaining-project-context-and-handoff/SKILL.md").read_text(encoding="utf-8")
         for term in (
             "codex-godot-implementation-handoff",
             "CODEX_GODOT_PRODUCT_IMPLEMENTATION_HANDOFF",
-            "Base/Notion/문서/기획/이미지 작업을 Codex에 넘기지 않는다",
-            "Project `AGENTS.md`",
-            "Notion Project Home/Domain/AI System",
+            "CAPABILITY_BASED_EXECUTOR_SELECTION",
+            "AGENTS.md",
             "CHANGE_PROPOSAL",
             "GPT_VISUAL_REQUEST",
             "READY_FOR_GPT_REVIEW",
@@ -180,18 +172,17 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
     def test_godot_work_instruction_is_intent_contract_not_line_by_line_script(self) -> None:
         text = (ROOT / "templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md").read_text(encoding="utf-8")
         for term in (
-            "Codex Godot Product Implementation Work Instruction",
-            "실제 게임 프로젝트의 Godot 제품 구현",
-            "Base/Notion/문서/기획/이미지/운영 정본 작업에는 사용하지 않는다",
+            "CAPABILITY_BASED_EXECUTOR_SELECTION",
+            "CODEX_GODOT_PRODUCT_IMPLEMENTATION_HANDOFF",
             "구현 방향·기술 방법 결정",
-            "CODEX_IMAGE_GENERATION_FORBIDDEN",
+            "APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST",
             "GPT_VISUAL_REQUEST",
             "CHANGE_PROPOSAL",
             "READY_FOR_GPT_REVIEW",
         ):
             self.assertIn(term, text)
 
-    def test_workspace_contract_separates_base_governance_and_godot_product_domains(self) -> None:
+    def test_historical_v3_contract_is_preserved_for_explicit_compatibility(self) -> None:
         data = json.loads((ROOT / "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json").read_text(encoding="utf-8"))
         self.assertEqual(3, data["schema_version"])
         self.assertEqual("GPT_BASE_NOTION_GOVERNANCE_OWNER", data["base_governance_owner"])
@@ -200,6 +191,24 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
         self.assertIn("BASE_VALIDATION_CONTRACT", data["gpt_repository_domains"])
         self.assertIn("GODOT_SCENE", data["codex_product_domains"])
         self.assertIn("GODOT_IMPLEMENTATION_TEST", data["codex_product_domains"])
+
+    def test_current_v4_has_one_execution_owner_and_conditional_handoff(self) -> None:
+        """Validate parsed routing edges; this does not attest live agent execution."""
+        data = json.loads((ROOT / "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json").read_text(encoding="utf-8"))
+        self.assertEqual("ACTIVE_DEFAULT", data["status"])
+        self.assertEqual("UNIFIED_WORK_EXECUTION", data["execution_model"])
+        self.assertEqual("CAPABILITY_BASED_EXECUTOR_SELECTION", data["executor_selection"])
+        self.assertIs(True, data["capability_is_not_authorization"])
+        owner = (ROOT / data["execution_policy"]).resolve()
+        self.assertTrue(owner.is_relative_to(ROOT.resolve()))
+        self.assertTrue(owner.is_file())
+        conditional = data["conditional_project_entrypoints"]
+        self.assertEqual({"docs/handoffs/CURRENT_CODEX_HANDOFF.md": "ONLY_WHEN_ACTUAL_HANDOFF_IS_NEEDED"}, conditional)
+        self.assertFalse(set(conditional).intersection(data["required_project_entrypoints"]))
+        self.assertIn("AGENTS.md", data["required_project_entrypoints"])
+        self.assertIn("assets/ASSET_MANIFEST.json", data["required_project_entrypoints"])
+        self.assertFalse(data["legacy_contract"]["active_route_for_new_work"])
+        self.assertTrue((ROOT / data["legacy_contract"]["path"]).is_file())
 
     def test_handoff_resume_preserves_godot_runtime_freshness_and_wrong_target_safety(self) -> None:
         policy = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
@@ -258,25 +267,24 @@ class GptCodexWorkflowContractTests(unittest.TestCase):
     def test_codex_bootstrap_is_dynamic_and_project_scoped(self) -> None:
         text = (ROOT / "templates/custom-instructions.codex.md").read_text(encoding="utf-8")
         for term in (
-            "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
-            "CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR",
+            "UNIFIED_WORK_EXECUTION",
+            "CAPABILITY_BASED_EXECUTOR_SELECTION",
             "AGENTS.md",
             "Active Context",
-            "Notion Project Home",
+            "REPOSITORY_PRIMARY_CANON",
             "project.godot",
             "actual evidence",
         ):
             self.assertIn(term, text)
 
-    def test_base_partition_is_gpt_owned_even_when_tests_or_ci_are_code(self) -> None:
+    def test_base_partition_uses_capability_even_when_tests_or_ci_are_code(self) -> None:
         model = (ROOT / "docs/operations/BASE_PARTITION_OPERATING_MODEL.md").read_text(encoding="utf-8")
         prompt = (ROOT / "templates/prompts/BASE_PARTITION_OPTIMIZATION_PROMPT.md").read_text(encoding="utf-8")
         for text in (model, prompt):
             self.assertIn("Base", text)
-            self.assertIn("GPT", text)
-            self.assertIn("CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR", text)
-        self.assertIn("Base Python tests, Registry/generated/CI", model)
-        self.assertIn("Base Python contract test·Registry/generated·CI policy", prompt)
+            self.assertIn("CAPABILITY_BASED_EXECUTOR_SELECTION", text)
+            self.assertIn("docs/GPT_CODEX_WORKFLOW_POLICY.md", text)
+        self.assertIn("CAPABILITY_IS_NOT_AUTHORIZATION", prompt)
 
     def test_historical_role_records_can_remain_but_are_explicitly_superseded(self) -> None:
         review = (ROOT / "docs/reviews/2026-08-25-gpt-codex-role-split-adversarial-review.md").read_text(encoding="utf-8")

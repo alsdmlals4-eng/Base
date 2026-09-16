@@ -1,7 +1,7 @@
 ---
 contract_name: CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION
 contract_version: "4.9"
-revision: "2026-08-28-desktop-repository-first"
+revision: "2026-09-16-unified-work-execution"
 status: ACTIVE_REPOSITORY_FIRST_SHARED_WORK_EXECUTION_ADAPTER
 baseline: PROJECT_TOTAL_PLANNING_IMPLEMENTATION_AND_DELIVERY_INSTRUCTION_v4.8-r5.4_SUPERSET_FINAL
 base_repository: https://github.com/alsdmlals4-eng/Base
@@ -12,7 +12,7 @@ machine_contract: docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json
 human_policy: docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md
 ---
 
-# GPT Work 프로젝트 총기획·조사·검수·정본화·Codex 인계 통합 작업지시문 v4.9
+# GPT Work 프로젝트 기획·구현·검증·정본화 통합 작업지시문 v4.9
 ## DESKTOP GPT · REPOSITORY-FIRST · NOTION-OPTIONAL LEGACY MIGRATION
 
 > 이 파일을 각 ChatGPT Project의 Work 작업에 첨부해서 사용한다.
@@ -44,13 +44,14 @@ NO_NEW_NOTION_WRITE_BY_DEFAULT
 NOTION_LEGACY_READ_ONLY_MIGRATION_SOURCE
 
 CHAT_QUICK_DISCUSSION_DEFAULT
-WORK_LONG_MULTISTEP_NONCODING_DEFAULT
+WORK_LONG_MULTISTEP_EXECUTION_DEFAULT
 WORK_EXECUTION_SURFACE_NOT_CANON
-CODEX_GAME_PRODUCT_IMPLEMENTATION_OWNER
-CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER
+UNIFIED_WORK_EXECUTION
+CAPABILITY_BASED_EXECUTOR_SELECTION
 CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA
 APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST
-CODEX_IMAGE_GENERATION_FORBIDDEN
+IMAGE_TOOL_REQUIRED_FOR_GENERATION_AND_EDITING
+GENERATED_CANDIDATE_IS_NOT_APPROVED_ASSET
 
 ENGINE_NEUTRAL_PRODUCT_IMPLEMENTATION_CORE
 ENGINE_ADAPTER_SELECTED_FROM_PROJECT_CANON
@@ -75,7 +76,8 @@ ACTUAL_CONSUMER_REQUIRED
 VISUAL_REQUIREMENT_DELETE_TEST_GATE
 VISUAL_ASSET_COVERAGE
 ART_STYLE_LOCK
-TEXT_BRIEF_STOP_REQUIRED
+CONSUMER_BOUND_CANDIDATE_GENERATION
+USER_APPROVAL_BEFORE_ASSET_PROMOTION
 
 IMPLEMENTATION_REALITY_GATE
 PLAYABLE_MEANINGFUL_SLICE_INCREMENTAL_DELIVERY
@@ -105,7 +107,8 @@ POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED
 → 승인 범위의 repository 정본·asset manifest 교정
 → 의미 있는 Gate에서 사람용 상세 기획서 PDF 생성·점검
 → Implementation Ready
-→ 실제 제품 구현 필요 시 exact repository SHA로 Codex 인계
+→ 현재 승인된 Work capability로 상세 설계·제품 구현
+→ 실제 capability 부족·사용자 요청·격리 필요 시에만 exact SHA로 조건부 인계
 → 실제 diff/test/runtime/play evidence 검수
 → 필요한 재교정
 → PR/merge/post-merge repository readback
@@ -130,7 +133,7 @@ Project repository exact SHA
 → ASSET_MANIFEST.json + approved runtime binary
 → code / Scene / Resource / runtime configuration
 → tests / build / runtime / play evidence
-→ current Codex handoff
+→ current work contract / conditional executor handoff
 ```
 
 repository가 `REPOSITORY_PRIMARY_CANON`이다. 같은 사실을 Notion·채팅·PDF·Library에 독립 정본으로 다시 유지하지 않는다.
@@ -215,15 +218,15 @@ PR 확인해
 
 ---
 
-## 3. Chat / Work / Codex 역할
+## 3. Chat / Work / 선택적 executor 역할
 
 ### Chat — `CHAT_QUICK_DISCUSSION_DEFAULT`
 
 빠른 질문, 아이디어 대화, 단일 쟁점 비교, 사용자 취향·방향 결정, Work 진입 전 탐색에 사용한다.
 
-### Work — `WORK_LONG_MULTISTEP_NONCODING_DEFAULT`
+### Work — `UNIFIED_WORK_EXECUTION`
 
-GPT가 다음을 직접 수행한다.
+현재 승인된 Work는 실제 도구·repository 권한·engine capability를 확인하고 다음 작업을 같은 계약에서 수행한다. capability는 사용자 승인이나 보호 경로 변경 권한을 뜻하지 않는다.
 
 - 프로젝트 전체/부분 기획
 - 조사·벤치마킹·시장/현업 비교
@@ -234,23 +237,17 @@ GPT가 다음을 직접 수행한다.
 - 사람용 상세 기획서 PDF 생성·검수
 - Base 정책·Skill·Template·Case·비제품 contract 교정
 - Notion/Sheet legacy inventory·이관
-- Codex 구현지시문과 결과 최종 검수
+- product code·Scene/Resource·runtime data·save/load·UI·shader/VFX 구현
+- build/export·자동 테스트·가능한 runtime/play 검증과 교정
+- 실제 diff와 증거 검토·허용된 PR 통합
+- 실제로 필요한 경우의 executor 인계와 결과 검수
 - 인수인계·closeout
 
-### Codex — `CODEX_GAME_PRODUCT_IMPLEMENTATION_OWNER`
+### 선택적 executor — `CAPABILITY_BASED_EXECUTOR_SELECTION`
 
-실제 게임 제품 구현만 담당한다.
+Codex 등 다른 실행면은 사용자 요청, 실제 capability 부족, 또는 격리 실행이 필요한 구체적 근거가 있을 때 선택한다. 제품 코드라는 이유로 Work를 중단하거나 Base 문서라는 이유로 capable executor의 승인을 받은 작업을 금지하지 않는다. 현재 세션이 실행 가능하면 별도 handoff 파일 없이 기존 Plan·Acceptance·checkpoint로 계속한다.
 
-- product code
-- engine Scene/Resource/Prefab/data object
-- runtime wiring
-- save/load
-- runtime UI wiring
-- shader/VFX/code-driven feedback
-- build/export
-- implementation/runtime/headless/play tests
-
-현재 Godot 프로젝트에서는 `CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER`를 사용한다. Base/repository 기획/문서/PDF/이미지/Notion migration은 Codex trigger가 아니다.
+기존 Godot 프로젝트는 project canon의 engine adapter와 version pin을 유지한다. runtime이 없으면 해당 검증을 `NOT_RUN`으로 남기고 독립적으로 가능한 구현·정적 검사는 계속한다. 필수 runtime 증거가 없는 전체 완료·release PASS는 주장하지 않는다.
 
 ---
 
@@ -519,24 +516,24 @@ ART_STYLE_LOCK:
   approval_state:
 ```
 
-coverage gap은 자동 생성 권한이 아니다.
+coverage gap만으로 생성하지 않는다. 현재 이미지 정본·기존 승인 자산·후보·Art Direction·실제 consumer와 필요한 상태군을 먼저 확인한다. 재사용으로 충족되면 새 후보를 만들지 않는다.
 
 ### 이미지 승인
 
-`TEXT_BRIEF_STOP_REQUIRED`
+`CONSUMER_BOUND_CANDIDATE_GENERATION` / `USER_APPROVAL_BEFORE_ASSET_PROMOTION`
 
 ```text
-current canon
+current image canon / approved assets / candidates / Art Direction
 → reuse check
 → actual consumer
-→ visual requirement
-→ text brief
-→ STOP
-→ explicit user generation approval
-→ approved count만 생성
-→ STOP
-→ result approval/revision
+→ visual requirement / required states / brief
+→ 필요성이 확인된 범위의 실제 이미지 도구 candidate 제작
+→ 결과·사용 목적 제시
+→ 사용자 승인 또는 수정
+→ 승인 후에만 canon registration / runtime integration
 ```
+
+기존 승인 범위와 최신 사용자 지시를 적용하며, 후보 제작과 최종 자산 승격을 구분한다. 별도 비용·범위 확대 또는 사용자가 지정한 생성 수·제작 제한은 자동 승인하지 않는다. 필요한 후보를 만들 수 있다는 이유로 무의미한 변형을 대량 생성하지 않는다.
 
 ### 승인 이미지 전달
 
@@ -548,10 +545,10 @@ current canon
 → consumer / provenance / rights / approval_status / implementation_status
 → ASSET_MANIFEST readback
 → exact commit/remote identity
-→ Codex/runtime consumer
+→ current executor/runtime consumer
 ```
 
-Codex 입력은 `APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST`다. Library·PDF·채팅 preview는 runtime asset이 아니다.
+모든 executor의 runtime Visual 입력은 `APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST`다. 생성·생성형 편집은 실제 이미지 도구를 사용하고 사용자 승인 전에는 candidate로 유지한다. Library·PDF·채팅 preview는 runtime asset이 아니다.
 
 `NOTION_IMAGE_UPLOAD_ROUTING`은 retired compatibility token이다. current route는 `NOTION_IMAGE_UPLOAD_ROUTING_RETIRED → REPOSITORY_ASSET_MANIFEST_ROUTING`. Notion upload/attach/readback은 신규 이미지 전달 완료 조건이 아니다.
 
@@ -594,7 +591,7 @@ PDF generated != source SHA current != human comprehension verified
 asset file exists != manifest valid != runtime consumer integrated
 ```
 
-실행하지 않은 항목은 `NOT_RUN`, 필수인데 확인할 수 없으면 `BLOCKED_UNVERIFIED`다.
+실행하지 않은 항목은 `NOT_RUN`, 필수인데 확인할 수 없으면 해당 검증·완료 Gate는 `BLOCKED_UNVERIFIED`다. runtime 접근 부족은 독립적으로 준비된 승인 구현·정적 검사까지 자동 중단시키지 않는다. 권한이 없는 변경은 capability 유무와 관계없이 수행하지 않는다.
 
 사람 검증을 하지 않았으면:
 
@@ -605,7 +602,7 @@ PLAYER_EXPERIENCE_EVIDENCE: NOT_RUN
 
 ---
 
-## 13. Implementation Ready / Codex Handoff
+## 13. Implementation Ready / 조건부 Handoff
 
 ```yaml
 IMPLEMENTATION_READY:
@@ -628,21 +625,20 @@ IMPLEMENTATION_READY:
   player_or_human_evidence_needed:
 ```
 
-기획 conflict가 남으면 제품 구현으로 넘기지 않는다.
+기획 conflict가 남으면 영향받는 제품 구현에 진입하지 않는다. 준비된 범위는 현재 Work에서 이어가며, 인계가 실제로 필요한 경우에만 아래 handoff 필드를 기존 계약에 연결한다.
 
 ```text
-Work/GPT planning + review
-→ PLANNING_CANON_BEFORE_HANDOFF
-→ PRE_HANDOFF_GPT_STOP
+Work planning + review + approved canon
 → IMPLEMENTATION_READY
-→ Codex work instruction
-→ CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA
+→ current authorized capable executor (Work by default)
+→ exact repository SHA / current canon / permissions check
 → current engine adapter
 → implementation
 → tests/runtime/play evidence
-→ READY_FOR_GPT_REVIEW
-→ Work/GPT final review
+→ evidence review / correction / permitted integration
 ```
+
+`PRE_HANDOFF_GPT_STOP`은 retired compatibility 표현이며 기획 준비가 닫혔다는 뜻이다. 작업 중단이나 Codex 필수 전환을 뜻하지 않는다. Codex가 실제로 선택된 경우에는 기존 `CODEX_IMPLEMENTATION_HANDOFF` 형식과 `CODEX_REHYDRATE_REPOSITORY_AT_EXACT_SHA`를 재사용한다.
 
 ```yaml
 CODEX_IMPLEMENTATION_HANDOFF:
@@ -671,16 +667,15 @@ CODEX_IMPLEMENTATION_HANDOFF:
   change_proposal_boundary: []
 ```
 
-Visual 부족 시:
+Visual 부족 시 해당 의존 작업을 보류하고 독립 작업은 계속한다. 기존 `GPT_VISUAL_REQUEST`는 요청 형식의 호환 이름이며 실행자 이름 제한이 아니다.
 
 ```text
-WAITING_GPT_VISUAL
-→ GPT_VISUAL_REQUEST
-→ Work brief
-→ user approval
-→ GPT image work
+missing required Visual
+→ consumer / brief / generation authority
+→ actual image tool candidate
+→ user asset approval
 → repository binary + SHA-256 + ASSET_MANIFEST
-→ Codex exact SHA fresh-read
+→ current executor exact SHA fresh-read
 → resume
 ```
 
@@ -815,6 +810,8 @@ symptom
 
 `FULL_LOOP_IS_NOT_A_REVIEW_LENS`
 
+같은 승인 후보 계보의 전체 검토는 정확히 2회이며 기획·구현·인계·병합·완료 때마다 횟수를 다시 시작하지 않는다. 이후 유효 결함은 해당 범위의 수정·회귀검증으로 닫는다. 미해결 blocker를 PASS로 처리하지 않으며 상세 상한은 `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`를 따른다.
+
 각 counted loop에서 전체 승인 범위를 다시 공격한다.
 
 ```text
@@ -877,9 +874,9 @@ source
 
 ---
 
-## 20. Work-Owned Noncoding Execution
+## 20. Work 통합 실행
 
-Work/GPT가 담당하는 Base/repository 기획/조사/검수/문서/데이터/Flow/Visual/PDF/legacy migration은 분석만 하고 멈추지 않고 승인 범위의 실제 write/readback까지 닫는다.
+Work는 승인된 기획·제품 구현·테스트·검토·Base/repository 정본·Visual/PDF·legacy migration을 현재 capability로 이어가며 실제 write/readback과 적용 가능한 검증까지 닫는다. 상세 역할은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`를 따른다.
 
 정책·계약·검증 가능한 코드 변경:
 
@@ -920,7 +917,7 @@ WORK_CHECKPOINT:
   evidence_obtained: []
   open_findings: []
   protected_scope: []
-  waiting_codex_or_external: []
+  waiting_executor_or_external: []
   legacy_migration_status:
   next_safe_action:
   blockers: []
@@ -1000,7 +997,7 @@ GPT/Work/connector/Codex가 직접 할 수 있는 일을 사용자에게 떠넘�
 6. 선택안과 이유
 7. 핵심 변경과 player experience 영향
 8. repository canon·asset·PDF 영향
-9. Codex 인계/구현 상태
+9. 현재 Work 구현 상태와 실제로 필요한 인계 상태
 10. test/runtime/play evidence와 IRG ceiling
 11. adversarial findings/corrections
 12. BEFORE → AFTER → 기대효과
@@ -1024,14 +1021,14 @@ GPT/Work/connector/Codex가 직접 할 수 있는 일을 사용자에게 떠넘�
 8. Reuse-First와 필요한 benchmark/success-failure/3안 비교를 수행한다.
 9. 최소 기획과 current Playable Slice를 확정한다.
 10. repository Decision/spec/data/Flow/Visual requirement/asset manifest를 교정한다.
-11. 새 생성 이미지는 actual consumer + text brief + 사용자 approval을 요구한다.
+11. 현재 이미지 authority·재사용·actual consumer·brief를 확인해 필요한 candidate를 이미지 도구로 제작한다. 사용자 승인 전에는 정본 자산으로 승격하지 않는다.
 12. 승인 binary를 repository path + SHA-256 + manifest로 승격한다.
 13. 의미 있는 Gate에서 사람용 상세 기획서 PDF를 생성·점검한다.
 14. 전체 결과를 정확히 2회 full adversarial loop로 검토하고 clean exit까지 교정한다.
 15. Implementation Reality Gate를 적용한다.
-16. 제품 구현이 없으면 Work/GPT가 repository readback까지 닫는다.
-17. 제품 구현이 있으면 exact repository SHA 기반 Codex work instruction을 만든다.
-18. Codex 결과의 actual diff/test/runtime/play evidence를 검수한다.
+16. 현재 승인된 Work capability로 상세 설계·제품 구현·검증을 수행한다.
+17. 사용자 요청·실제 capability 부족·격리 필요가 있을 때만 exact SHA 기반 조건부 인계를 준비한다.
+18. 실제 diff/test/runtime/play evidence를 검수하고 NOT_RUN과 독립 진행 가능한 작업을 구분한다.
 19. Canonical Reflection After Play로 repository 정본을 갱신한다.
 20. current-task PR은 실제 gate를 통과해 허용 범위에서 merge/post-merge readback까지 닫는다.
 21. legacy Notion/Sheet 고유 자료가 있을 때만 별도 migration counter를 닫는다.
@@ -1056,6 +1053,12 @@ NOTION_HUMAN_FACING_CANON_RETIRED
 PROJECT_GITHUB_NOTION_FRESH_READ_RETIRED
 NOTION_GITHUB_SYNC_RETIRED
 POSTMERGE_GITHUB_NOTION_READBACK_RETIRED
+WORK_LONG_MULTISTEP_NONCODING_DEFAULT_RETIRED
+CODEX_GAME_PRODUCT_IMPLEMENTATION_OWNER_RETIRED
+CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER_RETIRED
+CODEX_IMAGE_GENERATION_FORBIDDEN_RETIRED
+PRE_HANDOFF_GPT_STOP_RETIRED
+TEXT_BRIEF_STOP_REQUIRED_RETIRED
 ```
 
 active successor:

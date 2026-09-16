@@ -15,7 +15,7 @@ GENERAL_PROJECT_WORK_USES_GOAL_SCOPED_PHASES
 PART_OWNERSHIP_IS_SEMANTIC_RESPONSIBILITY_NOT_WRITE_BARRIER
 ```
 
-Base 전체 감사를 명시 요청했을 때 한 GPT coordinator가 순차 처리한다.
+Base 전체 감사를 명시 요청했을 때 현재 Work의 한 coordinator가 순차 처리한다.
 
 ```text
 latest main pin
@@ -37,28 +37,11 @@ P01 → P02 → P03 → P04 → P05 → P06 → P07 → P08 → P09
 
 ## Base 작업의 실행 Owner
 
-**Base 자체 P01~P09와 CP0 maintenance는 전부 GPT가 담당한다.**
+실행자 선택의 단일 owner는 `docs/GPT_CODEX_WORKFLOW_POLICY.md`의 `UNIFIED_WORK_EXECUTION` / `CAPABILITY_BASED_EXECUTOR_SELECTION`이다. 현재 Work의 승인된 실행자가 실제 도구로 Base P01~P09·CP0 maintenance와 필요한 검증을 수행한다.
 
-```text
-BASE_PARTITION_MAINTENANCE_OWNER = GPT
-BASE_POLICY_SKILL_GUIDE_TEMPLATE = GPT
-BASE_REGISTRY_GENERATED_MANIFEST = GPT
-BASE_PYTHON_TEST_AND_CI_CONTRACT = GPT
-BASE_NOTION = GPT
-CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR
-```
+`CAPABILITY_IS_NOT_AUTHORIZATION`: 도구 능력은 승인 범위·프로젝트 권한을 확대하지 않는다. Base의 Python test·Registry/generated checker·CI workflow나 게임의 GDScript·Scene·Resource라는 이유만으로 실행자를 제한하거나 교체하지 않는다. 별도 게임 프로젝트 구현이 필요하면 그 프로젝트의 최신 정본·승인 범위·exact SHA와 실제 도구를 먼저 확인한다.
 
-Base의 Python test, Registry/generated checker, CI workflow가 코드라는 이유로 Codex에 넘기지 않는다. `Base Python tests, Registry/generated/CI`는 GPT-owned Base maintenance다.
-
-Codex가 등장하는 경우는 Base maintenance 자체가 아니라, **별도의 실제 게임 프로젝트에서 Godot 제품 구현 task가 생성됐을 때**다.
-
-```text
-Base/P04/P05/P06 기획·검수 finding
-→ GPT가 Base/repository 설계 정본화
-→ 특정 게임 프로젝트에 실제 Godot 구현이 필요함
-→ 그 프로젝트용 Codex Godot Work Instruction
-→ Codex가 해당 프로젝트 repository exact SHA·승인 자산 manifest를 읽고 구현
-```
+현재 Work가 수행할 수 있는 작업은 계속하고, 실제 capability gap·사용자 지정 인계 등 owner의 조건을 충족할 때만 인계한다. 이 문서는 앱 이름에 따른 별도 역할표를 소유하지 않는다.
 
 ## Part 소유권의 의미
 
@@ -71,13 +54,13 @@ Manifest의 owner는 다음을 뜻한다.
 - 완료보고에서 어느 Part 성과인가
 - 어떤 consumer/Test를 우선 검증하는가
 
-**다른 Part라는 이유만으로 수정 보류 금지.** GPT coordinator가 증거와 검증 경로를 확보하면 다른 Part/CP0의 Base finding도 현재 workstream 안에서 교정할 수 있다.
+**다른 Part라는 이유만으로 수정 보류 금지.** 현재 coordinator가 승인 범위 안에서 증거와 검증 경로를 확보하면 다른 Part/CP0의 Base finding도 현재 workstream 안에서 교정할 수 있다.
 
 ```yaml
 CROSS_PART_CHANGE:
   discovered_while: Pxx
   semantic_owner: Pyy | CP0
-  execution_owner: GPT_BASE_MAINTENANCE
+  execution_owner: <현재 권한을 확인한 실행자>
   affected_paths: []
   problem:
   evidence:
@@ -122,7 +105,7 @@ FOLLOW_UP_TARGET_IS_MERGED_MAIN
           │                 │                 │
           └──────────── semantic links ──────┘
                             │
-                   GPT Coordinator
+                 Current Work Coordinator
                             │
                          ONE BASE
 ```
@@ -141,7 +124,7 @@ FOLLOW_UP_TARGET_IS_MERGED_MAIN
 | P08 | AI Operations & External Executors | GPT/Codex/외부 AI 역할·cost/context routing |
 | P09 | Content, Narrative & Publication | canon/voice/publication evidence |
 
-P06 Base 문서는 GPT가 관리한다. **P06의 설계가 특정 게임 프로젝트의 GDScript/Scene/Resource/runtime 변경으로 이어질 때만 그 프로젝트 구현을 Codex가 수행**한다.
+P06의 기술 의미·검증 책임과 실제 실행자는 구분한다. 특정 게임 프로젝트 구현으로 이어질 때도 그 프로젝트의 승인·도구 능력을 확인하고 위 단일 실행자 정책을 적용한다.
 
 ## Part checkpoint 필수 설명
 
@@ -163,7 +146,7 @@ Strict Part mode:
 python tools/check_base_partition_scope.py --part P04 --files <paths...>
 ```
 
-GPT coordinator mode:
+현재 Work coordinator mode:
 
 ```powershell
 python tools/check_base_partition_scope.py --coordinator --base <BASELINE_SHA> --head HEAD
@@ -181,7 +164,7 @@ PASS CONTROL_PLANE_COORDINATOR_WRITE
 
 ## Control Plane (CP0)
 
-CP0는 전역 routing/Registry/generated/partition 계약의 semantic owner다. **CP0 수정 역시 GPT Base maintenance 작업**이다.
+CP0는 전역 routing/Registry/generated/partition 계약의 semantic owner다. CP0 수정 역시 현재 Work의 승인된 Base maintenance 범위와 위 실행자 정책을 따른다.
 
 대표 CP0:
 
@@ -251,7 +234,7 @@ Source 발견 자체를 정본 승격으로 보지 않는다.
 Context 재수화와 handoff 관리비가 커서 **REJECT**.
 
 ### B · 한 coordinator 채팅
-Part별 semantic checkpoint와 rollback을 유지하면서 한 GPT coordinator가 순차 처리한다. **ADOPT**. 새 Part 채팅을 9개 만들지 않는다.
+Part별 semantic checkpoint와 rollback을 유지하면서 현재 Work의 한 coordinator가 순차 처리한다. **ADOPT**. 새 Part 채팅을 9개 만들지 않는다.
 
 ### C · Part 자체 제거
 책임·학습·source coverage가 흐려져 **REJECT**.
@@ -260,7 +243,7 @@ Part별 semantic checkpoint와 rollback을 유지하면서 한 GPT coordinator�
 
 ## Final Integration
 
-P01→P09 뒤 같은 GPT coordinator가:
+P01→P09 뒤 같은 Work coordinator가:
 
 1. latest main pin
 2. 모든 Part 결과/학습 readback
@@ -274,6 +257,6 @@ P01→P09 뒤 같은 GPT coordinator가:
 
 를 수행한다.
 
-## Codex 경계 한 줄
+## 실행자 경계 한 줄
 
-> **Base는 전부 GPT maintenance 영역이다. Codex는 Base 작업자가 아니라 실제 게임 프로젝트의 Godot 제품 구현자다.**
+> 현재 Work의 승인된 실행 능력으로 작업하고, 실제 인계 조건은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`를 따른다.

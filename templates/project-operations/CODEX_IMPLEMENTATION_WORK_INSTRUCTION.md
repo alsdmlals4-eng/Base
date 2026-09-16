@@ -1,13 +1,16 @@
-# Codex Godot Product Implementation Work Instruction
+# Conditional Codex Implementation Work Instruction
 
-> 이 Template은 **GPT가 기획·검수·비코딩 작업을 끝낸 뒤, 실제 게임 프로젝트의 Godot 제품 구현이 남았을 때만 Codex에 전달하는 작업지시문**이다.
+> 이 Template은 **사용자 요청, 현재 세션의 실제 capability 부족, 또는 근거 있는 격리 실행 때문에 Codex를 선택한 경우**의 조건부 작업지시문이다. 기존 파일명은 호환성을 위해 유지한다.
 >
-> Base/Notion/문서/기획/이미지/운영 정본 작업에는 사용하지 않는다. 여기서 Notion은 legacy inventory·이관 작업까지 포함한다. Codex는 일반 repository executor가 아니다.
+> 기본 경로는 `UNIFIED_WORK_EXECUTION`이다. capable Work는 승인 범위의 기획·상세 설계·구현·검증·검토·통합을 계속한다. 코드가 있다는 이유로 전환하지 않으며, 별도 handoff가 없으면 이 파일을 매 작업 복제하지 않는다. capability는 사용자 승인·repository 권한을 대체하지 않는다.
 
 ## 0. Handoff Contract
 
 ```yaml
 handoff_mode: CODEX_GODOT_PRODUCT_IMPLEMENTATION_HANDOFF
+executor_selection: CAPABILITY_BASED_EXECUTOR_SELECTION
+handoff_reason: USER_REQUEST | MISSING_CAPABILITY | ISOLATED_EXECUTION
+selected_executor: CODEX
 project:
 repository:
 base_branch:
@@ -23,18 +26,18 @@ user_final_approval_decision_id:
 implementation_authority_revision:
 work_slice_mode: PLAY_MEANINGFUL_WORK_SLICE
 work_slice_id:
-work_instruction_status: GPT_REVIEWED_GODOT_IMPLEMENTATION_READY
-planning_stop_gate: PRE_HANDOFF_GPT_STOP
-implementation_owner: CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER
-final_review_owner: GPT_FINAL_IMPLEMENTATION_REVIEW
+work_instruction_status: APPROVED_IMPLEMENTATION_READY
+planning_readiness: APPROVED_CANON_READY
+implementation_owner: CURRENT_AUTHORIZED_CAPABLE_EXECUTOR
+final_review_owner: CURRENT_REVIEW_OWNER
 actual_state_verification_required: true
 repository_rehydration_required: true
 github_rehydration_required: true
 notion_rehydration_required: false
 legacy_notion_migration_source_optional: true
-codex_image_generation: FORBIDDEN
+image_generation: IMAGE_TOOL_REQUIRED_CANDIDATE_APPROVAL_REQUIRED
 visual_input_contract: APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST
-missing_visual_action: GPT_VISUAL_REQUEST
+missing_visual_action: CANDIDATE_PREPARATION_OR_CAPABILITY_REQUEST
 ```
 
 ### Base revision contract
@@ -59,7 +62,7 @@ BOUNDARY_FRESH_READ_REQUIRED
 
 ### 사용 조건
 
-이 Template은 다음 중 하나가 남았을 때 사용한다.
+인계 사유가 실제로 성립하고 다음과 같은 승인 작업이 남았을 때 사용한다. 이 목록은 Work의 수행 금지 목록이 아니다.
 
 - GDScript / product code
 - Godot Scene / Resource / Autoload
@@ -70,18 +73,14 @@ BOUNDARY_FRESH_READ_REQUIRED
 - Godot build/export
 - Godot implementation/runtime/headless/play tests
 
-### 사용하지 않는 조건
+### 인계를 만들지 않는 조건
 
-- Base 정책·Skill·Guide·Template·Registry/generated/CI/test contract
-- repository Decision·AI production spec·GDD·기획서·밸런스표·Flow 교정
-- 사람용 상세 기획서 PDF 생성·검수
-- Notion 편집·legacy inventory·이관
-- 이미지 생성·편집·승인 정리
-- 조사·벤치마킹·검수
-- 문제→교훈→Base 승격
-- GitHub 비제품 문서/정본 교정
+- 현재 Work가 승인된 작업을 수행할 capability와 권한을 갖고 있으며 별도 격리 이점이 없다.
+- 단지 파일이 code/JSON/Python이거나 제품 구현 단계라는 이유만 있다.
+- 기획·문서·이미지·Base 운영 작업이라는 이름만으로 실행자를 금지하거나 필수 지정하려 한다.
+- runtime 하나가 없다는 이유로 독립 구현·정적 검사 전체를 전환하려 한다. 누락된 검증은 `NOT_RUN`으로 남기고 필요한 부분만 인계한다.
 
-## 1. GPT가 전달하는 것
+## 1. 현재 Work가 전달하는 것
 
 ### Slice / Player Outcome
 
@@ -178,7 +177,7 @@ approved_visual_records:
 - allowed intended use:
 - rights/provenance constraints:
 
-Codex는 `APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST`를 충족한 Visual만 소비하며 새 이미지를 생성·생성형 편집하지 않는다.
+runtime에는 `APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST`를 충족한 Visual만 소비한다. 필요한 이미지 후보의 생성·생성형 편집은 실제 이미지 도구와 현재 승인 범위에 따라 수행하며, candidate 제작과 runtime 자산 승격을 구분한다.
 
 ## 2. Codex가 다시 읽을 프로젝트 정본
 
@@ -205,7 +204,7 @@ repository_sources:
   current_open_prs: true
 ```
 
-기존 Notion에만 고유 자료가 남아 있으면 GPT가 별도 migration 작업에서 repository로 옮긴다. Codex 구현 지시문은 Notion page/database/attachment 조회를 필수 재수화 경로로 만들지 않는다.
+기존 Notion에만 고유 자료가 남아 있으면 승인된 migration scope에서 repository로 옮긴다. 이 구현 지시문은 Notion page/database/attachment 조회를 필수 재수화 경로로 만들지 않는다.
 
 ```yaml
 optional_legacy_migration_context:
@@ -218,7 +217,7 @@ optional_legacy_migration_context:
 ## 3. Codex 시작 순서
 
 ```text
-GPT-reviewed Godot Work Instruction 수신
+조건부 Work Instruction과 실제 인계 사유 확인
 → work_slice_id / approved_scope / explicit_non_scope 확인
 → project/repository identity + exact_source_sha 확인
 → latest completed Base main fresh-read
@@ -233,12 +232,14 @@ GPT-reviewed Godot Work Instruction 수신
 → open PR/worktree/branch overlap 확인
 → Work Instruction과 current truth 대조
 → 승인 범위 안에서 구현 방향·기술 방법 결정
-→ GODOT PRODUCT IMPLEMENTATION
+→ APPROVED IMPLEMENTATION WITH SELECTED ENGINE ADAPTER
 → TEST / RUNTIME / PLAY EVIDENCE
 → READY_FOR_GPT_REVIEW
 ```
 
 지시문과 current truth가 충돌하면 억지 구현하지 않고 drift를 분류한다. 관련 최신 Base 변경이 있으면 stale pin을 영구 고집하거나 floating latest로 즉시 전환하지 않고, 영향을 분류해 현재 package의 안전한 reconcile·revalidation 경계를 결정한다.
+
+runtime capability가 없으면 해당 검증은 `NOT_RUN`으로 반환하고 독립적으로 가능한 승인 구현·정적 검사를 계속한다. 필수 검증 증거가 없는 전체 완료 주장은 하지 않는다. repository write 권한이나 사용자 승인이 없다면 영향을 받는 변경은 실행하지 않는다.
 
 ## 4. Codex가 자율 결정할 수 있는 기술 구현
 
@@ -270,19 +271,19 @@ GPT가 예상 구현 경로를 적었더라도 더 안전하고 단순한 Godot 
 - 프로젝트가 채택한 Base 계약을 최신이라는 이유만으로 자동 교체
 - 사용자 승인된 `BLUEPRINT_PASS_2_FINAL`의 의미·scope 변경
 
-필요하면 `CHANGE_PROPOSAL`로 GPT에 반환한다.
+필요하면 `CHANGE_PROPOSAL`로 현재 작업 owner와 사용자 결정 경계에 반환한다.
 
 ## 6. 이미지 규칙
 
 ```text
-CODEX_IMAGE_GENERATION_FORBIDDEN
-CODEX_GENERATIVE_IMAGE_EDITING_FORBIDDEN
-CODEX_VISUAL_INPUT_REPOSITORY_MANIFEST_ONLY
+IMAGE_TOOL_REQUIRED_FOR_GENERATION_AND_EDITING
+GENERATED_CANDIDATE_IS_NOT_APPROVED_ASSET
+RUNTIME_VISUAL_INPUT_REPOSITORY_MANIFEST_ONLY
 APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST
 CODEX_VISUAL_INPUT_NOTION_APPROVED_ONLY_RETIRED
 ```
 
-이미지가 부족하면:
+이미지가 부족하면 consumer·brief·승인 범위와 실제 이미지 도구를 확인한다. 아래 `GPT_VISUAL_REQUEST`는 기존 요청 Schema의 호환 이름이며 GPT로의 필수 전환을 뜻하지 않는다.
 
 ```yaml
 GPT_VISUAL_REQUEST:
@@ -299,7 +300,7 @@ GPT_VISUAL_REQUEST:
   acceptance_criteria: []
 ```
 
-GPT가 제작·검수·사용자 승인 → repository binary 저장 → SHA-256·consumer·provenance·상태 manifest readback → Codex exact SHA fresh-read 후 재개한다.
+실제 이미지 도구로 candidate 제작·검수 → 사용자 자산 승인 → repository binary 저장 → SHA-256·consumer·provenance·상태 manifest readback → current executor exact SHA fresh-read 후 연결한다. 도구나 승인이 없으면 해당 의존 작업만 보류하고 독립 작업은 계속한다.
 
 Library·PDF·Notion preview에 보인다는 사실만으로 구현 입력이 되지 않는다.
 
@@ -348,12 +349,12 @@ codex_result:
   status: READY_FOR_GPT_REVIEW | BLOCKED | WAITING_GPT_VISUAL
 ```
 
-Codex는 구현 결과와 evidence를 반환하며 `FIX | TUNE | REDESIGN`의 최종 제품 판정은 GPT final review에서 수행한다.
+Codex는 구현 결과와 evidence를 반환하며 `FIX | TUNE | REDESIGN`의 제품 판정은 current review owner가 실제 정본·diff·검증에 대조해 수행한다. 기존 `READY_FOR_GPT_REVIEW` 결과명은 검토 필요 상태의 호환 표현이며 필수 앱 전환이 아니다.
 
 ## 9. 전체 흐름
 
 ```text
-GPT
+현재 승인된 Work
 latest Base + project current authority fresh-read
 → adopted Base drift comparison + execution SHA pin
 → 현재 PLAY_MEANINGFUL_WORK_SLICE repository 정본 복원
@@ -363,21 +364,22 @@ latest Base + project current authority fresh-read
 → 필요한 image/material/VFX-source preparation
 → 2차 최종 Blueprint + 적대적 검수·IRG
 → approved scope / explicit non-scope / Acceptance 확정
-→ repository Decision / AI production spec / asset manifest 등 비코딩 작업 완료
+→ repository Decision / AI production spec / asset manifest 준비
 → source-SHA-bound 사람용 상세 PDF 점검
 → exact final Blueprint 사용자 승인
-→ PRE_HANDOFF_GPT_STOP
-→ implementation handoff boundary fresh-read
-→ 프로젝트별 Codex Godot Work Instruction
+→ IMPLEMENTATION_READY
+→ 현재 capability와 권한으로 상세 설계·구현 계속
+→ 사용자 요청 / 실제 capability 부족 / 격리 필요 시에만 handoff boundary fresh-read
+→ 필요한 경우에만 이 조건부 Codex Work Instruction
 
-Codex
+현재 executor (인계가 있을 때 Codex)
 latest Base drift + pinned base_execution_sha 대조
 → exact repository SHA + final Blueprint + project entrypoints + asset manifest 재수화
 → 승인 범위 안에서 Godot 구현 방향·기술 방법 결정
 → 구현·코딩·runtime/play test
 → READY_FOR_GPT_REVIEW
 
-GPT
+현재 review owner
 구현 일치 → runtime → 실제 play/UX/Visual/Audio 최종 검수
 → FIX / TUNE / REDESIGN 분류
 → 필요한 영향 범위만 재검증
@@ -388,4 +390,4 @@ GPT
 → closeout boundary fresh-read와 남은 작업 재계산
 ```
 
-> 현재 역할 한 줄: **GPT는 현재 플레이 의미 Slice의 비코딩·기획·검수·Base·repository canon·Visual과 두 단계 Blueprint를 담당하고, Codex는 최종 승인된 2차 Blueprint exact revision 범위의 실제 게임 프로젝트 Godot 제품 구현·코딩을 담당한다.** Notion은 고유 자료가 남은 기존 프로젝트의 GPT-owned legacy migration source일 뿐 Codex의 기본 구현 입력이 아니다.
+> 현재 역할 한 줄: **승인되고 capability를 갖춘 Work가 기획부터 상세 설계·구현·검증·검토·허용된 통합까지 이어가며, 이 Template은 실제 인계가 필요할 때만 사용한다.** `PRE_HANDOFF_GPT_STOP`은 retired compatibility로 기획 준비 완료만 뜻하며 작업 중단이나 Codex 필수 전환이 아니다. Notion은 명시된 V4 exception 또는 고유 자료의 legacy migration source다.

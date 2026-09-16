@@ -146,7 +146,7 @@ class RepositoryFirstWorkspaceContractTests(unittest.TestCase):
             contract["codex_visual_input"],
         )
         self.assertEqual(
-            "GPT_CREATE_REVIEW_APPROVE_THEN_REPOSITORY_MANIFEST",
+            "CAPABLE_WORK_CANDIDATE_THEN_USER_APPROVAL_AND_REPOSITORY_MANIFEST",
             contract["missing_visual_route"],
         )
         self.assertTrue(

@@ -53,25 +53,23 @@ class P08AiOperationsContractTests(unittest.TestCase):
         skill = (ROOT / "skills/orchestrating-deepseek-worktrees/SKILL.md").read_text(encoding="utf-8")
         for term in (
             "EXECUTOR_REHYDRATION_GATE",
-            "GPT_PRIMARY_REVIEWER",
-            "GPT_NONCODING_PROJECT_OWNER",
-            "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
-            "CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR",
+            "CAPABILITY_IS_NOT_AUTHORIZATION",
+            "UNIFIED_WORK_EXECUTION",
+            "CAPABILITY_BASED_EXECUTOR_SELECTION",
             "REVIEW_PENDING",
             "exact branch/commit",
             "AGENTS.md",
         ):
             self.assertIn(term, skill)
 
-    def test_p08_routes_base_and_notion_to_gpt_and_godot_product_to_codex(self) -> None:
+    def test_p08_routes_current_work_through_capability_and_canon(self) -> None:
         text = (ROOT / "docs/operations/base-partitions/P08_AI_OPERATIONS_EXECUTORS.md").read_text(encoding="utf-8")
         for term in (
-            "GPT_BASE_NOTION_GOVERNANCE_OWNER",
-            "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
-            "CODEX_NOT_GENERAL_REPOSITORY_EXECUTOR",
-            "GDScript/product code",
-            "Scene/Resource/Autoload/runtime wiring",
-            "Base Python test·CI contract·Registry/generated checker",
+            "UNIFIED_WORK_EXECUTION",
+            "CAPABILITY_BASED_EXECUTOR_SELECTION",
+            "REVIEW_PENDING",
+            "GODOT_DEFAULT_ACTIVE_ENGINE_ADAPTER",
+            "NOT_RUN",
         ):
             self.assertIn(term, text)
         self.assertNotIn("OPTIONAL_CODEX_EXECUTOR", text)
@@ -80,9 +78,8 @@ class P08AiOperationsContractTests(unittest.TestCase):
         text = (ROOT / "docs/operations/base-partitions/P08_AI_OPERATIONS_EXECUTORS.md").read_text(encoding="utf-8")
         for term in (
             "CHAT_QUICK_DISCUSSION_DEFAULT",
-            "WORK_LONG_MULTISTEP_NONCODING_DEFAULT",
-            "CODEX_GAME_PRODUCT_IMPLEMENTATION_OWNER",
-            "CODEX_GODOT_PRODUCT_IMPLEMENTATION_OWNER",
+            "WORK_LONG_MULTISTEP_EXECUTION_DEFAULT",
+            "CAPABILITY_BASED_EXECUTOR_SELECTION",
             "ENGINE_ADAPTER_SELECTED_FROM_PROJECT_CANON",
         ):
             self.assertIn(term, text)
@@ -106,7 +103,7 @@ class P08AiOperationsContractTests(unittest.TestCase):
     def test_external_ai_optionality_is_separate_from_godot_implementation_owner(self) -> None:
         text = (ROOT / "skills/orchestrating-deepseek-worktrees/SKILL.md").read_text(encoding="utf-8")
         self.assertIn("외부 AI 사용은 optional", text)
-        self.assertIn("실제 게임 프로젝트의 Godot 제품 구현", text)
+        self.assertIn("CAPABILITY_BASED_EXECUTOR_SELECTION", text)
         learning = (ROOT / "skills/orchestrating-deepseek-worktrees/LEARNING_LOG.md").read_text(encoding="utf-8")
         self.assertIn("code format is not Codex ownership", learning)
 
@@ -118,11 +115,11 @@ class P08AiOperationsContractTests(unittest.TestCase):
         self.assertIn("tests/test_p08_ai_operations_contract.py", learning)
         self.assertIn("docs/operations/base-partitions/learning/P08_LEARNING_LOG.md", learning)
 
-    def test_codex_image_generation_is_not_p08_executor_capability(self) -> None:
+    def test_visual_capability_preserves_approval_and_manifest_boundary(self) -> None:
         policy = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
         for term in (
-            "CODEX_IMAGE_GENERATION_FORBIDDEN",
-            "CODEX_VISUAL_INPUT_NOTION_APPROVED_ONLY",
+            "APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST",
+            "승인 전 후보",
             "GPT_VISUAL_REQUEST_REQUIRED_WHEN_ASSET_MISSING",
         ):
             self.assertIn(term, policy)

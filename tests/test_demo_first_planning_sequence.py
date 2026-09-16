@@ -54,7 +54,7 @@ class DemoFirstPlanningSequenceTests(unittest.TestCase):
         for term in ("와이어프레임·플로우맵", "구현 가능성·위험", "완료 기준·검증·롤백",
                      "별도로 승인된 제한 범위", "영향받는 결정만 재승인", "저장 호환성",
                      "PLAY_MEANINGFUL_WORK_SLICE", "모든 최종 자산을 먼저 제작하지 않는다",
-                     "실제 Godot 제품의 상세 구현 설계와 구현은 Codex", "명시적인 사용자 선언",
+                     "CAPABILITY_BASED_EXECUTOR_SELECTION", "명시적인 사용자 선언",
                      "무엇이 바뀌었는가 / 어떤 연결로 작동하는가 / 사용자가 어떻게 확인하는가",
                      "사용자 기획 승인은 Human/Player 검증 PASS가 아니다"):
             with self.subTest(term=term):

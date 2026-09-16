@@ -189,24 +189,23 @@ VALIDATED | BLOCKED_UNVERIFIED
 MIGRATION_COMPLETE | MIGRATION_NOT_APPLICABLE | MIGRATION_PENDING
 ```
 
-## 5. GPT planning / Codex Godot product implementation boundary
+## 5. 통합 Work 기획·상세 설계·구현 경계
 
-기획·설계의 승인 전후 경계는 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md` §1.1 `BASIC_DESIGN_BEFORE_APPROVAL_DETAILED_DESIGN_AFTER_APPROVAL`을 따른다. 승인 전 기본 설계로 방향·타당성을 확인하고, 승인 후 실제 구현 owner가 상세 설계를 구체화한다. 아래 인계 흐름은 이 구분을 생략하거나 승인된 작은 작업의 전체 기획을 반복시키지 않는다.
+기획·설계의 승인 전후 경계는 `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md` §1.1 `BASIC_DESIGN_BEFORE_APPROVAL_DETAILED_DESIGN_AFTER_APPROVAL`을 따른다. 승인 전 기본 설계로 방향·타당성을 확인하고, 승인 후 현재 capable Work가 상세 설계를 구체화한다. `UNIFIED_WORK_EXECUTION`은 이 구분을 생략하거나 승인된 작은 작업의 전체 기획을 반복시키지 않는다.
 
-기획·근거조사·대안 비교·UI/UX·아트 방향·시각 후보 검수·최종 판정은 `GPT_FIRST_PLANNING_AND_REVIEW`와 `GPT_PRIMARY_REVIEWER`가 기본이다. 프로젝트 작업은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`의 `PLAY_MEANINGFUL_WORK_SLICE`를 기본 작업 단위로 삼고, 실제 구현 전에 승인된 기획 의미와 실행 계약을 `PLANNING_CANON_BEFORE_HANDOFF`로 정본화한다.
+기획·근거조사·대안 비교·UI/UX·아트 방향·시각 후보 검수·상세 설계·제품 구현·검토는 같은 승인 계약에서 연결한다. 프로젝트 작업은 `docs/GPT_CODEX_WORKFLOW_POLICY.md`의 `PLAY_MEANINGFUL_WORK_SLICE`를 내부 실행 단위로 삼고, 실제 구현 전에 승인된 기획 의미와 실행 계약을 정본화한다. Slice 분해는 승인된 전체 범위를 축소하지 않는다.
 
-실제 Godot 제품 구현이 남지 않은 계획은 GPT가 비코딩 결과와 정본 readback을 닫고 종료한다. 실제 Godot 제품 구현이 남아 있으면 GPT가 `PRE_HANDOFF_GPT_STOP`을 통과한 뒤 구현 방법을 더 세분화하지 않고 다음 current boundary를 따른다.
+`CAPABILITY_BASED_EXECUTOR_SELECTION`: 현재 승인된 Work가 필요한 repository·authoring·test capability를 갖추면 구현부터 허용된 통합까지 이어간다. 사용자 요청, 실제 capability 부족, 근거 있는 격리 실행 때만 필요한 부분을 다른 executor에 인계한다. capability는 사용자 승인·repository 권한을 대체하지 않는다.
 
 ```text
 PLAY_MEANINGFUL_WORK_SLICE
-→ PLANNING_CANON_BEFORE_HANDOFF
-→ PRE_HANDOFF_GPT_STOP
-→ ACTUAL GODOT PRODUCT IMPLEMENTATION → Codex
-→ READY_FOR_GPT_REVIEW
-→ GPT final review
+→ approved planning canon / IMPLEMENTATION_READY
+→ current authorized capable Work detailed design and implementation
+→ tests / available runtime evidence / correction
+→ review / permitted integration / repository readback
 ```
 
-Codex는 모든 계획에 붙는 선택적 보조 실행자가 아니라 **실제 게임 프로젝트의 Godot 제품 구현 owner**다. 반대로 Base·Notion·기획·문서·Visual 같은 비제품 구현은 Codex로 넘기지 않는다. 사용자가 local implementation을 실행해야 할 때는 `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`의 location-first 한 블록을 사용한다.
+기존 `PRE_HANDOFF_GPT_STOP`은 retired compatibility 표현이며 기획 준비 완료를 뜻한다. 작업 중단이나 Codex 필수 전환이 아니다. 실제 인계가 없으면 새 handoff 파일을 만들지 않고 기존 Plan·Acceptance·checkpoint를 사용한다. 사용자가 local implementation을 실행해야 할 때만 `docs/operations/POWERSHELL_FRESH_SHELL_EXECUTION_CONTRACT.md`의 location-first 한 블록을 사용한다.
 
 ```text
 GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY
@@ -214,7 +213,7 @@ REASONING_EFFORT_IS_NOT_WORK_EVIDENCE
 REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF
 ```
 
-GPT-primary는 답변 문장만 만드는 경로가 아니다. 추론 강도는 실제 조사·readback·Tool 실행·검증 증거가 아니며, 현재 세션이 필요한 browser/repository/connector/runtime Tool을 보유하면 직접 사용한다. Codex의 제품 구현 책임 경계와 별개로 필수 실행 evidence는 실제로 확보해야 한다.
+추론 강도는 실제 조사·readback·Tool 실행·검증 증거가 아니다. 현재 세션에 필요한 browser/repository/connector/runtime Tool이 있으면 직접 사용한다. runtime이 없으면 해당 검증은 `NOT_RUN`이며 독립적으로 준비된 구현·정적 검사는 계속한다. 필수 runtime 증거가 없는 전체 완료·release 판정은 허용하지 않는다.
 
 ## 6. 시각 checkpoint와 Demo-First
 
@@ -272,7 +271,7 @@ user approval
 
 - Notion 무료/current capability가 반복적으로 material planning을 차단.
 - project 규모·협업자 수 때문에 current Project relation model이 부족.
-- GPT가 직접 안정적인 engine mutation/verification을 수행할 공식 surface가 생김.
-- Codex 실행환경·비용·권한이 크게 변함.
+- 현재 Work 또는 선택 executor의 engine mutation/verification capability가 변함.
+- 실행환경·비용·권한이 크게 변함.
 - retired surface에서 아직 고유 material이 반복 발견됨.
 - 창의성 benchmark frontier가 실제 프로젝트에서 선택 품질을 높이지 못하거나 조사비용만 크게 늘림.

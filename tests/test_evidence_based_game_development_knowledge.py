@@ -169,8 +169,8 @@ class EvidenceBasedGameDevelopmentKnowledgeTests(unittest.TestCase):
         )
         for term in (
             "ChatGPT",
-            "Codex Plan",
-            "Codex Build",
+            "UNIFIED_WORK_EXECUTION",
+            "CAPABILITY_BASED_EXECUTOR_SELECTION",
             "외부 AI",
             "사용자 승인",
             "Prompt 계약",
