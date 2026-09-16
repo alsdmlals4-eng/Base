@@ -111,6 +111,13 @@ class SkillBehaviorGovernanceIntegrationTests(unittest.TestCase):
         self.assertEqual("managing-project-intake-and-work-contract", cases["SBE-041"]["expected_primary_skill"])
         self.assertIn("NOT_RUN", "\n".join(cases["SBE-040"]["required_evidence"]))
         self.assertIn("Notion", "\n".join(cases["SBE-041"]["required_evidence"]))
+        deliberate = "\n".join(cases["SBE-040"]["required_evidence"])
+        continuation = "\n".join(cases["SBE-041"]["required_evidence"])
+        self.assertIn("정확히 2회", deliberate)
+        self.assertIn("단계별 예산 초기화", deliberate)
+        self.assertIn("새 전체 회차 없이", continuation)
+        self.assertIn("유효한 기존 승인 범위", continuation)
+        self.assertIn("새 Notion write를 만들지 않는다", continuation)
 
         coverage = json.loads(
             (ROOT / "skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json").read_text(encoding="utf-8")

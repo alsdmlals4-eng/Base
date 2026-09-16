@@ -427,6 +427,18 @@ class SkillBehaviorCoverageTests(unittest.TestCase):
 
 
 class ClaimIntentBehaviorEvidenceHardeningTests(unittest.TestCase):
+    def test_current_two_round_fixtures_do_not_claim_model_execution(self) -> None:
+        document = json.loads((ROOT / "skills/SKILL_BEHAVIOR_EVALS.json").read_text(encoding="utf-8"))
+        for case_id in ("SBE-040", "SBE-041"):
+            matches = [item for item in document["cases"] if item["case_id"] == case_id]
+            self.assertEqual(1, len(matches))
+            case = matches[0]
+            self.assertEqual("NOT_REQUIRED", case["expected_user_decision_state"])
+            evidence = "\n".join(case["required_evidence"])
+            self.assertIn("2회", evidence)
+            self.assertNotIn("5회", evidence)
+        self.assertEqual("NOT_RUN", document["model_run_status"])
+
     def test_sbe_038_is_unique_fail_closed_and_not_model_run(self) -> None:
         documents = [
             json.loads((ROOT / "skills/SKILL_BEHAVIOR_EVALS.json").read_text(encoding="utf-8")),
