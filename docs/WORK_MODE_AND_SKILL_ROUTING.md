@@ -83,6 +83,18 @@ Godot은 필요한 경우 실제 실행한다. 실행 전 existing/task-owned �
 
 `WORK_DIRECT_GODOT_VERIFICATION_WHEN_MATERIAL`, `TASK_LAUNCHED_GODOT_PROCESS_OWNERSHIP`, `STOP_TASK_OWNED_GODOT_WHEN_NO_LONGER_NEEDED`, `PRESERVE_PREEXISTING_AND_UNRELATED_GODOT_INSTANCES`, `GODOT_VERIFICATION_AND_SHUTDOWN_REPORT`의 상세 owner는 통합 실행 정책이다.
 
+완료 증거 owner: `docs/knowledge/vertical-slice/SKILL_ORCHESTRATION_AND_EVIDENCE.md` §5.1. 실행 작업에만 아래 항목을 기존 결과 기록에 포함한다. 별도 빈 보고서를 만들지 않는다.
+
+```yaml
+godot_verification: <PASS | FAIL | NOT_RUN | BLOCKED_UNVERIFIED; exact build/run evidence>
+godot_process_cleanup:
+  task_owned_processes_started: []
+  task_owned_processes_stopped: []
+  preexisting_or_unrelated_preserved: []
+  residual_check: <PASS | PARTIAL | NOT_APPLICABLE>
+  residual_risk: <없음 또는 확인하지 못한 범위>
+```
+
 ## 6. 완료와 호환
 
 repository source/HEAD, 변경·유지 범위, 검사 결과, runtime_or_play_evidence, asset 소비, 실행 방법, 미구현·미검증·rollback을 설명한다. 검증·cleanup·Human·출시는 독립 상태다. `READY_FOR_GPT_REVIEW`는 legacy 인계 상태명이며 PASS가 아니다.

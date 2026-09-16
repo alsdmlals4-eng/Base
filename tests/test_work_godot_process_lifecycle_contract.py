@@ -122,16 +122,18 @@ class WorkGodotProcessLifecycleContractTests(unittest.TestCase):
         ):
             self.assertIn(term, godot_safety)
 
-    def test_direct_verification_does_not_expand_gpt_product_authoring(self) -> None:
+    def test_capable_work_authoring_does_not_expand_authorization(self) -> None:
         workflow = read(WORKFLOW)
         routing = read(ROUTING)
-        self.assertIn("GPT가 Godot 제품 코드를 직접 누적 구현", workflow)
-        self.assertIn(
-            "GPT는 실제 게임 프로젝트의 Godot 제품 코드를 기본 구현하지 않는다.",
-            routing,
-        )
-        self.assertIn("검수·기계검증", workflow)
-        self.assertIn("persistent product authoring", workflow)
+        for text in (workflow, routing):
+            self.assertIn("UNIFIED_WORK_EXECUTION", text)
+            self.assertIn("CAPABILITY_IS_NOT_AUTHORIZATION", text)
+            self.assertIn("NOT_RUN", text)
+        self.assertNotIn("GPT는 실제 게임 프로젝트의 Godot 제품 코드를 기본 구현하지 않는다.", routing)
+        evidence = read(EVIDENCE_OWNER)
+        self.assertIn("현재 Work PLAN", evidence)
+        self.assertIn("같은 승인 후보 계보의 정확히 2회", evidence)
+        self.assertNotIn("→ Codex PLAN 재검수", evidence)
 
 
 if __name__ == "__main__":

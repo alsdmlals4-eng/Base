@@ -90,11 +90,17 @@ current authority + actual implementation + related PR fresh-read
 
 ## 6. 실제 검증과 프로세스 안전
 
+실행·fresh artifact·정리·완료 증거의 단일 owner: `docs/knowledge/vertical-slice/SKILL_ORCHESTRATION_AND_EVIDENCE.md` §5.1. 프로세스 조작 안전은 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`를 따른다.
+
 `DIRECT_RUN_OR_VERIFIED_EVIDENCE` / `WORK_DIRECT_GODOT_VERIFICATION_WHEN_MATERIAL`
 
 필요한 runtime·입력·UI·리소스 연결은 실제 Godot 실행 또는 현재 변경에 유효한 exact-build 증거로 판정한다. 문서 변경에 불필요한 엔진 실행은 하지 않는다. 자동 검사·runtime·화면·기기·Human·출시 증거는 분리하고 `NOT_RUN`, `SKIPPED`, `BLOCKED_UNVERIFIED`를 PASS로 바꾸지 않는다. Human 검증은 사용자 선언·요청 시 수행하며 machine PASS로 대신하지 않는다.
 
 `TASK_LAUNCHED_GODOT_PROCESS_OWNERSHIP`: 실행 전 project path, 실행 대상, 기존 Editor/game/server, launch time과 parent-child/PID/session 식별자를 확인한다.
+
+- stale PID/session을 current truth로 쓰지 않음: 실행 직전 실제 대상·project path를 다시 확인한다.
+- 다른 프로젝트 editor/server/process를 임의 조작하지 않음: 승인 범위와 task ownership을 함께 확인한다.
+- 실제 Godot/runtime을 실행하지 않았으면 runtime PASS 아님: 파일 수정·정적 검사와 별도 판정한다.
 
 `STOP_TASK_OWNED_GODOT_WHEN_NO_LONGER_NEEDED`: 필요한 evidence/readback 확보 → 이번 작업이 시작한 불필요한 game/debug/Editor/server 정상 종료 → child-process·project-lock·session 잔여 확인. 같은 검증 묶음 안에서 매 assertion마다 재시작하지 않는다.
 

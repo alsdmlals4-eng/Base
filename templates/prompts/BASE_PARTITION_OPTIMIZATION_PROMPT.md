@@ -39,7 +39,7 @@ P01 → P02 → P03 → P04 → P05 → P06 → P07 → P08 → P09
 2. `AGENTS.md`, `START_HERE.md`, `BASE_PARTITION_MANIFEST.json`, 해당 Context Pack 확인
 3. 해당 Part의 Skill/Mode/Module/Guide/Template/Tool/Schema/Test 읽기
 4. 같은 Goal의 open/recent merged PR 비교
-5. 관련 Notion human-facing 상태 readback
+5. repository current owner readback; Notion은 V4의 명시적 예외·미이관 자료가 실제 관련될 때만 확인
 6. 이전 Part finding 재검증
 
 과거 completion packet의 SHA를 current truth로 가정하지 않는다.
@@ -147,7 +147,7 @@ BETTER_ALTERNATIVE_SEARCH
 LONG_TERM_PLAN_FIT_REQUIRED
 ```
 
-최소 3개 materially distinct 대안을 같은 기준으로 비교한다.
+실질적 구조 선택에는 최소 3개 materially distinct 대안을 같은 기준으로 비교한다. 같은 승인 범위의 유효한 비교는 재사용하고, 기계적 교정에 허수 대안이나 중복 재조사를 만들지 않는다.
 
 - 사용자/플레이어 가치
 - 정확성
@@ -160,6 +160,8 @@ LONG_TERM_PLAN_FIT_REQUIRED
 - current Base authority 적합성
 
 ## 9. Notion human-facing 작업
+
+`NO_NEW_NOTION_WRITE_BY_DEFAULT`: 아래는 V4의 명시적 예외로 승인된 Notion 작업에만 적용한다. 기본 사람용 문서·정본은 repository owner와 필요한 파생본이며 매 Part마다 Notion을 만들거나 동기화하지 않는다.
 
 `HUMAN_HOME_SELF_CONTAINED_BEFORE_DRILLDOWN`
 
@@ -177,7 +179,7 @@ Base/Project Visual 작업은 앱 이름 대신 실제 이미지 도구·consume
 현재 Work의 승인된 기획
 → Visual Requirement
 → 실제 도구로 image/mock/diagram 제작
-→ Project Notion upload/attach/readback
+→ project-controlled candidate 저장·readback
 → 승인
 ```
 
@@ -191,7 +193,7 @@ Figma, Google Sheets, external HTML workspace, retired custom local Tool/Hub를 
 UNIQUE / DUPLICATE / OBSOLETE
 ```
 
-UNIQUE만 현행 Notion/repository owner로 이관하고 readback 후 retirement한다.
+UNIQUE만 현행 repository owner 또는 V4 명시 예외 owner로 이관하고 readback 후 retirement한다. DUPLICATE/OBSOLETE는 참조·consumer·보존할 고유 자료를 확인한 뒤 Git 이력 등 복구 경로와 함께 제거한다. 파일명이나 나이만으로 삭제하지 않는다.
 
 ## 12. Learning + Source
 
@@ -228,7 +230,7 @@ CURRENT STATE / CANON / ACTUAL IMPLEMENTATION READBACK
 → RE-ATTACK THE WHOLE RESULTING STATE
 ```
 
-전체 검토는 정확히 2회다. 2회 뒤에는 오류·충돌·누락·blocker별 수정·검증만 계속하며 전체 회차를 추가하지 않는다. 회차 정본은 `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`다.
+같은 승인 후보 계보의 전체 검토는 정확히 2회다. Part checkpoint와 Final Integration이 그 예산을 공유하며 단계마다 초기화하지 않는다. 2회 뒤에는 오류·충돌·누락·blocker별 수정·검증만 계속하며 전체 회차를 추가하지 않는다. 회차 정본은 `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`다.
 
 ## 14. Git / PR
 
@@ -261,7 +263,7 @@ python tools/check_base_partition_scope.py --coordinator --base <BASELINE_SHA> -
 11. revisit conditions
 12. full adversarial loop evidence
 
-병합 후 latest main과 Notion을 readback하고 다음 Part로 간다.
+병합 후 latest main과 실제 변경한 owner를 readback하고 다음 Part로 간다. Notion readback은 승인된 V4 예외 작업에만 해당한다.
 
 ## 16. P09 이후 Final Integration
 
@@ -269,11 +271,11 @@ python tools/check_base_partition_scope.py --coordinator --base <BASELINE_SHA> -
 
 1. latest main repin
 2. P01~P09 결과/학습/finding 재검증
-3. CP0·Registry·generated·Notion 정합성 **직접 마감**
+3. CP0·Registry·generated·실제 변경 owner 정합성 **직접 마감**
 4. whole-Base regression/Required CI
-5. 정확히 2회 full-scope adversarial loop, 이후 결함별 수정·검증으로 오류 0 확인
+5. 공유 예산에서 남은 full-scope adversarial loop를 완료해 총 2회, 이후 결함별 수정·검증으로 오류 0 확인
 6. exact-head merge
-7. post-merge main + Base/Project Home readback
+7. post-merge main + 실제 변경한 Base/Project owner readback
 8. 사용자 학습형 최종보고
 
 까지 수행한다.
