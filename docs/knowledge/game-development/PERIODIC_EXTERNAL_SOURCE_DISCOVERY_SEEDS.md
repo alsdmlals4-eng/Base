@@ -833,7 +833,9 @@ BLOCKED_UNVERIFIED
 
 ## 12. Notion skills, work structure, and utilization workflow
 
-Notion은 Base의 정본이나 필수 workspace로 승격하지 않는다. 이 seed는 **Notion 자체 기능의 현재 동작과 반복 가능한 지식·작업 구조를 조사하는 공식 source**이며, 발견한 원리는 Existing Solution First와 적대적 검토를 통과한 뒤 기존 Base owner에 최소 흡수한다.
+Notion은 Base의 정본이나 필수 workspace로 승격하지 않는다. **공식 제품 사실과 비공식 현업·게임 제작·연구 사례를 구분해 조사**하고, 검증된 원리만 기존 Base owner에 최소 흡수한다. 아래 `source_role`은 공식 URL의 Notion 제품 동작에만 적용하며, 실무 사례의 역할은 12.3에서 별도로 판정한다.
+
+현행 권위는 `docs/DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE_POLICY.md`다. `NO_NEW_NOTION_WRITE_BY_DEFAULT`, `FIGMA_USAGE: DISABLED_BY_USER`를 유지한다. Notion을 조사한다는 이유로 workspace·DB·Agent를 만들거나 Figma/Huddling을 활성 참고 소스·권장 도구로 재도입하지 않는다.
 
 ```yaml
 seed_group: notion-skills-work-structure
@@ -845,30 +847,35 @@ source_role: AUTHORITY_TARGET_FOR_NOTION_BEHAVIOR
 recommended_cadence: weekly
 urls:
   skills: https://www.notion.com/help/skills-for-notion-agent
+  skills_current: https://www.notion.com/help/create-and-manage-skills
   custom_agents: https://www.notion.com/help/custom-agents
   notion_mcp: https://www.notion.com/help/notion-mcp
   databases: https://www.notion.com/help/category/databases
   database_automations: https://www.notion.com/help/database-automations
+  backup: https://www.notion.com/help/back-up-your-data
   releases: https://www.notion.com/releases
   developers: https://developers.notion.com/
 scan_surfaces:
   - Skills for Notion Agent and reusable task instructions
-  - persistent Instructions vs on-demand Skills vs autonomous Custom Agents
+  - persistent Instructions vs task-scoped Skills vs autonomous Custom Agents
+  - manual and automatic Skill routing, description eligibility and local export
   - databases, projects/tasks, views, relations, rollups, formulas and templates
   - database automations, buttons, triggers, webhooks and failure boundaries
   - Notion MCP, API, permissions and connected-app boundaries
+  - Workers, CLI and Agent SDK only when a current official surface is verified
   - release notes, beta/general availability and plan/seat changes when adoption depends on them
+  - export coverage and legacy migration without reactivating Notion as canon
 ```
 
 ### 12.1 흡수 질문
 
 ```text
 반복 작업을 매번 긴 prompt로 다시 쓰고 있는가?
-→ persistent preference는 instruction, 필요할 때만 부르는 절차는 skill, 시간/이벤트 기반 자율 실행은 agent/automation으로 책임을 분리할 수 있는가?
+→ persistent preference는 instruction, 특정 작업의 반복 절차는 skill, 시간/이벤트 기반 자율 실행은 agent/automation으로 책임을 분리할 수 있는가?
 → database property·view·relation이 실제 의사결정과 handoff를 줄이는가, 아니면 관리 오버헤드만 늘리는가?
 → template/button/automation이 반복 수작업을 줄이되 숨은 side effect와 권한 확대를 만들지 않는가?
-→ Notion MCP/API가 기존 GitHub·Google Sheets·repo-native owner를 대체하려는가, 아니면 명확한 보조 read/write 경계가 있는가?
-→ 공개 공식 자료에서 확인한 원리가 Base의 기존 Skill/Mode/Template에 이미 있는가?
+→ Notion MCP/API가 repository owner를 대체하려는가, 아니면 승인된 legacy 이관·프로젝트 예외에만 필요한가?
+→ 공식 기능과 현업 사례에서 추출한 원리가 Base의 기존 Skill/Mode/Template에 이미 있는가?
 → 기능 availability·plan·permission이 바뀌어도 Base 정본과 프로젝트 실행이 깨지지 않는가?
 ```
 
@@ -879,7 +886,58 @@ scan_surfaces:
 - Notion 페이지·database를 Base/GitHub 정본보다 높은 권한으로 만들지 않는다.
 - 별도 유료 플랜·AI credit·API 비용·automation quota가 필요한 경로는 `ZERO_INCREMENTAL_COST_REQUIRED`와 새 사용자 승인을 통과하기 전 활성화하지 않는다.
 - 실제 연결 workspace를 읽거나 쓰지 않은 조사에서는 Notion 사용 완료·자동화 동작을 주장하지 않는다.
-- 실질 개선이 없으면 `NO_CHANGE`로 닫고 source scan 기록만 갱신한다.
+- 실질 개선이 없으면 `NO_CHANGE`로 닫는다. Source 등록·문서 변경·큐 게시만으로 예약 실행 또는 심층 조사 완료가 증명되지는 않으며, 실행 증거가 없으면 `NOT_RUN`이다.
+
+### 12.3 공식 외 현업·게임 제작·연구 source lane
+
+아래는 같은 주간 seed의 조사 입력이다. 별도 scheduler나 새 정본이 아니다. 공식 문서는 Notion 제품 사실의 `AUTHORITY_TARGET`이고, 비공식 자료는 원저자·맥락·반례를 확인해 다음 역할로 사용한다.
+
+| Source / 원문 시작점 | 역할 | 조사와 제한 |
+|---|---|---|
+| Notion VIP — https://www.notion.vip/insights/streamline-project-management-with-notion | `PROFESSIONAL_PRACTICE` | Projects/Tasks/Resources와 contextual view 원리를 비교한다. 컨설팅·템플릿 판매 이해관계가 있으며 특정 DB 수를 공용 규칙으로 복사하지 않는다. |
+| Thomas Frank — https://thomasjfrank.com/docs/ultimate-tasks/databases/ | `PROFESSIONAL_PRACTICE` | 원저자의 Master DB·linked view 구조와 유지비를 비교한다. affiliate·template 사업 맥락을 기록하고 복잡한 전체 시스템을 자동 도입하지 않는다. |
+| 인디/솔로 개발자·스튜디오의 공개 GDD, devlog, production workflow, postmortem | 원저자·프로젝트·조건 확인 후 `PROFESSIONAL_PRACTICE`; 그 전 `DISCOVERY_FEED` | 기존 GDC/Game Developer source에서 원 발표·개발자 자료로 역추적한다. 작업·버그·빌드·에셋·플레이테스트·출시/마케팅 연결과 실패 사례를 함께 본다. |
+| Video Game Project Management Anti-patterns — https://arxiv.org/abs/2202.06183 | `AUTHORITY_TARGET` — 원 연구 자신의 표본·방법에 한정 | 440개 postmortem **문제** 분석이다. 440개 게임 조사나 Notion 효과 실험이 아니다. Feature Creep·여러 프로젝트·도구 부적합을 검토 질문으로 사용한다. |
+| Notion Marketplace의 게임 제작 템플릿·리뷰, Reddit·커뮤니티 | `DISCOVERY_FEED` | 제작자 원문·실제 사용 조건을 찾는 입력이다. 인기·별점·판매 문구·자기선택 후기만으로 생산성이나 게임 성공을 증명하지 않는다. |
+
+원문의 `published_or_updated_at`과 이번 `checked_at`을 구분하고 `commercial_or_vendor_interest`, 표본·팀 규모·장르·도구·비용, `counterevidence`, `existing_owner`, 실제 소비처, 최소 변경과 폐기 조건을 기존 `SOURCE_CONTEXT_PACKET`에 기록한다. 기계 packet에서는 실제 소비처를 `context_conditions`의 `actual_consumer: …` 문자열로 남기며 새 top-level 필드를 추가하지 않는다. 원문을 못 읽은 범위는 `BLOCKED_UNVERIFIED`다. 문서 길이만으로 상세 GDD/PDF를 기각하지 않고 플레이어 경험·구현 이해에 필요한 설명인지, 중복 유지비를 만드는지를 판단한다.
+
+실질 대안은 ① 기존 repository owner/template/view에 흡수, ② 승인된 프로젝트 전용 작은 실험, ③ 현행 유지·`NO_CHANGE`로 비교한다. setup/유지비·검색/문맥 전환·AI 연동·정본 충돌·다중 프로젝트·백업/이식성·비용·초보 사용성·플레이어 가치를 같은 기준으로 검토한다. `ADOPT / ADAPT / TEST / AVOID / REFERENCE_ONLY` 판정과 기존 5회 적대적 개선·회귀 재검사 절차를 따른다. 공용 DB 수·WIP 수·새 Skill을 먼저 고정하지 않는다.
+
+### 12.3.1 기존 분석 스키마로의 투영
+
+`tools/periodic_source_analysis_contract.py`의 `CANDIDATE_PROPERTIES`가 기계 candidate 필드를 소유한다. 아래 JSON은 **부분 필드 예시**이며 실제 scan receipt나 완성 packet이 아니다. 나머지 ID·출처·날짜·Evidence·판정 필드는 기존 schema로 채우고 `validate_analysis_packet`을 통과시킨다. 별도 schema·Watchlist·queue 필드를 만들지 않는다.
+
+```json
+{
+  "commercial_or_vendor_interest": "원문에서 확인한 판매·컨설팅·후원 이해관계 또는 미확인 범위",
+  "existing_owner": "docs/AI_SKILL_ADOPTION_GUIDE.md",
+  "context_conditions": [
+    "actual_consumer: 검증한 project namespace와 repository consumer 경로",
+    "표본·팀 규모·장르·도구·비용 조건을 원문 근거로 기록"
+  ],
+  "counterevidence": ["반례·실패·혼합 증거 또는 확인하지 못한 범위를 기록"],
+  "validation_artifact": "실제 검증 receipt 경로 또는 NOT_RUN",
+  "rollback_or_discard_condition": "중복 owner·추가 유지비·효과 미입증이면 폐기 또는 TEST 유지"
+}
+```
+
+원문에 없는 소비처를 만들어 채우지 않는다. 소비처를 검증하지 못했다면 같은 `context_conditions` 안에 `actual_consumer: NOT_VERIFIED`와 이유를 남기고 실제 적용 가능성을 주장하지 않는다. 독립 필드 `commercial_interest`나 `actual_consumer`를 추가하면 closed schema가 거부한다. 이미 허용된 필드에 의미를 보존하는 최소 투영을 우선한다.
+
+### 12.4 Skill 자동 선택과 로컬 이식의 증거 경계
+
+공식 `create-and-manage-skills` 본문 확인: `checked_at: 2026-08-31`. 적용 직전 현재 문서와 실제 연결 도구의 지원 범위를 다시 확인한다.
+
+- `SKILL_AUTO_USE_REQUIRES_DATABASE_DESCRIPTION`: 현재 공식 설명상 자동 선택에는 **skills database 안의 description**이 필요하고 `Use automatically`는 기본 활성화다. standalone Skill 페이지까지 자동 실행된다고 확대하거나, task-scoped/on-demand를 수동 전용으로 단정하지 않는다.
+- `NOTION_SKILL_EXPORT_IS_TRANSPORT_NOT_EQUIVALENCE`: `SKILL.md`와 공유 허용 첨부 파일의 export는 전달 기능이지 다른 agent에서 동작·권한·출력이 같다는 검증이 아니다. 가져온 지시·references·scripts·접근 권한·라이선스를 검토하고 대표 입력/경계 입력과 실제 도구 조합으로 비교한다. 조사 중 다운로드된 scripts를 자동 실행하지 않는다.
+- Base의 repository `SKILL.md`와 기존 Skill owner를 정본으로 유지한다. Notion 사본을 자동 동기화하거나 Registry를 덮어쓰지 않는다. 기본 지침·작업 Skill·자율 실행기의 책임 분리만 검증 후 `ADAPT`한다.
+
+### 12.5 최소 흡수와 정직한 scan receipt
+
+Master DB + contextual view 사례는 **하나의 정본 owner → 목적별 파생 view/PDF/handoff**로 변형해 비교한다. GitHub Issue·PR·검증 상태를 Notion에 별도 active tracker로 복제하지 않는다. legacy export 교훈은 `templates/project-operations/NOTION_TO_REPOSITORY_MIGRATION_CHECKLIST.md`로 연결하고, Skill 원리는 `docs/AI_SKILL_ADOPTION_GUIDE.md` 및 기존 owner를 먼저 검토한다.
+
+`last_successful_scan_at`은 실제로 읽은 source와 범위의 증거가 있을 때만 갱신한다. 한 원문 확인을 전체 채널·workspace·source family 전수 조사로 확대하지 않는다. PR/merge·테스트·예약 실행·project migration은 각자의 실제 증거로 보고하며, 동일 주제의 기존 진행 PR은 read-only로 두고 실제 경로·의미 충돌만 국소 보류한다.
+
 ## 13. Game market intelligence + verified success cases
 
 시장조사는 인기순위 수집이 아니라 **비교 차원 → table-stakes → failure/mixed cases → 검증 가능한 성과 → transferable principle → project kick candidate**로 이어진다. 상세 판정 owner는 `skills/analyzing-and-refining-game-concepts/references/benchmark-player-evidence-and-playtests.md`다.
