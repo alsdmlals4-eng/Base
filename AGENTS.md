@@ -49,6 +49,8 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 
 ## 3. 기획·승인·연속작업
 
+- **`VISIBLE_IMPLEMENTATION_BRIEF_BEFORE_APPROVAL`**: 새 변경은 intake의 사용자-facing 승인안으로 의도·현재 상태·변경/보호 범위·다음 작업과 구현 방법·완료/검증 기준을 먼저 보여주고 승인받는다. L0는 짧은 승인안으로 처리하며 읽기 전용 설명·조사에는 변경 승인을 만들지 않는다. 같은 승인 범위 continuation은 재승인하지 않는다.
+
 - **`UNIFIED_WORK_EXECUTION` / `CAPABILITY_BASED_EXECUTOR_SELECTION`**: 현재 Work의 실제 권한·도구로 승인된 기획·제품 코딩·검증·교정·병합을 이어간다. 앱 이름이나 코드 파일이라는 이유로 강제 인계하지 않는다. 실제 능력 부족·사용자 지정 인계만 조건부 경로로 처리하며 `CAPABILITY_IS_NOT_AUTHORIZATION`을 유지한다. 단일 owner: `docs/GPT_CODEX_WORKFLOW_POLICY.md`.
 - 같은 계약의 승인·계획·벤치마크·전체 검토 예산은 Base/플러그인/단계 사이에서 재사용한다. 검토 2회를 단계마다 초기화하지 않고 필수 CI·runtime Acceptance는 줄이지 않는다. 상세 경량 실행 기준은 위 owner §3을 따른다.
 - 새 L1 이상 요청은 `managing-project-intake-and-work-contract`에서 한 번 접수한다. 사용자에게 Skill·Skill Mode 선택을 전가하지 않는다.

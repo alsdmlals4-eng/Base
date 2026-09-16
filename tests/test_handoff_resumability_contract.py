@@ -46,6 +46,14 @@ class HandoffResumabilityContractTests(unittest.TestCase):
     def test_handoff_context_is_curated_not_transcript_dumped(self) -> None:
         self.assert_contract_tokens(("context_sanitation", "raw tool log", "3~7"))
 
+    def test_resume_uses_repository_canon_without_unconfigured_external_gate(self):
+        for text in (METHOD, TEMPLATE):
+            self.assertNotIn('GitHub + Notion current', text)
+            self.assertIn('NOT_CONFIGURED', text)
+        self.assertIn('source SHA', METHOD)
+        self.assertIn('대체본', METHOD)
+        self.assertIn('역참조', METHOD)
+
 
 if __name__ == "__main__":
     unittest.main()

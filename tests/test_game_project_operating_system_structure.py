@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from tools.skill_context import read_skill_contract
+
 import json
 import re
 import unittest
@@ -270,7 +272,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
 
     def test_work_mode_skill_and_skill_mode_are_distinct_and_automatic(self) -> None:
         routing = (ROOT / "docs/WORK_MODE_AND_SKILL_ROUTING.md").read_text(encoding="utf-8")
-        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        intake = read_skill_contract((ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md"))
         report = (ROOT / "templates/project-operations/SKILL_EXECUTION_REPORT.md").read_text(encoding="utf-8")
         for term in ("Work Mode", "Skill Mode", "PLAN", "BUILD", "REVIEW", "자동 선택"):
             self.assertIn(term, routing)
@@ -280,7 +282,7 @@ class GameProjectOperatingSystemStructureTests(unittest.TestCase):
         self.assertIn("user_skill_declaration_required: false", report)
 
     def test_unified_skill_modes_preserve_separate_safety_boundaries(self) -> None:
-        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        intake = read_skill_contract((ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md"))
         operating = (ROOT / "skills/managing-game-project-operating-system/SKILL.md").read_text(encoding="utf-8")
         documents = (ROOT / "skills/managing-design-documents/SKILL.md").read_text(encoding="utf-8")
         concepts = (ROOT / "skills/analyzing-and-refining-game-concepts/SKILL.md").read_text(encoding="utf-8")

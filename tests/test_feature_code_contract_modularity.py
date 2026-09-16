@@ -1,3 +1,5 @@
+
+from tools.skill_context import read_skill_contract
 """Guard the shared feature code-and-contract authoring boundary."""
 
 import json
@@ -90,7 +92,7 @@ class FeatureCodeContractRoutingTests(unittest.TestCase):
         )
 
     def test_skill_and_execution_plan_expose_the_existing_boundary(self) -> None:
-        skill = SKILL.read_text(encoding="utf-8")
+        skill = read_skill_contract(SKILL)
         plan = TEMPLATE.read_text(encoding="utf-8")
         self.assertIn("작은 단일 파일·단일 단계라도 L1 intake 대상", skill)
         self.assertIn(

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from tools.skill_context import read_skill_contract
+
 import json
 import subprocess
 import sys
@@ -94,7 +96,7 @@ class NotionProjectIsolationCoreSystemContractTests(unittest.TestCase):
             self.assertIn(required, text)
 
     def test_p01_active_planning_surfaces_use_repository_first_and_legacy_sources_are_compatibility_only(self) -> None:
-        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        intake = read_skill_contract((ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md"))
         project_os = (ROOT / "skills/managing-game-project-operating-system/SKILL.md").read_text(encoding="utf-8")
         grill_policy = (ROOT / "docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md").read_text(encoding="utf-8")
         continuous = (

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from tools.skill_context import read_skill_contract
+
 import importlib.util
 import json
 import subprocess
@@ -334,7 +336,7 @@ class ReviewRecordBehaviorTests(unittest.TestCase):
 
 class IntakeParallelPrPolicyBindingTests(unittest.TestCase):
     def test_user_directed_parallel_pr_policy_is_bound_to_existing_intake_owner(self) -> None:
-        skill = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        skill = read_skill_contract((ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md"))
         reference = (
             ROOT
             / "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"

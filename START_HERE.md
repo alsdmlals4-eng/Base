@@ -51,6 +51,8 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 
 ## 요청별 라우팅
 
+새 변경은 아래 intake의 `User-visible approval brief`로 구현 방향까지 보여준 뒤 승인받는다. 단순 L0는 짧게, 유효한 동일 승인 continuation은 재사용한다. 흡수·통합 뒤에는 intake의 `CONTEXT_FIT_RECHECK`로 이번 작업에 필요한 Skill/reference와 실제 consumer 연결만 다시 확인한다.
+
 먼저 `managing-project-intake-and-work-contract`에서 사용자 의도·저장소 사실·범위·승인·실행 계약을 한 번만 처리한 뒤 아래 주 책임으로 이동한다. 각 행은 다음 한 파일만 가리키며 상세 절차를 이 문서에 복제하지 않는다.
 
 | 요청 | 주 책임·mode | 다음 파일 |

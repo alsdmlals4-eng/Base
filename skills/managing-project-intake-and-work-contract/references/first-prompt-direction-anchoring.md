@@ -4,7 +4,7 @@
 
 `first-prompt`는 사용자의 요청을 길게 다시 쓰는 기능이 아니다. **프롬프트 전체를 어떤 방향으로 해석하고 실행해야 하는지 결정하는 핵심 문장을 프롬프트 가장 앞에 배치**하고, 그 문장이 뒤의 계약·Context·제약·검증과 정확히 일치하는지 확인하는 intake Skill Mode다.
 
-이 reference는 `managing-project-intake-and-work-contract`가 L1 이상 지시문을 작성할 때만 사용한다. 단순 오탈자, 명백한 형식 수정, 동일 입력의 검사 재실행은 L0 예외다.
+이 reference는 `managing-project-intake-and-work-contract`가 L1 이상 지시문을 작성할 때만 사용한다. 단순 오탈자, 명백한 형식 수정, 동일 입력의 검사 재실행은 전체 인터뷰의 L0 예외다. 새 변경의 짧은 승인안은 예외가 아니며 owner의 `VISIBLE_IMPLEMENTATION_BRIEF_BEFORE_APPROVAL`을 따른다.
 
 ## Authority boundary
 
@@ -163,7 +163,7 @@ route
 ```
 
 - 의도·기획·범위·우선순위·정본 충돌이 남으면 가장 큰 결정 질문 하나씩 묻는다.
-- 계약이 완전하지만 승인되지 않았다면 direction anchor와 핵심 계약을 보여 주고 한 번 승인받는다.
+- 계약이 완전하지만 승인되지 않았다면 direction anchor와 핵심 계약을 보여 주고 한 번 승인받는다. 내부 프롬프트 작성만으로 완료하지 않고 owner의 `User-visible approval brief`로 다음 작업·구현 연결·완료/검증까지 설명한다. 승인 전 구현 개요와 승인 후 세부 실행 계획을 구분한다.
 - exact contract already approved 상태이며 유효한 approval reference가 있으면 중복 질문하지 않는다.
 - 승인되지 않은 중대한 지시문은 `AWAITING_USER_CONFIRMATION`으로 유지하고 실행하지 않는다.
 - Grill Me는 사용자가 기술 세부를 대신 설계하게 만드는 절차가 아니다. 저장소와 테스트로 판정 가능한 사실은 먼저 조사한다.

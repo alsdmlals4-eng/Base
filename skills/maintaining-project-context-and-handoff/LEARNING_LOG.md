@@ -1,5 +1,11 @@
 # Maintaining Project Context and Handoff Learning Log
 
+## 2026-09-16 — File-based resume instead of transcript accumulation
+
+- **Observation:** The concise Skill already used repository-first reconstruction, but its Method and Handoff Template still imposed dual GitHub/Notion completion. Correcting only the entrypoint would leave a contradictory cold-start route.
+- **Correction:** Update Method and Template together; synchronize actual repository revisions, link Blueprint source SHA/consumer/evidence, keep conditional external exceptions and preserve pending decisions/checkpoints. No new permanent status copy is created.
+- **Pruning:** Confirm replacement, incoming references, generators, unique evidence, authority and recoverability before deletion. Compatibility and uncertain user material remain protected. Evidence is in the current intake/context PR and resumability tests; real project receiver acceptance and lower token billing are `NOT_RUN`.
+
 ## 2026-09-16 — Current capability, not application name, determines execution
 
 - **State:** `OBSERVATION`; unified routing is an approved operating decision, while productivity effects remain unmeasured.

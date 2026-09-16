@@ -181,7 +181,7 @@ unverified_claims_labeled:
 - 계약이 완전하지만 승인되지 않았으면 direction anchor와 핵심 계약을 한 번 확인받는다.
 - 동일한 exact contract의 유효한 승인 근거가 있으면 재질문하지 않고 재사용한다.
 - 승인 또는 재사용 가능한 승인 근거가 없으면 `AWAITING_USER_CONFIRMATION`이며 구현·위임·제품 변경을 시작하지 않는다.
-- L0 오탈자·명백한 형식 수정·동일 검사 재실행은 인터뷰 예외다.
+- L0 오탈자·명백한 형식 수정·동일 검사 재실행은 전체 인터뷰 예외다. 새 변경의 짧은 승인안까지 면제하지 않는다. 사용자에게 의도·구현 개요·다음 작업을 보여주는 계약과 흡수/통합 뒤 Context 적합성 재확인은 intake의 `VISIBLE_IMPLEMENTATION_BRIEF_BEFORE_APPROVAL` / `CONTEXT_FIT_RECHECK`가 소유한다.
 
 실행 reference: `skills/managing-project-intake-and-work-contract/references/first-prompt-direction-anchoring.md`.
 

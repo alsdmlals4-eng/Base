@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from tools.skill_context import read_skill_contract
+
 import json
 import re
 import unittest
@@ -148,7 +150,7 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         self.assertIn("외부 자료에서 정의되지 않은 DDD", package)
 
     def test_benchmark_work_sequence_and_feature_contract_routing_are_integrated_modes(self) -> None:
-        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        intake = read_skill_contract((ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md"))
         operating = (ROOT / "skills/managing-game-project-operating-system/SKILL.md").read_text(encoding="utf-8")
         design = (ROOT / "skills/managing-design-documents/SKILL.md").read_text(encoding="utf-8")
         concepts = (ROOT / "skills/analyzing-and-refining-game-concepts/SKILL.md").read_text(encoding="utf-8")
@@ -408,7 +410,7 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
 
     def test_confirmed_decisions_are_consumed_by_intake_and_project_os(self) -> None:
         doc_map = (ROOT / "docs/DOCUMENTATION_MAP.md").read_text(encoding="utf-8")
-        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        intake = read_skill_contract((ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md"))
         operating = (ROOT / "skills/managing-game-project-operating-system/SKILL.md").read_text(encoding="utf-8")
         registry = (ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8")
 

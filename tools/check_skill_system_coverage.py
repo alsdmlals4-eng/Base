@@ -5,6 +5,11 @@ import json
 import re
 from pathlib import Path
 
+if __package__:
+    from .skill_context import read_skill_contract
+else:
+    from skill_context import read_skill_contract
+
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "skills/SKILL_REGISTRY.json"
 COVERAGE = ROOT / "skills/SKILL_COVERAGE.json"
@@ -241,7 +246,11 @@ def validate() -> list[str]:
         if not path.is_file():
             errors.append(f"Missing skill file: {skill_id} -> {item['path']}")
             continue
-        text = path.read_text(encoding="utf-8")
+        try:
+            text = read_skill_contract(path)
+        except (OSError, ValueError) as exc:
+            errors.append(f"Broken Skill contract module: {skill_id}: {exc}")
+            continue
         match = FRONT_NAME.search(text)
         if not match or match.group(1).strip() != skill_id:
             errors.append(f"Front matter mismatch: {skill_id}")

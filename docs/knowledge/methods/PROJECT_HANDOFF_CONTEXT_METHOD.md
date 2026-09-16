@@ -6,6 +6,18 @@
 
 이 문서는 콜드 스타트와 인수인계의 불변 원칙만 책임진다. Active Context 갱신과 Handoff 산출물의 단계형 실행은 Skill이 책임진다.
 
+현행 workspace 권위는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`이다. Repository가 기본 정본이며 Notion/Sheets는 고유 미이관 자료 또는 프로젝트 AGENTS가 명시한 current 예외가 있을 때만 확인한다. 예외가 없으면 `NOT_CONFIGURED / NOT_APPLICABLE`이며 외부 동기화 때문에 재개를 막거나 새 외부 페이지를 만들지 않는다.
+
+## 파일 기반 재개·동기화·가지치기
+
+Base와 각 프로젝트 작업의 시작·의미 있는 checkpoint·종료에 적용한다. 이미 유효한 확인은 재사용하고 실제 변경 경로만 재검사한다.
+
+1. `AGENTS.md → Documentation Map → Active Context/현재 결정 → 해당 분야 owner·실제 consumer·검증 → 필요한 Skill/reference`로 읽는다. 지도는 위치·읽는 조건을, Active Context는 현재 승인 범위·실제 상태·다음 행동·차단·증거 경로를 맡는다. 필요한 지침 파일은 온전히 읽되 관련 없는 이력·전체 로그·모든 Skill을 로드하지 않는다.
+2. 로컬 checkout과 GitHub는 동일 저장소의 revision으로 동기화한다. dirty/diverged·다른 worktree를 먼저 확인하고 무조건 pull/덮어쓰지 않는다. 검증된 변경은 작업 branch·PR·정상 병합·main readback으로 닫고 로컬 main은 안전한 fast-forward 가능 여부를 별도로 확인한다. 원격 게시 전 로컬 결과를 동기화 완료로 쓰지 않는다.
+3. Blueprint는 기획·실제 코드/데이터/씬·이미지 consumer·검증에서 만든 **파생 읽기 자료**다. 기존 Blueprint owner에 구현 설명·이미지 근거·source SHA·생성 경로·CURRENT/STALE 상태를 연결한다. PDF를 별도 정본으로 편집하지 않는다. 사용자 검토·마일스톤·최종 인도 때 필요한 PDF를 갱신하며, 중간 변경은 source와 stale 상태만 갱신해 반복 렌더 비용을 줄인다. 파일이 없거나 열어보지 못했으면 미생성/미검증으로 남긴다.
+4. 구형 후보는 `skills/pruning-stale-and-nonfunctional-material/SKILL.md`로 분류한다. 대체본의 실제 내용·역참조·생성기·CI·외부 consumer·고유 승인/근거·복구 위치를 확인하고 연결을 먼저 교정한다. 대체 완료·삭제 승인·복구가 모두 확인된 추적 파일은 같은 PR에서 삭제하고 Git 이력으로 복구한다. 출처 불명/미추적 사용자 파일은 보존한다. 호환 stub·릴리스 증거는 오래됐다는 이유로 지우지 않는다. 결과는 기존 PR/작업 기록에 경로·판정·대체본·복구를 남기며 별도 상시 추적표를 만들지 않는다.
+5. 정리 후 진입점에서 현재 owner·승인 범위·실제 consumer·검증 명령·다음 행동을 찾는 콜드 스타트 검사를 한다. 깨진 링크·대체 전 경로·충돌·누락을 고친다. 새 세션은 그 경로를 fresh-read해 현재 차이만 확인한다. 이미 쌓인 대화 토큰을 삭제했다고 주장하거나 파일 기반 구조만으로 동일 품질/비용 절감을 실측했다고 하지 않는다.
+
 ## 핵심 원칙
 
 Active Context와 Handoff는 전체 기획서·Roadmap·과거 대화를 복제하는 장문 문서가 아니라 **현재 상태, 읽기 순서, 미완료 작업과 위험을 연결하는 압축 라우터**다.
@@ -68,7 +80,7 @@ Handoff는 **송신자가 만든 패킷**과 **수신자가 실제로 인수를 
 송신 세션
 → PACKET_READY
 → PENDING_RECEIVER_ACK
-→ 새 채팅/담당자가 GitHub + Notion + 적용 지침 fresh-read
+→ 새 채팅/담당자가 repository + 적용 지침 + 필요한 예외 자료 fresh-read
 → receiver_ack readback
 → TRANSFER_ACCEPTED
 → next_safe_action 실행
@@ -117,7 +129,7 @@ canon_freshness: SAME_BASELINE | DRIFT_DETECTED | BLOCKED_UNVERIFIED
 
 - 프로젝트 `AGENTS.md`가 있다면 읽고, 작업 경로 아래에 더 가까운 `AGENTS.md`가 있으면 그 범위를 우선 확인한다.
 - 저장소 공용 지침·프로젝트 지침·분야 정본이 서로 충돌하면 Handoff 요약으로 임의 해결하지 않는다.
-- GitHub main/branch, open PR, Notion current canon이 packet 작성 후 이동했는지 재조회한다.
+- GitHub main/branch, open PR, 적용되는 예외 자료이 packet 작성 후 이동했는지 재조회한다.
 - `prepared_from_main_sha != resume_observed_main_sha` 자체가 자동 실패는 아니지만, 변경이 현재 작업에 영향을 주는지 확인하기 전 mutation을 시작하지 않는다.
 - 관련 정본 또는 적용 지침이 달라졌다면 `CONTEXT_DRIFT_RECHECK_REQUIRED`로 두고 현재 사실에 맞게 Active Context/Handoff locator를 재조정한다.
 
@@ -171,8 +183,8 @@ context_sanitation:
 3. **GitHub 정본 동기화**
    - 현재 branch/main, 정확한 commit, 변경 파일, Issue/PR, 실제 코드·데이터·Scene·Resource·Test 상태를 다시 읽는다.
    - 승인·구현·검증 상태를 분리하고 stale locator를 제거한다.
-4. **Notion 정본 동기화**
-   - 사람용 Home/Domain/Visual과 AI/System 상세 페이지가 현재 결정과 맞는지 다시 읽는다.
+4. **명시된 외부 예외 동기화(조건부)**
+   - 프로젝트가 명시한 current 예외가 있을 때만 해당 Home/Domain/Visual·System을 대조한다. 없으면 `NOT_CONFIGURED`로 남기고 이 단계를 실행하지 않는다.
    - Home에는 사람이 알아야 할 결과·Flow·표·승인 Visual을, AI/System에는 운영 메타데이터·검증·handoff 세부를 둔다.
 5. **Instruction surface / freshness snapshot**
    - 현재 작업에 적용되는 `AGENTS.md`, 프로젝트 지침, 분야 정본을 확인한다.
@@ -184,11 +196,11 @@ context_sanitation:
    - Handoff는 `현재 상태 → 이번 작업 결과 → 남은 작업 → 위험·미검증 → 다음 작업자의 첫 행동 → 검증·롤백` 순서로 압축한다.
    - 과거 대화가 없으면 복원할 수 없는 핵심 사실이 남아 있으면 인수인계 미완료다.
 8. **Fresh-chat resumability test**
-   - 새 채팅이 이전 대화·기억 없이 **GitHub + Notion current canon만** 읽는다고 가정한다.
+   - 새 채팅이 이전 대화·기억 없이 **repository current canon과 적용되는 예외만** 읽는다고 가정한다.
    - 아래 콜드 스타트 질문에 모두 답하고, 첫 작업 경로와 보호 범위를 찾을 수 있어야 한다.
    - 과거 대화를 다시 붙여 넣어야만 같은 품질로 이어갈 수 있으면 `HANDOFF_FAIL_CONTEXT_DEPENDENCY`다.
-9. **Notion Visual delivery audit**
-   - 이번 작업에 승인·참조·교체된 이미지가 있다면 올바른 프로젝트 Home/Visual/Asset 위치에 실제로 존재하는지 확인한다.
+9. **실제 Visual destination audit**
+   - 이번 작업에 승인·참조·교체된 이미지가 있다면 올바른 프로젝트 repository/Blueprint/Asset 위치(명시된 외부 예외가 있으면 그 목적지 포함)에 실제로 존재하는지 확인한다.
    - 링크/파일명/메타데이터 존재만으로 PASS하지 않는다. 가능한 transport 범위에서 upload/attach, destination readback, 이미지 block 또는 attachment content readback, 승인 상태·용도·supersession을 확인한다.
    - `READBACK_PASS`와 사용자가 실제로 보는 `HUMAN_VISIBLE_PASS`, 그리고 runtime product asset 승인을 구분한다.
    - 깨진 링크, placeholder, 이전 승인본이 현행인 것처럼 남은 상태는 인수인계 차단 사유다.
@@ -202,10 +214,10 @@ context_sanitation:
    - 새 광역 Skill/중복 정책을 자동 생성하지 않는다. 여러 프로젝트/Part에서 반복 재사용 가치가 입증될 때 기존 owner 흡수를 우선한다.
    - Base에 기록해야 하는 교훈인데 write/readback 증거가 없으면 `HANDOFF_NOT_READY`다.
 12. **송신 packet receipt**
-   - GitHub locator, Notion locator, current commit, 남은 일, 첫 행동, Visual audit 결과, 문제/교훈 disposition, Base evidence locator와 readback 상태를 한 번에 확인 가능하게 남긴다.
+   - GitHub locator, optional external locator, current commit, 남은 일, 첫 행동, Visual audit 결과, 문제/교훈 disposition, Base evidence locator와 readback 상태를 한 번에 확인 가능하게 남긴다.
    - 조건을 만족하면 `PACKET_READY / PENDING_RECEIVER_ACK`로 종료한다.
 13. **수신자 fresh-read + receiver_ack**
-   - 새 채팅/담당자는 mutation 전에 최신 GitHub·Notion·적용 지침을 다시 읽는다.
+   - 새 채팅/담당자는 mutation 전에 최신 repository·적용 지침과 명시된 외부 예외을 다시 읽는다.
    - 현재 상태·다음 행동·보호 범위·미결 승인·이미 적용된 side effect를 readback한다.
    - packet과 현재 정본이 일치하면 `TRANSFER_ACCEPTED`, 불일치하면 `CONTEXT_DRIFT_RECHECK_REQUIRED`다.
 
@@ -218,7 +230,7 @@ context_sanitation:
 - 구현된 것과 아직 구현되지 않은 것이 구분된다.
 - 검증 PASS와 NOT_RUN/UNVERIFIED가 구분된다.
 - 다음 작업의 첫 행동·선행 조건·완료 기준이 명확하다.
-- GitHub와 Notion 중 무엇이 어떤 사실의 정본인지 알 수 있다.
+- Repository owner와 Blueprint/외부 파생본 중 무엇이 어떤 사실을 소유하는지 알 수 있다.
 - 승인 Visual의 실제 위치·용도·현재성·교체 관계를 알 수 있다.
 - 이번 작업의 문제와 재사용 가능한 교훈이 프로젝트에만 남을지 Base 후보인지 판단되어 있다.
 - `BASE_PROMOTION_CANDIDATE`의 Base 기록 위치와 write/readback 결과를 새 채팅에서 찾을 수 있다.
@@ -231,7 +243,7 @@ context_sanitation:
 
 ## 콜드 스타트 질문
 
-새 작업자가 저장소와 적용 가능한 Notion current canon만으로 다음에 답할 수 있어야 한다.
+새 작업자가 저장소와 명시된 current 예외만으로 다음에 답할 수 있어야 한다.
 
 1. 무엇을 만드는가?
 2. 현재 어디까지 결정·구현·검증됐는가?
@@ -239,13 +251,13 @@ context_sanitation:
 4. 무엇을 변경하면 안 되는가?
 5. 관련 책임 원본·Skill·실제 파일·검증은 어디인가?
 6. 미확정·보류·위험은 무엇인가?
-7. Notion에서 사람이 확인해야 할 핵심 Flow·표·승인 Visual은 어디인가?
+7. Blueprint/프로젝트 파생뷰에서 사람이 확인할 핵심 Flow·표·승인 Visual은 어디인가?
 8. 이번 작업에서 반복 방지 가치가 있는 문제·교훈과 Base 승격 상태는 무엇인가?
 9. Base 승격 후보라면 실제 Base evidence/learning 기록과 readback 위치는 어디인가?
 10. `last_safe_checkpoint`와 `next_safe_action`은 무엇이며 이미 실행된 side effect는 무엇인가?
 11. 아직 사용자 승인이 필요한 결정이 있는가?
 12. 현재 작업에 실제 적용되는 `AGENTS.md`/프로젝트 지침은 무엇인가?
-13. Handoff 작성 이후 GitHub/Notion 정본이 바뀌었는가?
+13. Handoff 작성 이후 repository/명시된 예외 자료가 바뀌었는가?
 14. 이 내용을 자기 말로 readback하고 `receiver_ack`할 수 있는가?
 
 ## 실패 조건
@@ -257,8 +269,8 @@ context_sanitation:
 - 실제 확인 없이 구현·검증 완료로 기록함
 - 다음 작업·위험·보호 범위를 누락함
 - 오래된 경로나 보류 문서를 기본 읽기에 남김
-- GitHub/Notion 중 한쪽만 갱신하고 동기화 완료로 선언함
-- 이미지 URL이나 파일명만 보고 Notion Visual 전달을 완료로 간주함
+- 실제로 동기화가 요구된 목적지의 readback 없이 동기화 완료로 선언함
+- 이미지 URL이나 파일명만 보고 실제 Visual 목적지 전달을 완료로 간주함
 - 작업 중 발견한 반복 가능한 문제를 프로젝트 로그에만 묻어 두고 Base promotion disposition을 생략함
 - `BASE_PROMOTION_CANDIDATE`를 실제 Base 기록·readback 없이 검토 완료로만 닫음
 - 새 채팅이 과거 대화를 요구하는데도 handoff PASS로 선언함
@@ -266,4 +278,4 @@ context_sanitation:
 - `side_effects_already_applied` 확인 없이 동일 mutation을 재실행함
 - 승인 대기 결정을 일반 next task로 숨겨 새 채팅이 임의 결정함
 - 적용되는 `AGENTS.md`/프로젝트 지침을 읽지 않고 Handoff 요약만 신뢰함
-- packet 작성 후 main/Notion drift를 확인하지 않고 mutation을 시작함
+- packet 작성 후 main/적용 예외 자료 drift를 확인하지 않고 mutation을 시작함

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from tools.skill_context import read_skill_contract
+
 import unittest
 import re
 from pathlib import Path
@@ -125,7 +127,7 @@ class P08AiOperationsContractTests(unittest.TestCase):
             self.assertIn(term, policy)
 
     def test_intake_ai_solution_layer_selection_routes_before_build(self) -> None:
-        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        intake = read_skill_contract((ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md"))
         capability = (ROOT / "docs/CAPABILITY_COMPOSITION_MAP.md").read_text(encoding="utf-8")
         for term in (
             "PUBLIC_VIDEO_SOURCE_RECOVERY_BEFORE_BLOCKER",
@@ -143,7 +145,7 @@ class P08AiOperationsContractTests(unittest.TestCase):
             self.assertIn(term, capability)
 
     def test_intake_pm_closeout_binds_recorded_evidence_to_independent_git_truth(self) -> None:
-        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        intake = read_skill_contract((ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md"))
         for term in (
             "PROJECT_WORK_KANBAN_CHECKLIST",
             "--phase start",

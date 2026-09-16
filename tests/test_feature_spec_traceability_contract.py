@@ -1,9 +1,13 @@
+
+from tools.skill_context import read_skill_contract
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def read(path: str) -> str:
+    if path == 'skills/managing-project-intake-and-work-contract/SKILL.md':
+        return read_skill_contract(ROOT / path)
     return (ROOT / path).read_text(encoding="utf-8")
 
 
