@@ -5,6 +5,8 @@
 - **State:** `OBSERVATION`. Repeated intake/handoff by application name is not a new user decision. Current workflow owner now selects the actual authorized capability and reuses the approved contract; new feature/public boundary meaning changes still trigger intake.
 - **Consumers:** Intake, handoff Registry/body/reference, Work/project templates and workspace V4 entrypoints are corrected together. Detailed evidence and recurrence conditions are in `skills/maintaining-project-context-and-handoff/LEARNING_LOG.md`; no new Skill or registry row was added.
 - **Boundary:** Project runtime/engine/save/art approval and installed plugins/automations are not migrated by this Base correction. Policy/contract tests do not prove measured resource savings or fleet adoption.
+- **Connected evaluation correction:** Active behavior fixtures SBE-040/SBE-041 still demanded five reviews and a new full review after merge. Their prompts, expected evidence and consuming tests now share the same two-round budget and conditional Notion boundary. Historical dated learning below is prior evidence, not the current execution contract.
+- **Independent review learning:** Owner-only edits were insufficient: active research/combat references still forced handoff, and a Work sequence exhausted both review rounds before implementation. Correct those exact consumers, reserve an implementation-result round, and propagate the shared budget to all nine Part entrypoints. Order assertions and parsed Registry/V4 tests supplement token-presence checks; no third full review is created by targeted correction.
 
 ## 2026-09-01 — 기능별 코드·계약 경계의 소형 기능 라우팅
 

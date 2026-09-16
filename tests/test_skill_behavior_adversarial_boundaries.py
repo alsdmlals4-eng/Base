@@ -306,8 +306,12 @@ class ClaimIntentAdversarialBoundaryTests(unittest.TestCase):
         cases = {case["case_id"]: case for case in evals["cases"]}
         deliberate = "\n".join(cases["SBE-040"]["required_evidence"])
         continuation = "\n".join(cases["SBE-041"]["required_evidence"])
-        for token in ("인터넷 원출처", "최소 3개", "Tool 실행", "5회", "NOT_RUN"):
+        for token in ("인터넷 원출처", "최소 3개", "Tool 실행", "정확히 2회", "NOT_RUN"):
             self.assertIn(token, deliberate)
+        self.assertNotIn("5회", deliberate)
+        self.assertIn("세 번째 전체 검토 없이", deliberate)
+        self.assertIn("새 전체 회차 없이", continuation)
+        self.assertIn("명시적 예외", continuation)
         for token in ("exact main SHA", "새 Branch/PR", "destination", "남은 필수 작업"):
             self.assertIn(token, continuation)
 

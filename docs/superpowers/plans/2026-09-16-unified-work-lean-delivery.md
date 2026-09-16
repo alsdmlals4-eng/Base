@@ -18,7 +18,7 @@
 - [x] Consolidate same-contract approval/research/review budgets, scoped freshness/testing and milestone publication in existing owners.
 - [x] Add simple-control/deep-system/inspectable-causality and JSON-content/module-computation guidance to existing guides without converting current projects.
 - [ ] Validate consumer behavior after changes, update superseded tests with current invariants, run repository validation and exactly two independent review rounds.
-- [ ] Commit/push current-task branch; pass exact-head CI/review/rulesets, squash merge, read back main and provide a reusable project adoption prompt.
+- [x] Commit/push current-task branch and open current-task PR #880. Final exact-head CI/ruleset/merge/main-readback receipt is tracked on that PR, not inferred from this implementation-plan snapshot.
 
 ## Evaluation
 
@@ -43,3 +43,6 @@ Rollback: revert this bounded policy commit through a normal PR; no project runt
 - Independent round 1: six fresh-reader scenarios selected the intended capable/partial/read-only/explicit-handoff/two-round/image-candidate paths. Whole-scope review found two Important corrections (missing TUNE approval-envelope definition; stale map-tail handoff restriction) and one Minor correction (role-named V4 visual route). All three were corrected in their existing owners; engine compatibility wording and omitted claim/continuation router safeguards were also reconciled. Round 2 and exact-head CI remain required before merge.
 - Candidate reports are policy/contract evidence only: runtime, Human, plugin A/B savings and multi-project adoption remain NOT_RUN. Generated/released legacy artifacts and unrelated PRs/worktrees are preserved.
 - Existing open PRs were searched. Adjacent earlier work (including #831/#829) is unrelated/read-only, not taken over; this branch implements the new 2026-09-16 approved unified-execution decision on completed main.
+- Independent round 2 (input `200cbd6`, then finding-specific readback): no Critical finding; corrected remaining forced-handoff research/combat consumers, Work step ordering that spent both reviews before implementation, and shared-budget omissions in Part/Final entrypoints. Minor Base-first bootstrap was aligned with project-first authority. Order-specific and all-nine-context-pack guards were added. The full-review budget is exhausted (2/2); later checks are finding-specific regression/readback, not another whole review.
+- Active SBE-040/041 behavior fixtures were also reconciled: no five-round requirement, no postmerge reset, no default Notion write. Generated evidence refreshed. Fixture/schema coverage is 30/30 primary and non-selection, but external model-run status remains NOT_RUN.
+- PR #880 initial candidate `200cbd6` passed all required CI including core regression and ci-gate. Those results do not automatically cover later targeted corrections; the final commit requires its own CI before merge.

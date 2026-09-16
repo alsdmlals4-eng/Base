@@ -250,7 +250,7 @@ P01→P09 뒤 같은 Work coordinator가:
 3. cross-Part/CP0 Base finding 직접 교정
 4. Registry/generated/Documentation 정합성 마감; Notion은 적용 가능한 V4 exception 또는 고유 legacy 이관 범위만
 5. repository-wide regression / Required CI
-6. 정확히 2회 full-scope adversarial loop 후 clean
+6. 같은 승인 후보 계보의 공유 검토 예산 중 남은 full-scope 회차를 완료해 총 정확히 2회. Part·Final Integration별로 초기화하지 않으며 이후 결함별 교정·검증만 수행 (`docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`)
 7. exact-head merge
 8. post-merge repository exact SHA readback; 적용 가능한 V4 exception만 해당 destination readback 추가
 9. 사용자 학습형 최종보고

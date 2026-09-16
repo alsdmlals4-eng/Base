@@ -26,7 +26,9 @@ Part 경계는 수정 금지선이 아니라 semantic owner 지도다. 다른 Pa
 기능 수 늘리기, 플레이어 감정/선택/보상 누락, 허수 대안, 벤치마크 복사, 테스트 불가능한 acceptance, 시스템-only PoC를 player-experience evidence로 승격, player-facing placeholder가 남은 Slice를 최종 플레이테스트 대상으로 사용, 프로젝트 고유 내용을 Base 공용화.
 
 ## 검증/완료
-관련 planning/vertical slice 회귀와 Part scope 검사. 정확히 2회 **전체 lifecycle** 적대적 개선 후 clean까지. 관점 5개를 5회로 세지 않는다.
+관련 planning/vertical slice 회귀와 Part scope 검사. 관점 5개를 5회로 세지 않는다.
+
+같은 승인 후보 계보의 공유 검토 예산은 전체 정확히 2회다. Part·Final Integration별로 초기화하지 않는다. 이후 결함별 교정·검증만 계속한다. 정본: `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`.
 
 ## 학습 루프
 - 작업마다 `docs/operations/base-partitions/learning/P04_LEARNING_LOG.md`에 Learning Checkpoint를 남긴다.

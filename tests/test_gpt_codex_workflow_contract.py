@@ -9,6 +9,31 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class GptCodexWorkflowContractTests(unittest.TestCase):
+    def test_work_sequence_reserves_review_for_implementation_before_merge(self) -> None:
+        text = (ROOT / "templates/project-operations/CHATGPT_WORK_PROJECT_EXECUTION_INSTRUCTION_v4.9.md").read_text(encoding="utf-8")
+        sequence = text.split("## 25. 자동 실행 순서", 1)[1].split("## 26.", 1)[0]
+        self.assertIn("실제 구현 결과 검토에 최소 1회를 남긴다", sequence)
+        implementation = sequence.index("16. 현재 승인된 Work capability")
+        final_review = sequence.index("23. 남은 필수 작업이 0이면 실제 구현된 Completion Candidate")
+        merge = sequence.index("24. required finding 0과 exact-head CI")
+        self.assertLess(implementation, final_review)
+        self.assertLess(final_review, merge)
+        self.assertIn("이미 2회가 끝났다면 결함별 교정·표적 검증만", sequence)
+        self.assertNotIn("14. 전체 결과를 정확히 2회", sequence)
+
+    def test_active_research_and_combat_consumers_follow_same_capability_owner(self) -> None:
+        for relative in (
+            "docs/AUTONOMOUS_RESEARCH_IMPLEMENTATION_AND_LEARNING_POLICY.md",
+            "skills/analyzing-and-refining-game-concepts/references/game-system-difficulty-and-combat-ai.md",
+        ):
+            with self.subTest(path=relative):
+                text = (ROOT / relative).read_text(encoding="utf-8")
+                self.assertIn("docs/GPT_CODEX_WORKFLOW_POLICY.md", text)
+                self.assertIn("현재 Work", text)
+                self.assertIn("조건부 인계", text)
+                self.assertNotIn("Codex 구현 패키지로 넘긴다", text)
+                self.assertNotIn("Codex가 exact repository revision", text)
+
     def test_canonical_policy_uses_capability_not_application_name(self) -> None:
         text = (ROOT / "docs/GPT_CODEX_WORKFLOW_POLICY.md").read_text(encoding="utf-8")
         for term in (

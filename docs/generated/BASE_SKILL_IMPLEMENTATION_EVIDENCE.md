@@ -4,7 +4,7 @@
 > Active Skill count: `30`
 > External model behavior run: `NOT_RUN`
 > Behavior evaluation case count: `47`
-> Behavior evaluation source SHA-256: `d9a1b83cc83875b56c87e08914b1553760ce6911e4e1dbb5c73731e492234eba`
+> Behavior evaluation source SHA-256: `40e7b2e08d7d2f93b287ce14025dc782eae5705dea7d0bd08ec07194f3a4fff9`
 > Source digest newline policy: `CRLF normalized to LF`.
 
 `EXECUTABLE_EVIDENCE` means a repository test, tool, workflow, or package script is linked. It does not mean that evidence passed on the current commit. `CONTRACT_EVIDENCE` means only a contract or documentation consumer is linked. Actual model, runtime, device, and human validation remain separate.

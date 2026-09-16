@@ -118,4 +118,6 @@ APPROVED_REPOSITORY_PATH_SHA256_AND_MANIFEST
 
 ## 완료 기준
 
+같은 승인 후보 계보의 공유 검토 예산은 전체 정확히 2회다. Part·Final Integration별로 초기화하지 않는다. 이후 결함별 교정·검증만 계속한다. 정본: `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`.
+
 > **현재 승인된 Work는 보유 capability로 기획부터 구현·검증·검토·허용된 통합까지 이어가며, 실제로 필요한 경우에만 다른 실행자로 인계한다. 완료 상태는 실행자 이름이 아니라 실제 증거로 판정한다.**

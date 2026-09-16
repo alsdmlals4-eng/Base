@@ -123,6 +123,10 @@ class BasePartitionContractTests(unittest.TestCase):
     def test_each_part_has_a_context_pack_and_operational_contract(self) -> None:
         manifest = self.load_manifest()
         for part in manifest["parts"]:
+            context = (ROOT / part["context_pack"]).read_text(encoding="utf-8")
+            self.assertIn("공유 검토 예산", context, part["part_id"])
+            self.assertIn("초기화하지 않는다", context, part["part_id"])
+            self.assertIn("docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md", context, part["part_id"])
             self.assertTrue((ROOT / part["context_pack"]).exists(), part["part_id"])
             for field in ("purpose", "owned_write_paths", "read_only_dependencies", "important_rules", "owned_skill_ids", "modules", "validation", "acceptance_criteria", "revisit_conditions"):
                 self.assertTrue(part[field], f"{part['part_id']} missing {field}")

@@ -25,7 +25,9 @@ Part 경계는 수정 금지선이 아니라 semantic owner 지도다. 다른 Pa
 정사/voice drift, 프로젝트 고유 서사를 Base 공용 규칙으로 승격, 외부 표현 복제, 발행 성공을 게임 runtime 완료로 혼동.
 
 ## 검증/완료
-writing/fiction/youtube/narrative focused tests + scope 검사. 정확히 2회 전체 적대적 검토 후 clean까지.
+writing/fiction/youtube/narrative focused tests + scope 검사를 수행한다.
+
+같은 승인 후보 계보의 공유 검토 예산은 전체 정확히 2회다. Part·Final Integration별로 초기화하지 않는다. 이후 결함별 교정·검증만 계속한다. 정본: `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`.
 ## 학습 루프
 - 작업마다 `docs/operations/base-partitions/learning/P09_LEARNING_LOG.md`에 Learning Checkpoint를 남긴다.
 - 새 공용 교훈이 없으면 `NO_NEW_REUSABLE_LESSON`; 프로젝트 전용이면 `PROJECT_ONLY`; Base 승격 후보면 `BASE_PROMOTION_CANDIDATE`.

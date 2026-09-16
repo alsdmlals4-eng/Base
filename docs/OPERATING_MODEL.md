@@ -41,16 +41,13 @@ Base와 이를 적용한 프로젝트의 작업목표는 **현재 가능한 방�
 ## 3. 최소 시작 경로
 
 ```text
-Base START_HERE
-→ Base AGENTS
-→ Base Operating Model
-→ Work Mode·Skill Routing
-→ Base Documentation Map
-→ Base Skill Registry
+최신 사용자 지시
 → 대상 프로젝트 AGENTS
 → 프로젝트 START_HERE·Active Context·Documentation Map
-→ exact repository human PDF/Markdown projection; explicitly scoped V4 Notion exception only when applicable
-→ 현재 책임 원본·Issue·Plan
+→ 채택한 Base 계약·version lock과 현재 책임 원본·Issue·Plan
+→ 실제 대상/consumer·테스트·현재 main·관련 열린 PR
+→ Base 최신 main과 채택 계약의 drift 확인 (자동 교체 아님)
+→ 필요한 Base owner·Work Mode·Skill Routing·Registry trigger만 확인
 → Prompt 의도·현재 단계
 → PLAN / BUILD / REVIEW Work Mode
 → 자동 선택된 최소 Skill·Skill Mode
@@ -58,6 +55,7 @@ Base START_HERE
 ```
 
 `모두 확인`은 모든 파일을 읽는다는 뜻이 아니다. Registry와 Documentation Map으로 현재 작업에 적용되는 책임 원본과 영향 파일만 선택한다.
+Base 자체 작업에서는 Base가 대상 저장소다. 사람용 PDF/Markdown은 필요한 설명·검토에 읽는 파생본이지 실제 consumer 확인의 대체물이 아니다. 같은 작업 안에서는 변경된 owner와 직접 의존성만 다시 확인한다. 자세한 bootstrap은 `START_HERE.md`의 current-authority read order를 따른다.
 
 ## 4. 작업 생명주기
 

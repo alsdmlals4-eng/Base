@@ -1024,17 +1024,17 @@ GPT/Work/connector/Codex가 직접 할 수 있는 일을 사용자에게 떠넘�
 11. 현재 이미지 authority·재사용·actual consumer·brief를 확인해 필요한 candidate를 이미지 도구로 제작한다. 사용자 승인 전에는 정본 자산으로 승격하지 않는다.
 12. 승인 binary를 repository path + SHA-256 + manifest로 승격한다.
 13. 의미 있는 Gate에서 사람용 상세 기획서 PDF를 생성·점검한다.
-14. 전체 결과를 정확히 2회 full adversarial loop로 검토하고 clean exit까지 교정한다.
+14. 승인 기획과 구현 준비를 점검한다. 이미 기록된 전체 검토는 공유 2회 예산에 포함하되, 실제 구현 결과 검토에 최소 1회를 남긴다. 여기서 2회를 모두 소진하지 않는다.
 15. Implementation Reality Gate를 적용한다.
 16. 현재 승인된 Work capability로 상세 설계·제품 구현·검증을 수행한다.
 17. 사용자 요청·실제 capability 부족·격리 필요가 있을 때만 exact SHA 기반 조건부 인계를 준비한다.
 18. 실제 diff/test/runtime/play evidence를 검수하고 NOT_RUN과 독립 진행 가능한 작업을 구분한다.
 19. Canonical Reflection After Play로 repository 정본을 갱신한다.
-20. current-task PR은 실제 gate를 통과해 허용 범위에서 merge/post-merge readback까지 닫는다.
+20. REQUIRED_WORK_REMAINING을 재계산하고 승인 범위의 실행 가능한 미완료 항목은 구현·검증으로 돌아간다.
 21. legacy Notion/Sheet 고유 자료가 있을 때만 별도 migration counter를 닫는다.
 22. material failure는 Incident/Solution/Lesson으로 환류한다.
-23. REQUIRED_WORK_REMAINING을 다시 계산한다.
-24. 0이면 Completion Candidate를 재공격한다.
+23. 남은 필수 작업이 0이면 실제 구현된 Completion Candidate에서 공유 전체 검토 예산을 총 정확히 2회로 완료한다. 이미 2회가 끝났다면 결함별 교정·표적 검증만 한다.
+24. required finding 0과 exact-head CI·독립 검토·ruleset을 확인한 current-task PR만 허용 범위에서 merge/post-merge readback까지 닫는다. 병합 후 전체 회차를 초기화하지 않는다.
 25. required finding 0 + evidence 충족 + clean review일 때만 완료한다.
 ```
 
