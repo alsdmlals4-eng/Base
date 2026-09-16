@@ -21,6 +21,7 @@ Mode는 앱 전환 명령이 아니다. `UNIFIED_WORK_EXECUTION` / `CAPABILITY_B
 사용자 요청
 → 프로젝트 current authority / 실제 consumer / 같은 Goal PR
 → 승인 범위와 결과·검증 복원
+→ 새 변경이면 intake 승인안에 의도·구현 방법·다음 작업을 표시하고 승인 대기; 동일 승인 continuation은 재사용
 → 주 책임 Skill과 필요한 mode 선택
 → 현재 세션의 실제 권한·도구 확인
 → PLAN → NONCODING_BUILD 또는 GODOT_PRODUCT_BUILD → REVIEW
@@ -43,6 +44,7 @@ Mode는 앱 전환 명령이 아니다. `UNIFIED_WORK_EXECUTION` / `CAPABILITY_B
 - 같은 승인·요구 분류·계획·검토는 Base와 플러그인 사이에서 중복 실행하지 않는다. 기존 owner와 approval reference를 재사용한다.
 - 새로운 증거·실패·범위 변화가 없으면 동등한 조사·설계·승인을 반복하지 않는다.
 - 설치 여부, 세션 노출, 실제 호출, 실행 결과, 사용량은 서로 다른 관측이다.
+- intake의 `CONTEXT_FIT_RECHECK`로 최초 라우팅 뒤 정본/consumer 적합성을 확인하고 흡수·통합 뒤 연결을 재검사한다. 관련 없는 Skill 전부를 다시 로드하지 않는다. 새 module/Skill도 독립 책임과 소비 경로가 입증되면 선택할 수 있다.
 
 ## 2C. CLAIM_AND_INTENT_VERIFICATION_GATE
 

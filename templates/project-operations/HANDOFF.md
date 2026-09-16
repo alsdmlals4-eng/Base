@@ -4,9 +4,9 @@
 공용 콜드 스타트·재개 기준: `docs/knowledge/methods/PROJECT_HANDOFF_CONTEXT_METHOD.md`
 Fresh-read 재구성 companion: `skills/maintaining-project-context-and-handoff/references/fresh-read-project-bootstrap.md`
 
-> 사용자가 `인수인계 진행`을 지시한 경우 이 문서는 단순 세션 요약이 아니다. 현재 작업을 안전한 checkpoint까지 닫고 GitHub·Notion 정본을 동기화한 뒤, 새 채팅이 과거 대화 없이 재개할 수 있는지 검증한 **종료 스냅샷**이어야 한다. 송신 측 `PACKET_READY`와 수신 측 `TRANSFER_ACCEPTED`는 별도 상태다.
+> 사용자가 `인수인계 진행`을 지시한 경우 이 문서는 단순 세션 요약이 아니다. 현재 작업을 안전한 checkpoint까지 닫고 repository 정본과 명시된 current 예외만 동기화한 뒤, 새 채팅이 과거 대화 없이 재개할 수 있는지 검증한 **종료 스냅샷**이어야 한다. 송신 측 `PACKET_READY`와 수신 측 `TRANSFER_ACCEPTED`는 별도 상태다.
 >
-> 새 채팅은 과거 대화가 아니라 Fresh-read companion의 `project_identity / current_goal / current_quality_and_stage / protected_scope / next_safe_action / evidence_ceiling / instruction_surface`를 GitHub + Notion current truth에서 다시 구성한다. 불일치는 mutation 전에 `CONTEXT_DRIFT_RECHECK_REQUIRED`다.
+> 새 채팅은 과거 대화가 아니라 Fresh-read companion의 `project_identity / current_goal / current_quality_and_stage / protected_scope / next_safe_action / evidence_ceiling / instruction_surface`를 repository current truth와 적용되는 예외에서 다시 구성한다. 불일치는 mutation 전에 `CONTEXT_DRIFT_RECHECK_REQUIRED`다.
 
 ## 인수 시점 상태
 
@@ -79,7 +79,9 @@ instruction_surface_readback:
 - Handoff 요약이 현재 instruction surface를 대체하지 않는다.
 - 지침 간 충돌이 발견되면 임의로 합치지 않고 current authority와 범위를 재검토한다.
 
-## Notion 정본 동기화
+## 외부 예외 동기화(조건부)
+
+프로젝트 AGENTS에 명시된 current 예외만 작성한다. 예외가 없으면 `NOT_CONFIGURED / NOT_APPLICABLE`이며 필수 완료 Gate가 아니다. 고유 미이관 자료는 read-only migration source로 확인한다.
 
 ```yaml
 project_home:
@@ -93,7 +95,7 @@ system_metadata_leak_check: PASS | FAIL | NOT_RUN
 
 - 사람용 Home에는 프로젝트 목적·핵심 Flow·표·승인 Visual·현재 상태를 남긴다.
 - 운영 receipt, SHA/PR/CI, 세부 검증·handoff 데이터는 AI/System 쪽에 둔다.
-- GitHub와 Notion 중 한쪽만 갱신한 상태를 `SYNC_COMPLETE`로 선언하지 않는다.
+- 명시된 필수 동기화 목적지를 확인하지 않은 상태를 `SYNC_COMPLETE`로 선언하지 않는다.
 
 ## Pending user decisions
 
@@ -110,9 +112,9 @@ approval_required_before_resume: true | false
 - 새 채팅이 임의 기본값을 선택하면 안 되는 미결 결정만 여기에 남긴다.
 - `approval_required_before_resume: true`이면 그 결정에 의존하는 mutation은 receiver가 자동 실행하지 않는다.
 
-## Notion 이미지·Visual 전달 검증
+## 실제 이미지·Visual 목적지 전달 검증
 
-이번 작업에서 이미지가 생성·승인·참조·교체되었다면 반드시 작성한다.
+이번 작업에서 이미지가 생성·승인·참조·교체되었다면 실제 repository/Blueprint/Asset 목적지에 대해 작성한다. 명시된 외부 예외가 없으면 Notion 전달은 요구하지 않는다.
 
 ```yaml
 visual_audit_required: true | false
@@ -198,7 +200,7 @@ context_sanitation:
 
 ## Fresh-chat resumability test
 
-새 채팅이 이전 대화·메모리 없이 GitHub + Notion current canon만 읽는다고 가정한다.
+새 채팅이 이전 대화·메모리 없이 repository current canon과 적용되는 예외만 읽는다고 가정한다.
 
 - 무엇을 만드는가? `PASS | FAIL`
 - 어디까지 결정·구현·검증됐는가? `PASS | FAIL`
@@ -231,7 +233,7 @@ receiver_ack:
   status: TRANSFER_ACCEPTED | CONTEXT_DRIFT_RECHECK_REQUIRED | BLOCKED
 ```
 
-- `prepared_from_main_sha`와 `resume_observed_main_sha`가 다르면 관련 diff/Notion 변화가 현재 작업에 영향을 주는지 먼저 확인한다.
+- `prepared_from_main_sha`와 `resume_observed_main_sha`가 다르면 관련 diff/적용되는 예외 자료 변화가 현재 작업에 영향을 주는지 먼저 확인한다.
 - packet과 current canon이 일치해야 `TRANSFER_ACCEPTED`다.
 - 실제 receiver가 없는 송신 세션에서는 `PENDING_RECEIVER_ACK`가 정상 종료 상태다. 이를 `TRANSFER_ACCEPTED`로 과장하지 않는다.
 

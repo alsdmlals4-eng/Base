@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from tools.skill_context import read_skill_contract
+
 import json
 import unittest
 from pathlib import Path
@@ -9,6 +11,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def read(path: str) -> str:
+    if path == 'skills/managing-project-intake-and-work-contract/SKILL.md':
+        return read_skill_contract(ROOT / path)
     return (ROOT / path).read_text(encoding="utf-8")
 
 
@@ -29,6 +33,7 @@ class ReuseFirstPreflightEnforcementTests(unittest.TestCase):
         self.assertIn("NOT_APPLICABLE", intake)
         self.assertIn("REUSE_FIRST_PREFLIGHT_REQUIRED", start)
 
+        intake = read("skills/managing-project-intake-and-work-contract/references/preflight-and-evidence.md")
         project_pos = intake.find("target project GitHub current main")
         asset_pos = intake.find("Asset/Reference/Benchmark")
         reuse_pos = intake.find("PROJECT_WORK_REUSE_HANDOFF.json")

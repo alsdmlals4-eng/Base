@@ -1,0 +1,72 @@
+{
+  "work_level": "L2",
+  "benchmark_preflight_receipt": {
+    "state": "REUSED_EVIDENCE",
+    "entries": [
+      {
+        "source_and_evidence": "main 09f3e45; current intake, first-prompt and workflow owners; prior-turn official OpenAI Build Skills and Anthropic Effective Context Engineering pages.",
+        "observed_pattern": "existing owner with progressive reference loading; selected Skill read completely; installation is not invocation.",
+        "project_fit_and_difference": "ADAPT existing intake rather than another prompt Skill. New module only for bounded linked-contract validation; preserve repository approval and CI.",
+        "disposition": "ADAPT"
+      }
+    ]
+  },
+  "context_configuration_hygiene": {
+    "scope": "intake entrypoint, its linked references, direct policy/template and test consumers",
+    "inventory": [
+      {
+        "path": "skills/managing-project-intake-and-work-contract/SKILL.md",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "main 09f3e45",
+        "references_and_consumers": "AGENTS/START_HERE, templates, check_skill_system_coverage and contract suites",
+        "removal_proposed": false
+      }
+    ]
+  },
+  "project_work_kanban": {
+    "goal_or_slice_issue_ref": "current-user-message:2026-09-16:좋아-진행해줘:approval-brief-context-routing",
+    "source_main_sha": "09f3e45e6e35cd61ab4d71541d47938b1f66a6fe",
+    "work_item_refs": [
+      "TASK-01"
+    ],
+    "active_work_item_ref": "TASK-01",
+    "next_action": "Complete plan T1-T4 and exact-head validation",
+    "work_items": [
+      {
+        "work_item_id": "TASK-01",
+        "title": "Approved intake and context routing correction",
+        "status": "IN_PROGRESS",
+        "canon_owner": "skills/managing-project-intake-and-work-contract/SKILL.md",
+        "actual_consumers": [
+          "templates/EXECUTABLE_PROMPT.md",
+          "tools/check_skill_system_coverage.py",
+          "tests/test_skill_context.py"
+        ],
+        "depends_on": [],
+        "acceptance_criteria": [
+          "AC-01"
+        ],
+        "required_evidence": [
+          "E2_TEST"
+        ],
+        "checklist": [
+          {
+            "id": "AC-01",
+            "text": "Preapproval brief and valid continuation preserved; conditional routes reachable, tests/CI/two reviews and main readback complete",
+            "status": "NOT_RUN"
+          }
+        ],
+        "verification": [
+          {
+            "level": "E2_TEST",
+            "status": "NOT_RUN",
+            "evidence": []
+          }
+        ],
+        "next_action": "Verify candidate, two independent review rounds, exact-head CI and main readback; final receipts on current-task PR"
+      }
+    ]
+  },
+  "approval_reference": "current-user-message:2026-09-16:좋아-진행해줘:approval-brief-context-routing",
+  "approved_scope": "User-visible intent/implementation/acceptance before new changes; exact approved continuation; conditional Skill modules and context/link validation; file-based resume with repository/local/Blueprint revision linkage and verified stale-material cleanup; current-task normal PR/merge. No absorption of PR #844 or fleet project mutation."
+}

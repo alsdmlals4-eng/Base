@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from tools.skill_context import read_skill_contract
+
 import unittest
 from pathlib import Path
 
@@ -151,7 +153,7 @@ class ContinuousWorkExecutionContractTests(unittest.TestCase):
 
     def test_user_directed_work_uses_latest_main_copy_integration_without_touching_in_progress_prs(self) -> None:
         reference = REFERENCE.read_text(encoding="utf-8")
-        skill = SKILL.read_text(encoding="utf-8")
+        skill = read_skill_contract(SKILL)
         for text in (reference, skill):
             for term in (
                 "USER_DIRECTED_PARALLEL_PR",
@@ -168,7 +170,7 @@ class ContinuousWorkExecutionContractTests(unittest.TestCase):
 
     def test_overlap_uses_standing_copy_integration_and_material_absorption_merge_gate(self) -> None:
         reference = REFERENCE.read_text(encoding="utf-8")
-        skill = SKILL.read_text(encoding="utf-8")
+        skill = read_skill_contract(SKILL)
         sync = SYNC_PROTOCOL.read_text(encoding="utf-8")
         for text in (reference, skill):
             self.assertIn("PROVISIONAL_INTEGRATION", text)

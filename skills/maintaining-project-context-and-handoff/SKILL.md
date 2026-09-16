@@ -34,6 +34,7 @@ Machine contract: `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`
 3. current state / changed scope / remaining work / blocker / owner paths / exact revision / first next action만 기존 Active Context에 갱신한다. 과거 진행 일지를 계속 prepend하지 않는다.
 4. `HANDOFF_ONLY_FOR_CAPABILITY_GAP_OR_EXPLICIT_REQUEST`일 때 기존 인계 Template을 사용한다. 같은 세션의 단계 전환에는 새 handoff 파일을 만들지 않는다.
 5. 실제 검사·runtime·사용자 승인·병합은 따로 판정하고 evidence ceiling을 기록한다. `NOT_RUN`은 PASS가 아니다.
+6. 컨텍스트가 길어지거나 작업을 종료·재개할 때는 [프로젝트 인수인계·컨텍스트 설계 방법](../../docs/knowledge/methods/PROJECT_HANDOFF_CONTEXT_METHOD.md)의 파일 기반 재개·동기화·가지치기 절차를 따른다. 현재 작업에 필요한 owner와 Blueprint source SHA만 연결하고 전체 대화·모든 Skill을 다시 싣지 않는다. 대체 완료·역참조·복구가 확인된 구형 파일만 삭제하며, 프로젝트 작업에도 동일하게 적용한다.
 
 ## Implementation contract
 

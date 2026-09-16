@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from tools.skill_context import read_skill_contract
+
 import json
 import tempfile
 import unittest
@@ -85,7 +87,7 @@ class DeepInterviewContractTests(unittest.TestCase):
         self.assertTrue(all(item["sha256"] and item["role"] for item in payload["files"]))
 
     def test_unified_intake_preserves_triggers_exceptions_and_confirmation_gate(self) -> None:
-        text = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        text = read_skill_contract((ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md"))
         for term in (
             "route",
             "clarify",
@@ -104,7 +106,7 @@ class DeepInterviewContractTests(unittest.TestCase):
         reference_path = ROOT / "skills/managing-project-intake-and-work-contract/references/continuous-work-execution.md"
         self.assertTrue(reference_path.is_file(), "continuous work execution reference must exist")
         reference = reference_path.read_text(encoding="utf-8")
-        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        intake = read_skill_contract((ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md"))
         for term in (
             "[연속작업] 진행해",
             "CONTINUOUS_WORK_ACTIVE",

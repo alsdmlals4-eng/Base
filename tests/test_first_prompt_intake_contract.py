@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from tools.skill_context import read_skill_contract
+
 import unittest
 from pathlib import Path
 
@@ -27,7 +29,7 @@ REGISTRY = ROOT / "skills" / "SKILL_REGISTRY.json"
 
 class FirstPromptIntakeContractTests(unittest.TestCase):
     def test_existing_intake_skill_owns_first_prompt_without_new_registry_skill(self) -> None:
-        skill = INTAKE_SKILL.read_text(encoding="utf-8")
+        skill = read_skill_contract(INTAKE_SKILL)
         registry = REGISTRY.read_text(encoding="utf-8")
         self.assertIn("`first-prompt`", skill)
         self.assertIn("first-prompt-direction-anchoring.md", skill)
@@ -72,7 +74,7 @@ class FirstPromptIntakeContractTests(unittest.TestCase):
 
     def test_every_l1_instruction_runs_intake_and_alignment_before_execution(self) -> None:
         agents = AGENTS.read_text(encoding="utf-8")
-        skill = INTAKE_SKILL.read_text(encoding="utf-8")
+        skill = read_skill_contract(INTAKE_SKILL)
         for required in (
             "모든 L1 이상 지시문 작성",
             "좋은 프롬프트 변환",
@@ -85,7 +87,7 @@ class FirstPromptIntakeContractTests(unittest.TestCase):
         self.assertLess(skill.index("`first-prompt`"), skill.index("`contract`"))
 
     def test_alignment_gate_reuses_approval_and_preserves_l0_exception(self) -> None:
-        skill = INTAKE_SKILL.read_text(encoding="utf-8")
+        skill = read_skill_contract(INTAKE_SKILL)
         for required in (
             "exact contract already approved",
             "approval reference",

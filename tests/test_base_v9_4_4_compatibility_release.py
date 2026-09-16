@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from tools.skill_context import read_skill_contract
+
 import hashlib
 import json
 import subprocess
@@ -99,7 +101,7 @@ class BaseV944CompatibilityReleaseTests(unittest.TestCase):
 
     def test_reuse_first_payload_contains_release_markers(self) -> None:
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
-        intake = (ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md").read_text(encoding="utf-8")
+        intake = read_skill_contract((ROOT / "skills/managing-project-intake-and-work-contract/SKILL.md"))
         handoff = load_json(ROOT / "docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json")
         self.assertIn("REUSE_FIRST_PREFLIGHT_REQUIRED", agents)
         self.assertIn("REUSE_LEARNING_HANDOFF_REQUIRED", intake)

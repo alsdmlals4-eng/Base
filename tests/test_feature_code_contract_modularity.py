@@ -1,3 +1,5 @@
+
+from tools.skill_context import read_skill_contract
 """Guard the shared feature code-and-contract authoring boundary."""
 
 import json
@@ -90,11 +92,11 @@ class FeatureCodeContractRoutingTests(unittest.TestCase):
         )
 
     def test_skill_and_execution_plan_expose_the_existing_boundary(self) -> None:
-        skill = SKILL.read_text(encoding="utf-8")
+        skill = read_skill_contract(SKILL)
         plan = TEMPLATE.read_text(encoding="utf-8")
         self.assertIn("작은 단일 파일·단일 단계라도 L1 intake 대상", skill)
         self.assertIn(
-            "작업 분해가 필요하지 않은 작은 기능을 포함해 `references/work-decomposition-and-sequencing.md`",
+            "작업 분해가 필요하지 않은 작은 기능을 포함해 [work-decomposition-and-sequencing.md](references/work-decomposition-and-sequencing.md)",
             skill,
         )
         for field in (

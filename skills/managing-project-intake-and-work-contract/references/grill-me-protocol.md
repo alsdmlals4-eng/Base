@@ -2,7 +2,7 @@
 
 Grill Me는 `managing-project-intake-and-work-contract`의 `clarify` Skill Mode에서 사용하는 프로젝트 핵심 결정 인터뷰다. 독립 Skill ID를 추가하지 않는다. 기존의 요구 확인·상태·사용자 승인 계약을 유지하면서 질문 품질, 승인 즉시 동기화와 종료 기준을 강화한다.
 
-공용 동기화 계약은 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`를 따른다.
+공용 동기화 계약은 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`와 현행 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`을 따른다. repository가 정본이며 Sheets는 고유 미이관 자료가 있을 때만 읽는 legacy source다. 명시된 프로젝트 current 예외가 없으면 Sheet 생성·쓰기·동기화를 요구하지 않는다.
 
 ## 1. 사용 조건
 
@@ -33,20 +33,20 @@ Grill Me는 `managing-project-intake-and-work-contract`의 `clarify` Skill Mode�
 → CURRENT_CONFIRMED_DECISIONS.md
 → 관련 분야 책임 원본
 → 실제 코드·데이터·Scene·Resource·자산·테스트
-→ 프로젝트 Google Sheets 최신 Decision 행
+→ 명시된 current 예외 또는 고유 미이관 자료가 있을 때만 legacy Google Sheets 대조
 → 현재 대화
 → 질문 필요성 판정
 ```
 
 다음 질문 전 게이트를 모두 통과해야 한다.
 
-1. 저장소·책임 원본·현재 대화·Google Sheets에서 답을 찾을 수 없는가?
+1. 저장소·책임 원본·현재 대화와 적용되는 예외/이관 자료에서 답을 찾을 수 없는가?
 2. 사용자가 이미 같은 결정에 답하지 않았는가?
 3. 최신 Decision으로 대체·폐기·보류되지 않았는가?
 4. 실제로 프로젝트 방향·플레이 경험·범위·제작 가능성을 바꾸는가?
 5. 구현자가 정할 기술 세부나 초기 시험값이 아니라 사용자 결정인가?
 6. 동일 Goal의 열린 PR 또는 최근 병합 PR에서 이미 처리되지 않았는가?
-7. 이전 승인 건이 `SYNCED` 상태인가?
+7. 이전 승인 건이 branch 내구 기록·필요한 readback을 마친 `APPROVED_PENDING_MERGE` 또는 실제 병합·readback을 마친 `SYNCED` 상태이며, 배치 checkpoint가 새 질문을 막지 않는가?
 
 하나라도 질문이 불필요하다고 판정되면 묻지 않는다.
 
@@ -121,7 +121,7 @@ validation:
 - 여러 결정이 필요하면 의존성이 높은 것부터 순차적으로 묻는다.
 - 질문 수를 채우기 위해 비차단 질문을 만들지 않는다.
 - 사용자가 `모두 권장안대로`라고 하면 남은 동등 유형 결정을 권장안으로 일괄 확정하고 질문을 계속 늘리지 않는다.
-- 이전 승인 건의 정본·main·Sheets 동기화가 완료되기 전에 다음 질문으로 넘어가지 않는다.
+- 이전 승인 건을 현행 repository owner에 반영·readback한 뒤 다음 질문 필요성을 판단한다. 같은 작업 안의 질문마다 PR 병합이나 선택적 Sheet 동기화를 선행 요구하지 않는다.
 
 ## 6. GitHub 질문 기록
 
@@ -137,7 +137,7 @@ validation:
 - main HEAD:
 - 관련 열린 PR:
 - 최근 병합 PR:
-- Google Sheets 상태:
+- 예외/이관 source 상태(해당할 때만):
 - 질문:
 - 선택지:
 - GPT 권장안:
@@ -160,7 +160,7 @@ validation:
 - main HEAD:
 - 관련 열린 PR:
 - 최근 병합 PR:
-- Google Sheets 동기화:
+- 명시적 예외의 동기화(해당할 때만):
 
 ### 질문
 
@@ -222,7 +222,7 @@ A / B / C / 직접 수정안 / 권장안대로
 
 ## 9. 나쁜 질문
 
-- 저장소·Google Sheets를 보면 알 수 있는 사실
+- 저장소와 적용되는 예외/이관 source를 보면 알 수 있는 사실
 - 파일 경로·기존 상태 확인
 - 사소한 명칭·수치·구현 세부
 - 이미 답한 질문
@@ -242,14 +242,14 @@ A / B / C / 직접 수정안 / 권장안대로
 4. 프로젝트 `CURRENT_CONFIRMED_DECISIONS.md`를 갱신한다.
 5. 영향받는 기획 책임 원본과 실행 계약을 갱신한다.
 6. 필요한 경우 `ACTIVE_CONTEXT.md`를 갱신한다.
-7. 승인 결정 문서가 직접 `main` 반영 허용 범위면 논리 Commit 하나로 반영한다.
-8. 새 `main` HEAD와 Commit SHA를 재조회한다.
-9. 프로젝트 Google Sheets의 확정 결정 행을 추가·수정한다.
-10. 해당 Sheet 행을 재조회해 Decision ID·결정·Commit·대체 관계를 비교한다.
-11. GitHub 댓글에 정본 경로, Commit SHA, Sheet tab·row와 동기화 판정을 기록한다.
-12. `SYNCED`면 다음 질문 필요성을 재평가한다.
+7. 승인 결정은 현재 작업 branch의 논리 Commit으로 반영하고 정본·Commit SHA를 재조회한다. direct main push 또는 보호 규칙 우회를 하지 않는다.
+8. 이 시점에는 `APPROVED_PENDING_MERGE`로 기록한다. 해당 작업의 정상 PR 병합 뒤 새 main과 Decision을 재확인하며, 질문마다 별도 PR이나 기획-only 선행 병합을 요구하지 않는다.
+9. 별도 current 프로젝트 예외가 명시된 경우에만 그 owner·scope·destination의 승인된 동기화와 readback을 수행한다. legacy Sheet 존재만으로 쓰기 권한을 만들지 않는다.
+10. 적용되는 destination이 있으면 Decision ID·결정·Commit·대체 관계를 비교한다. 없으면 NOT_APPLICABLE로 둔다.
+11. 기존 GitHub 추적 surface에 정본 경로, Commit SHA와 실제 동기화 판정을 기록한다.
+12. `APPROVED_PENDING_MERGE`의 branch 기록·필요한 readback 또는 실제 `SYNCED`가 확인되면 다음 질문 필요성을 재평가한다. `docs/PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md`의 10건 상한·고위험/충돌/세션 종료 checkpoint는 그대로 유지한다.
 
-직접 `main` 반영 허용 범위와 구현 PR 분리는 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`를 따른다.
+현재 작업의 PR·승인·병합 경계는 최신 `AGENTS.md`와 `docs/CONFIRMED_DECISION_SYNC_POLICY.md`를 함께 따른다.
 
 GPT 제안은 사용자 승인 전까지 확정이 아니다.
 
@@ -260,17 +260,18 @@ QUESTION_RECORDED
 AWAITING_USER_DECISION
 APPROVED_PENDING_CANON
 CANON_UPDATED
+APPROVED_PENDING_MERGE
 MAIN_UPDATED
-SHEET_UPDATED
+SHEET_UPDATED (명시적 예외가 적용된 과거/호환 상태; 기본 필수 아님)
 SYNCED
 SYNC_FAILED
 BLOCKED_UNVERIFIED
 ```
 
 - GitHub 쓰기 실패: 댓글에 실패·영향·재개 조건을 기록한다.
-- Google Sheets 쓰기 실패: GitHub 정본은 유지하고 `SYNC_FAILED`와 재동기화 Decision ID를 남긴다.
-- 권한·연결·tab을 확인할 수 없음: `BLOCKED_UNVERIFIED`로 남긴다.
-- `SYNCED`가 아닌 승인 건이 있으면 비차단 질문을 계속 늘리지 않는다.
+- 명시적 예외 destination 쓰기 실패: GitHub 정본은 유지하고 `SYNC_FAILED`와 재동기화 Decision ID를 남긴다. Sheet 미구성은 그 자체로 실패가 아니다.
+- 실제 적용되는 필수 source·destination 권한·연결을 확인할 수 없음: 해당 범위만 `BLOCKED_UNVERIFIED`로 남긴다.
+- branch 기록·필요한 readback이 실패했거나 배치 checkpoint가 요구되면 비차단 질문을 계속 늘리지 않는다. 단순히 `APPROVED_PENDING_MERGE`이고 아직 main에 병합되지 않았다는 이유만으로 질문·동일 승인 범위 구현을 막지 않는다. `SYNCED`는 실제 main 병합·readback 뒤에만 쓴다.
 
 ## 12. 적용 단계
 
@@ -283,16 +284,16 @@ BLOCKED_UNVERIFIED
 
 ## 13. 종료 조건
 
-다음을 모두 만족하면 종료한다.
+다음을 모두 만족하면 인터뷰를 종료하고 동일 승인 범위의 상세 설계·구현으로 진행할 수 있다. 작업 전체의 통합 종료는 정상 PR 병합·main readback까지 별도로 닫는다.
 
 - 핵심 결정 분기가 해소됐다.
 - 사용자의 우선순위와 비타협 조건이 명확하다.
 - 변경 가능·제거·보류 요소가 기록됐다.
 - 서로 충돌하는 사용자 답변이 없다.
 - 모든 승인 Decision이 `CURRENT_CONFIRMED_DECISIONS.md`와 분야 책임 원본에 반영됐다.
-- 승인 문서가 `main`에 반영되고 Commit SHA가 기록됐다.
-- Google Sheets 재조회 결과가 GitHub 정본과 일치한다.
-- 모든 승인 건의 동기화 상태가 `SYNCED` 또는 명시적 `BLOCKED_UNVERIFIED`다.
+- 승인 문서가 현재 branch에 내구 기록되고 Commit SHA·필요한 readback이 확인되어 `APPROVED_PENDING_MERGE`다. 이미 정상 병합됐다면 실제 main SHA와 `SYNCED`를 기록한다.
+- 적용되는 명시적 예외 destination이 있을 때만 그 재조회 결과가 GitHub 정본과 일치한다.
+- 모든 적용 승인 건은 `APPROVED_PENDING_MERGE` 또는 실제 `SYNCED`이며, 필요한 승인·readback 실패는 `BLOCKED_UNVERIFIED`로 남겨 영향 범위 실행을 막는다.
 - 남은 질문이 구현 세부 또는 비차단 수준이다.
 
 최종 프로젝트 코어와 구현 인계는 사용자 승인 후에만 다음 상태를 사용한다.
@@ -304,7 +305,7 @@ READY_FOR_IMPLEMENTATION_HANDOFF
 
 ## 14. 실패 조건
 
-- 저장소·정본·Google Sheets에서 확인할 사실을 질문함
+- 저장소·정본·적용되는 예외/이관 자료에서 확인할 사실을 질문함
 - 같은 Decision을 표현만 바꿔 다시 질문함
 - 한 번에 여러 결정을 질문함
 - 권장안과 영향 분석을 누락함
@@ -312,7 +313,7 @@ READY_FOR_IMPLEMENTATION_HANDOFF
 - 사용자 답변을 GitHub 추적 surface에 기록하지 않음
 - 승인 답변을 checkpoint까지 임시 누적함
 - `CURRENT_CONFIRMED_DECISIONS.md`만 갱신하고 분야 책임 원본을 누락함
-- GitHub 또는 Sheets 한쪽만 갱신하고 `SYNCED`로 보고함
+- GitHub 정본 또는 실제 필수 예외 destination을 누락하고 `SYNCED`로 보고함
 - 승인 전 `CORE_CONFIRMED` 사용
 - 제거·보류·기각 항목을 누락으로 재제안함
 - `모두 권장안대로` 승인 뒤 불필요한 질문을 계속함

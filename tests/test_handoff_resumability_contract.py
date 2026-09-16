@@ -46,6 +46,21 @@ class HandoffResumabilityContractTests(unittest.TestCase):
     def test_handoff_context_is_curated_not_transcript_dumped(self) -> None:
         self.assert_contract_tokens(("context_sanitation", "raw tool log", "3~7"))
 
+    def test_resume_uses_repository_canon_without_unconfigured_external_gate(self):
+        for text in (METHOD, TEMPLATE):
+            self.assertNotIn('GitHub + Notion current', text)
+            self.assertIn('NOT_CONFIGURED', text)
+        self.assertIn('source SHA', METHOD)
+        self.assertIn('대체본', METHOD)
+        self.assertIn('역참조', METHOD)
+
+    def test_grill_me_branch_approval_does_not_wait_for_main_to_continue(self):
+        text = (ROOT / 'skills/managing-project-intake-and-work-contract/references/grill-me-protocol.md').read_text(encoding='utf-8')
+        self.assertNotIn('이전 승인 건이 `SYNCED` 상태인가?', text)
+        self.assertNotIn('승인 문서가 `main`에 반영되고 Commit SHA가 기록됐다.', text)
+        self.assertIn('APPROVED_PENDING_MERGE', text)
+        self.assertIn('PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md', text)
+
 
 if __name__ == "__main__":
     unittest.main()

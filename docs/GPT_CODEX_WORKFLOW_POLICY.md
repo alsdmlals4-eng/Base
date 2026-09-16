@@ -47,12 +47,15 @@ current authority + actual implementation + related PR fresh-read
 
 ## 3. 경량 실행: 한 계약, 한 판단, 필요한 검증
 
+새 변경의 사용자-visible 승인안과 `CONTEXT_FIT_RECHECK`의 단일 owner는 `skills/managing-project-intake-and-work-contract/SKILL.md`다. 의도·구현 개요는 승인 전에 보여주고, 상세 실행·범위 안 교정은 승인 후 연속 수행한다. 같은 계약의 승인을 단계마다 초기화하지 않는다.
+
 `TARGETED_CONTEXT_RECOVERY_NOT_FULL_PROJECT_REAUDIT`
 
 - 시작에는 최신 AGENTS·main·결정/Active Context·실제 대상/consumer·같은 Goal PR을 확인한다. 같은 작업 안에서는 바뀐 owner와 직접 의존성을 다시 읽고, cross-system 충돌·공용 schema·새 권한·사용자 전수감사 요청이 있을 때 범위를 넓힌다.
 - `EXISTING_SOLUTION_FIRST`: 프로젝트 구현·승인 자산 → 관련 Base 축적 근거 → 필요한 외부 자료. 같은 승인 범위의 유효한 benchmark는 `REUSED_EVIDENCE`로 재사용한다. benchmark **확인**은 매 작업, 신규 인터넷 **재조사**는 판단에 필요한 근거가 부족하거나 바뀐 경우다.
 - Base intake와 플러그인이 같은 요구 정리·승인·계획·검토를 중복 실행하지 않게 현재 owner와 승인 참조를 한 번 연결한다. 스킬 존재만으로 전체 본문·모든 reference를 읽지 않는다. 선택한 지침은 빠짐없이 읽되 관련 없는 지침은 선택하지 않는다.
 - 현재 계획·검증 진입점으로 충분하면 새 Skill·프레임워크·대시보드·추적표를 만들지 않는다. 플러그인 설치 수를 실제 호출량·비용과 동일시하지 않는다.
+- 필요한 module/Skill 생성은 허용한다. 기존 owner 흡수·조건부 module·독립 Skill을 비교하고, 독립 trigger·입출력·권한·검증 경계와 실제 consumer가 있는 최소안을 택한다. 생성/통합 후 연결·조건부 로드·반례를 확인하며 Skill 수 자체를 목표로 삼지 않는다.
 - `IMPACT_BOUNDED_REVALIDATION`: 중간 변경은 영향 범위 테스트, 통합 경계에서는 관련 회귀검사, 병합 전에는 repository 필수 검사. 필수 CI·보안·저장 호환성·runtime Acceptance를 비용 명목으로 생략하지 않는다.
 - 같은 승인 후보 계보의 전체 적대 검토는 정확히 2회다. 기획·구현·인계·병합 때마다 초기화하지 않는다. 2회 뒤 결함별 수정·표적 검증만 계속하고 미해결 blocker를 PASS로 바꾸지 않는다. 상세: `docs/operations/FULL_ADVERSARIAL_REVIEW_LOOP_POLICY.md`.
 - `CANON_SYNC_AFTER_VALIDATION`: 구현 상태·결정·다음 작업은 같은 작업에서 갱신한다. 전체 PDF는 사용자 검토·의미 있는 마일스톤·최종 인도에 생성한다. 중간 코드 수정마다 재생성하지 않고 기존 PDF의 source SHA와 stale 상태를 정직하게 유지한다.
