@@ -186,7 +186,7 @@ class ConsolidatedSkillReferenceTests(unittest.TestCase):
         ):
             self.assertTrue((ROOT / path).is_file(), path)
 
-        self.assertIn("작업 분해가 필요하지 않은 작은 기능을 포함해 `references/work-decomposition-and-sequencing.md`", intake)
+        self.assertIn("작업 분해가 필요하지 않은 작은 기능을 포함해 [work-decomposition-and-sequencing.md](references/work-decomposition-and-sequencing.md)", intake)
         self.assertIn("## 2.2 기능별 코드·계약 모듈화", decomposition)
         self.assertIn("## 기능별 코드·계약 경계", sequence_plan)
         for source in (intake, operating, design):

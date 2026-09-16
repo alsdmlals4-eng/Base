@@ -96,7 +96,7 @@ class FeatureCodeContractRoutingTests(unittest.TestCase):
         plan = TEMPLATE.read_text(encoding="utf-8")
         self.assertIn("작은 단일 파일·단일 단계라도 L1 intake 대상", skill)
         self.assertIn(
-            "작업 분해가 필요하지 않은 작은 기능을 포함해 `references/work-decomposition-and-sequencing.md`",
+            "작업 분해가 필요하지 않은 작은 기능을 포함해 [work-decomposition-and-sequencing.md](references/work-decomposition-and-sequencing.md)",
             skill,
         )
         for field in (

@@ -54,6 +54,13 @@ class HandoffResumabilityContractTests(unittest.TestCase):
         self.assertIn('대체본', METHOD)
         self.assertIn('역참조', METHOD)
 
+    def test_grill_me_branch_approval_does_not_wait_for_main_to_continue(self):
+        text = (ROOT / 'skills/managing-project-intake-and-work-contract/references/grill-me-protocol.md').read_text(encoding='utf-8')
+        self.assertNotIn('이전 승인 건이 `SYNCED` 상태인가?', text)
+        self.assertNotIn('승인 문서가 `main`에 반영되고 Commit SHA가 기록됐다.', text)
+        self.assertIn('APPROVED_PENDING_MERGE', text)
+        self.assertIn('PLANNING_FIRST_GRILL_ME_BATCH_POLICY.md', text)
+
 
 if __name__ == "__main__":
     unittest.main()

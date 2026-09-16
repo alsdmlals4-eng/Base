@@ -5,10 +5,10 @@ import json
 import re
 from pathlib import Path
 
-if __package__:
-    from .skill_context import read_skill_contract
-else:
+if __name__ == '__main__' and not __package__:
     from skill_context import read_skill_contract
+else:
+    from tools.skill_context import read_skill_contract
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "skills/SKILL_REGISTRY.json"

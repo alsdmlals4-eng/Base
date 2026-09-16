@@ -51,13 +51,13 @@ Registry의 승인된 작은 작업 비사용 조건은 이미 승인·정의된
 `PRE_BUILD_BEFORE_AFTER_EXPECTED_EFFECT_REPORT`와 `USER_APPROVAL_BEFORE_BUILD`의 사용자-facing 형태는 아래 승인안이다. 구현 후에는 필요한 정본 동기화·검토·exact-head CI·정상 병합·readback을 닫고 `NOT_RUN`을 PASS로 바꾸지 않는다.
 <!-- contract-module: references/preflight-and-evidence.md -->
 
-`CONTINUATION_INTENT_ALIASES`는 `[연속작업] 진행해`뿐 아니라 이미 승인된 동일 계약에 대한 `진행해`, `계속해`, `남은 작업 진행` 같은 명확한 계속 실행 의도를 인식한다. 유효한 approval reference가 있을 때만 `APPROVED_CONTRACT_CONTINUATION`으로 `references/continuous-work-execution.md`를 적용해 남은 범위에 `CONTINUOUS_WORK_ACTIVE`를 결합한다. 이는 `PLAN / BUILD / REVIEW`를 대체하거나 새 범위를 승인하지 않으며, 사용자 전용 결정·미검증 차단·고위험 외부 행위의 확인 Gate를 제거하지 않는다. blocker가 생기면 즉시 전역 종료하지 않고 `recover → local defer → independent ready work → global stop last` 순서로 처리한다.
+`CONTINUATION_INTENT_ALIASES`는 `[연속작업] 진행해`뿐 아니라 이미 승인된 동일 계약에 대한 `진행해`, `계속해`, `남은 작업 진행` 같은 명확한 계속 실행 의도를 인식한다. 유효한 approval reference가 있을 때만 `APPROVED_CONTRACT_CONTINUATION`으로 [continuous-work-execution.md](references/continuous-work-execution.md)를 적용해 남은 범위에 `CONTINUOUS_WORK_ACTIVE`를 결합한다. 이는 `PLAN / BUILD / REVIEW`를 대체하거나 새 범위를 승인하지 않으며, 사용자 전용 결정·미검증 차단·고위험 외부 행위의 확인 Gate를 제거하지 않는다. blocker가 생기면 즉시 전역 종료하지 않고 `recover → local defer → independent ready work → global stop last` 순서로 처리한다.
 
 명시적인 user-directed 계속 작업에서 `same-goal`의 `in-progress PR`이 이미 있으면 `USER_DIRECTED_PARALLEL_PR`로 라우팅한다. 기존 PR은 read-only overlap evidence로만 확인하고 **do not modify/rebase/update** 하며, **current completed main**에서 **separate branch/PR**을 만든다. ordinary same-workstream coordination에서 허용된 경우 `synchronizing-local-and-github-state`의 concurrent preflight와 `BASE_COPY_INTEGRATION_STANDING_AUTHORIZATION_2026_08_16`을 사용할 수 있다.
 
 그러나 `STRONGER_WORK_CONTRACT_OVERRIDES_COPY_INTEGRATION`이 항상 먼저 적용된다. 현재 작업의 더 구체적인 승인 계약이 다른 open/draft/ready PR 또는 다른 workstream을 `read-only / no absorption`으로 지정하면 standing copy-integration보다 우선한다. 그 PR의 material delta를 own 작업으로 가져오려면 **explicit absorption authorization**이 별도로 있어야 하며, 다른 workstream에는 `EXPLICIT_USER_ABSORPTION_AUTHORIZATION: REQUIRED_FOR_EXCEPTION`을 충족해야 한다. 없으면 overlap 탐지·경로 회피·main의 이미 병합된 결과 재평가만 수행하고 selective copy·재구현·흡수·close·supersede 처리를 하지 않는다.
 
-흡수가 명시적으로 허용된 ordinary coordination에서만 `PROVISIONAL_INTEGRATION`을 사용한다. owner PR branches는 read-only로 보존하고 필요한 material delta만 selective copy·재구현한 뒤 semantic reconciliation과 exact-head 검증을 수행한다. `absorbed_owner_deltas`와 `residual_owner_deltas`로 coverage를 증명한다. `scheduled/periodic` repository-writing automation도 unrelated open PR 존재 자체를 전역 blocker로 사용하지 않고 실제 path/semantic overlap만 국소 조정한다. 상세 경계는 `references/continuous-work-execution.md`와 `synchronizing-local-and-github-state`를 따른다.
+흡수가 명시적으로 허용된 ordinary coordination에서만 `PROVISIONAL_INTEGRATION`을 사용한다. owner PR branches는 read-only로 보존하고 필요한 material delta만 selective copy·재구현한 뒤 semantic reconciliation과 exact-head 검증을 수행한다. `absorbed_owner_deltas`와 `residual_owner_deltas`로 coverage를 증명한다. `scheduled/periodic` repository-writing automation도 unrelated open PR 존재 자체를 전역 blocker로 사용하지 않고 실제 path/semantic overlap만 국소 조정한다. 상세 경계는 [continuous-work-execution.md](references/continuous-work-execution.md)와 `synchronizing-local-and-github-state`를 따른다.
 
 공개 영상의 source 복구, 새 AI/MCP/addon/CLI/framework/Skill/Mode 평가가 필요하면 [외부 source·도구 라우팅](references/external-source-and-tool-routing.md)을 읽는다. 외부 용어 발견은 설치·비용·권한·신규 제작의 승인이 아니다.
 <!-- contract-module: references/external-source-and-tool-routing.md -->
@@ -79,16 +79,16 @@ Registry의 승인된 작은 작업 비사용 조건은 이미 승인·정의된
 
 legacy Google Sheets 해석·이관이 필요한 경우에만 `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`와 compatibility 계약을 참고한다. 이는 신규 입력이나 active workspace 권위를 만들지 않는다. 기존 consumer가 사용하는 legacy literal `project_google_sheet`는 `google_sheet_compatibility_source`의 호환 alias일 뿐이며 신규 Sheet·active sync·정본 권위를 뜻하지 않는다.
 
-연속작업 활성화·자동 승인·blocker recovery·종료 경계: `references/continuous-work-execution.md`
+연속작업 활성화·자동 승인·blocker recovery·종료 경계: [continuous-work-execution.md](references/continuous-work-execution.md)
 
-예기치 않은 실행 중단의 Retry/Resume·Watchdog 신호·중복 실행 방지: `references/task-recovery-protocol.md`
+예기치 않은 실행 중단의 Retry/Resume·Watchdog 신호·중복 실행 방지: [task-recovery-protocol.md](references/task-recovery-protocol.md)
 
 ## Skill Modes
 
 - `route`: 요청 의도·현재 단계·위험을 파악하고 Work Mode, 작업 수준, 변경 유형, 주 책임 분야와 최소 Skill 집합을 자동 판정한다. `[연속작업] 진행해`, `진행해`, `계속해`, `남은 작업 진행` 같은 계속 실행 의도와 기존 approval reference를 함께 감지한다.
-- `first-prompt`: 핵심 방향 문장을 지시문 가장 앞에 배치하고 Task·Context·Source·Constraints·Output·Validation을 순서화한 뒤 전체 계약과 충돌하지 않는지 검사한다. 상세 절차는 `references/first-prompt-direction-anchoring.md`를 사용한다.
+- `first-prompt`: 핵심 방향 문장을 지시문 가장 앞에 배치하고 Task·Context·Source·Constraints·Output·Validation을 순서화한 뒤 전체 계약과 충돌하지 않는지 검사한다. 상세 절차는 [first-prompt-direction-anchoring.md](references/first-prompt-direction-anchoring.md)를 사용한다.
 - `contract`: 확정된 요구를 범위·제외·보호·완료·검증이 있는 실행 계약으로 변환하고, opt-in이 있으면 현재 승인 범위에 `continuous_work_state`를 결합한다.
-- `clarify`: 저장소에서 확인할 사실을 먼저 조사하고 사용자만 결정할 수 있는 모호성을 닫는다. 모든 L1 이상 지시문은 실행 전 `Grill Me alignment gate`를 거치며, 프로젝트 방향을 바꾸는 핵심 결정은 `references/grill-me-protocol.md`를 사용한다.
+- `clarify`: 저장소에서 확인할 사실을 먼저 조사하고 사용자만 결정할 수 있는 모호성을 닫는다. 모든 L1 이상 지시문은 실행 전 `Grill Me alignment gate`를 거치며, 프로젝트 방향을 바꾸는 핵심 결정은 [grill-me-protocol.md](references/grill-me-protocol.md)를 사용한다.
 - `decompose-and-sequence`: 승인된 계약을 검증 가능한 결과 단위로 나누고 의존성·병렬화·게이트·롤백 순서를 정한다.
 - `execution-report`: 실제 실행한 Work Mode·Skill·Skill Mode, 선택 이유, 수행 내용, 결과·증거·미검증을 보고한다.
 
@@ -174,12 +174,12 @@ L1+ root receipt를 작성·검증할 때 [입출력·실행 순서 계약](refe
 9. 현재 Issue·Plan·책임 원본과 실제 파일
 10. `SKILL_REGISTRY.json`
 11. 신규 MCP·addon·CLI·framework·Skill·Mode이면 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`와 Godot 평가 Skill
-12. L1 이상 지시문 작성 시 `references/first-prompt-direction-anchoring.md`
-13. 필요한 경우 `references/question-and-source-model.md`
-14. 종료 판정이 필요한 경우 `references/ambiguity-and-closure.md`
-15. Grill Me 정합성 확인과 핵심 결정 인터뷰가 필요한 경우 `references/grill-me-protocol.md`
-16. `CONTINUATION_INTENT_ALIASES`와 유효한 승인 계약이 함께 있으면 `references/continuous-work-execution.md`
-17. 새 기능 또는 기능 계약·공개 경계를 만들거나 의미 있게 바꾸는 경우에는 작업 분해가 필요하지 않은 작은 기능을 포함해 `references/work-decomposition-and-sequencing.md`; 그 밖에는 작업 분해·순서화가 필요할 때만 읽는다.
+12. L1 이상 지시문 작성 시 [first-prompt-direction-anchoring.md](references/first-prompt-direction-anchoring.md)
+13. 필요한 경우 [question-and-source-model.md](references/question-and-source-model.md)
+14. 종료 판정이 필요한 경우 [ambiguity-and-closure.md](references/ambiguity-and-closure.md)
+15. Grill Me 정합성 확인과 핵심 결정 인터뷰가 필요한 경우 [grill-me-protocol.md](references/grill-me-protocol.md)
+16. `CONTINUATION_INTENT_ALIASES`와 유효한 승인 계약이 함께 있으면 [continuous-work-execution.md](references/continuous-work-execution.md)
+17. 새 기능 또는 기능 계약·공개 경계를 만들거나 의미 있게 바꾸는 경우에는 작업 분해가 필요하지 않은 작은 기능을 포함해 [work-decomposition-and-sequencing.md](references/work-decomposition-and-sequencing.md); 그 밖에는 작업 분해·순서화가 필요할 때만 읽는다.
 
 ## Workflow
 
@@ -260,7 +260,7 @@ current project authority + actual implementation/assets/tests
 
 ### 3.1 Build the first prompt
 
-모든 L1 이상 지시문 작성은 `references/first-prompt-direction-anchoring.md`를 사용한다.
+모든 L1 이상 지시문 작성은 [first-prompt-direction-anchoring.md](references/first-prompt-direction-anchoring.md)를 사용한다.
 
 ```text
 DIRECTION_ANCHOR
@@ -325,7 +325,7 @@ agreement_or_disagreement_reason:
 
 ### 5.5 Activate bounded continuous work for an approved contract
 
-`[연속작업] 진행해`, `진행해`, `계속해`, `남은 작업 진행` 같은 `CONTINUATION_INTENT_ALIASES`가 있고 현재 계약이 `CONFIRMED` 또는 `REUSED_APPROVAL`이면 `APPROVED_CONTRACT_CONTINUATION`으로 `references/continuous-work-execution.md`를 적용해 `CONTINUOUS_WORK_ACTIVE`로 전환한다.
+`[연속작업] 진행해`, `진행해`, `계속해`, `남은 작업 진행` 같은 `CONTINUATION_INTENT_ALIASES`가 있고 현재 계약이 `CONFIRMED` 또는 `REUSED_APPROVAL`이면 `APPROVED_CONTRACT_CONTINUATION`으로 [continuous-work-execution.md](references/continuous-work-execution.md)를 적용해 `CONTINUOUS_WORK_ACTIVE`로 전환한다.
 
 ```text
 현재 승인된 작업 계약
@@ -412,10 +412,10 @@ CONTINUOUS_WORK_INACTIVE
 
 - `routing-project-work-by-discipline` → `route`
 - `conducting-deep-requirement-interviews` → `clarify`
-- `grill-me`, `grillme`, `Grill Me` → `clarify` + `references/grill-me-protocol.md`
+- `grill-me`, `grillme`, `Grill Me` → `clarify` + [grill-me-protocol.md](references/grill-me-protocol.md)
 - `transforming-requests-into-prompts` → `first-prompt` + `contract` + `clarify`
 - `[좋은 프롬프트]`, `좋은 프롬프트`, `퍼스트 프롬프트`, `first prompt` → `first-prompt` + `contract` + `clarify`
-- `[연속작업] 진행해`, `진행해`, `계속해`, `남은 작업 진행` → 유효한 현재 승인 계약 + `references/continuous-work-execution.md`
+- `[연속작업] 진행해`, `진행해`, `계속해`, `남은 작업 진행` → 유효한 현재 승인 계약 + [continuous-work-execution.md](references/continuous-work-execution.md)
 
 Templates:
 
@@ -430,7 +430,7 @@ L1 이상 Prompt 계약에서 강한 지시를 추가하기 전에 `HARD_CONSTRA
 
 입력·출력·불변조건·실패조건·검증을 예시보다 먼저 정의하는 Interface-first 계약을 사용한다. 예시는 정상·실패·경계·회귀 Fixture 또는 Golden Set으로 보존한다.
 
-Direction anchor와 first-prompt 순서화는 `references/first-prompt-direction-anchoring.md`를 따른다. Context 큐레이션은 현재 `decision_question`을 고정한 뒤 권위·freshness·representation·deduplication·known conflicts·반대 근거·`progressive_load_trigger`·`refresh_trigger`를 기록한다. 상세 Method: `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`.
+Direction anchor와 first-prompt 순서화는 [first-prompt-direction-anchoring.md](references/first-prompt-direction-anchoring.md)를 따른다. Context 큐레이션은 현재 `decision_question`을 고정한 뒤 권위·freshness·representation·deduplication·known conflicts·반대 근거·`progressive_load_trigger`·`refresh_trigger`를 기록한다. 상세 Method: `docs/knowledge/game-development/AI_INSTRUCTION_AND_CONTEXT_DESIGN_METHOD.md`.
 
 ## BCP-008 L2+ 명세 추적성
 

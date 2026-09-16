@@ -9,6 +9,7 @@
 - **Cleanup boundary:** Remove superseded instructions in place; retain compatibility stubs and frozen evidence unless replacement, incoming references, approval and recovery are verified. No whole-file deletion or fleet adoption is claimed in this task.
 - **Evidence:** `docs/superpowers/plans/2026-09-16-approval-brief-context-routing.md`, `tests/test_skill_context.py`, `tests/test_handoff_resumability_contract.py` and current-task PR. Real project resume, application-wide automatic selection, machine-enforced preapproval and token billing are not proven by these tests. Independent application/review results remain separately recorded.
 - **Recheck trigger:** Missing required reference, overeager context loading, stale Blueprint/Active Context, unconfigured external sync gate, or a new Skill proposed without an independent trigger/input/output/validation and real consumer.
+- **Round 1 correction:** Real first-prompt/continuation/decomposition/interview references were backtick-only and rejected by the bounded loader. Convert visible routes to Markdown links, keeping fail-closed selection. Separate `APPROVED_PENDING_MERGE` branch readback from actual main `SYNCED`, retaining batch checkpoints. An isolated subprocess caught the coverage checker's dynamic-import failure hidden by full-suite import order; verify CLI and independent import paths. Three findings reproduced before correction; receipts belong to PR #881.
 
 ## 2026-09-16 — Reuse the approved contract across unified Work stages
 

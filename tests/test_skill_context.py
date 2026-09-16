@@ -1,5 +1,7 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
+import subprocess
+import sys
 import unittest
 from unittest.mock import patch
 
@@ -72,6 +74,20 @@ class SkillContextTests(unittest.TestCase):
         pack = load_skill_context(source, ['references/preflight-and-evidence.md'])
         self.assertEqual({source.resolve(), (source.parent / 'references/preflight-and-evidence.md').resolve()}, set(pack))
         self.assertIn('PRE_BUILD', '\n'.join(pack.values()))
+
+    def test_real_intake_execution_references_are_selectable_without_eager_loading(self):
+        source = Path(__file__).resolve().parents[1] / 'skills/managing-project-intake-and-work-contract/SKILL.md'
+        for name in ('first-prompt-direction-anchoring', 'continuous-work-execution', 'work-decomposition-and-sequencing', 'grill-me-protocol'):
+            with self.subTest(reference=name):
+                selected = f'references/{name}.md'
+                pack = load_skill_context(source, [selected])
+                self.assertEqual({source.resolve(), (source.parent / selected).resolve()}, set(pack))
+
+    def test_production_coverage_suite_imports_in_an_isolated_process(self):
+        result = subprocess.run([sys.executable, '-m', 'unittest', 'tests.test_skill_system_coverage', '-q'],
+                                cwd=Path(__file__).resolve().parents[1], capture_output=True,
+                                text=True, encoding='utf-8', errors='replace', timeout=60)
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
 
 
 if __name__ == '__main__':
