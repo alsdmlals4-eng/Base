@@ -342,7 +342,11 @@ proposal_status: NOT_PROPOSED | DRAFT | SUBMITTED | DEFERRED
 - 공용 판단 Guide: `docs/knowledge/game-development/GAME_BACKEND_CLOUD_RUN_AND_ONLINE_SERVICES_GUIDE.md`
 - 프로젝트 계약: `templates/project-operations/GAME_BACKEND_SERVICE_CONTRACT.md`
 - 서버 필요성·적합성·권위·상태·idempotency·replay·IAM·비밀·WebSocket·비용·장애·rollback을 연결한다.
-- 실제 deployment·runtime·load·failure·cost·security가 없으면 해당 상태를 `NOT_RUN`으로 유지한다.
+- 보호된 온라인 동작이 있으면 `AUTHENTICATION_IS_NOT_AUTHORIZATION`, `DENY_BY_DEFAULT`, trusted server-side object/action/property/context authorization을 기록한다. 오프라인 프로젝트는 `ONLINE_IDENTITY_NOT_REQUIRED`로 남기고 서버를 만들지 않는다.
+- `AUTHORIZATION_NEGATIVE_MATRIX_REQUIRED`는 최소 두 actor와 서로 다른 같은 유형 resource로 cross-user read/update/delete, cross-tenant 또는 relationship, ordinary-user→administrator function, method/path/operation substitution, sensitive-property injection, bulk/list/export, expired/revoked session을 실행한다.
+- 각 거절은 승인된 비공개 오류 class와 `DENIAL_HAS_NO_PROTECTED_SIDE_EFFECT`를 만족해야 한다. authoritative state delta·external effect·private data disclosure·privilege elevation이 없고 redacted audit event가 readback되는지 확인한다.
+- session idle/absolute timeout, logout·revocation·privilege-change invalidation, WebSocket revalidation·per-message authorization·browser Origin allowlist, browser/native session-secret storage, 전체 보호 세션 TLS, privileged credential과 self-managed password controls를 연결한다.
+- `STATIC_CONTRACT_IS_NOT_RUNTIME_SECURITY_EVIDENCE`: exact revision·configured policy·executable negative tests·state/side-effect/audit readback이 없으면 runtime security와 실제 deployment·load·failure·cost·production readiness를 `NOT_RUN`으로 유지한다.
 
 ## 20. Entitlement·integrity·DRM 특화 증빙
 
