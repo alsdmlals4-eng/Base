@@ -116,6 +116,8 @@ Google Sheets는 `GOOGLE_SHEETS_MIGRATION_ONLY_UNTIL_REMOVAL` source다. Figma·
 | Active Skill generated view | `docs/generated/BASE_ACTIVE_SKILLS.md` | Registry-derived human discovery surface |
 | Legacy Skill alias | `skills/LEGACY_SKILL_ALIASES.md` | historical Skill ID → current Skill/mode |
 | Skill learning | `skills/SKILL_LEARNING_LOG.md` | failure·decision·verification·promotion history |
+| 반복 작업·Skill Creator·스킬/모듈 재사용 | `skills/evolving-project-discipline-skills/SKILL.md` | 기존 제작 도구 재사용, 설정/모듈/스킬 경계와 프로젝트 채택 |
+| 게임 레터링·로고·타이틀 | `skills/designing-game-lettering/SKILL.md` | 글자 형태·시각 보정·권리·소비처; 일반 UI text는 UI owner |
 | Skill behavior eval | `skills/SKILL_BEHAVIOR_EVALS.json` | prompt routing expected/forbidden behavior |
 | Local validation | `tools/run_local_validation.py` | full regression and exact trusted-main validation entrypoint |
 | Base proposal registry | `[수정제안서]/PROPOSAL_REGISTRY.json` | project-derived shared change proposal lifecycle |

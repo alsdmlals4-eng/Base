@@ -45,6 +45,8 @@ skill_implementation_evidence_index:
 
 세부 인벤토리·통합 전 보존표·Health Review는 `references/consolidation-and-health-review.md`를 필요할 때만 읽는다.
 
+반복 작업·재작업을 재사용 절차/자동화로 바꾸거나 `skill-creator`를 연결할 때는 [반복 작업과 Skill Creator](references/repeated-work-and-skill-creator.md)를 읽는다. 기존 모듈·설정·reference로 충분한지 먼저 판단한다. 이 Skill은 Base 책임·등록·승격을 소유하고, 실제 제공되는 `skill-creator`는 패키지 작성·검증에 재사용한다. 시스템 스킬을 복제 설치하지 않는다.
+
 ## Workflow
 
 1. Registry·실제 패키지·entrypoint·Learning Log를 대조한다.

@@ -76,7 +76,8 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 | 일반 변경·외부 AI 결과 검증 | `reviewing-and-validating-project-changes` | `skills/reviewing-and-validating-project-changes/SKILL.md` |
 | 정본·경로·ID·Schema 전파 누락 | `auditing-canonical-reference-freshness` | `skills/auditing-canonical-reference-freshness/SKILL.md` |
 | 기획 책임 원본 작성·구조 변경·발행 | `managing-design-documents` | `skills/managing-design-documents/SKILL.md` |
-| 프로젝트 Skill 생성·통합·학습 | `evolving-project-discipline-skills` | `skills/evolving-project-discipline-skills/SKILL.md` |
+| 반복 작업 모듈화·Skill Creator 활용·프로젝트 Skill 생성·통합·학습 | `evolving-project-discipline-skills` | `skills/evolving-project-discipline-skills/SKILL.md` |
+| 게임 로고·타이틀·챕터/보스 이름 레터링 | `designing-game-lettering` (일반 UI 글자는 기존 UI owner) | `skills/designing-game-lettering/SKILL.md` |
 | 현재 상태·다음 작업·Handoff | `maintaining-project-context-and-handoff` | `skills/maintaining-project-context-and-handoff/SKILL.md` |
 | Work 통합 구현·조건부 인계 | 현재 Work의 승인된 능력으로 제품 구현; 실제 경계에서만 `maintaining-project-context-and-handoff` | `docs/GPT_CODEX_WORKFLOW_POLICY.md`; 인계가 필요할 때만 `templates/project-operations/CODEX_IMPLEMENTATION_WORK_INSTRUCTION.md` |
 | 프로젝트 교훈의 Base 제안·승인 구현 | `managing-base-change-proposals` | `skills/managing-base-change-proposals/SKILL.md` |
