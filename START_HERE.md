@@ -29,7 +29,9 @@
 
 기본 프로젝트 작업 계약은 `DESKTOP_GPT_REPOSITORY_FIRST_WORKSPACE`다. repository가 `REPOSITORY_PRIMARY_CANON`, 사람용 상세 기획서 PDF가 `HUMAN_GDD_PDF_DERIVED_VIEW`, AI용 상세 기획·구현 명세 Markdown이 repository canon이다. `NO_NEW_NOTION_WRITE_BY_DEFAULT`이며 기존 `NOTION_DEFAULT_PROJECT_WORKSPACE`는 `NOTION_DEFAULT_PROJECT_WORKSPACE_RETIRED`다. legacy Notion과 Google Sheets는 **현재 작업이 실제 migration scope일 때만** `templates/project-operations/NOTION_TO_REPOSITORY_MIGRATION_CHECKLIST.md`, `docs/PROJECT_GDD_GOOGLE_SHEETS_POLICY.md`, `docs/DEPRECATED_PROJECT_SURFACE_RETIREMENT_POLICY.md`를 읽어 고유 자료를 repository 또는 명시적 non-canon 보관소로 이관한다. 통합 Vertical Slice 실행이 승인된 경우에만 `templates/prompts/VERTICAL_SLICE_INTEGRATED_EXECUTION_PROMPT_v9.md`를 사용한다. 이 Prompt와 과거 v6~v8 자료는 최신 사용자 결정·프로젝트 정본보다 높은 권한을 갖지 않는다.
 
-신규 MCP·addon·CLI·framework·Skill·Mode 또는 유사 실행 계층 제작 요청은 설계보다 먼저 `evaluating-godot-assets-and-plugins-before-creation: inventory-current-environment / disposition`으로 라우팅하고 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`의 Existing Solution First Gate를 통과한다. 이미 사용 중인 도구·연결된 MCP·enabled addon·dependency·관련 PR·외부 대안을 확인하지 않은 `BUILD_NEW`는 시작하지 않는다.
+`GODOT_CONSUMER_SCOPED_TOOL_ROUTE`: 신규 MCP·addon·CLI·framework·Skill·Mode 또는 유사 실행 계층 제작 요청에 실제 Godot 엔진·저작·씬·리소스 consumer가 있는 경우에만 `evaluating-godot-assets-and-plugins-before-creation: inventory-current-environment / disposition`으로 라우팅하고 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`의 Existing Solution First Gate를 통과한다. 이미 사용 중인 도구·연결된 MCP·enabled addon·dependency·관련 PR·외부 대안을 확인하지 않은 `BUILD_NEW`는 시작하지 않는다.
+
+Godot consumer가 없는 Base 문서·Skill·일반 CLI는 intake와 해당 분야 owner의 Existing Solution First로 평가한다. 비-Godot 작업에 engine adapter·Godot 설치·HiGodot 검사를 요구하지 않는다.
 
 ## Base 저장소 자체를 콜드 스타트할 때
 
@@ -59,7 +61,7 @@ Base는 프로젝트 운영 키트의 공용 원본이다. 프로젝트 전용 �
 |---|---|---|
 | 신규 프로젝트 운영체계 설치 | `managing-game-project-operating-system: install / verify` | `skills/managing-game-project-operating-system/SKILL.md` |
 | 기존 프로젝트 구조 감사·마이그레이션 | `managing-game-project-operating-system: audit / reconcile-legacy / migrate / verify` | `skills/managing-game-project-operating-system/SKILL.md` |
-| 신규 MCP·addon·CLI·framework·Skill·Mode 제작 전 현재 환경·기존 대안 조사 | `evaluating-godot-assets-and-plugins-before-creation: inventory-current-environment / disposition` | `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` + `skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md` |
+| Godot consumer가 있는 신규 MCP·addon·CLI·framework·Skill·Mode의 현재 환경·기존 대안 조사 | `evaluating-godot-assets-and-plugins-before-creation: inventory-current-environment / disposition` | `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` + `skills/evaluating-godot-assets-and-plugins-before-creation/SKILL.md` |
 | HiGodot 도입·exact pin·canary·업데이트·rollback | `managing-game-project-operating-system: install / verify` + Godot 평가 Skill | `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` + `templates/project-operations/HIGODOT_ADOPTION_RECORD.json` |
 | Godot 구현·GDScript 테스트·실행 QA | HiGodot persistent authoring → adopted GUT deterministic test → adopted Hera `LIVE_QA_AND_OBSERVABILITY_ONLY` | `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md` + `templates/project-operations/.agents/skills/godot-live-editor-operations/SKILL.md` |
 | 구형 자료 분류·보존·Archive·승인 삭제 | `governing-legacy-retention-and-archives` | `skills/governing-legacy-retention-and-archives/SKILL.md` |

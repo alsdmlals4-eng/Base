@@ -1,0 +1,199 @@
+{
+  "work_level": "L2",
+  "approval_ref": "current-user-explicit-approval:2026-09-16:Base-only-correction-validation-normal-PR-merge",
+  "approved_scope": "Refactor current Base AGENTS and high-use intake/routing references for conditional loading; correct independently observed contradictions; absorb research principles, not new model training/runtime; supply global Codex instructions as a copyable template only. Preserve projects, deployed plugins, unrelated PRs, protected artifacts and main rules.",
+  "outcome_status": "PREMERGE_LOCAL_VERIFIED_EXACT_HEAD_CI_PENDING",
+  "benchmark_preflight_receipt": {
+    "state": "PASS",
+    "entries": [
+      {
+        "source_and_evidence": "Base@e3f960b2a1dd108af5c1a6fcdbc675415ee1ccdf: AGENTS.md, intake, GPT_CODEX_WORKFLOW_POLICY, skill_context.py, existing compiled-contract consumers",
+        "observed_pattern": "Selective loading and approval reuse already exist, but intake unconditionally lists unrelated Godot/workspace routes and root essential-source global stop conflicts with local recovery.",
+        "project_fit_and_difference": "Preserve existing owners and safety; narrow conditional load paths and reconcile scope, not install a second orchestration stack.",
+        "disposition": "ADAPT"
+      },
+      {
+        "source_and_evidence": "https://learn.chatgpt.com/docs/agent-configuration/agents-md (read 2026-09-16)",
+        "observed_pattern": "Global preferences and project guidance are layered; concise rules and applicable local instructions matter.",
+        "project_fit_and_difference": "Rewrite Base entrypoint and provide a manual-use global template; no global settings mutation or automatic project adoption.",
+        "disposition": "ADAPT"
+      },
+      {
+        "source_and_evidence": "https://arxiv.org/abs/2110.14168 ; https://react-lm.github.io/ ; https://deepmind.google/blog/competitive-programming-with-alphacode/ ; https://arxiv.org/abs/2501.12948 (read 2026-09-16)",
+        "observed_pattern": "Verifier selection, reasoning/action observation, training, and candidate filtering are distinct mechanisms.",
+        "project_fit_and_difference": "Use observed tool results and bounded candidate verification; repository learning is not weight training, and published benchmark quality/cost does not transfer automatically.",
+        "disposition": "ADAPT"
+      }
+    ]
+  },
+  "alternatives": [
+    {
+      "option": "Keep all bodies and only add warnings",
+      "disposition": "REJECT",
+      "reason": "Lowest migration cost, but repeated unconditional text continues to be read."
+    },
+    {
+      "option": "Rewrite root and extract conditional intake detail through existing selective loader",
+      "disposition": "ADOPT",
+      "reason": "Observable loading reduction while retaining contract/evidence/safety with current tests and no new runtime."
+    },
+    {
+      "option": "Replace the rule/skill stack or uninstall plugins",
+      "disposition": "REJECT",
+      "reason": "Broader compatibility and permission effects; no measured need and outside approved installed-plugin scope."
+    }
+  ],
+  "context_configuration_hygiene": {
+    "scope": "Base root, high-use intake, current workflow/review references, their direct tests and template",
+    "inventory": [
+      {
+        "path": "AGENTS.md",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "current main",
+        "references_and_consumers": "Codex root; root contract tests",
+        "removal_proposed": false
+      },
+      {
+        "path": "skills/managing-project-intake-and-work-contract/SKILL.md",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "Base intake",
+        "references_and_consumers": "Registry, load_skill_context, read_skill_contract, intake consumers",
+        "removal_proposed": false
+      },
+      {
+        "path": "docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT.json",
+        "classification": "COMPATIBILITY",
+        "owner_or_provenance": "V3 historical contract",
+        "references_and_consumers": "Not removed; compatible readers may exist",
+        "removal_proposed": false
+      }
+    ]
+  },
+  "project_work_kanban": {
+    "goal_or_slice_issue_ref": "current-user-request:2026-09-16:lean-Base-instructions",
+    "source_main_sha": "e3f960b2a1dd108af5c1a6fcdbc675415ee1ccdf",
+    "work_item_refs": [
+      "LEAN-RULES"
+    ],
+    "active_work_item_ref": "LEAN-RULES",
+    "next_action": "Publish current-task PR; verify exact-head CI/ruleset/threads, normal squash merge and main readback.",
+    "work_items": [
+      {
+        "work_item_id": "LEAN-RULES",
+        "title": "Lean conflict-free Base instruction entrypoints",
+        "status": "VERIFY_REVIEW",
+        "canon_owner": "AGENTS.md",
+        "actual_consumers": [
+          "skills/managing-project-intake-and-work-contract/SKILL.md",
+          "tools/skill_context.py",
+          "tests/test_skill_context.py"
+        ],
+        "depends_on": [],
+        "acceptance_criteria": [
+          "SELECT",
+          "CONTRACT",
+          "DELIVER"
+        ],
+        "required_evidence": [
+          "E0_CONTRACT",
+          "E2_TEST"
+        ],
+        "checklist": [
+          {
+            "id": "SELECT",
+            "text": "Normal and conditional selection discover required references without eager loading",
+            "status": "PASS",
+            "evidence": [
+              "tests/test_skill_context.py selective-loader tests",
+              "Independent five-scenario retrieval plus L2+ traceability readback"
+            ]
+          },
+          {
+            "id": "CONTRACT",
+            "text": "Preserve safety, reconcile instructions and pass regressions/exactly two full reviews",
+            "status": "PASS",
+            "evidence": [
+              "Two independent full reviews and targeted closure of all three findings",
+              "Full local suite 2705 tests; 55 environment skips disclosed; Base validation exit 0"
+            ]
+          },
+          {
+            "id": "DELIVER",
+            "text": "Normal current-task merge and exact-main readback; custom instructions delivered",
+            "status": "NOT_RUN"
+          }
+        ],
+        "verification": [
+          {
+            "level": "E0_CONTRACT",
+            "status": "PASS",
+            "evidence": [
+              "Independent full reviews 2/2, all findings closed; selective-loader and source-blocker CLI checks"
+            ]
+          },
+          {
+            "level": "E2_TEST",
+            "status": "PASS",
+            "evidence": [
+              "Final full local run: 2705 tests, 55 skipped, no failures/errors; exact-head CI still pending"
+            ]
+          }
+        ],
+        "next_action": "Publish current-task PR; verify exact-head CI/ruleset/threads, normal squash merge and main readback."
+      }
+    ]
+  },
+  "open_pr_overlap": "Open PRs 844/837 touch intake; 847/803/802 root; 866 evaluation envelope. All remain read-only; no material delta absorbed. Correct independently observed current-main behavior only.",
+  "evidence_ceiling": "Repository static/retrieval evidence only; no measured token billing, productivity, game runtime, human approval, project adoption or plugin deployment.",
+  "review_checkpoint": {
+    "full_scope_rounds_completed": 2,
+    "round_1": {
+      "reviewer": "independent lean_authority_review_1",
+      "findings": [
+        "Source blocker needs active-task preflight rebinding with blocked source preserved",
+        "Single-discipline L2+ multi-file traceability must select moved reference"
+      ],
+      "resolution": "Both corrected; independent targeted readback closed; CLI and selective-load proof preserved"
+    },
+    "round_2": {
+      "reviewer": "independent lean_authority_review_2",
+      "findings": [
+        "START_HERE and Godot evaluator still routed non-Godot tools unconditionally"
+      ],
+      "resolution": "Direct bootstrap/evaluator conditions corrected; independent targeted 14 tests PASS; baseline mutation probe detected former route"
+    },
+    "full_review_findings_remaining": 0,
+    "no_automatic_third_full_review": true,
+    "ceiling": "Independent AI review is not a GitHub approval submission, user play test, or exact-head CI result"
+  },
+  "checkpoint_policy": "Committed receipt is an implementation/premerge checkpoint; exact-head final review/CI and postmerge evidence belong to task PR.",
+  "validation_checkpoint": {
+    "initial_full_run": "2701 tests / 11 failures + 1 error / 55 skips: stale raw-body contract consumers and moved string boundaries; NOT PASS",
+    "correction": "Consumers now follow existing read_skill_contract modules; no assertions or permission checks removed. Targeted 96 tests PASS; additional entry/CLI/loading set 53 PASS.",
+    "final_full_run": "PASS: run_local_validation.py with trusted e3f960b2a1dd108af5c1a6fcdbc675415ee1ccdf; 2705 tests / 2650 passed / 55 skipped; CI topology, generated artifacts, integrity, skill coverage, diff check and fsck passed. Final commit CI/merge/readback recorded in PR.",
+    "environment": "PYTHONUTF8=1 required for Unicode CLI child processes on this Windows environment; default cp949 failure reproduced in unchanged baseline",
+    "auxiliary_skill_creator_quick_validate": "NOT_RUN_DEPENDENCY_MISSING: PyYAML absent in both available Python runtimes; Base native skill/coverage validation PASS; no new dependency installed",
+    "runtime_human_project_adoption": "NOT_APPLICABLE_TO_BASE_POLICY_CHANGE"
+  },
+  "learning": {
+    "reuse_mode": "Refine existing intake/loader/validators; no new Skill or runtime",
+    "lesson": "Offline contract-union success does not prove runtime reference discoverability; verify selection triggers and untouched bootstrap consumers.",
+    "removed_context": "Eager intake decision/workspace detail moved to conditional references; obsolete unconditional stop/three-alternative/Godot routing instructions corrected.",
+    "preserved": "V3 compatibility/history, projects, installed plugins, global settings, original checkout and unrelated PRs/worktrees",
+    "measured_effect": "Baseline intake entrypoint normalized UTF-8 39579 bytes; final length measured at PR. Context bytes are not billing/productivity measurement.",
+    "entrypoint_bytes": [
+      {
+        "path": "AGENTS.md",
+        "normalized_utf8_bytes_before": 22164,
+        "after": 21010,
+        "reduction_pct": 5.2
+      },
+      {
+        "path": "skills/managing-project-intake-and-work-contract/SKILL.md",
+        "normalized_utf8_bytes_before": 39579,
+        "after": 18818,
+        "reduction_pct": 52.5
+      }
+    ]
+  }
+}

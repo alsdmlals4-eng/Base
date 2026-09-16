@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from tools.skill_context import read_skill_contract
+
 import json
 import unittest
 from pathlib import Path
@@ -124,7 +126,7 @@ class BaseV94AiOperationsContractTests(unittest.TestCase):
 
     def test_first_prompt_intake_and_alignment_contract(self) -> None:
         reference = FIRST_PROMPT_REFERENCE.read_text(encoding="utf-8")
-        skill = INTAKE_SKILL.read_text(encoding="utf-8")
+        skill = read_skill_contract(INTAKE_SKILL)
         method = INSTRUCTION_METHOD.read_text(encoding="utf-8")
         agents = AGENTS.read_text(encoding="utf-8")
         aliases = LEGACY_ALIASES.read_text(encoding="utf-8")

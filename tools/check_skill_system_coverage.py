@@ -164,7 +164,7 @@ def _validate_bcp008(errors: list[str]) -> None:
         if not path.is_file():
             errors.append(f"Missing BCP-008 owner route: {relative}")
             continue
-        text = path.read_text(encoding="utf-8")
+        text = read_skill_contract(path) if path.name == "SKILL.md" else path.read_text(encoding="utf-8")
         for term in required_terms:
             if term not in text:
                 errors.append(f"Missing BCP-008 owner route token {term!r}: {relative}")

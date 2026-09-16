@@ -199,6 +199,17 @@ expected exact HEAD SHA 고정
 
 현재 task만 막혔고 승인 범위 안의 다른 독립 작업은 가능한 상태다. 이 경우 현재 task만 `deferred_tasks`로 이동한다. 다른 `ready_tasks`가 있으면 전체 루프를 즉시 종료하지 않는다.
 
+#### Active-task preflight 재결합
+
+`SOURCE_DEPENDENCY_SCOPED_BLOCKER`는 검증기 우회가 아니다. root `benchmark_preflight_receipt.state=BLOCKED_UNVERIFIED`인 receipt는 start/resume을 계속 거부한다.
+
+1. 원 source 식별자·실패 근거·재개 조건을 같은 board의 의존 task `blocker / resume_condition`과 evidence에 보존하고 `BLOCKED_UNVERIFIED`로 둔다. 기존 실패 기록을 지우거나 그 source를 PASS로 바꾸지 않는다.
+2. 별도 승인·근거가 있는 독립 task인지 `depends_on`과 실제 consumer를 확인한다. 사용자가 전체 중단을 지시했으면 전환하지 않는다.
+3. 다음 task를 `active_work_item_ref`로 선택하고 현재 active 작업에 해당하는 **별도 확인된 근거만** root preflight의 `source_and_evidence / observed_pattern / project_fit_and_difference`에 재결합한다. 어떤 active task용 근거인지 함께 적는다. 독립 근거가 없으면 root blocked 상태를 유지한다.
+4. 신뢰한 source SHA로 기존 `--phase resume`을 다시 실행한다. 차단 task에 의존하면 거부되어야 하며, 그 task가 남은 동안 전체 `--phase closeout`도 실패해야 한다.
+
+기존 schema·검증기를 사용하며 별도 상태 정본이나 blocked-receipt bypass를 추가하지 않는다. 회귀 소비처: `tests/test_project_work_tracking.py`.
+
 ### `USER_DECISION_REQUIRED`
 
 다음처럼 승인된 **결과 자체**를 바꾸는 선택에만 사용한다.

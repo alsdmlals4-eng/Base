@@ -22,4 +22,7 @@ exact video/source identity readback
 
 - `NO_AUTO_FEATURE_FROM_VOCABULARY`: 영상·기사에서 유용한 용어를 발견했다는 사실만으로 runtime, dependency, paid service, provider, framework, fine-tuning, vector database 또는 MCP server를 추가하지 않는다. 실제 consumer와 Existing Solution First 비교를 거친 최소 `BUILD_NEW`만 별도 승인·검증한다.
 
-새 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층 요청은 일반 설계보다 먼저 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`와 `evaluating-godot-assets-and-plugins-before-creation: inventory-current-environment / disposition`으로 라우팅한다. `existing_solution_disposition`과 비교 증거·사용자 승인 상태 없이 `BUILD_NEW` 계약을 만들지 않는다.
+`GODOT_CONSUMER_SCOPED_TOOL_ROUTE`: 새 MCP·addon·CLI·framework·Skill·Mode·공용 실행 계층 요청은 실제 Godot 엔진·저작·씬·리소스 consumer가 있는 경우에만 `docs/knowledge/godot/HIGODOT_SINGLE_AUTHORITY_AND_SAFE_OPERATION.md`와 `evaluating-godot-assets-and-plugins-before-creation: inventory-current-environment / disposition`으로 라우팅한다. `existing_solution_disposition`과 비교 증거·사용자 승인 상태 없이 `BUILD_NEW` 계약을 만들지 않는다.
+
+
+일반 Base 문서·Skill·비-Godot 도구에는 해당 분야 owner와 Existing Solution First를 사용한다. Godot 전용 검사·설치·권한을 무관한 요청에 추가하지 않는다.

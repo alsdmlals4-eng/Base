@@ -7,7 +7,7 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 우선순위는 **사용자의 최신 지시** → 대상 프로젝트 `AGENTS.md`와 프로젝트 고유 보안·엔진·데이터 규칙 → Active Context와 승인된 작업 계약 → 등록된 책임 원본과 실제 코드·데이터·자산·테스트 → 채택된 Base 계약 → Base 원격 원본 → 외부 사례·과거 대화·초안·추정 순이다.
 
 - 정상 동작 중인 사용자 변경을 임의로 되돌리지 않는다. 외부 벤치마크·리뷰·커뮤니티·모델 해석은 요구사항이나 실제 구현의 정본이 아니다.
-- **사용자가 작업 근거로 직접 제공한 외부 링크**를 현재 도구로 읽지 못하고 그 내용이 필수라면 **즉시 `BLOCKED_UNVERIFIED`로 작업을 중단**하고 **원문 텍스트·파일·스크린샷**처럼 현재 세션에서 검증 가능한 형태를 요청한다. **링크 제목·검색 스니펫·과거 기억·주변 자료·추정**으로 대체하지 않으며, 사용자가 해제하기 전에는 **다른 독립 작업으로 임의 전환하지 않는다**.
+- **`SOURCE_DEPENDENCY_SCOPED_BLOCKER`**: 사용자가 제공한 필수 외부 source를 허용된 읽기 경로로도 확인하지 못하면 그 근거에 의존하는 작업은 `BLOCKED_UNVERIFIED`로 보류하고 원문 텍스트·파일·스크린샷을 요청한다. 제목·검색 스니펫·과거 기억·주변 자료·추정은 원문 증거가 아니다. 별도 근거와 승인이 있는 독립 작업은 계속할 수 있다. 사용자가 전체 중단을 지시했거나 모든 필수 작업이 해당 source에 의존하면 전체 중단한다.
 - 저장소·실행 증거 없이 설치·마이그레이션·검수 완료를 주장하지 않는다. **실행하지 않은** 조사·Skill·테스트·렌더·빌드·접근성·성능 검증은 완료 증거가 아니다.
 - 모든 파일과 전체 `skills/`를 기본 로드하지 않는다. `skills/SKILL_REGISTRY.json` trigger로 필요한 최소 Skill을 고르고 현행 목록은 `docs/generated/BASE_ACTIVE_SKILLS.md`에서 확인한다.
 - 보호 경로, 권한, 생성물, released lock, frozen artifact는 전용 계약 없이 수정하지 않는다.
@@ -33,14 +33,14 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 ## 2. L1+ 작업 진입·판단 불변식
 
 - L1 이상은 **최신 main**, 현재 결정, 분야 정본, 같은 Goal의 열린·최근 병합 PR, **실제 구현**을 먼저 비교한다. 저장소 사실로 판단 가능한 오류·누락을 사용자에게 되묻지 않는다.
-- **`REUSE_FIRST_PREFLIGHT_REQUIRED`**: 신규 또는 의미 있게 개정하는 시스템·메커닉·데이터/콘텐츠 구조·UI/UX·시각/Asset·도구/자동화·workflow·Skill/Eval·QA/Test는 새 설계·제작 전에 `managing-project-intake-and-work-contract`가 `docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json`을 통해 현재 프로젝트 구현·승인 Asset/Reference/Benchmark → 기존 Base reuse 및 축적 knowledge/case/reference → 직접 관련된 다른 프로젝트의 검증 evidence → 결정에 필요한 외부 benchmark 순으로 조사한다. 적용 대상에서 `NOT_RUN`이면 신규 제작/`BUILD_NEW` readiness를 주장하지 않는다. 동일 승인 범위의 유효한 기존 evidence는 `REUSED_EVIDENCE`, 순수 기계적 변경은 이유가 있는 `NOT_APPLICABLE`을 허용한다. 모든 프로젝트를 전수 검색하지 않고 Registry/profile/current bottleneck이 가리키는 대상만 targeted 확인하며 프로젝트 정본과 고유 정체성이 Base reference보다 우선한다.
-- **`MANDATORY_BENCHMARK_REVERSE_ENGINEERING_PREFLIGHT` / `BENCHMARK_PREFLIGHT_BEFORE_WORK_REQUIRED`**: Base와 프로젝트의 모든 L1+ 작업은 변경·작성·구현 전에 current repository의 동일 책임·실제 consumer를 첫 비교 기준으로 삼고, 관련 승인 Reference/Benchmark·Base 사례·필요한 공식/원출처·직접 관련 유사 구현을 실제로 읽어 효율·품질·위험의 차이를 기록한다. 결과는 `source_and_evidence`, `observed_pattern`, `project_fit_and_difference`, `ADOPT / ADAPT / REJECT / NOT_APPLICABLE`와 `benchmark_preflight_state`로 남긴다. 고정 메뉴·화면·장르·구도·구현을 미리 정하지 않으며, 프로젝트의 현재 세계관·플랫폼·소비처·계약에서 필요한 행동과 flow를 찾는다. L0 순수 기계 수정만 이유가 있는 `NOT_APPLICABLE`을 허용한다. 읽을 수 없는 필수 source는 추측으로 보완하지 않고 `BLOCKED_UNVERIFIED`다.
-- **`LEGACY_CONTEXT_CONFIGURATION_HYGIENE_REQUIRED`**: 모든 L1+ 작업은 시작 fresh-read에서 이번 범위의 오래된 context·설정·라우터·중복 문서를 `ACTIVE_OWNER | COMPATIBILITY | ARCHIVE | OBSOLETE_CANDIDATE | UNKNOWN_UNVERIFIED`로 분류한다. `NO_BROAD_SWEEP_WITHOUT_SCOPE`: 토큰 절감 명목의 전 저장소 무차별 재작성은 하지 않는다. `NO_DELETION_BY_AGE_OR_NAME`: 오래됐거나 이름이 legacy라는 사실만으로 삭제하지 않는다. `OBSOLETE_CANDIDATE`의 실제 제거는 `REFERENCES_AND_CONSUMERS_ZERO_BEFORE_REMOVAL`와 `GIT_RECOVERABLE_REMOVAL_AND_READBACK`을 만족하고, 연결 문서·생성물·테스트를 재검증할 때만 수행한다. 아직 consumer·provenance를 읽지 못했으면 `UNKNOWN_UNVERIFIED`로 보존한다.
-- **`REUSE_LEARNING_HANDOFF_REQUIRED`**: 위 preflight가 적용된 작업의 종료에서는 기존 reuse handoff의 `selected_modules / reuse_mode / project_paths_changed / verification_evidence / evidence_ceiling / rollback / project_only_lessons / base_promotion_candidates`를 평가한다. 새 재사용 교훈이 없으면 `NO_NEW_REUSE_LEARNING`으로 닫고 억지 Registry churn을 만들지 않으며, 후보 발견만으로 Base 승격·프로젝트 adoption·runtime proof를 주장하지 않는다.
+- **`REUSE_FIRST_PREFLIGHT_REQUIRED`**: 새 설계·제작은 현재 구현·승인 자산 → 관련 Base reuse/knowledge → 직접 관련 프로젝트 evidence → 필요한 외부 원출처 순으로 비교한다. `docs/knowledge/game-development/reuse/adoption/PROJECT_WORK_REUSE_HANDOFF.json`과 intake가 owner다. 전체 프로젝트 전수조사는 하지 않는다. 유효한 동일 범위 근거는 `REUSED_EVIDENCE`, 순수 기계 변경은 사유 있는 `NOT_APPLICABLE`; 미실행 상태에서 `BUILD_NEW` 준비 완료를 주장하지 않는다. 프로젝트 정본과 정체성이 우선한다.
+- **`MANDATORY_BENCHMARK_REVERSE_ENGINEERING_PREFLIGHT` / `BENCHMARK_PREFLIGHT_BEFORE_WORK_REQUIRED`**: 모든 L1+ 작업 전 실제 consumer와 관련 기존 해법을 읽고 `source_and_evidence`, `observed_pattern`, `project_fit_and_difference`, `ADOPT / ADAPT / REJECT / NOT_APPLICABLE`, `benchmark_preflight_state`를 기존 receipt에 남긴다. 재사용 가능한 근거에 매번 새 웹조사를 강제하지 않는다. 메뉴·화면·장르를 고정하지 않고 프로젝트별 필요한 행동을 찾는다. L0 순수 기계 수정만 사유 있는 `NOT_APPLICABLE`; 필수 source 미확인은 의존 작업의 `BLOCKED_UNVERIFIED`다.
+- **`LEGACY_CONTEXT_CONFIGURATION_HYGIENE_REQUIRED`**: L1+ 시작 시 영향 경로만 `ACTIVE_OWNER | COMPATIBILITY | ARCHIVE | OBSOLETE_CANDIDATE | UNKNOWN_UNVERIFIED`로 확인한다. `NO_BROAD_SWEEP_WITHOUT_SCOPE`, `NO_DELETION_BY_AGE_OR_NAME`을 지킨다. 삭제는 `REFERENCES_AND_CONSUMERS_ZERO_BEFORE_REMOVAL` + `GIT_RECOVERABLE_REMOVAL_AND_READBACK` 충족 뒤 연결·생성물·테스트를 재검증한다. 출처·consumer 미확인은 보존한다.
+- **`REUSE_LEARNING_HANDOFF_REQUIRED`**: 적용된 reuse handoff의 변경 경로·검증·evidence ceiling·rollback·전용 교훈·공용화 후보를 마감 시 평가한다. 새 교훈이 없으면 `NO_NEW_REUSE_LEARNING`; 불필요한 Registry 변경이나 후보의 자동 Base 승격은 하지 않는다.
 - `DEEP_WORK_PREANSWER_GATE` / `REQUIRED_EVIDENCE_BEFORE_FINAL`: 요청된 조사·벤치마킹·검토·구현·검증은 실제 수행 뒤 substantive final을 낸다. `NOT_RUN_MANDATORY_GATE_BLOCKS_COMPLETION`: 필수 항목이 `NOT_RUN`이면 완료가 아니라 `BLOCKED_UNVERIFIED`다.
 - `INTERMEDIATE_REPORT_SUPPRESSION_IS_NOT_WORK_REDUCTION`: 중간보고 축소는 작업 축소가 아니다. `REASONING_EFFORT_IS_NOT_WORK_EVIDENCE`: 추론 강도는 evidence가 아니다. `REQUIRED_TOOL_EXECUTION_IS_NOT_OPTIONAL_EXECUTOR_HANDOFF`: 현재 세션 도구로 필요한 필수 증거를 얻을 수 있으면 실제 Tool 실행을 optional executor handoff로 대체하거나 생략하지 않는다.
 - `GPT_PRIMARY_IS_DECISION_OWNERSHIP_NOT_TEXT_ONLY`: GPT primary는 판단·조정 책임을 뜻하며 텍스트 작성만으로 조사·실행·검증 책임을 충족한 것으로 보지 않는다.
-- **`CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY`**: 중요한 결정은 먼저 **현행 조사**를 하고, **최소 3개**의 materially distinct 유효 대안을 같은 기준으로 비교한다. `MINIMUM_VIABLE_ALTERNATIVES: 3`. 허수 대안으로 수를 채우지 않는다.
+- **`CURRENT_STATE_BENCHMARK_ALTERNATIVE_TRADE_STUDY`**: 중요한 새 설계·정책 결정은 현행 조사와 최소 3개 실질 대안을 비교한다(`MINIMUM_VIABLE_ALTERNATIVES: 3`). 이미 승인된 해법·단일 정답의 결함 수정에 허수 대안이나 재승인 절차를 만들지 않는다. 적용 경계는 장기 작업 owner의 `IMPORTANT_DECISION_ALTERNATIVES_ONLY`다.
 - **`BETTER_ALTERNATIVE_SEARCH`**: 새 증거·실패·finding이 나오면 **더 나은 방안**을 다시 찾는다. 핵심 방향·플레이어 경험·비용·범위를 바꾸면 `USER_DECISION_REQUIRED`다.
 - **`LONG_TERM_PLAN_FIT_REQUIRED`**: 권장안은 사용자/플레이어 가치, 정확성, 위험, 수명주기 비용, 유지보수성, 재사용·모듈성, 증거 강도, **되돌리기 난이도**, **장기계획** 적합성과 재검토 조건까지 비교한다.
 - **`BEST_LONG_TERM_EFFICIENT_METHOD` / `QUALITY_OVER_RESPONSE_SPEED` / `BENCHMARK_PRACTICE_COMPARISON`**: 가장 빠른 답보다 장기 총비용과 결과 품질을 우선하고 공식/1차 자료·현업 성공/실패 사례를 `ADOPT / ADAPT / REJECT`로 판정한다.
@@ -116,6 +116,6 @@ Base는 여러 게임 프로젝트가 공유하는 **[학습형] [공용]** Skil
 
 ### 사용자 학습형 완료보고
 
-L1 이상 완료보고는 역할 → 핵심 규칙/작동 시점 → 사용한 Work Mode·Skill·Skill Mode → 입력/판단/출력/검증 연결 → 작업 전/후/기대효과/trade-off → 장기 적합성 → 실제 검증 증거 → 미검증·남은 위험·롤백 순으로 사람에게 이해되게 설명한다. 파일명·테스트명만 나열하지 않는다.
+완료보고는 한국어로 결과 → 바꾼 이유와 작동 방식 → 직접 시험하는 방법 → 검증·남은 위험 순으로 짧게 쓴다. 사용한 Work Mode·Skill·Skill Mode는 실제 수행한 것만 밝힌다. 사용자 학습에 필요한 전/후·trade-off는 설명하되 작은 작업마다 장문의 고정 목차를 반복하지 않는다.
 
 완료보고에는 승인 범위·제외·보호 대상, 변경/유지/통합/보류/제거 후보, 테스트·런타임·렌더·정확한 HEAD 증거, `REMAINING_WORK_COMPLETION_GATE`, `IMPLEMENTATION_CORRECTION_RESCAN`, `POST_COMPLETION_ADVERSARIAL_REVIEW_REQUIRED`, `CLEAN_REVIEW_EXIT`, 남은 작업과 Base 환류 여부를 포함한다.
