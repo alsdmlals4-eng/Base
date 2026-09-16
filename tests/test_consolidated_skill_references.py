@@ -461,12 +461,15 @@ class ClaimIntentConsolidatedReferenceTests(unittest.TestCase):
 
         registry = json.loads((ROOT / "skills/SKILL_REGISTRY.json").read_text(encoding="utf-8"))
         active = [entry for entry in registry["skills"] if entry["status"] == "ACTIVE"]
-        self.assertEqual(30, len(active))
         owners = [entry for entry in active if entry["skill_id"] == "reviewing-and-validating-project-changes"]
         self.assertEqual(1, len(owners))
         owner = owners[0]
         for trigger in ("completion-claim", "claim-evidence", "intent-conformance", "hallucination-audit"):
             self.assertIn(trigger, owner["trigger_tags"])
+            self.assertEqual(
+                ["reviewing-and-validating-project-changes"],
+                [entry["skill_id"] for entry in active if trigger in entry["trigger_tags"]],
+            )
 
         skill = (ROOT / owner["path"]).read_text(encoding="utf-8")
         reference_path = ROOT / "skills/reviewing-and-validating-project-changes/references/claim-and-intent-verification.md"
