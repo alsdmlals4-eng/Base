@@ -6,6 +6,58 @@
   "source_issue": "https://github.com/alsdmlals4-eng/Base/issues/74",
   "cases": [
     {
+      "case_id": "SBE-960",
+      "case_type": "positive",
+      "prompt": "승인된 가상 게임의 이름은 밤의 항로야. 차갑지만 절제된 해양 미스터리이고 256px 메뉴 로고와 큰 배너에 쓸 거야. 효과보다 글자 형태부터 비교하고 제작 준비를 해줘.",
+      "expected_work_mode": "PLAN",
+      "expected_primary_skill": "designing-game-lettering",
+      "expected_supporting_skills": [],
+      "expected_skill_modes": ["lettering-brief"],
+      "forbidden_skills": ["building-project-visual-dashboards"],
+      "required_evidence": ["문구", "사용처", "형태", "실제 크기", "권리"],
+      "expected_user_decision_state": "DEFERRED",
+      "rationale": "글자 조형이 주 책임이다. 프로젝트 source와 실제 배너 규격은 확인해야 하며 가상 brief를 제품 승인으로 만들지 않는다."
+    },
+    {
+      "case_id": "SBE-961",
+      "case_type": "negative",
+      "prompt": "설정 화면 버튼의 글자를 키우고 일본어에서도 잘리지 않게 해줘. 제목이나 로고를 새로 만드는 작업은 아니야.",
+      "expected_work_mode": "PLAN",
+      "expected_primary_skill": "auditing-and-refining-ui-art",
+      "expected_supporting_skills": [],
+      "expected_skill_modes": ["design-system-contract", "godot-ui-contract"],
+      "forbidden_skills": ["designing-game-lettering"],
+      "required_evidence": ["폰트", "현지화", "잘림", "실제 화면"],
+      "expected_user_decision_state": "DEFERRED",
+      "rationale": "일반 UI 텍스트는 편집 가능한 글자/레이아웃으로 처리하며 장식 이미지로 바꾸지 않는다."
+    },
+    {
+      "case_id": "SBE-962",
+      "case_type": "cross-skill",
+      "prompt": "여러 게임에서 아이콘 크기와 알파 검사를 자꾸 다시 짜고 있어. 다음부터 재사용하도록 구조를 정해줘. 이 환경에는 스킬 제작 기능이 이미 있어.",
+      "expected_work_mode": "PLAN",
+      "expected_primary_skill": "evolving-project-discipline-skills",
+      "expected_supporting_skills": [],
+      "expected_skill_modes": ["inventory", "decide-boundary"],
+      "forbidden_skills": ["designing-game-lettering"],
+      "required_evidence": ["기존 검사", "모듈", "설정", "기존 제작 도구", "검증"],
+      "expected_user_decision_state": "DEFERRED",
+      "rationale": "기계적 처리는 재사용 검사기로, 프로젝트별 규격은 설정으로 분리한다. 이미 있는 제작 도구를 복제 설치하지 않는다."
+    },
+    {
+      "case_id": "SBE-963",
+      "case_type": "boundary",
+      "prompt": "내 게임 타이틀 후보를 검수해줘. 무료 OFL 폰트로 글자 윤곽을 변형했는데 강의에서는 상업 로고로 못 쓴대. 이미지 후보만 있고 편집 원본과 게임 적용은 아직이야.",
+      "expected_work_mode": "REVIEW",
+      "expected_primary_skill": "designing-game-lettering",
+      "expected_supporting_skills": [],
+      "expected_skill_modes": ["lettering-review"],
+      "forbidden_skills": ["building-project-visual-dashboards"],
+      "required_evidence": ["실제 폰트", "공식", "폰트 소프트웨어", "결과물", "후보", "미검증"],
+      "expected_user_decision_state": "DEFERRED",
+      "rationale": "라이선스 오해를 원출처로 대조하고 이미지 후보를 편집 원본/상표 검토/runtime 완료로 승격하지 않는다."
+    },
+    {
       "case_id": "SBE-015",
       "case_type": "cross-skill",
       "prompt": "승인된 통합 설계와 마스터 구현 계획을 단계별 Godot 패키지로 나누고, Codex 읽기 전용 계획 검토와 지정 브랜치 구현 인계 조건을 정리해줘.",

@@ -17,6 +17,8 @@ description: Use when designing art or UI image prompts, generating planning or 
 
 ## Conditional visual modules
 
+게임 로고·타이틀·챕터/보스 이름의 레터링 조형이 주 작업이면 `skills/designing-game-lettering/SKILL.md`로 라우팅한다. 일반 UI 글자 크기·현지화는 기존 UI owner다. 레터링도 실제 이미지 제작·승인에는 이 Skill의 기존 gate를 소비하며, repository 정본과 Notion 예외 여부는 `docs/operations/PROJECT_WORKSPACE_AUTHORITY_CONTRACT_V4.json`이 우선한다.
+
 현재 task에 필요한 reference만 추가로 읽는다. 매 이미지 작업에서 전부 로드하지 않는다.
 
 - Screen-first subordinate preflight: `docs/knowledge/game-development/GAME_SCREEN_SURFACE_INVENTORY_AND_VISUAL_ASSET_MATRIX.md`

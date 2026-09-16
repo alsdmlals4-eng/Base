@@ -1,10 +1,10 @@
 # Base Skill Implementation Evidence
 
 > Generated from `skills/SKILL_REGISTRY.json`, behavior evaluation sets, and `skills/SKILL_IMPLEMENTATION_EVIDENCE.json`. Do not edit this derivative.
-> Active Skill count: `30`
+> Active Skill count: `31`
 > External model behavior run: `NOT_RUN`
-> Behavior evaluation case count: `47`
-> Behavior evaluation source SHA-256: `40e7b2e08d7d2f93b287ce14025dc782eae5705dea7d0bd08ec07194f3a4fff9`
+> Behavior evaluation case count: `51`
+> Behavior evaluation source SHA-256: `a317d4dafcfc0a2795a1c82d10c3158354f43b74c03ae6296c87ce744850754c`
 > Source digest newline policy: `CRLF normalized to LF`.
 
 `EXECUTABLE_EVIDENCE` means a repository test, tool, workflow, or package script is linked. It does not mean that evidence passed on the current commit. `CONTRACT_EVIDENCE` means only a contract or documentation consumer is linked. Actual model, runtime, device, and human validation remain separate.
@@ -13,7 +13,7 @@
 | --- | --- | --- | --- | --- | --- |
 | `managing-project-intake-and-work-contract` | planning-project-operations | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_neutral_adversarial_feature_lifecycle.py`<br>TEST: `tests/test_consolidated_skill_references.py`<br>TEST: `tests/test_feature_spec_traceability_contract.py`<br>TEST: `tests/test_skill_system_coverage.py` |
 | `managing-game-project-operating-system` | project-operations-integrated-review | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_game_project_operating_system_structure.py` |
-| `evolving-project-discipline-skills` | project-operations | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_skill_system_coverage.py`<br>TEST: `tests/test_skill_behavior_evidence_hardening.py` |
+| `evolving-project-discipline-skills` | project-operations | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_skill_system_coverage.py`<br>TEST: `tests/test_skill_behavior_evidence_hardening.py`<br>TEST: `tests/test_skill_creator_lettering.py` |
 | `managing-design-documents` | planning-documentation-publication | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_consolidated_skill_references.py`<br>TEST: `tests/test_feature_spec_traceability_contract.py` |
 | `maintaining-project-context-and-handoff` | project-operations | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_gpt_codex_workflow_contract.py` |
 | `analyzing-and-refining-game-concepts` | game-design-strategy | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_game_design_difficulty_workflow.py` |
@@ -41,3 +41,4 @@
 | `evaluating-godot-assets-and-plugins-before-creation` | godot-asset-and-plugin-evaluation | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_base_shared_skill_routes.py` |
 | `optimizing-ai-model-and-prompt-costs` | ai-model-cost-operations | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_skill_system_coverage.py` |
 | `developing-and-revising-serial-fiction` | serial-fiction-writing-and-revision | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_serial_fiction_discipline.py`<br>CONTRACT: `skills/developing-and-revising-serial-fiction/SKILL.md`<br>CONTRACT: `docs/knowledge/serial-fiction/SERIAL_FICTION_WRITING_AND_REVISION_GUIDE.md` |
+| `designing-game-lettering` | art-lettering | PASS | PASS | EXECUTABLE_EVIDENCE | TEST: `tests/test_skill_creator_lettering.py`<br>CONTRACT: `skills/designing-game-lettering/references/lettering-production.md` |

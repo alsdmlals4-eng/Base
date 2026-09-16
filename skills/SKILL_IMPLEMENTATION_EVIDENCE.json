@@ -18,10 +18,18 @@
       ]
     },
     {
+      "skill_id": "designing-game-lettering",
+      "evidence": [
+        {"kind": "TEST", "path": "tests/test_skill_creator_lettering.py"},
+        {"kind": "CONTRACT", "path": "skills/designing-game-lettering/references/lettering-production.md"}
+      ]
+    },
+    {
       "skill_id": "evolving-project-discipline-skills",
       "evidence": [
         {"kind": "TEST", "path": "tests/test_skill_system_coverage.py"},
-        {"kind": "TEST", "path": "tests/test_skill_behavior_evidence_hardening.py"}
+        {"kind": "TEST", "path": "tests/test_skill_behavior_evidence_hardening.py"},
+        {"kind": "TEST", "path": "tests/test_skill_creator_lettering.py"}
       ]
     },
     {

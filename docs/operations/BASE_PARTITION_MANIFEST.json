@@ -652,11 +652,13 @@
       "context_pack": "docs/operations/base-partitions/P05_ART_UX_UI_VISUAL_ASSETS.md",
       "owned_skill_ids": [
         "designing-art-prompts-and-technique-cards",
+        "designing-game-lettering",
         "auditing-and-refining-ui-art",
         "building-project-visual-dashboards"
       ],
       "owned_write_paths": [
         "skills/designing-art-prompts-and-technique-cards/**",
+        "skills/designing-game-lettering/**",
         "skills/auditing-and-refining-ui-art/**",
         "skills/building-project-visual-dashboards/**",
         "templates/ui/**",

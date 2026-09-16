@@ -83,6 +83,15 @@ def cases() -> list[dict]:
 
 
 class SkillBehaviorAdversarialBoundaryTests(unittest.TestCase):
+    def test_lettering_rights_boundary_does_not_claim_completed_model_run(self) -> None:
+        coverage = json.loads((ROOT / "skills/SKILL_BEHAVIOR_COVERAGE_EVALS.json").read_text(encoding="utf-8"))
+        self.assertEqual("NOT_RUN", coverage["model_run_status"])
+        case = next(case for case in coverage["cases"] if case["case_id"] == "SBE-963")
+        self.assertEqual("boundary", case["case_type"])
+        self.assertEqual("designing-game-lettering", case["expected_primary_skill"])
+        self.assertEqual(["lettering-review"], case["expected_skill_modes"])
+        self.assertNotEqual("NOT_REQUIRED", case["expected_user_decision_state"])
+
     def setUp(self) -> None:
         self.checker = load_module("check_skill_behavior_evals", CHECKER_PATH)
         self.builder = load_module("build_skill_implementation_evidence", BUILDER_PATH)
