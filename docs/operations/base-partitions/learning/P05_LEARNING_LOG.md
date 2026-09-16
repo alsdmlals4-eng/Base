@@ -4,6 +4,13 @@
 
 ## 작업별 Learning Checkpoint
 
+### 2026-09-16 · Lettering route and partition ownership
+
+- work_ref: https://github.com/alsdmlals4-eng/Base/pull/882
+- baseline_and_result: 공용 레터링 Skill을 Registry와 함께 P05 semantic owner 및 context pack에 연결한다. 전체 core regression에서 partition owner 누락을 재현하고 교정했다.
+- reusable_lesson: 새 Skill은 기본 발견뿐 아니라 유지보수 owner 지도를 갱신해야 한다. 기법·선택 근거는 `skills/SKILL_LEARNING_LOG.md`의 Creator reuse and game lettering 항목으로 연결하며 중복 원본을 만들지 않는다.
+- evidence_ceiling: 공용 연결/계약 검사. 실제 로고 제작·runtime·Human·프로젝트 채택은 NOT_RUN; 첫 프로젝트 사용 때 다시 검증한다.
+
 ### 2026-09-10 · Source-backed implementation learning maps
 
 - work_ref: `docs/operations/work-receipts/2026-09-10-implementation-learning-map.json`

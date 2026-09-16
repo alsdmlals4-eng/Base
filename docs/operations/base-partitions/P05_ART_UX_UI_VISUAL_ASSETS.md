@@ -9,7 +9,9 @@
 아트 방향·이미지 생성/편집·UX/UI·시각 자산 일관성/재사용·Notion visual flow와 폐기 시각 도구 흡수를 책임진다.
 
 ## 핵심 Skill
-`designing-art-prompts-and-technique-cards`, `auditing-and-refining-ui-art`, `building-project-visual-dashboards`.
+`designing-art-prompts-and-technique-cards`, `designing-game-lettering`, `auditing-and-refining-ui-art`, `building-project-visual-dashboards`.
+
+레터링은 로고·타이틀 글자 조형일 때만 선택하며 일반 UI 글자/현지화는 기존 UI owner다. 이미지 제작·승인 gate는 art owner를 재사용한다. repository 기본 정본과 Notion 예외는 현행 V4 계약이 우선한다.
 
 ## 중요 규칙
 `RELEASE_NEAR_VERTICAL_SLICE_FIRST`, `SYSTEM_ONLY_POC_NOT_PLAYER_EXPERIENCE_EVIDENCE`, Project Notion placement + readback, PROJECT_ASSET_APPROVED, identity-preserving edit, LEGACY_ABSORB_VERIFY_REMOVE.

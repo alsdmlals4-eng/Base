@@ -62,6 +62,13 @@ class BasePartitionContractTests(unittest.TestCase):
         self.assertEqual(self.active_skill_ids(), set(assignments))
         self.assertEqual(len(assignments), len(set(assignments)))
 
+    def test_lettering_has_one_visual_partition_owner_and_context_route(self) -> None:
+        part = next(part for part in self.load_manifest()["parts"] if part["part_id"] == "P05")
+        self.assertIn("designing-game-lettering", part["owned_skill_ids"])
+        self.assertIn("skills/designing-game-lettering/**", part["owned_write_paths"])
+        context = (ROOT / part["context_pack"]).read_text(encoding="utf-8")
+        self.assertIn("`designing-game-lettering`", context)
+
     def test_part_write_paths_are_unique_and_control_plane_is_not_part_owned(self) -> None:
         manifest = self.load_manifest()
         seen: dict[str, str] = {}
