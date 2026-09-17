@@ -69,6 +69,89 @@ class SkillContextTests(unittest.TestCase):
         with patch.object(Path, 'resolve', redirected), self.assertRaises(ValueError):
             load_skill_context(self.skill, ['references/receipt.md'])
 
+    def test_contract_validation_reads_each_source_once(self):
+        with self.skill.open('a', encoding='utf-8') as stream:
+            stream.write('<!-- contract-module: references/receipt.md -->\n')
+        original = Path.read_text
+        reads = []
+
+        def observed(path, *args, **kwargs):
+            reads.append(path.resolve())
+            return original(path, *args, **kwargs)
+
+        with patch.object(Path, 'read_text', observed):
+            read_skill_contract(self.skill)
+        self.assertEqual([self.skill.resolve(),
+                          (self.root / 'references/receipt.md').resolve()], reads)
+
+    def test_contract_without_modules_reads_entrypoint_once(self):
+        self.skill.write_text('# No contract modules\n', encoding='utf-8')
+        original = Path.read_text
+        reads = []
+
+        def observed(path, *args, **kwargs):
+            reads.append(path.resolve())
+            return original(path, *args, **kwargs)
+
+        with patch.object(Path, 'read_text', observed):
+            text = read_skill_contract(self.skill)
+        self.assertEqual('# No contract modules\n', text)
+        self.assertEqual([self.skill.resolve()], reads)
+
+    def test_selected_context_reads_only_unique_requested_files(self):
+        original = Path.read_text
+        reads = []
+
+        def observed(path, *args, **kwargs):
+            reads.append(path.resolve())
+            return original(path, *args, **kwargs)
+
+        with patch.object(Path, 'read_text', observed):
+            load_skill_context(self.skill, ['references/receipt.md'] * 2)
+        self.assertEqual([self.skill.resolve(),
+                          (self.root / 'references/receipt.md').resolve()], reads)
+
+    def test_default_context_performs_no_reference_reads(self):
+        original = Path.read_text
+        reads = []
+
+        def observed(path, *args, **kwargs):
+            reads.append(path.resolve())
+            return original(path, *args, **kwargs)
+
+        with patch.object(Path, 'read_text', observed):
+            load_skill_context(self.skill)
+        self.assertEqual([self.skill.resolve()], reads)
+
+    def test_separate_invocations_read_fresh_reference_content(self):
+        reference = self.root / 'references/receipt.md'
+        for reader in (lambda: '\n'.join(load_skill_context(
+                           self.skill, ['references/receipt.md']).values()),
+                       lambda: read_skill_contract(self.skill)):
+            reference.write_text('earlier reference', encoding='utf-8')
+            self.assertIn('earlier reference', reader())
+            reference.write_text('updated reference', encoding='utf-8')
+            result = reader()
+            self.assertIn('updated reference', result)
+            self.assertNotIn('earlier reference', result)
+
+    def test_contract_markers_and_links_use_same_entrypoint_snapshot(self):
+        original = Path.read_text
+        initial = original(self.skill, encoding='utf-8')
+
+        def changed_after_read(path, *args, **kwargs):
+            text = original(path, *args, **kwargs)
+            if path.resolve() == self.skill.resolve():
+                self.skill.write_text('# Later entrypoint without links\n', encoding='utf-8')
+            return text
+
+        with patch.object(Path, 'read_text', changed_after_read):
+            try:
+                text = read_skill_contract(self.skill)
+            except ValueError as error:
+                self.fail(f'Contract used a second entrypoint snapshot: {error}')
+        self.assertEqual(initial + '\nreceipt contract\n[deep](hidden.md)', text)
+
     def test_real_intake_entrypoint_discovers_only_selected_module(self):
         source = Path(__file__).resolve().parents[1] / 'skills/managing-project-intake-and-work-contract/SKILL.md'
         pack = load_skill_context(source, ['references/preflight-and-evidence.md'])
