@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "adoption_state": "CANDIDATE",
+  "source_roots": [
+    ".asset-vault/library",
+    "assets/source/aseprite"
+  ],
+  "candidate_output_root": ".asset-vault/library/aseprite-generated",
+  "allowed_source_extensions": [
+    ".aseprite",
+    ".ase"
+  ],
+  "allow_overwrite": false,
+  "timeout_seconds": 60,
+  "sheet_type": "rows"
+}
