@@ -130,3 +130,19 @@ Base UX/UI 변경 main 병합
 - 기존 프로젝트 Skill·문서의 고유 기능이 보존된다.
 - 제품 경로 변경 여부와 검증·미검증이 명시된다.
 - 새 작업자가 프로젝트 저장소만으로 UX/UI 작업 시작점과 검증 경로를 찾을 수 있다.
+
+## 10. 효과·비주얼·UI의 프로젝트별 연결
+
+`PROJECT_PRESENTATION_BINDING`: [경험→표현 명세 가이드](experience-to-presentation-contract.md)는 Base 공용 작성 방법이다. 프로젝트 적용 시 기존 원본에 다음 차이만 연결한다.
+
+| 기존 프로젝트 원본 | 연결할 프로젝트별 값 |
+|---|---|
+| 핵심 기획·Experience Intent | 해당 기능이 지킬 감정·판단·표현, 공개/숨김 정보와 승인 상태 |
+| 시스템·데이터 | 규칙 효과의 trigger·대상·값·지속·중첩·실패와 state_owner |
+| Art/Visual Bible·Asset Catalog | 보호할 시각 언어, 승인 자산·실제 슬롯·상태군·제작/승격 상태 |
+| UX/UI·기능 Spec | 선택한 상태·입력·피드백, 실제 해상도/언어/설정, 반복·중단과 복귀 |
+| 실제 코드·검증 owner | runtime_consumer·이벤트·구현 경로·대표 구간·기계/실행/사람 증거 |
+
+하나의 `requirement_id`로 연결하고 `source_id + path + section` 참조를 우선한다. L1은 짧은 기존 기록으로 충분하며 L2만 필요한 상세 Spec/Packet을 쓴다. 고정 전투 예시·수치·색·타이밍·새 파일명을 프로젝트 전체에 복사하지 않는다.
+
+Base main 채택 시 기존 adopted lock을 보존한 선택 동기화로 해당 절과 정확한 commit을 기록한다. 프로젝트 내부/정확한 Base commit 링크로 재연결하고 AGENTS/router → 기존 owner → 실제 consumer → 검증 위치를 readback한다. 경로가 계획뿐이면 `PLANNED`, 사람 결과는 `NOT_RUN`; 이 연결의 실제 채택 전에는 `PENDING_PROJECT_ADOPTION`이다. 템플릿·어댑터 변경이 게임 구현이나 재미 통과를 뜻하지 않는다.
