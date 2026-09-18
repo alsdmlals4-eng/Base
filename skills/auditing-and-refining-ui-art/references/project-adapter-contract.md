@@ -133,7 +133,7 @@ Base UX/UI 변경 main 병합
 
 ## 10. 효과·비주얼·UI의 프로젝트별 연결
 
-`PROJECT_PRESENTATION_BINDING`: [경험→표현 명세 가이드](experience-to-presentation-contract.md)는 Base 공용 작성 방법이다. 프로젝트 적용 시 기존 원본에 다음 차이만 연결한다.
+`PROJECT_PRESENTATION_BINDING`: [경험→표현 명세 가이드](../../../docs/knowledge/game-development/EXPERIENCE_TO_PRESENTATION_GUIDE.md)는 Base 공용 작성 방법이다. 프로젝트 적용 시 기존 원본에 다음 차이만 연결한다.
 
 | 기존 프로젝트 원본 | 연결할 프로젝트별 값 |
 |---|---|

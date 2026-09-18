@@ -4,7 +4,7 @@ import re
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-REFERENCE = Path("skills/auditing-and-refining-ui-art/references/experience-to-presentation-contract.md")
+REFERENCE = Path("docs/knowledge/game-development/EXPERIENCE_TO_PRESENTATION_GUIDE.md")
 SKILL = Path("skills/auditing-and-refining-ui-art/SKILL.md")
 CONCEPT = Path("skills/analyzing-and-refining-game-concepts/references/concept-evidence-and-gates.md")
 ADAPTER = Path("skills/auditing-and-refining-ui-art/references/project-adapter-contract.md")
@@ -62,6 +62,13 @@ class ExperienceToPresentationContractTests(unittest.TestCase):
         self.clauses("L0", "L1", "L2", "REUSED_EVIDENCE", "DOC", "MACHINE", "RUNTIME", "HUMAN",
                      "FUN_PASS", "에이전트", "PENDING_PROJECT_ADOPTION", "USER_DECISION_REQUIRED")
         self.assertIn("PROJECT_PRESENTATION_BINDING", self.text(ADAPTER))
+
+    def test_guide_stays_in_shared_knowledge_without_a_packaged_orphan(self):
+        self.assertEqual(REFERENCE.parent, Path("docs/knowledge/game-development"))
+        self.assertFalse((ROOT / "skills/auditing-and-refining-ui-art/references/experience-to-presentation-contract.md").exists())
+        for artifact in (ROOT / ADAPTER.parent).glob("*.md"):
+            self.assertIn(artifact.relative_to(ROOT / SKILL.parent).as_posix(),
+                          self.text(SKILL), "package sources require a direct Skill route")
 
     def test_existing_domain_and_fun_boundaries_survive(self):
         self.assertIn("도메인 규칙", self.text(SKILL))

@@ -4,7 +4,7 @@
 
 ## 1. 적용과 책임
 
-- 출발점은 [재미 검증 생명주기](../../analyzing-and-refining-game-concepts/references/concept-evidence-and-gates.md#fun-verification-lifecycle)의 승인된 경험 가설이다. 효과·아트·UI 중 바뀌는 부분만 사용한다. L1은 기존 Brief/Decision에 짧게, L2는 기존 전문 정본 또는 기능 Spec에 연결한다. L0 기계 수정은 이유 있는 비적용, 유효한 같은 조건의 근거는 `REUSED_EVIDENCE`다.
+- 출발점은 [재미 검증 생명주기](../../../skills/analyzing-and-refining-game-concepts/references/concept-evidence-and-gates.md#fun-verification-lifecycle)의 승인된 경험 가설이다. 효과·아트·UI 중 바뀌는 부분만 사용한다. L1은 기존 Brief/Decision에 짧게, L2는 기존 전문 정본 또는 기능 Spec에 연결한다. L0 기계 수정은 이유 있는 비적용, 유효한 같은 조건의 근거는 `REUSED_EVIDENCE`다.
 - `GAMEPLAY_EFFECT`는 피해·회복·버프·진행 변경 같은 **규칙 효과**다. 발동 조건, 대상, 값/계산식, 지속·만료, 중첩·갱신·상한, 비용·실패·면역을 기존 시스템/데이터 owner에서 정한다. 해당하지 않는 항목은 이유와 함께 생략한다.
 - `PRESENTATION_EFFECT`는 VFX·모션·소리·카메라 등 **표현 효과**다. 규칙 효과의 원인·예고·확정 결과를 전달하거나 감각·세계관·표현의 만족을 만든다. 같은 `requirement_id`로 연결하되 표시 코드가 피해·보상·저장을 재계산하지 않는다.
 - 기능 Spec의 Experience Intent, `GAME_UX_UI_SYSTEM`의 상태·피드백·Godot·검증 절, Art/Visual Bible과 Asset Catalog를 `source_id + path + section`으로 참조한다. `GAME_FEATURE_DESIGN_SPEC`에 전문 분야 내용을 다시 복제하지 않는다. 실행 결과는 `FEATURE_SPEC_TRACEABILITY_PACKET` 또는 기존 validation owner로 연결한다.
@@ -51,7 +51,7 @@
 
 ## 4. 비주얼: 정체성·구별·제작성까지 확인한다
 
-[기존 Art Guide](../../../docs/knowledge/game-development/ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md)의 Visual Requirement Gate를 재사용한다. 새 스타일·캐릭터·아이콘을 자동 확정하지 않는다.
+[기존 Art Guide](ART_DIRECTION_AND_ASSET_PLANNING_GUIDE.md)의 Visual Requirement Gate를 재사용한다. 새 스타일·캐릭터·아이콘을 자동 확정하지 않는다.
 
 | 대상 | 설계할 구분 | 실제 소비 크기에서 확인할 것 |
 |---|---|---|
@@ -84,7 +84,7 @@ modal 닫기, 대상 삭제, 목록 재정렬, 입력 장치 변경, save/load �
 
 ## 6. Godot 구현·성능·동등 경로
 
-[Godot UI 계약](godot-ui-implementation-contract.md), [모션 계약](ui-motion-and-interaction-principles.md), [폴리싱 계약](ui-polishing-method.md)의 기존 구조와 프로젝트 채택 엔진 버전을 사용한다. 아래는 배치 방향이며 새 framework를 설치하라는 지시가 아니다.
+[Godot UI 계약](../../../skills/auditing-and-refining-ui-art/references/godot-ui-implementation-contract.md), [모션 계약](../../../skills/auditing-and-refining-ui-art/references/ui-motion-and-interaction-principles.md), [폴리싱 계약](../../../skills/auditing-and-refining-ui-art/references/ui-polishing-method.md)의 기존 구조와 프로젝트 채택 엔진 버전을 사용한다. 아래는 배치 방향이며 새 framework를 설치하라는 지시가 아니다.
 
 | 책임 | 기존 Godot consumer에 연결할 내용 |
 |---|---|
@@ -139,7 +139,7 @@ AC-HUMAN: 불가 이유와 회복 후 가능한 행동을 설명하는지 관찰
 - 이해했지만 재미없거나 피로함 → 감각·빈도·리듬·선택 구조를 검토한다. 단순히 더 큰 효과를 처방하지 않는다.
 - 설정/재입력/복귀 시 깨짐 → 상태 소유·중단·이벤트·자산 수명을 고친다.
 
-결과는 기존 Decision의 유지·변경·보류·재검증으로 연결한다. [프로젝트 어댑터](project-adapter-contract.md)에 따라 기존 UX/아트/시스템 원본·실제 consumer·검증 위치를 연결하고 선택 채택한다. **Base 문서·PR만으로 프로젝트 적용 완료가 아니며 `PENDING_PROJECT_ADOPTION`**이다. adopted lock을 일괄 바꾸거나 기존 승인 이미지를 교체하지 않는다.
+결과는 기존 Decision의 유지·변경·보류·재검증으로 연결한다. [프로젝트 어댑터](../../../skills/auditing-and-refining-ui-art/references/project-adapter-contract.md)에 따라 기존 UX/아트/시스템 원본·실제 consumer·검증 위치를 연결하고 선택 채택한다. **Base 문서·PR만으로 프로젝트 적용 완료가 아니며 `PENDING_PROJECT_ADOPTION`**이다. adopted lock을 일괄 바꾸거나 기존 승인 이미지를 교체하지 않는다.
 
 ## 9. 조사 근거와 적용 한계
 

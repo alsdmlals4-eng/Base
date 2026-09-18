@@ -86,7 +86,7 @@ GDD 핵심 규칙, 레벨, 등장인물, 캐릭터 스타일, 스테이지, 세�
 
 설계의 목표·규칙은 `managing-design-documents`의 기존 owner, 실행 결과는 기존 validation evidence owner가 소유한다. 이 reference는 그 내용을 다시 소유하지 않는다. L2의 `GAME_FEATURE_DESIGN_SPEC.md` §2는 가설·계획, Packet은 승인·구현·증거 ID 연결을 맡는다.
 
-효과·비주얼·UI를 구체화할 때는 기존 UX/UI owner의 [경험→표현 명세 가이드](../../auditing-and-refining-ui-art/references/experience-to-presentation-contract.md)를 조건부로 읽는다. 규칙 효과와 표현 효과, 상태·입력·정보 공개·자산·실제 consumer·반증 예시를 같은 Requirement에 연결하며 이 절에 전문을 복제하지 않는다.
+효과·비주얼·UI를 구체화할 때는 기존 UX/UI owner의 [경험→표현 명세 가이드](../../../docs/knowledge/game-development/EXPERIENCE_TO_PRESENTATION_GUIDE.md)를 조건부로 읽는다. 규칙 효과와 표현 효과, 상태·입력·정보 공개·자산·실제 consumer·반증 예시를 같은 Requirement에 연결하며 이 절에 전문을 복제하지 않는다.
 
 ### 검증과 감독의 책임 경계
 
