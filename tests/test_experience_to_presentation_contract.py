@@ -70,6 +70,41 @@ class ExperienceToPresentationContractTests(unittest.TestCase):
             self.assertIn(artifact.relative_to(ROOT / SKILL.parent).as_posix(),
                           self.text(SKILL), "package sources require a direct Skill route")
 
+    def specialization(self):
+        text = self.text(ADAPTER)
+        heading = "## 11. 프로젝트 작업에서의 재구체화와 교정 연결"
+        self.assertIn(heading, text, "project specialization must have an explicit lifecycle")
+        return text.split(heading, 1)[1]
+
+    def test_project_specialization_covers_research_to_readback(self):
+        text = self.specialization()
+        for clause in ("PROJECT_SPECIFIC_PRESENTATION_SPECIALIZATION", "프로젝트 fresh-read",
+                       "조사·실무 비교", "프로젝트 명세", "적대적 검토", "구현·검증",
+                       "교정·연결 readback", "source_and_evidence", "ADOPT / ADAPT / REJECT",
+                       "requirement_id", "state_owner", "runtime_consumer"):
+            self.assertIn(clause, text)
+
+    def test_project_specialization_rejects_link_only_completion(self):
+        text = self.specialization()
+        for clause in ("REFERENCE_ONLY_NOT_SPECIFIED", "SPECIFIED", "TBD", "EXAMPLE_ONLY",
+                       "HYPOTHESIS", "PLANNED", "NOT_RUN", "승인",
+                       "필수 미정값", "초기값", "조정 기준"):
+            self.assertIn(clause, text)
+
+    def test_project_specialization_requires_bidirectional_evidence(self):
+        text = self.specialization()
+        for clause in ("BIDIRECTIONAL_REQUIREMENT_TRACE", "요구사항 → 구현·자산 → 검증",
+                       "검증·화면 → 구현 → 요구사항·승인 원본", "exact SHA", "동일 revision",
+                       "DOC", "MACHINE", "RUNTIME", "HUMAN", "의미 일치"):
+            self.assertIn(clause, text)
+
+    def test_project_specialization_preserves_scope_and_existing_review_budget(self):
+        text = self.specialization()
+        for clause in ("기존 승인", "L1", "REUSED_EVIDENCE", "채택 lock", "전체 검토 예산",
+                       "재초기화하지 않는다", "USER_DECISION_REQUIRED", "PENDING_PROJECT_ADOPTION",
+                       "기존 Decision", "독립 검토", "에이전트"):
+            self.assertIn(clause, text)
+
     def test_existing_domain_and_fun_boundaries_survive(self):
         self.assertIn("도메인 규칙", self.text(SKILL))
         self.assertIn("NO_UNIVERSAL_FUN_SCORE", self.text(CONCEPT))
