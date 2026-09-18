@@ -22,15 +22,19 @@ class ExperienceToPresentationContractTests(unittest.TestCase):
                 self.assertIn(clause, text)
 
     def test_existing_owners_route_to_one_conditional_reference(self):
-        for owner in (SKILL, CONCEPT, ADAPTER):
-            with self.subTest(owner=str(owner)):
-                links = re.findall(r"\]\(([^)]+experience-to-presentation-contract\.md[^)]*)\)", self.text(owner))
-                # Adapter is in the same directory, so a bare filename is valid too.
-                if owner == ADAPTER:
-                    links = re.findall(r"\]\((experience-to-presentation-contract\.md[^)]*)\)", self.text(owner))
-                self.assertEqual(len(links), 1, "exactly one explicit conditional route")
-                target = links[0].split("#", 1)[0]
-                self.assertEqual((ROOT / owner.parent / target).resolve(), (ROOT / REFERENCE).resolve())
+        # Keep the established Skill entrypoint; follow its existing adapter link.
+        # This avoids an unnecessary public Skill-contract/registry change.
+        for owner, target in ((SKILL, ADAPTER), (CONCEPT, REFERENCE),
+                              (ADAPTER, REFERENCE)):
+            with self.subTest(owner=str(owner), target=str(target)):
+                links = re.findall(r"\]\(([^)]+)\)", self.text(owner))
+                resolved = [
+                    (ROOT / owner.parent / link.split("#", 1)[0]).resolve()
+                    for link in links if "://" not in link
+                ]
+                self.assertEqual(resolved.count((ROOT / target).resolve()), 1,
+                                 "one real link per existing-owner route required")
+                self.assertTrue((ROOT / target).is_file())
 
     def test_gameplay_and_presentation_effects_have_different_owners(self):
         self.clauses("GAMEPLAY_EFFECT", "PRESENTATION_EFFECT", "state_owner",

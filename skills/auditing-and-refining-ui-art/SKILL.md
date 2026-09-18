@@ -85,7 +85,6 @@ description: Use when planning, polishing, or auditing game UX, UI structure, in
 
 상세 방법은 필요할 때만 읽는다.
 
-- 효과·비주얼·UI 기능을 경험 가설에서 구체 명세로 정립할 때: [작성 칸·상태·구현 연결·예시](references/experience-to-presentation-contract.md)
 - [ux-ui-design-system-method.md](references/ux-ui-design-system-method.md)
 - [game-ux-pattern-library.md](references/game-ux-pattern-library.md)
 - [ux-ui-reference-library.md](references/ux-ui-reference-library.md)
