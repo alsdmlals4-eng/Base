@@ -80,3 +80,14 @@ managing-design-documents
 reviewing-and-validating-project-changes
 → 실제 diff·runtime·test evidence 대조와 coverage_status 재계산
 ```
+
+## 8. Player-experience verification linkage
+
+L2 이상 플레이어-facing 기능은 [Base 재미 검증 생명주기](../../skills/analyzing-and-refining-game-concepts/references/concept-evidence-and-gates.md#fun-verification-lifecycle)의 경험 가설을 기존 행에 연결한다. L0·L1에 이 Packet을 새로 요구하지 않는다.
+
+- §2 `canonical_sources`에 승인된 프로젝트 핵심 경험과 기능 Spec의 Experience Intent/Planned evidence 위치를 참조한다. 목표나 성공 기준의 전문을 이 Packet에 복제하지 않는다.
+- §3의 같은 `requirement_id`를 실제 `implementation_paths`와 경험 가설의 Acceptance에 연결한다. 아직 없는 Scene·데이터·자산 경로는 계획/누락이지 IMPLEMENTED가 아니다.
+- §4의 `verification_id`를 MACHINE·RUNTIME·HUMAN 질문별로 분리하고 같은 Requirement에 연결한다. 결과 owner의 exact 빌드·환경·구간·대상·행동 관찰·자기보고·필요한 로그·반증을 참조한다. 사람 검증이 없으면 HUMAN은 `NOT_RUN`이며 기계 검사 결과를 복사하지 않는다.
+- 재미 관련 근거가 반박되거나 불충분하면 기존 Decision에 최소 수정 또는 재검증을 연결하고 §5에 owner·다음 행동을 남긴다. 로그·AI 점수만으로 `FUN_PASS`를 만들지 않는다.
+- `CONVERGED`는 §6의 승인된 현재 scope에 대한 연결·검증 수렴이다. 필요한 HUMAN 검증이 남으면 `GAP / BLOCKED_UNVERIFIED`를 유지한다. HUMAN 검증이 scope 밖인 기술 구현 Packet이 수렴하더라도 재미·사용자 승인·출시 PASS를 뜻하지 않는다.
+- 프로젝트에 설치할 때 Base 내부 상대 링크를 채택된 project-local owner 또는 exact Base commit permalink로 바꾸고 링크를 다시 확인한다.
