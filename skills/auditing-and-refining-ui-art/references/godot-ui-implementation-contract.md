@@ -301,8 +301,12 @@ human_validation:
 remaining_risks:
 ```
 
-## Godot 4.7 maintained UI baseline
+## Godot 4.7 UI maintenance baseline — dated reference
 
-Use Godot 4.7.1-stable as the current 4.7 maintenance reference (2026-07-14). Build runtime UI with native `Control`, `Container`, and `Theme` ownership. Preserve deterministic focus traversal, visible focus, keyboard/gamepad escape paths, and meaningful `accessibility_region` landmarks where supported.
+The target project's adopted Godot version remains authoritative. Do not silently replace a project engine pin because Base has observed a newer patch release.
+
+When selecting or refreshing a Godot 4.7 maintenance baseline, recheck the official [Godot release policy](https://docs.godotengine.org/en/stable/about/release_policy.html) and [release archive](https://godotengine.org/download/archive/). Godot's current policy states that only the latest patch release in a minor series receives support. At the 2026-09-08 Source review checkpoint, the official archive lists **Godot 4.7.2-stable (2026-08-18)** as the latest 4.7 maintenance release, and the official [4.7.2 maintenance release](https://godotengine.org/article/maintenance-release-godot-4-7-2/) reports no known incompatibilities with 4.7.1 while still recommending version-control-backed upgrade validation. This is a dated Base reference, not a floating `current` claim and not project runtime evidence.
+
+Build runtime UI with native `Control`, `Container`, and `Theme` ownership. Preserve deterministic focus traversal, visible focus, keyboard/gamepad escape paths, and meaningful `accessibility_region` landmarks where supported.
 
 Validate overflow and wrapping with long Korean strings rather than shortened English-only fixtures. Inspect the same UI contract at 1280x720 and 1920x1080. These static requirements stay `NOT_RUN` until the target project supplies runtime, device, accessibility, and human evidence.
