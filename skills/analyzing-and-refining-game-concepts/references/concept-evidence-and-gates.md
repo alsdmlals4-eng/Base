@@ -55,6 +55,56 @@ GDD 핵심 규칙, 레벨, 등장인물, 캐릭터 스타일, 스테이지, 세�
 - 루프·동기: Micro → Session → Meta가 다음 행동과 장기 목표를 연결하는가.
 - 차별화·제작성: 장르 관습이 아니라 핵심 행동의 차이이며 현재 팀과 파이프라인으로 반복 생산 가능한가.
 
+<a id="fun-verification-lifecycle"></a>
+
+## Fun verification lifecycle
+
+`FUN_VERIFICATION_LIFECYCLE`: 플레이어 경험에 영향을 주는 신규·의미 있는 변경은 기능 기획부터 설계·구현·검증·교정까지 같은 경험 가설을 추적한다. Base는 **검증 방법과 증거 경계**, 프로젝트는 **대상 플레이어·핵심/보조 경험·보호할 의미·판정 기준**을 소유한다. 아래 내용은 공용 운영 계약이지 재미를 보장하는 과학적 공식이 아니다.
+
+### 적용 범위와 비용 경계
+
+- L1 이상 플레이어-facing 기능·시스템·콘텐츠·UI/UX·피드백 변경에 적용한다. L1은 기존 Brief·Decision·작업 계약에 짧게 연결하며 새 Spec·보고서·대시보드를 요구하지 않는다. L2 주요 기능만 기존 `GAME_FEATURE_DESIGN_SPEC.md`와 필요한 `FEATURE_SPEC_TRACEABILITY_PACKET.md`를 사용한다.
+- L0 오탈자, 동작을 바꾸지 않는 기계 수정, 순수 내부 도구는 이유 있는 `NOT_APPLICABLE` 또는 기존 경험의 비퇴행 검사로 처리한다. 내부 기반 기능도 실제 플레이어-facing consumer에 미치는 영향이 있으면 해당 경로만 검토한다.
+- 동일 승인·가설·consumer·대표 구간의 유효한 근거는 `REUSED_EVIDENCE`로 연결한다. 파일마다 전체 재미 연구를 반복하지 않으며 변경된 경험·상태·표본·환경 때문에 무효가 된 부분만 재검증한다.
+- 승인된 방향을 다시 승인받지 않는다. 핵심 경험·서사·경제 의미·주요 UX·비용·범위를 바꾸는 교정만 `USER_DECISION_REQUIRED`로 올린다. `NEUTRAL / CONFLICT / UNPROVEN`은 검토 후보이지 자동 삭제·재설계 권한이 아니다.
+
+### 공용 방법과 프로젝트별 값
+
+프로젝트의 기존 핵심 기획/Experience Intent owner를 `source_id + path + section`으로 참조한다. 핵심 경험과 보조 경험, 대상/플레이 맥락, 금지 방향, 대표 Slice와 현재 근거·승인 상태를 그 owner에 결합한다. Base에 프로젝트별 수치·세계관·판정 결과를 복제하지 않는다. 정본에 없는 경험 목표는 `HYPOTHESIS / UNVERIFIED`이며 장르명·과거 채팅으로 확정하지 않는다.
+
+`NO_UNIVERSAL_FUN_SCORE`: 모든 장르에 같은 점수·재도전율·난도·선택 수·보상 빈도를 강제하지 않는다. 서사는 이해·감정·기억, 표현/꾸미기는 자기 방식의 표현, 휴식형 경험은 부담과 편안함처럼 **프로젝트가 승인한 약속에 맞는 질문**을 선택한다. 이는 가능한 적용 예시이며 장르별 의무 목록이 아니다. 도전·숙련·반복 플레이가 핵심이 아닌 작품에 이를 필수 합격 기준으로 만들지 않는다.
+
+### 기능 생명주기 연결
+
+| 단계 | 기존 정본에 남길 최소 연결 | 다음 단계 판단 |
+|---|---|---|
+| PLAN — 기능 기획 | 기능/Requirement ID → 승인된 경험 원본 → `AMPLIFY / SUPPORT / NEUTRAL / CONFLICT / UNPROVEN` → 어떤 상황·행동·정보·결과가 어떤 경험을 만들 것인지의 가설 | 기능 수가 아니라 플레이어 가치와 보호 범위로 채택·보류를 판단한다. |
+| DESIGN — 설계 | 같은 가설 → 입력·상태·규칙·의미 있는 선택 또는 표현 → 피드백/보상/결과 → `runtime_consumer` → 가장 작은 대표 Slice와 관찰 질문 | Godot이면 실제 Scene·Node·Resource·Script, 데이터/save-load, UI 상태·입력, 필요한 자산, 기존 통합·실패·회귀를 연결한다. 미구현 경로는 계획으로 표시한다. |
+| IMPLEMENT — 구현 | 승인 Requirement → 실제 파일·Scene·데이터·자산 consumer → 기계/실행 검증 → 필요한 최소 관찰 지점 | 기존 로그·리플레이·캡처를 우선하며 재미 측정을 이유로 분석 서버·상주 에이전트·유료 도구를 자동 도입하지 않는다. |
+| VERIFY — 검증 | exact 빌드/commit·환경·대상·표본·대표 구간 → 행동 관찰 + 자기보고 + 필요한 로그 → 의도와 실제 경험의 차이·`counterevidence` | 경험 가설별 지지·반박·미확인을 판단한다. 관측하지 않은 질문은 `NOT_RUN`이다. |
+| LEARN — 교정 | 원인 분류 → `KEEP / CHANGE / DEFER / RETEST` 등 기존 Decision → 최소 수정·재검증 → 정본/Active Context·기존 Learning Log | 프로젝트 전용 교훈과 Base 공용 후보를 구분한다. 문서 계약 추가를 재미 개선 실증으로 승격하지 않는다. |
+
+설계의 목표·규칙은 `managing-design-documents`의 기존 owner, 실행 결과는 기존 validation evidence owner가 소유한다. 이 reference는 그 내용을 다시 소유하지 않는다. L2의 `GAME_FEATURE_DESIGN_SPEC.md` §2는 가설·계획, Packet은 승인·구현·증거 ID 연결을 맡는다.
+
+### 검증과 감독의 책임 경계
+
+- 테스트 전에 바꿀 개발 결정, 대표 구간, 성공·실패·중단 기준을 정한다. `benchmark-player-evidence-and-playtests.md`의 기존 방법을 재사용한다. 한 번에 가장 중요한 경험 가설을 우선하되 인위적인 표본 수·테스트 횟수를 공용 합격 기준으로 고정하지 않는다.
+- 관찰은 행동, 자기보고는 당사자의 해석, 로그는 기록된 사건을 보여준다. 서로 모순되면 숨기지 말고 대안 설명과 추가 검증을 남긴다. 오래 고민함=흥미로운 선택, 긴 플레이=몰입, 높은 재도전율=만족으로 단정하지 않는다. DDD는 설계 렌즈이지 실제 도파민의 측정이 아니다.
+- 첫 플레이의 이해·도달과 반복 플레이의 숙련·변주·피로를 구분한다. 짧은 세션 결과로 장기 유지율·전체 게임·다른 집단을 검증했다고 하지 않는다. 테스트 중 설명·힌트·유도 개입이 있었다면 기록한다.
+- 이해 실패, 선택/규칙 실패, 피드백/감각 실패, 리듬/콘텐츠 피로, 빌드/환경 결함을 분리한다. 같은 관찰에 여러 원인이 있을 수 있으므로 보상·기능 추가를 기본 해법으로 삼지 않는다.
+- '재미 감독'은 `analyzing-and-refining-game-concepts`의 **경험 가설과 증거 차이를 종합하는 책임**이다. 이 책임만을 이유로 새 독립 Skill·승인권자·가상 플레이어를 자동 추가하지 않는다. `designing-vertical-slices`의 사람 플레이 증거와 실제 변경 검증 owner를 연결하며 AI 자체 평가는 HUMAN 증거가 아니다. 게임 내부의 runtime Director는 별도 기능 요구가 있을 때만 검토한다.
+- `DOC / MACHINE / RUNTIME / HUMAN / USER_APPROVAL / RELEASE`는 별개 검증층이다. 자동 테스트·AI 검토·로그만으로 HUMAN PASS나 `FUN_PASS`를 만들지 않는다. 문서 테스트는 계약·링크의 존재만 확인하며 AI의 실제 준수나 게임 재미를 강제/보증하지 않는다.
+- 사람 증거가 없다고 승인된 Slice 구현 자체를 순환 차단하지 않는다. 아래 `SLICE_BUILD_READY`와 `PRODUCTION_READY`의 구분을 유지하고, 필요한 HUMAN 검증·승격만 `NOT_RUN / BLOCKED_UNVERIFIED`로 남긴다. release-near Slice의 짧은 범위를 유지하며 전체 게임 완성을 테스트 선행 조건으로 만들지 않는다.
+
+### 조사 근거와 적용 한계
+
+2026-09-18 확인. 아래 원출처를 기존 Base 계약과 비교해 방법만 흡수했으며 개별 프로젝트 재미를 검증하지 않았다.
+
+- **ADOPT** — [Choose the right playtest method](https://gamesuserresearch.com/choose-the-right-playtest-method/): 연구 질문에 맞는 방법 선택, 관찰·인터뷰·분석의 상호 보완. 본문 확인; 특정 표본 수나 성공률의 근거로 쓰지 않는다.
+- **ADAPT** — [Interesting Decisions, GDC 2012](https://www.gdcvault.com/play/1015756/): 선택·정보·피드백·pacing을 함께 검토한다는 발표자 공개 개요. 개요 확인만 했으며 전체 영상 검토나 모든 장르의 의무 기준으로 확대하지 않는다.
+- **ADAPT** — [Slay the Spire: Metrics Driven Design and Balance, GDC 2019](https://www.gdcvault.com/play/1025731/-Slay-the-Spire-Metrics): 지표와 커뮤니티 피드백을 함께 다룬다는 발표자 공개 개요. 개별 알고리즘·표본·실험 효과는 이 개요만으로 추정하지 않는다.
+- **REJECT** — 보편적 재미 점수, 로그만으로 감정을 확정하는 판정, 중복 감독 계층, 프로젝트 정체성과 채택 version을 무시하는 일괄 전파.
+
 ## Technical Spike 계약
 
 ```text

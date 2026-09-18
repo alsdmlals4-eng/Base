@@ -1,0 +1,161 @@
+{
+  "work_level": "L1",
+  "record_type": "PREMERGE_EVIDENCE_SNAPSHOT_NOT_CLOSEOUT",
+  "approval_reference": "current-user-message:2026-09-18:base-project-fun-verification",
+  "approved_direct_request": "좋아 맞춰서 base공용 규칙,프로젝트별 규칙으로 기능 기획 설계 구현시 참고하게 하자",
+  "scope": [
+    "Expand the existing concept evidence owner, project AGENTS template and feature traceability template.",
+    "Add focused documentation-contract tests; preserve existing owners and evidence ceilings."
+  ],
+  "protected_and_excluded": [
+    "No direct main push, force update, admin bypass or unrelated PR mutation.",
+    "No new Skill, runtime Director, service, dependency, paid tool, analytics server or game content.",
+    "No automatic project fleet rollout, adopted-lock replacement, Human/UX or release claim."
+  ],
+  "benchmark_preflight_receipt": {
+    "state": "PASS",
+    "entries": [
+      {
+        "source_and_evidence": "ebfc6c807a0d1582a2df27c518ef60398bf8486c: skills/analyzing-and-refining-game-concepts/references/concept-evidence-and-gates.md; templates/AGENTS.project.md; templates/planning/FEATURE_SPEC_TRACEABILITY_PACKET.md; concept Skill and GAME_FEATURE_DESIGN_SPEC section 2",
+        "observed_pattern": "Core fun and evidence layers already exist; feature phases and project-specific adoption can share the existing owner.",
+        "project_fit_and_difference": "Extend one owner and two consumers, not a second director or fun-scoring authority.",
+        "disposition": "ADAPT"
+      },
+      {
+        "source_and_evidence": "https://gamesuserresearch.com/choose-the-right-playtest-method/ (full article read 2026-09-18)",
+        "observed_pattern": "Choose observation, interview, analytics or survey from the research question; combine evidence with its limits.",
+        "project_fit_and_difference": "Use hypothesis-specific questions and counterevidence without universal sample size or fun score.",
+        "disposition": "ADOPT"
+      },
+      {
+        "source_and_evidence": "https://www.gdcvault.com/play/1015756/ and https://www.gdcvault.com/play/1025731/-Slay-the-Spire-Metrics (public session abstracts read 2026-09-18; videos NOT_RUN)",
+        "observed_pattern": "Decision information/feedback/pacing; metrics combined with community feedback and intended feel.",
+        "project_fit_and_difference": "Method references only; no claims about unviewed algorithms, samples, or measured project improvement.",
+        "disposition": "ADAPT"
+      }
+    ]
+  },
+  "context_configuration_hygiene": {
+    "scope": "Three changed Markdown owners/consumers and one new focused test; no broad cleanup.",
+    "inventory": [
+      {
+        "path": "skills/analyzing-and-refining-game-concepts/references/concept-evidence-and-gates.md",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "ebfc6c807a0d1582a2df27c518ef60398bf8486c",
+        "references_and_consumers": "Existing concept Skill conditional reference, project template and packet; source and consumer links read.",
+        "removal_proposed": false
+      },
+      {
+        "path": "templates/AGENTS.project.md",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "ebfc6c807a0d1582a2df27c518ef60398bf8486c",
+        "references_and_consumers": "Project-install template, not evidence of any individual project adoption; narrow PoC wording aligned with current owner.",
+        "removal_proposed": false
+      },
+      {
+        "path": "templates/planning/FEATURE_SPEC_TRACEABILITY_PACKET.md",
+        "classification": "ACTIVE_OWNER",
+        "owner_or_provenance": "ebfc6c807a0d1582a2df27c518ef60398bf8486c",
+        "references_and_consumers": "L2 traceability of approved design to implementation and evidence; no L0/L1 packet requirement.",
+        "removal_proposed": false
+      }
+    ]
+  },
+  "project_work_kanban": {
+    "goal_or_slice_issue_ref": "current-user-message:2026-09-18:base-project-fun-verification",
+    "source_main_sha": "ebfc6c807a0d1582a2df27c518ef60398bf8486c",
+    "work_item_refs": [
+      "FUN-01"
+    ],
+    "active_work_item_ref": "FUN-01",
+    "next_action": "Publish and inspect the exact-head PR checks and review gates; do not claim merged adoption.",
+    "work_items": [
+      {
+        "work_item_id": "FUN-01",
+        "title": "Integrate fun verification into the existing Base and project-template lifecycle",
+        "status": "IN_PROGRESS",
+        "canon_owner": "skills/analyzing-and-refining-game-concepts/references/concept-evidence-and-gates.md",
+        "actual_consumers": [
+          "templates/AGENTS.project.md",
+          "templates/planning/FEATURE_SPEC_TRACEABILITY_PACKET.md"
+        ],
+        "depends_on": [],
+        "acceptance_criteria": [
+          "AC-FUN-01"
+        ],
+        "required_evidence": [
+          "E2_TEST"
+        ],
+        "checklist": [
+          {
+            "id": "AC-FUN-01",
+            "text": "Existing owner and consumer links pass exact-head repository checks and normal integration gates.",
+            "status": "NOT_RUN"
+          }
+        ],
+        "verification": [
+          {
+            "level": "E2_TEST",
+            "status": "NOT_RUN",
+            "evidence": []
+          }
+        ],
+        "next_action": "Complete exact-head full CI and independent review before normal squash integration."
+      }
+    ]
+  },
+  "baseline_blob_shas": {
+    "skills/analyzing-and-refining-game-concepts/references/concept-evidence-and-gates.md": "0edbc89691816990f73a58bfc7de0654126247a3",
+    "templates/AGENTS.project.md": "c899a7b0baa2a91f2739d6700aa66d8bb90cc6a3",
+    "templates/planning/FEATURE_SPEC_TRACEABILITY_PACKET.md": "84af84674f5e092bad0cad1623e5f3f09ed9a90a"
+  },
+  "candidate_blob_shas": {
+    "skills/analyzing-and-refining-game-concepts/references/concept-evidence-and-gates.md": "82244614841555a47a6d3160075881c384f41b2b",
+    "templates/AGENTS.project.md": "96af9b4cf1933b6f401833d03d9a3f9c31d53b3d",
+    "templates/planning/FEATURE_SPEC_TRACEABILITY_PACKET.md": "d3597028852e296a3eaf9659152a850d3b47e351",
+    "tests/test_fun_verification_lifecycle_contract.py": "62fa8cda3ee9bb3f2174b4f2318b0c3edec54b23"
+  },
+  "validation_environment": "Partial source sandbox, Python 3.13. Complete Git checkout unavailable: GitHub DNS failed in container; connector reads/writes work. Baseline bytes checked against Git blob SHA.",
+  "focused_command": "python -m unittest discover -s tests -p test_fun_verification_lifecycle_contract.py -v",
+  "red_evidence": {
+    "tests_run": 8,
+    "assertion_failures": 7,
+    "errors": 0,
+    "exit_code": 1,
+    "meaning": "New sections absent on unchanged baseline; one method has two failed subtests. Existing evidence-boundary checks survive."
+  },
+  "green_evidence": {
+    "tests_run": 8,
+    "failures": 0,
+    "errors": 0,
+    "exit_code": 0,
+    "ceiling": "Documentation clauses and relative-link integrity only; not semantic proof, AI compliance or player enjoyment."
+  },
+  "other_local_checks": {
+    "py_compile": "PASS: new test file",
+    "changed_file_trailing_whitespace": "PASS: zero",
+    "full_run_local_validation": "NOT_RUN: no complete checkout",
+    "root_receipt_validator": "NOT_RUN; JSON syntax checked only"
+  },
+  "project_adoption": "PENDING_PROJECT_ADOPTION: bind exact adopted Base subsection to current project owners during approved project work; record/read back local adoption and consumers.",
+  "learning_log": [
+    {
+      "kind": "common_contract",
+      "finding": "Feature intent, implementation and human evidence must remain linked without making every small task a full playtest/report.",
+      "action": "Existing owner plus two template links and focused regression tests.",
+      "ceiling": "Process contract implemented; real workflow efficiency/fun improvement UNMEASURED."
+    },
+    {
+      "kind": "execution_correction",
+      "finding": "Connector text transcription can change EOF or punctuation without semantic intent.",
+      "action": "Match Git blob SHA before editing and before attaching each written blob to a branch; a mismatched unattached template blob was rejected and recreated.",
+      "ceiling": "Exact bytes verified for this change; no new generic tool or global rule added."
+    }
+  ],
+  "remaining_required": [
+    "Exact-head full repository CI and receipt validator",
+    "Independent review / current required merge gates",
+    "Normal squash merge and main readback"
+  ],
+  "rollback": "Revert only this task PR through the normal repository workflow. No project data, assets, installed tools, or global settings require migration."
+}
