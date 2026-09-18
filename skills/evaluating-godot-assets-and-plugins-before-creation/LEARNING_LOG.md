@@ -67,3 +67,14 @@
 - **Verification:** exact Git blob으로 대조한 baseline에서 새 문서 계약 검사 12개가 의도한 missing-section assertion으로 실패했고, MCP 절 추가 뒤 12개가 통과했다. 이것은 계약 회귀검사이며 실제 MCP 연결·Blender/Godot 실행·성능·UX/Human·독립 검토·병합 증거가 아니다. 최종 exact HEAD·CI·review·readback은 해당 PR에서 확인한다.
 - **Recovery lesson:** 연결 도구에서 읽은 원문을 로컬 검증용으로 복원할 때 마지막 LF 유무까지 Git blob SHA로 대조했다. 검증 스냅샷은 전체 clone이나 원래 commit history가 아니므로 full-repository local PASS로 보고하지 않는다.
 - **Boundary and next trigger:** 사용자 PC의 live host 접근이 없는 현재 작업에서는 설정·권한·vendor pin·승인 자산을 변경하지 않는다. 실제 프로젝트에서 확인된 기능 결함이나 Blender consumer가 생기면 같은 owner로 trial·runtime·rollback을 검증한다. 문서 흡수를 설치 완료로, 테스트를 실제 생산성 향상으로 승격하지 않는다.
+
+## 2026-09-09 — Resource-sensitive agent evaluations need a causal resource envelope
+
+- **상태:** `PATTERN_CANDIDATE`
+- **Trigger:** 2026-09-09 주기 Source 개선에서 Anthropic Engineering의 2026-02-05 agent-evaluation infrastructure-noise 실험을 원출처로 deep-read하고 현재 external-agent A/B owner와 비교했다.
+- **Finding:** 기존 `A_B_ISOLATED_EQUIVALENT_STATE`는 입력·model/configuration/permission·cache/order를 통제했지만, resource-sensitive 실행의 runner/hardware, 보장 CPU/RAM, hard kill limit, timeout, concurrency, network/egress를 평가 identity로 명시하지 않았다. 또한 OOM·termination 같은 종료 형태만으로 infrastructure failure를 판정하면 agent 전략이 선언된 한도를 초과한 실제 resource-efficiency 실패를 누락할 수 있고, 한 arm에 더 좋은 resource envelope를 고정한 채 반복 실행해도 adapter 효과를 분리할 수 없다.
+- **Decision:** 새 Skill·Guide·runner를 만들지 않고 기존 `docs/knowledge/ai/agent-tools/EXTERNAL_AGENT_ADAPTER_CONTRACT.md`와 active adoption review에만 vendor-neutral 계약을 흡수한다. resource envelope는 outcome-sensitive workload에서만 적용하고, 비교 attribution은 materially matched resource envelope 또는 predeclared counterbalanced/randomized assignment가 있을 때만 허용한다. 고정 resource confounding은 environment-conditioned non-comparative evidence로 제한한다.
+- **Evidence contract:** resource-sensitive trial은 runner/hardware, guaranteed CPU/RAM, hard limit, wall-clock timeout, concurrency, egress/network, cache/warm state를 applicable/observable 범위에서 기록한다. 실패는 종료 signature가 아니라 원인으로 분류한다. harness/provider가 선언한 envelope를 제공하지 못했으면 infra failure, envelope가 제공됐는데 agent 전략이 hard/time limit을 넘었으면 task/resource-efficiency failure, 원인이 불명확하면 `FAILURE_CAUSE_UNVERIFIED`다.
+- **Claim ceiling:** Anthropic의 Terminal-Bench/SWE-bench 수치, 특정 resource multiplier, error-rate 또는 score-difference threshold는 해당 실험의 version/task/environment에 묶인 evidence이며 Base-wide 상수로 복제하지 않는다. 이 학습은 특정 model·adapter가 더 우수하다는 증거가 아니다.
+- **Verification state:** 문서/회귀 검증과 PR lifecycle은 PR #866의 exact-head 기록이 소유한다. 이 learning entry 자체는 Anthropic benchmark 재현, 실제 external-agent A/B 실행, project runtime, Human/UX, 비용 절감 또는 release PASS를 뜻하지 않는다.
+- **Next trigger:** 실제 프로젝트 trial에서 resource envelope 차이가 관찰되거나 upstream benchmark methodology가 바뀌면 causal failure classification, comparative attribution, environment-conditioned ceiling을 다시 검증한다.
