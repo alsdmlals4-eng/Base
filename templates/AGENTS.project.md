@@ -172,7 +172,8 @@ frame
 → sharpen
 → structure
 → analyze
-→ poc-contract
+→ technical-spike-contract (기술 질문이 있을 때만; poc-contract 호환)
+→ release-near-vertical-slice-handoff (사람 경험 질문)
 → recalibrate
 → production-gate
 ```
@@ -180,8 +181,20 @@ frame
 - 기능 목록을 핵심 컨셉으로 대체하지 않는다.
 - SWOT은 SO·WO·ST·WT 실행안으로 변환한다.
 - `DDD`처럼 의미가 여러 개인 약어는 프로젝트 정의 없이 임의 해석하지 않는다.
-- PoC는 가장 위험한 가설의 최소 검증이며 전체 게임이나 Vertical Slice로 팽창시키지 않는다.
+- PoC는 `TECHNICAL_SPIKE_INTERNAL_ONLY`인 좁은 기술 검증이다. 재미·몰입은 `RELEASE_NEAR_VERTICAL_SLICE_FIRST`의 짧은 완성형 구간과 사람 플레이로 검증하며 전체 게임 완성을 선행 조건으로 삼지 않는다.
 - PoC 결과는 기획의 유지·증폭·변경·삭제·보류·재검증 결정에 반영한다.
+
+## Project-specific fun verification
+
+`PROJECT_FUN_PROFILE_BINDING`: 기능 기획·설계·구현을 시작할 때 프로젝트의 기존 핵심 경험 owner와 [Base 재미 검증 생명주기](../skills/analyzing-and-refining-game-concepts/references/concept-evidence-and-gates.md#fun-verification-lifecycle)를 연결한다. Base는 방법, 프로젝트 정본은 경험의 의미·판정 기준을 소유한다.
+
+- **기존 정본 위치:** `source_id + path + section`으로 핵심 경험·보조 경험, 대상 플레이어/플레이 맥락, 금지 방향, 대표 Slice, 승인·가설 상태와 근거 위치를 연결한다. 이 항목들을 별도 FUN 문서나 AGENTS에 전문 복제하지 않는다.
+- **기능 기획:** 어떤 경험에 기여하는지와 반증 가능한 가설을 기존 Brief/Decision에 기록한다. 정본에 없으면 미확정으로 표시하며 장르명만으로 재미 목표를 확정하지 않는다.
+- **설계:** 같은 기능 ID에서 입력·상태·규칙·정보·피드백·보상/결과와 실제 runtime consumer를 연결하고, 가장 작은 대표 구간의 관찰 질문을 정한다.
+- **구현·검증:** 기획 ID → 실제 코드/Scene·데이터·자산 → 기계·runtime 증거 → 필요한 사람 플레이 결과를 연결한다. 인간 검증 미실행은 `NOT_RUN`이며 문서·테스트 PASS로 대체하지 않는다. 기존 승인 범위의 구현은 계속할 수 있다.
+- **작업 크기:** L1은 기존 작업 기록의 짧은 연결로 충분하다. L2 주요 기능은 기존 상세 Spec·필요한 Traceability Packet을 사용한다. L0와 경험 영향 없는 변경은 이유 있는 `NOT_APPLICABLE` 또는 비퇴행 검사로 처리한다.
+- **채택 경계:** 이 template 링크는 Base 내부 참조다. 프로젝트에 적용할 때 프로젝트 read order·정본·기존 구현·same-goal PR을 fresh-read하고, 해당 절을 project-local owner 또는 exact Base commit permalink로 다시 연결한다. `docs/BASE_RULES_VERSION.md` 또는 그 프로젝트의 실제 채택 기록에 선택한 변경·기준 SHA·검증·rollback을 남긴다. 채택 lock 전체를 조용히 교체하지 않는다.
+- **실제 적용 판정:** 프로젝트 AGENTS/router → 기존 기획 owner → 기능 consumer → 검증 기록의 연결과 readback이 확인되기 전에는 `PENDING_PROJECT_ADOPTION`이다. template·Base PR·파일 존재만으로 프로젝트 채택 완료를 주장하지 않는다. 기존 프로젝트는 승인된 해당 프로젝트 작업에서 좁게 적용하며 일괄 덮어쓰지 않는다.
 
 ## Project operating-system changes
 
