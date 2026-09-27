@@ -1,5 +1,8 @@
 # [프로젝트명] 시작 지점
 
+> `BASE_CURRENT_OPERATIONAL_BOOTSTRAP` / `PROJECT_WORK_FRESH_BASE_ENTRY`: for **ordinary target-project work** and Base maintenance that need current PM/intake/workflow guidance without project-side preinstallation, read `docs/operations/BASE_CURRENT_PROJECT_WORK_BOOTSTRAP.md`. It is a nonpersistent PM/workflow overlay: target-project `AGENTS.md`, product canon, protected paths and adopted Base release retain authority. Do not copy the detailed playbook into this file.
+
+
 > 사용자, 새 GPT, 새 Codex와 새 작업자가 프로젝트 전체 상태를 가장 먼저 확인하는 대시보드다. 세부 기획은 등록된 Markdown 또는 JSON 책임 원본을, 구현 상태는 실제 파일과 테스트를 따른다.
 
 - 공식 위치: 저장소 루트 `[기획서]/00_프로젝트_허브/START_HERE.md`

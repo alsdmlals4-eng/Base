@@ -1,5 +1,8 @@
 # 프로젝트 AI·GitHub 작업 흐름
 
+> `BASE_CURRENT_OPERATIONAL_BOOTSTRAP` / `PROJECT_WORK_FRESH_BASE_ENTRY`: for **ordinary target-project work** and Base maintenance that need current PM/intake/workflow guidance without project-side preinstallation, read `docs/operations/BASE_CURRENT_PROJECT_WORK_BOOTSTRAP.md`. It is a nonpersistent PM/workflow overlay: target-project `AGENTS.md`, product canon, protected paths and adopted Base release retain authority. Do not copy the detailed playbook into this file.
+
+
 ## 1. 목적
 
 사용자는 만들고 싶은 결과와 중요한 방향을 설명한다. 저장소 운영체계는 책임 원본, 최소 Skill, 실행 순서, 개발 게이트, 검증과 인수인계를 기억한다.

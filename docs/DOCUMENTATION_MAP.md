@@ -1,5 +1,8 @@
 # Base 문서·스킬 역할표
 
+> `BASE_CURRENT_OPERATIONAL_BOOTSTRAP`: when current scope requires **Base-only maintenance** and future project sessions to fresh-read current Base without project-side preinstallation, read `docs/operations/BASE_CURRENT_PROJECT_WORK_BOOTSTRAP.md`. It is a nonpersistent PM/workflow overlay: target-project `AGENTS.md`, product canon, protected paths and adopted Base release retain authority. Do not copy the detailed playbook into this file.
+
+
 Base는 게임·연재소설 등 등록 프로젝트가 공유하는 **[학습형] [공용]** 작업 원칙, Skill, Template, Test와 일반화된 Case를 관리한다. 프로젝트별 실제 구현·세계관·수치·승인 자산·런타임 상태는 프로젝트 정본과 저장소가 소유한다.
 
 ## 1. 최소 시작 경로

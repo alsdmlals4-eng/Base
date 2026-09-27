@@ -1,5 +1,8 @@
 # Work 프로젝트 시작 정본 확인·선교정 체크리스트
 
+> `BASE_CURRENT_OPERATIONAL_BOOTSTRAP` / `PROJECT_WORK_FRESH_BASE_ENTRY`: for **ordinary target-project work** and Base maintenance that need current PM/intake/workflow guidance without project-side preinstallation, read `docs/operations/BASE_CURRENT_PROJECT_WORK_BOOTSTRAP.md`. It is a nonpersistent PM/workflow overlay: target-project `AGENTS.md`, product canon, protected paths and adopted Base release retain authority. Do not copy the detailed playbook into this file.
+
+
 > 이 파일은 프로젝트 사실을 새로 소유하는 두 번째 정본이 아니다. 현재 Base·Project repository owner를 찾아 읽고, 작업 시작 상태를 검증하며, 누락·충돌을 먼저 교정하는 **project-specific 실행 receipt의 형식과 Gate**를 정의한다.
 
 ```text
