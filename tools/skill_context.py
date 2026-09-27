@@ -17,6 +17,13 @@ def load_skill_context(skill_file: Path, references: tuple[str, ...] | list[str]
     """Return complete requested documents; never expand their child references."""
     skill_file = Path(skill_file).resolve(strict=True)
     body = skill_file.read_text(encoding='utf-8')
+    return _load_selected_references(skill_file, body, references)
+
+
+def _load_selected_references(
+    skill_file: Path, body: str, references: tuple[str, ...] | list[str]
+) -> dict[Path, str]:
+    """Reuse one entrypoint read; retain the same selection and path checks."""
     links = set(_LINK.findall(body))
     pack = {skill_file: body}
     reference_root = (skill_file.parent / 'references').resolve()
@@ -35,7 +42,12 @@ def load_skill_context(skill_file: Path, references: tuple[str, ...] | list[str]
 
 
 def read_skill_contract(skill_file: Path) -> str:
-    """Validation-only union of the entrypoint and explicitly declared fragments."""
-    body = Path(skill_file).read_text(encoding='utf-8')
+    """Validation-only union, with one fresh entrypoint read per invocation.
+
+    Markers and links use the same body. This is not an atomic multi-file
+    snapshot, an approval check, or a cache across separate invocations.
+    """
+    skill_file = Path(skill_file).resolve(strict=True)
+    body = skill_file.read_text(encoding='utf-8')
     modules = _MODULE.findall(body)
-    return '\n'.join(load_skill_context(skill_file, modules).values())
+    return '\n'.join(_load_selected_references(skill_file, body, modules).values())

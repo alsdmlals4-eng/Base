@@ -46,6 +46,14 @@ Mode는 앱 전환 명령이 아니다. `UNIFIED_WORK_EXECUTION` / `CAPABILITY_B
 - 설치 여부, 세션 노출, 실제 호출, 실행 결과, 사용량은 서로 다른 관측이다.
 - intake의 `CONTEXT_FIT_RECHECK`로 최초 라우팅 뒤 정본/consumer 적합성을 확인하고 흡수·통합 뒤 연결을 재검사한다. 관련 없는 Skill 전부를 다시 로드하지 않는다. 새 module/Skill도 독립 책임과 소비 경로가 입증되면 선택할 수 있다.
 
+### 선택적 흡수·관측의 경계
+
+외부 discipline은 기존 owner의 실제 누락·실패가 확인된 부분만 흡수한다. 같은 책임의 router·승인 장치·체크리스트를 덧씌우지 않는다. 질문 실행·최근 응답 timestamp·advisory hook의 exit 0은 해당 작업에 대한 긍정적 승인이 아니다. 기존 intake의 approval reference를 현재 작업·허용 범위·최신 사용자 결정과 대조하며, 거절·철회·다른 범위의 응답을 승인으로 재사용하지 않는다.
+
+라우팅 변경이나 중복 읽기를 조사할 때만 기존 work receipt에 source revision, 선택/실제 읽기/보류한 경로, 실행 명령·결과를 남긴다. 반환된 pack 크기만 보지 말고 실제 읽기 횟수와 필수 내용 보존을 함께 검사한다. `tools/skill_context.py`는 호출마다 fresh-read하되 같은 호출의 entrypoint·선택 reference를 중복 읽지 않는다. 다중 파일의 원자적 snapshot, 앱의 자동 Skill 선택, 사용자 승인 강제 또는 실제 청구 token·작업시간 절감까지 증명하는 것은 아니다.
+
+Hook·검사기의 enforcement 주장은 실제 연결된 runtime consumer와 해당 실패·거절·잘못된 입력의 차단 증거가 있을 때만 한다. 문서/정적 검사 PASS와 실제 도구 호출 차단을 구분한다. 이 관측을 위한 새 상시 보고서·전역 Hook·별도 승인 정본은 만들지 않는다.
+
 ## 2C. CLAIM_AND_INTENT_VERIFICATION_GATE
 
 완료 주장과 요청 의도를 current repository·PR·actual evidence로 대조한다.

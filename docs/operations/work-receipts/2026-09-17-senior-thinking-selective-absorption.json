@@ -1,0 +1,92 @@
+{
+  "work_level": "L1",
+  "approval_ref": "current-user-explicit-approval:2026-09-17:senior-thinking-selective-absorption",
+  "approval_context": "User approved the preceding selective-absorption recommendation with 좋아 권고안대로 진행해. Existing owners and demonstrable gaps only; no duplicate router or hook installation.",
+  "source_main_sha": "ebfc6c807a0d1582a2df27c518ef60398bf8486c",
+  "approved_scope": "Correct the existing selective loader, add six regression tests, clarify its existing routing owner and record evidence. Normal integration requires independent review and exact-head CI.",
+  "outcome_status": "IMPLEMENTED_FOCUSED_TESTS_VERIFIED_INTEGRATION_PENDING",
+  "actual_paths": [
+    "tools/skill_context.py",
+    "tests/test_skill_context.py",
+    "docs/WORK_MODE_AND_SKILL_ROUTING.md",
+    "docs/operations/work-receipts/2026-09-17-senior-thinking-selective-absorption.json"
+  ],
+  "protected_scope": ["projects and adopted locks", "pre-existing PRs", "installed plugins and global settings", "registries and frozen/released artifacts", "workflows, permissions and billing"],
+  "benchmark_preflight_receipt": {
+    "state": "PASS",
+    "entries": [
+      {
+        "source_and_evidence": "Base@ebfc6c807a0d1582a2df27c518ef60398bf8486c: AGENTS.md, intake/routing owners, tools/skill_context.py, tests/test_skill_context.py and production coverage consumer.",
+        "observed_pattern": "Selective loading and approval reuse already exist. Contract validation reads its entrypoint twice; returned-pack assertions do not detect this.",
+        "project_fit_and_difference": "One entrypoint body for markers, links and output; unchanged selection/path checks and no persistent cache.",
+        "disposition": "ADAPT"
+      },
+      {
+        "source_and_evidence": "songjiun10-collab/Senior-thinking-skills@be98e588b4b5455b5ca95c11d2beacdfef4360be: senior-engineer-mindset/scripts/check_ask_before_hard_change.py; blob 5b0638efdb0291809136ea384dba6234868b39e4.",
+        "observed_pattern": "The example explicitly describes advisory/fail-open behavior. tool_response presence records a timestamp without checking affirmative approval; malformed JSON allows.",
+        "project_fit_and_difference": "Reject installation as approval enforcement. Source inspection this turn is not a live hook/host behavior test.",
+        "disposition": "REJECT"
+      },
+      {
+        "source_and_evidence": "https://agentskills.io/specification (read 2026-09-17)",
+        "observed_pattern": "Progressive disclosure separates metadata, active instructions and on-demand resources.",
+        "project_fit_and_difference": "Keep current Base authority and test actual file reads instead of adding a second router or claiming model/billing improvements.",
+        "disposition": "ADAPT"
+      }
+    ]
+  },
+  "alternatives": [
+    {"option": "Keep current loader", "disposition": "REJECT", "reason": "Reproduced duplicate read and mixed-entrypoint failure remain."},
+    {"option": "Install full external skill/hook bundle", "disposition": "REJECT", "reason": "Duplicates existing authority without reliable approval enforcement."},
+    {"option": "Correct existing loader and observe real reads", "disposition": "ADOPT", "reason": "Small compatible correction with regression evidence and no new runtime."}
+  ],
+  "open_pr_overlap": "Recent merged #881/#883 inspected as context. Open exact-term skill_context search returned zero matches. Adjacent intake/root/evaluation and Aseprite work remains read-only; not an exhaustive file-overlap claim.",
+  "implementation": {
+    "before": "Contract markers came from entrypoint read 1 while links/output came from read 2.",
+    "after": "Both public APIs reuse a private selection helper; contract validation uses one captured entrypoint body.",
+    "actual_consumer": "tools/check_skill_system_coverage.py and existing contract tests",
+    "public_api_changed": false,
+    "new_dependencies": [],
+    "installed_external_skills_or_hooks": [],
+    "new_tests": [
+      "test_contract_validation_reads_each_source_once",
+      "test_contract_without_modules_reads_entrypoint_once",
+      "test_selected_context_reads_only_unique_requested_files",
+      "test_default_context_performs_no_reference_reads",
+      "test_separate_invocations_read_fresh_reference_content",
+      "test_contract_markers_and_links_use_same_entrypoint_snapshot"
+    ]
+  },
+  "validation_checkpoint": {
+    "environment": "Linux isolated partial source sandbox, not a complete Git checkout. Clone failed DNS resolution; GitHub connector reads worked.",
+    "source_integrity": "Baseline tool/test/routing contents matched connector Git blob SHA before editing.",
+    "baseline": "9 self-contained existing tests PASS; 6 original repository integration tests not selected locally.",
+    "red": "15 self-contained tests on unchanged tool: 3 assertion failures, 0 errors. Initial probe had 2 failures and 1 ValueError; the expected defect was converted to an explicit assertion before implementation.",
+    "green": "15 self-contained tests PASS: 9 existing + 6 new, 0 failures/errors. All 15 original test methods remain AST-equivalent; none removed or weakened.",
+    "local_command": "python /mnt/data/base-senior-thinking-evidence/run_focused.py",
+    "full_checkout_command": "python -m unittest discover -s tests -p test_skill_context.py -v",
+    "static": "py_compile for changed Python files and trailing-whitespace scan PASS.",
+    "full_local_suite": "NOT_RUN: no full checkout; focused tests do not replace run_local_validation.py.",
+    "exact_head_remote_ci": "PENDING: record final candidate SHA/runs in task PR.",
+    "independent_review": "NOT_RUN: author checks are not independent review.",
+    "runtime_human_billing": "NOT_RUN: no live Work/Codex behavior, hook enforcement, game runtime, Human result or productivity/billing measurement."
+  },
+  "author_review": {
+    "passes": [
+      "Review 1: complete code/test/document scope check; both APIs, path rejection and no-recursion preserved; no persistent cache or new authority.",
+      "Review 2: complete correction/evidence check; original tests preserved, later calls fresh-read, and single-entrypoint consistency is not an atomic multi-file snapshot."
+    ],
+    "independent": false,
+    "remaining_integration_gates": ["exact-head full CI", "independent review", "required checks/ruleset/unresolved threads", "normal merge and postmerge readback"]
+  },
+  "learning": {
+    "lesson": "A deduplicated returned pack does not prove deduplicated I/O. Observe real reads alongside content completeness, failure and freshness regressions.",
+    "authorization_lesson": "A question/recent response timestamp is not affirmative task-scoped approval; advisory success is not enforcement.",
+    "nonuse_conditions": "No new router, permanent observation report, mandatory extra approval or unconditional model evaluation for unchanged small tasks.",
+    "measured_effect": "Focused fixture entrypoint reads 2 -> 1 per contract-validation invocation; not total task time, model tokens or billing.",
+    "automatic_project_rollout": false
+  },
+  "rollback": "Revert this current-task PR through the normal PR process. No deployed hook, global setting, game save or asset migration to undo.",
+  "checkpoint_policy": "Premerge checkpoint only. Final exact-head CI/review/merge evidence belongs to task PR; never rewrite old results into PASS.",
+  "evidence_ceiling": "Focused Python behavior and source/document inspection until exact-head full repository CI and independent review are separately verified."
+}
