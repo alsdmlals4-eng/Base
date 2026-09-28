@@ -14,6 +14,8 @@ on:
       - "tests/test_periodic_source_analysis_runner.py"
       - "tests/test_periodic_source_scan_queue.py"
       - "docs/knowledge/game-development/PERIODIC_SOURCE_SCAN_QUEUE.md"
+      - "docs/knowledge/game-development/PERIODIC_SOURCE_OPERATIONS_LEDGER.json"
+      - "docs/knowledge/game-development/PERIODIC_EXTERNAL_SOURCE_WATCHLIST.md"
       - "docs/operations/BASE_PARTITION_MANIFEST.json"
       - "docs/operations/BASE_PARTITION_LEARNING_SYSTEM.md"
       - "docs/operations/base-partitions/learning/**"
